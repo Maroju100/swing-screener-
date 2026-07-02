@@ -28,15 +28,15 @@ Log "=== Swing Screener Cycle Start ==="
 
 # ── Market hours check (CDT = UTC-5) ──────────────────────
 $utcNow      = [DateTime]::UtcNow
-$cdtOffset   = [TimeSpan]::FromHours(-5)          # CDT (summer); change to -6 for CST (winter)
-$cdtNow      = $utcNow.Add($cdtOffset)
-$dayOfWeek   = $cdtNow.DayOfWeek
-$marketOpen  = [TimeSpan]"09:30:00"
-$marketClose = [TimeSpan]"16:00:00"
+$cstOffset   = [TimeSpan]::FromHours(-6)          # CST (UTC-6); change to -5 for CDT (summer)
+$cstNow      = $utcNow.Add($cstOffset)
+$dayOfWeek   = $cstNow.DayOfWeek
+$marketOpen  = [TimeSpan]"08:30:00"              # 9:30 AM ET = 8:30 AM CST
+$marketClose = [TimeSpan]"15:00:00"              # 4:00 PM ET = 3:00 PM CST
 $isWeekday   = $dayOfWeek -ne "Saturday" -and $dayOfWeek -ne "Sunday"
-$isMarketHrs = $cdtNow.TimeOfDay -ge $marketOpen -and $cdtNow.TimeOfDay -le $marketClose
+$isMarketHrs = $cstNow.TimeOfDay -ge $marketOpen -and $cstNow.TimeOfDay -le $marketClose
 
-Log "CDT now: $($cdtNow.ToString('ddd yyyy-MM-dd HH:mm')) | Weekday: $isWeekday | Market hours: $isMarketHrs"
+Log "CST now: $($cstNow.ToString('ddd yyyy-MM-dd HH:mm')) | Weekday: $isWeekday | Market hours: $isMarketHrs"
 
 if (-not $isWeekday) {
     Log "Weekend — skipping cycle."
@@ -44,7 +44,7 @@ if (-not $isWeekday) {
 }
 
 if (-not $isMarketHrs) {
-    Log "Outside market hours (9:30–4:00 PM CDT) — skipping cycle."
+    Log "Outside market hours (8:30 AM–3:00 PM CST) — skipping cycle."
     exit 0
 }
 

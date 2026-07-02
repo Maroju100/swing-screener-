@@ -107,6 +107,6 @@ Get-ChildItem "$env:USERPROFILE\SwingScreener\logs" | Sort LastWriteTime -Desc
 ## Notes
 
 - **Keep PC on** during market hours (9:30 AM–4 PM CDT, Mon–Fri). Sleep/hibernate stops the task.
-- If you travel: update CDT offset in `swing-screener.ps1` line 24 (`-5` for summer, `-6` for winter).
+- Timezone is set to **CST (UTC-6)**, market hours **8:30 AM–3:00 PM CST**. If you switch to CDT in summer, change offset to `-5` and times to `09:30`/`16:00` in `swing-screener.ps1`.
 - Each cycle creates a timestamped log file. Logs older than 7 days are auto-deleted.
 - The task runs under your user account so it has access to the same MCP credentials as the Claude desktop app.

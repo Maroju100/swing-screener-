@@ -64,14 +64,14 @@ $action = New-ScheduledTaskAction `
     -Execute "powershell.exe" `
     -Argument "-NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$SCRIPT_PATH`""
 
-# Trigger: every 15 minutes, 9:15 AM–4:15 PM, Mon–Fri
-# (starts 15 min early so the 9:30 cycle doesn't miss)
+# Trigger: every 15 minutes, 8:15 AM–3:15 PM CST, Mon–Fri
+# (starts 15 min early so the 8:30 AM cycle doesn't miss)
 $trigger = New-ScheduledTaskTrigger `
     -Weekly `
     -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday `
-    -At "09:15AM"
+    -At "08:15AM"
 
-# Repeat every 15 min for 7 hours (covers full market day + buffer)
+# Repeat every 15 min for 7 hours (covers full market day 8:30–3:00 PM + buffer)
 $trigger.RepetitionInterval = [TimeSpan]::FromMinutes(15)
 $trigger.RepetitionDuration = [TimeSpan]::FromHours(7)
 
@@ -118,7 +118,7 @@ if (Test-Path $mcpConfig) {
 
 # ── Done ──────────────────────────────────────────────────
 Write-Host "`n=== Setup Complete ===" -ForegroundColor Cyan
-Write-Host "Task '$TASK_NAME' will run every 15 min on weekdays 9:15 AM–4:15 PM."
+Write-Host "Task '$TASK_NAME' will run every 15 min on weekdays 8:15 AM–3:15 PM CST."
 Write-Host "Logs saved to: $LOG_DIR"
 Write-Host "`nTo test immediately: Start-ScheduledTask -TaskName '$TASK_NAME'"
 Write-Host "To view logs:        Get-Content `"$LOG_DIR\*.log`" | Select -Last 50"
