@@ -1,0 +1,77 @@
+{
+  "strategy": {
+    "name": "3-Way Combo: Whipsaw + 1-2-3 + Bressert",
+    "status": "LIVE",
+    "schedule": "Weekdays 13:45 UTC (9:45 AM ET)",
+    "account": "Robinhood 912291820 (Agentic 2, cash account)",
+    "universe": ["AMD", "MU", "WDC", "SNDK", "TSM"],
+    "excluded_watch_only": ["NVDA", "SLV", "SPCX"],
+    "signals": [
+      {
+        "id": "A",
+        "name": "2B Reversal + Bollinger whipsaw",
+        "rules": [
+          "Fakeout day k in last 3 days: LOW < min low of prior 10 days (broke support) OR LOW < lower Bollinger(20, 2σ)",
+          "Entry today: close > prior support AND close > day k close AND volume >= day k volume",
+          "Score = breakdown depth (prior_support - fakeout low) / prior_support"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Joe Ross 1-2-3 low breakout",
+        "rules": [
+          "Swing pivots (strength 2) over ~45 bars; last three pivots must be Low(P1) → High(P2) → Low(P3)",
+          "P3 low > P1 low (higher low) AND P3 within last 15 trading days",
+          "Entry today: close crosses above P2 high (yesterday closed at/below it)",
+          "Score = (close - P2 high) / P2 high"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Bressert RSI-3M3 cycle buy",
+        "rules": [
+          "RSI(3) smoothed with 3-bar SMA = RSI3M3",
+          "Buy setup bar: prior day's RSI3M3 < 30 (oversold) AND RSI3M3 turns up",
+          "Entry today: close > setup bar's HIGH (setup bar within last 3 days)",
+          "Score = (close - setup bar high) / setup bar high"
+        ]
+      }
+    ],
+    "ranking": "All signals compete for the same slots; a symbol with 2+ signals firing ranks first, otherwise by score descending",
+    "thresholds": {
+      "support_window_days": 10,
+      "fakeout_lookback_days": 3,
+      "bollinger": "20-period, 2 std dev",
+      "pivot_strength": 2,
+      "pattern_freshness_days": 15,
+      "rsi3m3_oversold": 30,
+      "stop": "entry - 1.75 x ATR(14)",
+      "target": "entry + 3.5 x ATR(14)",
+      "min_hold_days_for_target": 2,
+      "max_positions": 5,
+      "max_new_entries_per_run": 2,
+      "stop_pause": "3 stop-losses in trailing 7 days pauses new buys",
+      "min_buying_power": 50,
+      "sizing": "target notional = total account value / 5, capped by cash; shares halved if ATR14/close > its 20-day average (volatility haircut)"
+    },
+    "backtest": {
+      "base": 25000,
+      "windows": [
+        { "window": "Oct-Nov 2025 (pure out-of-sample validation)", "net_pl": 4200.54 },
+        { "window": "Dec 2025 - Jan 2026", "net_pl": 10724.25 },
+        { "window": "Feb-Mar 2026", "net_pl": -935.11 },
+        { "window": "Apr-Jun 2026", "net_pl": 22822.36 }
+      ],
+      "total": 36812.04,
+      "note": "Profitable in 3 of 4 windows; ~40 round trips total — encouraging, not proven"
+    }
+  },
+  "baseline": {
+    "date": "2026-07-05",
+    "account_value": 4958.82,
+    "cash": 3012.40,
+    "buying_power": 2575.44,
+    "note": "Account value includes human-held NVDA (10 sh) and CGC (2 sh), which the automation never touches. Daily P&L below tracks total account value change."
+  },
+  "runs": []
+}

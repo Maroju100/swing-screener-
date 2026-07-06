@@ -103,7 +103,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <h1>&#9889; Swing Screener</h1>
-      <div class="strategy-badge">Hybrid Momentum Pullback · Agentic 2</div>
+      <div class="strategy-badge">3-Way Combo: Whipsaw + 1-2-3 + Bressert · Agentic 2 · LIVE</div>
       <div class="meta-bar">
         <span class="live-dot"></span>
         <span class="meta-count">395 matches</span>
@@ -111,8 +111,10 @@
       </div>
     </div>
     <div class="tab-bar">
-      <div class="tab active" onclick="switchTab('scan',this)">Scan (395)</div>
-      <div class="tab" onclick="switchTab('activity',this)">Activity (3)</div>
+      <div class="tab active" onclick="switchTab('scan',this)">Scan</div>
+      <div class="tab" onclick="switchTab('runs',this)">Runs</div>
+      <div class="tab" onclick="switchTab('rules',this)">Rules</div>
+      <div class="tab" onclick="switchTab('pnl',this)">P&amp;L</div>
     </div>
     <div class="tab-pane active" id="tab-scan">
       <div class="search-wrap">
@@ -120,15 +122,23 @@
       </div>
       <div class="stock-list" id="stock-list"></div>
     </div>
-    <div class="tab-pane" id="tab-activity">
+    <div class="tab-pane" id="tab-runs">
+      <div class="activity-list" id="runs-list"></div>
+      <div class="section-mini" style="padding:4px 16px 0;">Legacy cycles (previous strategy)</div>
       <div class="activity-list" id="activity-list"></div>
+    </div>
+    <div class="tab-pane" id="tab-rules">
+      <div class="activity-list" id="rules-list"></div>
+    </div>
+    <div class="tab-pane" id="tab-pnl">
+      <div class="activity-list" id="pnl-list"></div>
     </div>
   </div>
   <div class="main-panel" id="main-panel">
     <div class="empty-state">
       <div class="empty-icon">&#128200;</div>
-      <h2>Hybrid Momentum Pullback</h2>
-      <p>395 live matches &bull; Cycle 1 complete &bull; NVDA held +0.03% &bull; No new entries (sector selloff — scores 0-4/10, need &#8805;7)</p>
+      <h2>3-Way Combo &mdash; Live</h2>
+      <p>Whipsaw Reversal + 1-2-3 Breakout + Bressert RSI-3M3 on AMD / MU / WDC / SNDK / TSM &bull; runs weekdays 13:45 UTC &bull; see the Runs, Rules and P&amp;L tabs for the daily log</p>
     </div>
   </div>
 </div>
@@ -180,10 +190,10 @@ function showDetails(s, cardEl) {
     rsiM(s.rsi,rc,rl) +
     mc('Price','$'+s.price.toFixed(2)) +
     mc('Change',(up?'+':'')+s.change_pct.toFixed(2)+'%',(up?'+':'')+s.change.toFixed(2)) + '</div>' +
-    '<div class="scan-info"><div class="section-title">Strategy: Hybrid Momentum Pullback</div>' +
-    '<div class="filter-chips"><span class="chip">Score &#8805;7/10</span><span class="chip">3 confirmations</span>' +
-    '<span class="chip">Price > 50 EMA</span><span class="chip">Neutral+ news</span>' +
-    '<span class="chip">Max 2 positions</span><span class="chip">Stop 5-8%</span></div></div>';
+    '<div class="scan-info"><div class="section-title">Live Strategy: 3-Way Combo</div>' +
+    '<div class="filter-chips"><span class="chip">A: Whipsaw reversal</span><span class="chip">B: 1-2-3 breakout</span>' +
+    '<span class="chip">C: Bressert RSI-3M3</span><span class="chip">Stop 1.75&times;ATR</span>' +
+    '<span class="chip">Target 3.5&times;ATR</span><span class="chip">Max 5 positions</span></div></div>';
 }
 function mc(l,v,s) { return '<div class="metric-card"><div class="metric-label">'+l+'</div><div class="metric-value">'+v+'</div>'+(s?'<div class="metric-sub">'+s+'</div>':'')+' </div>'; }
 function rsiM(r,c,l) {
@@ -228,6 +238,98 @@ function renderActivity() {
       '<div class="verdict-bar">'+c.verdict+'</div></div>';
   }).join('');
 }
+
+/* ---------- Agentic daily log (Runs / Rules / P&L) ---------- */
+function money(v){ return (v<0?'-$':'$') + Math.abs(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function pnlSpan(v){ return '<span class="'+(v>=0?'up':'down')+'">'+(v>=0?'+':'')+money(v).replace('$-','-$')+'</span>'; }
+
+function renderRuns(log){
+  const el = document.getElementById('runs-list');
+  if(!log){ el.innerHTML = '<div class="exec-item none">Could not load agentic_log.json</div>'; return; }
+  const runs = (log.runs||[]).slice().reverse();
+  if(!runs.length){
+    el.innerHTML = '<div class="cycle-card"><div class="cycle-num">No runs logged yet</div>' +
+      '<div class="exec-reason">First 3-way combo run: next weekday 13:45 UTC. Each run appends here with orders, positions and P&amp;L.</div>' +
+      '<div class="account-row"><span>Baseline ('+log.baseline.date+')</span><span>'+money(log.baseline.account_value)+'</span></div></div>';
+    return;
+  }
+  el.innerHTML = runs.map(r=>{
+    const orders = (r.orders||[]).map(o=>{
+      const cls = o.side==='BUY'?'buy':'sell';
+      return '<div class="exec-item '+cls+'"><div><span class="exec-sym">'+o.symbol+'</span>' +
+        '<span class="exec-tag '+cls+'">'+o.side+'</span>' +
+        (o.signal?'<span class="exec-tag buy" style="background:rgba(88,166,255,0.15);color:var(--accent)">Signal '+o.signal+'</span>':'') +
+        ' '+o.shares+' sh @ $'+Number(o.price).toFixed(2)+'</div>' +
+        (o.reason?'<div class="exec-reason">'+o.reason+'</div>':'')+'</div>';
+    }).join('') || '<div class="exec-item none">No trades this run</div>';
+    const pos = (r.positions||[]).map(p=>
+      '<div class="pos-row"><span style="color:var(--muted)">'+p.symbol+' &times;'+p.shares+' @ $'+Number(p.entry).toFixed(2)+'</span>' +
+      '<span>'+(p.current!=null?'$'+Number(p.current).toFixed(2):'')+'</span></div>'
+    ).join('') || '<div style="font-size:11px;color:var(--muted)">No open positions</div>';
+    return '<div class="cycle-card">' +
+      '<div class="cycle-header"><div class="cycle-meta"><span class="cycle-num">'+r.date+'</span>' +
+      '<span class="cycle-strategy">'+(r.regime||'')+'</span></div></div>' + orders +
+      '<div class="section-mini">Positions</div>' + pos +
+      '<div class="account-row"><span>Account: '+money(r.account_value)+'</span><span>Cash: '+(r.cash!=null?money(r.cash):'&mdash;')+'</span></div>' +
+      '<div class="account-row"><span>Daily P&amp;L: '+pnlSpan(r.daily_pl)+'</span><span>Total: '+pnlSpan(r.cumulative_pl)+'</span></div>' +
+      (r.notes?'<div class="verdict-bar">'+r.notes+'</div>':'') + '</div>';
+  }).join('');
+}
+
+function renderRules(log){
+  const el = document.getElementById('rules-list');
+  if(!log){ el.innerHTML = '<div class="exec-item none">Could not load agentic_log.json</div>'; return; }
+  const s = log.strategy;
+  const sig = s.signals.map(g=>
+    '<div class="cycle-card"><div class="cycle-num">Signal '+g.id+' &mdash; '+g.name+'</div>' +
+    g.rules.map(r=>'<div class="exec-reason">&bull; '+r+'</div>').join('')+'</div>'
+  ).join('');
+  const th = Object.entries(s.thresholds).map(([k,v])=>
+    '<div class="pos-row"><span style="color:var(--muted)">'+k.replace(/_/g,' ')+'</span><span style="text-align:right;max-width:60%">'+v+'</span></div>'
+  ).join('');
+  const bt = s.backtest.windows.map(w=>
+    '<div class="pos-row"><span style="color:var(--muted)">'+w.window+'</span>'+pnlSpan(w.net_pl)+'</div>'
+  ).join('');
+  el.innerHTML =
+    '<div class="cycle-card"><div class="cycle-num">'+s.name+' &middot; '+s.status+'</div>' +
+    '<div class="exec-reason">'+s.schedule+' &middot; '+s.account+'</div>' +
+    '<div class="section-mini">Universe</div><div class="filter-chips">' +
+    s.universe.map(u=>'<span class="chip">'+u+'</span>').join('') + '</div>' +
+    '<div class="section-mini">Excluded (watch-only)</div><div class="filter-chips">' +
+    s.excluded_watch_only.map(u=>'<span class="chip" style="color:var(--red)">'+u+'</span>').join('') + '</div></div>' +
+    sig +
+    '<div class="cycle-card"><div class="cycle-num">Thresholds &amp; risk engine</div>'+th+
+    '<div class="verdict-bar">'+s.ranking+'</div></div>' +
+    '<div class="cycle-card"><div class="cycle-num">Backtest record ($'+s.backtest.base.toLocaleString()+' base)</div>'+bt+
+    '<div class="pos-row"><span style="font-weight:700">TOTAL</span>'+pnlSpan(s.backtest.total)+'</div>' +
+    '<div class="verdict-bar">'+s.backtest.note+'</div></div>';
+}
+
+function renderPnl(log){
+  const el = document.getElementById('pnl-list');
+  if(!log){ el.innerHTML = '<div class="exec-item none">Could not load agentic_log.json</div>'; return; }
+  const runs = log.runs||[];
+  const last = runs.length ? runs[runs.length-1] : null;
+  const cum = last ? last.cumulative_pl : 0;
+  const acct = last ? last.account_value : log.baseline.account_value;
+  const rows = runs.slice().reverse().map(r=>
+    '<div class="pos-row"><span style="color:var(--muted)">'+r.date+'</span>' +
+    '<span>'+money(r.account_value)+'</span>'+pnlSpan(r.daily_pl)+'</div>'
+  ).join('') || '<div style="font-size:11px;color:var(--muted);padding:4px 0">No runs yet — populates after the first daily run</div>';
+  el.innerHTML =
+    '<div class="cycle-card"><div class="cycle-num">Account value</div>' +
+    '<div style="font-size:22px;font-weight:700;margin:4px 0">'+money(acct)+'</div>' +
+    '<div class="account-row"><span>Since baseline '+log.baseline.date+' ('+money(log.baseline.account_value)+')</span>'+pnlSpan(cum)+'</div>' +
+    '<div class="verdict-bar">'+log.baseline.note+'</div></div>' +
+    '<div class="cycle-card"><div class="cycle-num">Daily P&amp;L</div>' +
+    '<div class="pos-row" style="font-weight:600"><span>Date</span><span>Account</span><span>Day P&amp;L</span></div>' + rows + '</div>';
+}
+
+let AGENTIC_LOG = null;
+fetch('agentic_log.json?t=' + Date.now())
+  .then(r => { if(!r.ok) throw new Error(r.status); return r.json(); })
+  .then(j => { AGENTIC_LOG = j; renderRuns(j); renderRules(j); renderPnl(j); })
+  .catch(() => { renderRuns(null); renderRules(null); renderPnl(null); });
 
 renderList(allStocks);
 renderActivity();
