@@ -2,7 +2,7 @@
   "strategy": {
     "name": "3-Way Combo: Whipsaw + 1-2-3 + Bressert",
     "status": "LIVE",
-    "schedule": "Weekdays 13:45 UTC (9:45 AM ET)",
+    "schedule": "Weekdays 13:45 UTC / 9:45 AM ET (morning, prior close) + 19:50 UTC / 3:50 PM ET (pre-close, same-day close proxy)",
     "account": "Robinhood 912291820 (Agentic 2, cash account)",
     "universe": ["AMD", "MU", "WDC", "SNDK", "TSM"],
     "excluded_watch_only": ["NVDA", "SLV", "SPCX"],
@@ -63,7 +63,7 @@
         { "window": "Apr-Jun 2026", "net_pl": 22822.36 }
       ],
       "total": 36812.04,
-      "note": "Profitable in 3 of 4 windows; ~40 round trips total — encouraging, not proven"
+      "note": "Profitable in 3 of 4 windows; ~40 round trips total — encouraging, not proven. Separate 9-month same-close-vs-next-open timing test (Aug 2025-Jul 2026, 148 signals): same-day pre-close entry beat next-day-open entry, +$12,817 vs +$10,587 net, 71.4% vs 58.8% win rate — basis for the added 3:50pm ET pre-close run."
     }
   },
   "baseline": {
