@@ -1,6 +1,6 @@
 {
   "strategy": {
-    "name": "3-Way Combo: Whipsaw + 1-2-3 + Bressert",
+    "name": "4-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse",
     "status": "LIVE",
     "schedule": "Weekdays 13:45 UTC / 9:45 AM ET (morning, prior close) + 19:50 UTC / 3:50 PM ET (pre-close, same-day close proxy)",
     "account": "Robinhood 912291820 (Agentic 2, cash account)",
@@ -35,6 +35,16 @@
           "Entry today: close > setup bar's HIGH (setup bar within last 3 days)",
           "Score = (close - setup bar high) / setup bar high"
         ]
+      },
+      {
+        "id": "D",
+        "name": "Elder Impulse green-turn continuation",
+        "rules": [
+          "13-day EMA slope (rising/falling) = trend inertia; MACD-Histogram slope (today's bar vs yesterday's) = trend power",
+          "Impulse color: green = EMA rising AND MACD-Histogram rising; red = both falling; blue = mixed",
+          "Entry today: Impulse color turns green today AND was not green yesterday (first day of fresh alignment)",
+          "Score = today's MACD-Histogram value minus yesterday's + 0.01"
+        ]
       }
     ],
     "ranking": "All signals compete for the same slots; a symbol with 2+ signals firing ranks first, otherwise by score descending",
@@ -45,6 +55,8 @@
       "pivot_strength": 2,
       "pattern_freshness_days": 15,
       "rsi3m3_oversold": 30,
+      "impulse_ema_period": 13,
+      "impulse_macd": "12/26/9 (standard MACD-Histogram)",
       "stop": "entry - 1.75 x ATR(14)",
       "target": "entry + 3.5 x ATR(14)",
       "min_hold_days_for_target": 2,
@@ -57,13 +69,13 @@
     "backtest": {
       "base": 25000,
       "windows": [
-        { "window": "Oct-Nov 2025 (pure out-of-sample validation)", "net_pl": 4200.54 },
-        { "window": "Dec 2025 - Jan 2026", "net_pl": 10724.25 },
-        { "window": "Feb-Mar 2026", "net_pl": -935.11 },
-        { "window": "Apr-Jun 2026", "net_pl": 22822.36 }
+        { "window": "Oct-Nov 2025 (pure out-of-sample validation)", "net_pl": 7884.26 },
+        { "window": "Dec 2025 - Jan 2026", "net_pl": 13506.35 },
+        { "window": "Feb-Mar 2026", "net_pl": -987.30 },
+        { "window": "Apr-Jun 2026", "net_pl": 22390.98 }
       ],
-      "total": 36812.04,
-      "note": "Profitable in 3 of 4 windows; ~40 round trips total — encouraging, not proven. Separate 9-month same-close-vs-next-open timing test (Aug 2025-Jul 2026, 148 signals): same-day pre-close entry beat next-day-open entry, +$12,817 vs +$10,587 net, 71.4% vs 58.8% win rate — basis for the added 3:50pm ET pre-close run."
+      "total": 42794.29,
+      "note": "Profitable in 3 of 4 windows, ~101 round trips total. Upgraded from the 3-signal combo (A+B+C only, which totaled +$36,812.04) by adding Signal D (Elder Impulse) — the 4th signal added +$5,982 (+16%) in total P&L versus the 3-signal version while leaving the one losing window (Feb-Mar 2026) essentially unchanged (-$987 vs -$935). Elder Impulse alone also backtested strongly on its own (+$32,428.62 total, same 3-of-4 pattern), which is why it was promoted from a candidate to a live signal. Separate 9-month same-close-vs-next-open timing test (Aug 2025-Jul 2026, 148 signals): same-day pre-close entry beat next-day-open entry, +$12,817 vs +$10,587 net, 71.4% vs 58.8% win rate — basis for the added 3:50pm ET pre-close run."
     }
   },
   "baseline": {

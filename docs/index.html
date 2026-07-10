@@ -103,7 +103,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <h1>&#9889; Swing Screener</h1>
-      <div class="strategy-badge">3-Way Combo: Whipsaw + 1-2-3 + Bressert · Agentic 2 · LIVE</div>
+      <div class="strategy-badge">4-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse · Agentic 2 · LIVE</div>
       <div class="meta-bar">
         <span class="live-dot"></span>
         <span class="meta-count">395 matches</span>
@@ -137,8 +137,8 @@
   <div class="main-panel" id="main-panel">
     <div class="empty-state">
       <div class="empty-icon">&#128200;</div>
-      <h2>3-Way Combo &mdash; Live</h2>
-      <p>Whipsaw Reversal + 1-2-3 Breakout + Bressert RSI-3M3 on AMD / MU / WDC / SNDK / TSM &bull; runs weekdays 13:45 UTC &bull; see the Runs, Rules and P&amp;L tabs for the daily log</p>
+      <h2>4-Way Combo &mdash; Live</h2>
+      <p>Whipsaw Reversal + 1-2-3 Breakout + Bressert RSI-3M3 + Elder Impulse on AMD / MU / WDC / SNDK / TSM &bull; runs weekdays 13:45 UTC &amp; 19:50 UTC &bull; see the Runs, Rules and P&amp;L tabs for the daily log</p>
     </div>
   </div>
 </div>
@@ -190,9 +190,10 @@ function showDetails(s, cardEl) {
     rsiM(s.rsi,rc,rl) +
     mc('Price','$'+s.price.toFixed(2)) +
     mc('Change',(up?'+':'')+s.change_pct.toFixed(2)+'%',(up?'+':'')+s.change.toFixed(2)) + '</div>' +
-    '<div class="scan-info"><div class="section-title">Live Strategy: 3-Way Combo</div>' +
+    '<div class="scan-info"><div class="section-title">Live Strategy: 4-Way Combo</div>' +
     '<div class="filter-chips"><span class="chip">A: Whipsaw reversal</span><span class="chip">B: 1-2-3 breakout</span>' +
-    '<span class="chip">C: Bressert RSI-3M3</span><span class="chip">Stop 1.75&times;ATR</span>' +
+    '<span class="chip">C: Bressert RSI-3M3</span><span class="chip">D: Elder Impulse</span>' +
+    '<span class="chip">Stop 1.75&times;ATR</span>' +
     '<span class="chip">Target 3.5&times;ATR</span><span class="chip">Max 5 positions</span></div></div>';
 }
 function mc(l,v,s) { return '<div class="metric-card"><div class="metric-label">'+l+'</div><div class="metric-value">'+v+'</div>'+(s?'<div class="metric-sub">'+s+'</div>':'')+' </div>'; }
@@ -249,7 +250,7 @@ function renderRuns(log){
   const runs = (log.runs||[]).slice().reverse();
   if(!runs.length){
     el.innerHTML = '<div class="cycle-card"><div class="cycle-num">No runs logged yet</div>' +
-      '<div class="exec-reason">First 3-way combo run: next weekday 13:45 UTC. Each run appends here with orders, positions and P&amp;L.</div>' +
+      '<div class="exec-reason">First 4-way combo run: next weekday 13:45 UTC. Each run appends here with orders, positions and P&amp;L.</div>' +
       '<div class="account-row"><span>Baseline ('+log.baseline.date+')</span><span>'+money(log.baseline.account_value)+'</span></div></div>';
     return;
   }
