@@ -1,8 +1,8 @@
 {
   "2026-07-14_pre_close": {
     "run": "pre_close",
-    "stage": "blocked",
-    "started_at": "2026-07-14T18:39:25Z",
-    "blocked_reason": "get_equity_historicals returned 'MCP tool call requires approval' on 3 consecutive attempts after get_accounts/get_portfolio/get_equity_positions/get_equity_quotes all succeeded; awaiting user approval of a pending tool permission prompt"
+    "stage": "started",
+    "started_at": "2026-07-14T18:40:52Z",
+    "note": "retry after earlier manual fire in this same session blocked on get_equity_historicals approval"
   }
 }
