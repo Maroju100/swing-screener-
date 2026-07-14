@@ -85,5 +85,18 @@
     "buying_power": 2575.44,
     "note": "Account value includes human-held NVDA (10 sh) and CGC (2 sh), which the automation never touches. Daily P&L below tracks total account value change."
   },
-  "runs": []
+  "runs": [
+    {
+      "date": "2026-07-14",
+      "regime": "Broad intraday strength across the basket into the pre-close (AMD +3.8%, MU +4.8%, WDC +1.3%, SNDK +6.1%, TSM +0.6% vs 2026-07-13 close) — could not be characterized against the full signal set because historical bars were unavailable this run (see notes).",
+      "orders": [],
+      "positions": [],
+      "account_value": 4991.20,
+      "cash": 4989.28,
+      "buying_power": 4989.28,
+      "daily_pl": 32.38,
+      "cumulative_pl": 32.38,
+      "notes": "Pre-close: no signal scan possible — get_equity_historicals returned 'MCP tool call requires approval' on every attempt (4 total, across 2 separate firings of the newly reconfigured session-bound trigger), while get_accounts/get_portfolio/get_equity_positions/get_equity_quotes all succeeded normally. No trades placed — refused to fabricate signal values without real historical data. No open basket positions to exit (only human-held CGC in the account). Flagging for the user: this specific tool needs its pending approval cleared before the automation can actually evaluate signals, even though the session-binding fix resolved the earlier silent full-session stalls."
+    }
+  ]
 }

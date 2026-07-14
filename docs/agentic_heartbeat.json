@@ -1,8 +1,10 @@
 {
   "2026-07-14_pre_close": {
     "run": "pre_close",
-    "stage": "started",
+    "stage": "completed_no_data",
     "started_at": "2026-07-14T18:40:52Z",
-    "note": "retry after earlier manual fire in this same session blocked on get_equity_historicals approval"
+    "completed_at": "2026-07-14T18:41:30Z",
+    "orders_count": 0,
+    "note": "get_equity_historicals blocked ('MCP tool call requires approval') on every attempt this run and the prior manual fire; account/portfolio/positions/quotes all worked. Logged a no-data run to agentic_log.json rather than fabricating signals. Needs the pending tool approval cleared."
   }
 }
