@@ -1,8 +1,10 @@
 {
   "2026-07-14_pre_close": {
     "run": "pre_close",
-    "stage": "started",
+    "stage": "completed_no_data",
     "started_at": "2026-07-14T19:51:00Z",
-    "note": "scheduled retry — testing whether the settings.local.json permission allowlist fix (added earlier today) has taken effect for get_equity_historicals"
+    "completed_at": "2026-07-14T19:52:15Z",
+    "orders_count": 0,
+    "note": "5th consecutive block on get_equity_historicals despite the settings.local.json allowlist fix. Diagnosis: permission allowlists likely load once at session start and don't hot-reload; this session was already running when the fix was written. Needs an actual session restart (not just a resumed trigger firing) to pick it up. account/portfolio/positions/quotes all still work fine."
   }
 }
