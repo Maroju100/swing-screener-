@@ -1,8 +1,10 @@
 {
   "2026-07-14_pre_close": {
     "run": "pre_close",
-    "stage": "started",
+    "stage": "completed",
     "started_at": "2026-07-14T20:50:33Z",
-    "note": "rerun after enabling fractional-share sizing (triggers recreated to allow up to 6 decimal places instead of skipping zero-share entries); testing whether AMD's Signal D (previously sized to 0 whole shares) now places a fractional order"
+    "completed_at": "2026-07-14T20:53:15Z",
+    "orders_count": 1,
+    "note": "Fractional-share sizing worked: AMD Signal D sized to 0.911403 shares (was 0 under whole-share rules) and a real market order was placed (order id 6a56a1a6-1fc2-421b-831d-fdffda2d299c, state=queued, will fill at next regular open since it was placed after today's close)."
   }
 }
