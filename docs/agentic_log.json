@@ -64,7 +64,7 @@
       "max_new_entries_per_run": 2,
       "stop_pause": "3 stop-losses in trailing 7 days pauses new buys",
       "min_buying_power": 50,
-      "sizing": "target notional = total account value / 5, capped by cash; shares halved if ATR14/close > its 20-day average (volatility haircut)"
+      "sizing": "target notional = total account value / 5, capped by cash; shares halved if ATR14/close > its 20-day average (volatility haircut); fractional shares allowed (up to 6 decimal places, market orders only, regular hours only) — updated 2026-07-14, previously whole-share-only which skipped any entry that rounded to 0 shares"
     },
     "backtest": {
       "base": 25000,
