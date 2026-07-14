@@ -1,10 +1,8 @@
 {
   "2026-07-14_pre_close": {
     "run": "pre_close",
-    "stage": "completed",
-    "started_at": "2026-07-14T20:10:30Z",
-    "completed_at": "2026-07-14T20:14:00Z",
-    "orders_count": 0,
-    "note": "get_equity_historicals succeeded on the reverted session-bound trigger. Full signal scan completed for all 5 symbols. Signal D fired on AMD but sized to 0 shares after the volatility haircut, so no order placed. See agentic_log.json notes for full detail."
+    "stage": "started",
+    "started_at": "2026-07-14T20:50:33Z",
+    "note": "rerun after enabling fractional-share sizing (triggers recreated to allow up to 6 decimal places instead of skipping zero-share entries); testing whether AMD's Signal D (previously sized to 0 whole shares) now places a fractional order"
   }
 }
