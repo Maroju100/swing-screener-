@@ -1,8 +1,10 @@
 {
   "2026-07-14_pre_close": {
     "run": "pre_close",
-    "stage": "started",
+    "stage": "completed",
     "started_at": "2026-07-14T20:10:30Z",
-    "note": "reverted triggers back to binding this persistent session after fresh-session-per-fire (create_new_session_on_fire=true) stalled completely with zero activity; testing get_equity_historicals again on this known-working session"
+    "completed_at": "2026-07-14T20:14:00Z",
+    "orders_count": 0,
+    "note": "get_equity_historicals succeeded on the reverted session-bound trigger. Full signal scan completed for all 5 symbols. Signal D fired on AMD but sized to 0 shares after the volatility haircut, so no order placed. See agentic_log.json notes for full detail."
   }
 }
