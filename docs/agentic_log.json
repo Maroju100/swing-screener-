@@ -99,6 +99,20 @@
       "daily_pl": 32.39,
       "cumulative_pl": 32.39,
       "notes": "Pre-close (manual fire, ~18:40 UTC, then 19:51 UTC): get_equity_historicals blocked 5 times in a row. Deleted the session-bound triggers, recreated them as fresh-session-per-fire (create_new_session_on_fire=true) hoping the new .claude/settings.local.json Robinhood-tool allowlist would let a cold session skip the approval gate — that fresh session stalled completely (zero activity, no heartbeat write) after ~6 minutes, so reverted back to session-bound triggers. Manual fire on the reverted trigger (20:10 UTC) finally got a clean get_equity_historicals call through. Full signal scan completed: A/B/C found no qualifying setups on any of the 5 symbols. Signal D (Elder Impulse) fired on AMD — fresh green turn. First attempt (20:10 UTC): whole-share sizing rounded 1 raw share down to 0 after the volatility haircut (AMD's ATR14/close 7.19% > its 20-day avg 6.99%), so no trade placed. User then asked to allow fractional shares instead of skipping. Recreated both triggers with fractional sizing enabled (up to 6 decimals, market+regular_hours only per Robinhood's fractional-share rule) and refired pre-close (20:50 UTC): same AMD Signal D setup, target_notional $998.24 / $547.64 = 1.822807 raw shares, halved by the same volatility filter to 0.911403 shares (~$499 notional) — no longer rounds to 0. Reviewed (clean, no broker alerts) and placed as a real market order, regular_hours. Since the actual wall-clock time was already past today's 4:00pm ET close (order placed 4:52pm ET), Robinhood queued it for the next regular session open rather than filling immediately — state=queued, not yet filled. Stop/target once filled: entry - 1.75xATR14 ($480.42) / entry + 3.5xATR14 ($682.07), using yesterday's completed-bar ATR14=$38.41. No open confirmed basket positions yet (only human-held CGC) — AMD will appear once the queued order fills. Conviction: 6/10 (real fresh turn; small account size relative to AMD's price is exactly why fractional sizing was needed)."
+    },
+    {
+      "date": "2026-07-15",
+      "regime": "Sharp pullback in memory names after yesterday's rally (MU -3.1%, WDC -3.8%, SNDK -5.3% vs 2026-07-14 close) while AMD/TSM hold roughly flat (+0.3% each). First real overnight-gap test of the session-bound morning trigger — it fired exactly on schedule (13:45 UTC) after this session sat idle since ~21:03 UTC the prior day, confirming the automation survives multi-hour idle periods.",
+      "orders": [],
+      "positions": [
+        {"symbol": "AMD", "shares": 0.911403, "entry": 556.43, "current": 549.99}
+      ],
+      "account_value": 4983.55,
+      "cash": 4482.15,
+      "buying_power": 4482.15,
+      "daily_pl": -7.66,
+      "cumulative_pl": 24.73,
+      "notes": "AMD Signal D order from yesterday's pre-close run FILLED overnight at market open (13:30:01 UTC) — 0.911403 shares @ $556.43 avg cost, confirming the queued-order-fills-at-next-open behavior worked as expected. Exit check: stop $489.21 / target $690.87 (entry 556.43, ATR14=$38.41 from entry time); current price $549.99 is well above stop and held 0 days, so HOLD, no action. New-entry signal scan COULD NOT run this morning: get_equity_historicals returned 'MCP tool call requires approval' on 3 consecutive attempts, while get_accounts/get_portfolio/get_equity_positions/get_equity_quotes/get_equity_orders all worked fine — the same tool-specific block seen intermittently before, now confirmed to recur even on this reliable session after an idle period. No new entries evaluated or placed — refused to fabricate signal data without real historical bars. No stop-losses fired, no pause triggered."
     }
   ]
 }

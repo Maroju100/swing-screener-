@@ -1,8 +1,11 @@
 {
   "2026-07-15_morning": {
     "run": "morning",
-    "stage": "started",
-    "started_at": "2026-07-15T13:46:06Z"
+    "stage": "completed",
+    "started_at": "2026-07-15T13:46:06Z",
+    "completed_at": "2026-07-15T13:52:00Z",
+    "orders_count": 0,
+    "note": "First real overnight-gap firing — trigger fired exactly on schedule after an idle session, confirming automation survives multi-hour gaps. AMD's queued order from yesterday filled at open ($556.43). New-entry scan blocked again by get_equity_historicals ('MCP tool call requires approval'), so no new signals evaluated. Exit check on AMD: HOLD (well above stop, held 0 days)."
   },
   "2026-07-14_pre_close": {
     "run": "pre_close",
