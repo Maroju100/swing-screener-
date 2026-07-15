@@ -113,6 +113,7 @@
       <div class="tab active" onclick="switchTab('runs',this)">Runs</div>
       <div class="tab" onclick="switchTab('rules',this)">Rules</div>
       <div class="tab" onclick="switchTab('pnl',this)">P&amp;L</div>
+      <div class="tab" onclick="switchTab('daytrade',this)">Day Trades</div>
     </div>
     <div class="tab-pane active" id="tab-runs">
       <div class="activity-list" id="runs-list"></div>
@@ -122,6 +123,9 @@
     </div>
     <div class="tab-pane" id="tab-pnl">
       <div class="activity-list" id="pnl-list"></div>
+    </div>
+    <div class="tab-pane" id="tab-daytrade">
+      <div class="activity-list" id="daytrade-list"></div>
     </div>
   </div>
   <div class="main-panel" id="main-panel">
@@ -225,6 +229,80 @@ function renderPnl(log){
     '<div class="cycle-card"><div class="cycle-num">Daily P&amp;L</div>' +
     '<div class="pos-row" style="font-weight:600"><span>Date</span><span>Account</span><span>Day P&amp;L</span></div>' + rows + '</div>';
 }
+
+/* ---------- Day-Trading LIVE (real money) ---------- */
+function computeDayTradePnl(log){
+  // FIFO-match BUY -> SELL per symbol across all runs, in chronological order, to get realized P&L
+  const runs = (log && log.runs) || [];
+  const open = {}; // symbol -> queue of {shares, price}
+  let realized = 0, closedCount = 0;
+  runs.forEach(r => (r.orders||[]).forEach(o => {
+    if(o.side === 'BUY'){
+      open[o.symbol] = open[o.symbol] || [];
+      open[o.symbol].push({shares: Number(o.shares), price: Number(o.price)});
+    } else if(o.side === 'SELL' && open[o.symbol] && open[o.symbol].length){
+      const lot = open[o.symbol].shift();
+      realized += (Number(o.price) - lot.price) * lot.shares;
+      closedCount++;
+    }
+  }));
+  return {realized, closedCount};
+}
+
+function renderDayTrade(log, state){
+  const el = document.getElementById('daytrade-list');
+  if(!log && !state){
+    el.innerHTML = '<div class="cycle-card"><div class="cycle-num">Day-Trading LIVE &middot; Real Money</div>' +
+      '<div class="exec-reason">No runs logged yet. Fires up to 7x per weekday (10:10am&ndash;4:10pm ET) once market data allows. Uses 8 backtested day-trading strategies with settled-cash-only sizing to avoid Good Faith Violations on this cash account.</div></div>';
+    return;
+  }
+  const pending = state ? (state.pending_settlement||[]).reduce((s,p)=>s+p.amount,0) : 0;
+  const openPos = state ? Object.entries(state.open_positions||{}) : [];
+  const {realized, closedCount} = computeDayTradePnl(log);
+  const runs = (log && log.runs || []).slice().reverse();
+
+  let html = '<div class="cycle-card"><div class="cycle-num">Day-Trading LIVE &middot; Real Money</div>' +
+    '<div class="exec-reason">Settled-cash-only sizing (GFV-safe) &middot; fractional shares &middot; excludes any symbol the 6-Way Combo swing system already holds</div>' +
+    '<div class="account-row"><span>Pending settlement (locked until next business day)</span><span>'+money(pending)+'</span></div>' +
+    '<div class="account-row"><span>Realized P&amp;L ('+closedCount+' closed round trips)</span>'+pnlSpan(realized)+'</div></div>';
+
+  html += '<div class="cycle-card"><div class="cycle-num">Open day-trade positions ('+openPos.length+')</div>' +
+    (openPos.length ? openPos.map(([sym,p])=>
+      '<div class="pos-row"><span style="color:var(--muted)">'+sym+' &times;'+p.shares+' @ $'+Number(p.entry).toFixed(2)+' ('+(p.signal||'')+')</span>' +
+      '<span>stop $'+Number(p.stop).toFixed(2)+' / target $'+Number(p.target).toFixed(2)+'</span></div>'
+    ).join('') : '<div style="font-size:11px;color:var(--muted)">None open &mdash; positions force-close same day</div>') + '</div>';
+
+  if(!runs.length){
+    html += '<div class="cycle-card"><div class="cycle-num">No trade runs logged yet</div></div>';
+  } else {
+    html += runs.map(r=>{
+      const orders = (r.orders||[]).map(o=>{
+        const cls = o.side==='BUY'?'buy':'sell';
+        return '<div class="exec-item '+cls+'"><div><span class="exec-sym">'+o.symbol+'</span>' +
+          '<span class="exec-tag '+cls+'">'+o.side+'</span>' +
+          (o.signal?'<span class="exec-tag buy" style="background:rgba(88,166,255,0.15);color:var(--accent)">'+o.signal+'</span>':'') +
+          ' '+o.shares+' sh @ $'+Number(o.price).toFixed(2)+'</div>' +
+          (o.reason?'<div class="exec-reason">'+o.reason+'</div>':'')+'</div>';
+      }).join('') || '<div class="exec-item none">No orders this run</div>';
+      const skipped = (r.skipped||[]).map(s=>'<div class="exec-reason">Skipped '+(s.symbol||'')+': '+(s.why||s)+'</div>').join('');
+      return '<div class="cycle-card"><div class="cycle-header"><div class="cycle-meta">' +
+        '<span class="cycle-num">'+(r.timestamp||'').slice(0,16).replace('T',' ')+' UTC</span></div></div>' +
+        orders + skipped +
+        (r.safe_settled_cash!=null?'<div class="account-row"><span>Safe settled cash at run time</span><span>'+money(r.safe_settled_cash)+'</span></div>':'') +
+        '</div>';
+    }).join('');
+  }
+  el.innerHTML = html;
+}
+
+let DAYTRADE_LOG = null, DAYTRADE_STATE = null;
+function loadDayTrade(){
+  Promise.all([
+    fetch('daytrade_live_log.json?t=' + Date.now()).then(r=>r.ok?r.json():null).catch(()=>null),
+    fetch('daytrade_live_state.json?t=' + Date.now()).then(r=>r.ok?r.json():null).catch(()=>null)
+  ]).then(([log, state]) => { DAYTRADE_LOG = log; DAYTRADE_STATE = state; renderDayTrade(log, state); });
+}
+loadDayTrade();
 
 let AGENTIC_LOG = null;
 function updateMetaTimestamp(j){
