@@ -1,0 +1,76 @@
+{
+ "capital_per_strategy": 25000.0,
+ "symbols": [
+  "AMD",
+  "MU",
+  "WDC",
+  "SNDK",
+  "TSM"
+ ],
+ "strategies": [
+  "Swing Pullback / Anti",
+  "Hybrid Disciplined Momentum Scalping",
+  "Gap / High Change Momentum",
+  "Turtle Soup Reversal",
+  "Momentum Breakout",
+  "Mid-Range Reversion Rule",
+  "Opening Range Breakout",
+  "ID/NR4 Volatility Breakout"
+ ],
+ "note": "PAPER TRADING ONLY - no real orders placed.",
+ "runs": [
+  {
+   "timestamp": "2026-07-15T17:54:46.735964+00:00",
+   "trades": [
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-15",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 16,
+     "price": 518.85
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-15",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 518.85,
+     "exit": 526.79,
+     "shares": 16,
+     "pnl": 127.12
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-15",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 5,
+     "price": 1536.34
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-15",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 1536.34,
+     "exit": 1579.14,
+     "shares": 5,
+     "pnl": 214.03
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": 0.0,
+    "Hybrid Disciplined Momentum Scalping": 0.0,
+    "Gap / High Change Momentum": 0.0,
+    "Turtle Soup Reversal": 341.15,
+    "Momentum Breakout": 0.0,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 0.0,
+    "ID/NR4 Volatility Breakout": 0.0
+   }
+  }
+ ]
+}
