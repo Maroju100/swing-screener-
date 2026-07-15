@@ -4,14 +4,24 @@
     "status": "LIVE",
     "schedule": "Weekdays 13:45 UTC / 9:45 AM ET (morning, prior close) + 19:50 UTC / 3:50 PM ET (pre-close, same-day close proxy)",
     "account": "Robinhood 912291820 (Agentic 2, cash account)",
-    "universe": ["AMD", "MU", "WDC", "SNDK", "TSM"],
-    "excluded_watch_only": ["NVDA", "SLV", "SPCX"],
+    "universe": [
+      "AMD",
+      "MU",
+      "WDC",
+      "SNDK",
+      "TSM"
+    ],
+    "excluded_watch_only": [
+      "NVDA",
+      "SLV",
+      "SPCX"
+    ],
     "signals": [
       {
         "id": "A",
         "name": "2B Reversal + Bollinger whipsaw",
         "rules": [
-          "Fakeout day k in last 3 days: LOW < min low of prior 10 days (broke support) OR LOW < lower Bollinger(20, 2σ)",
+          "Fakeout day k in last 3 days: LOW < min low of prior 10 days (broke support) OR LOW < lower Bollinger(20, 2\u03c3)",
           "Entry today: close > prior support AND close > day k close AND volume >= day k volume",
           "Score = breakdown depth (prior_support - fakeout low) / prior_support"
         ]
@@ -20,7 +30,7 @@
         "id": "B",
         "name": "Joe Ross 1-2-3 low breakout",
         "rules": [
-          "Swing pivots (strength 2) over ~45 bars; last three pivots must be Low(P1) → High(P2) → Low(P3)",
+          "Swing pivots (strength 2) over ~45 bars; last three pivots must be Low(P1) \u2192 High(P2) \u2192 Low(P3)",
           "P3 low > P1 low (higher low) AND P3 within last 15 trading days",
           "Entry today: close crosses above P2 high (yesterday closed at/below it)",
           "Score = (close - P2 high) / P2 high"
@@ -64,24 +74,36 @@
       "max_new_entries_per_run": 2,
       "stop_pause": "3 stop-losses in trailing 7 days pauses new buys",
       "min_buying_power": 50,
-      "sizing": "target notional = total account value / 5, capped by cash; shares halved if ATR14/close > its 20-day average (volatility haircut); fractional shares allowed (up to 6 decimal places, market orders only, regular hours only) — updated 2026-07-14, previously whole-share-only which skipped any entry that rounded to 0 shares"
+      "sizing": "target notional = total account value / 5, capped by cash; shares halved if ATR14/close > its 20-day average (volatility haircut); fractional shares allowed (up to 6 decimal places, market orders only, regular hours only) \u2014 updated 2026-07-14, previously whole-share-only which skipped any entry that rounded to 0 shares"
     },
     "backtest": {
       "base": 25000,
       "windows": [
-        { "window": "Oct-Nov 2025 (pure out-of-sample validation)", "net_pl": 7884.26 },
-        { "window": "Dec 2025 - Jan 2026", "net_pl": 13506.35 },
-        { "window": "Feb-Mar 2026", "net_pl": -987.30 },
-        { "window": "Apr-Jun 2026", "net_pl": 22390.98 }
+        {
+          "window": "Oct-Nov 2025 (pure out-of-sample validation)",
+          "net_pl": 7884.26
+        },
+        {
+          "window": "Dec 2025 - Jan 2026",
+          "net_pl": 13506.35
+        },
+        {
+          "window": "Feb-Mar 2026",
+          "net_pl": -987.3
+        },
+        {
+          "window": "Apr-Jun 2026",
+          "net_pl": 22390.98
+        }
       ],
       "total": 42794.29,
-      "note": "Profitable in 3 of 4 windows, ~101 round trips total. Upgraded from the 3-signal combo (A+B+C only, which totaled +$36,812.04) by adding Signal D (Elder Impulse) — the 4th signal added +$5,982 (+16%) in total P&L versus the 3-signal version while leaving the one losing window (Feb-Mar 2026) essentially unchanged (-$987 vs -$935). Elder Impulse alone also backtested strongly on its own (+$32,428.62 total, same 3-of-4 pattern), which is why it was promoted from a candidate to a live signal. Separate 9-month same-close-vs-next-open timing test (Aug 2025-Jul 2026, 148 signals): same-day pre-close entry beat next-day-open entry, +$12,817 vs +$10,587 net, 71.4% vs 58.8% win rate — basis for the added 3:50pm ET pre-close run."
+      "note": "Profitable in 3 of 4 windows, ~101 round trips total. Upgraded from the 3-signal combo (A+B+C only, which totaled +$36,812.04) by adding Signal D (Elder Impulse) \u2014 the 4th signal added +$5,982 (+16%) in total P&L versus the 3-signal version while leaving the one losing window (Feb-Mar 2026) essentially unchanged (-$987 vs -$935). Elder Impulse alone also backtested strongly on its own (+$32,428.62 total, same 3-of-4 pattern), which is why it was promoted from a candidate to a live signal. Separate 9-month same-close-vs-next-open timing test (Aug 2025-Jul 2026, 148 signals): same-day pre-close entry beat next-day-open entry, +$12,817 vs +$10,587 net, 71.4% vs 58.8% win rate \u2014 basis for the added 3:50pm ET pre-close run."
     }
   },
   "baseline": {
     "date": "2026-07-05",
     "account_value": 4958.82,
-    "cash": 3012.40,
+    "cash": 3012.4,
     "buying_power": 2575.44,
     "note": "Account value includes human-held NVDA (10 sh) and CGC (2 sh), which the automation never touches. Daily P&L below tracks total account value change."
   },
@@ -90,7 +112,14 @@
       "date": "2026-07-14",
       "regime": "Broad basket strength holding into the close (AMD +2.5%, MU +4.9%, WDC +1.4%, SNDK +5.0%, TSM -0.2% vs 2026-07-13 close). Semis/memory names extending the week's rally.",
       "orders": [
-        {"symbol": "AMD", "side": "BUY", "signal": "D", "shares": 0.911403, "price": 547.64, "reason": "Elder Impulse fresh green turn; fractional sizing enabled this run — order id 6a56a1a6-1fc2-421b-831d-fdffda2d299c, state=queued (placed 20:52 UTC after today's regular close, will fill at next regular open)"}
+        {
+          "symbol": "AMD",
+          "side": "BUY",
+          "signal": "D",
+          "shares": 0.911403,
+          "price": 547.64,
+          "reason": "Elder Impulse fresh green turn; fractional sizing enabled this run \u2014 order id 6a56a1a6-1fc2-421b-831d-fdffda2d299c, state=queued (placed 20:52 UTC after today's regular close, will fill at next regular open)"
+        }
       ],
       "positions": [],
       "account_value": 4991.21,
@@ -98,21 +127,26 @@
       "buying_power": 4989.28,
       "daily_pl": 32.39,
       "cumulative_pl": 32.39,
-      "notes": "Pre-close (manual fire, ~18:40 UTC, then 19:51 UTC): get_equity_historicals blocked 5 times in a row. Deleted the session-bound triggers, recreated them as fresh-session-per-fire (create_new_session_on_fire=true) hoping the new .claude/settings.local.json Robinhood-tool allowlist would let a cold session skip the approval gate — that fresh session stalled completely (zero activity, no heartbeat write) after ~6 minutes, so reverted back to session-bound triggers. Manual fire on the reverted trigger (20:10 UTC) finally got a clean get_equity_historicals call through. Full signal scan completed: A/B/C found no qualifying setups on any of the 5 symbols. Signal D (Elder Impulse) fired on AMD — fresh green turn. First attempt (20:10 UTC): whole-share sizing rounded 1 raw share down to 0 after the volatility haircut (AMD's ATR14/close 7.19% > its 20-day avg 6.99%), so no trade placed. User then asked to allow fractional shares instead of skipping. Recreated both triggers with fractional sizing enabled (up to 6 decimals, market+regular_hours only per Robinhood's fractional-share rule) and refired pre-close (20:50 UTC): same AMD Signal D setup, target_notional $998.24 / $547.64 = 1.822807 raw shares, halved by the same volatility filter to 0.911403 shares (~$499 notional) — no longer rounds to 0. Reviewed (clean, no broker alerts) and placed as a real market order, regular_hours. Since the actual wall-clock time was already past today's 4:00pm ET close (order placed 4:52pm ET), Robinhood queued it for the next regular session open rather than filling immediately — state=queued, not yet filled. Stop/target once filled: entry - 1.75xATR14 ($480.42) / entry + 3.5xATR14 ($682.07), using yesterday's completed-bar ATR14=$38.41. No open confirmed basket positions yet (only human-held CGC) — AMD will appear once the queued order fills. Conviction: 6/10 (real fresh turn; small account size relative to AMD's price is exactly why fractional sizing was needed)."
+      "notes": "Pre-close (manual fire, ~18:40 UTC, then 19:51 UTC): get_equity_historicals blocked 5 times in a row. Deleted the session-bound triggers, recreated them as fresh-session-per-fire (create_new_session_on_fire=true) hoping the new .claude/settings.local.json Robinhood-tool allowlist would let a cold session skip the approval gate \u2014 that fresh session stalled completely (zero activity, no heartbeat write) after ~6 minutes, so reverted back to session-bound triggers. Manual fire on the reverted trigger (20:10 UTC) finally got a clean get_equity_historicals call through. Full signal scan completed: A/B/C found no qualifying setups on any of the 5 symbols. Signal D (Elder Impulse) fired on AMD \u2014 fresh green turn. First attempt (20:10 UTC): whole-share sizing rounded 1 raw share down to 0 after the volatility haircut (AMD's ATR14/close 7.19% > its 20-day avg 6.99%), so no trade placed. User then asked to allow fractional shares instead of skipping. Recreated both triggers with fractional sizing enabled (up to 6 decimals, market+regular_hours only per Robinhood's fractional-share rule) and refired pre-close (20:50 UTC): same AMD Signal D setup, target_notional $998.24 / $547.64 = 1.822807 raw shares, halved by the same volatility filter to 0.911403 shares (~$499 notional) \u2014 no longer rounds to 0. Reviewed (clean, no broker alerts) and placed as a real market order, regular_hours. Since the actual wall-clock time was already past today's 4:00pm ET close (order placed 4:52pm ET), Robinhood queued it for the next regular session open rather than filling immediately \u2014 state=queued, not yet filled. Stop/target once filled: entry - 1.75xATR14 ($480.42) / entry + 3.5xATR14 ($682.07), using yesterday's completed-bar ATR14=$38.41. No open confirmed basket positions yet (only human-held CGC) \u2014 AMD will appear once the queued order fills. Conviction: 6/10 (real fresh turn; small account size relative to AMD's price is exactly why fractional sizing was needed)."
     },
     {
       "date": "2026-07-15",
-      "regime": "Sharp pullback in memory names after yesterday's rally (MU -3.1%, WDC -3.8%, SNDK -5.3% vs 2026-07-14 close) while AMD/TSM hold roughly flat (+0.3% each). First real overnight-gap test of the session-bound morning trigger — it fired exactly on schedule (13:45 UTC) after this session sat idle since ~21:03 UTC the prior day, confirming the automation survives multi-hour idle periods.",
+      "regime": "Sharp pullback in memory names after yesterday's rally (MU -3.1%, WDC -3.8%, SNDK -5.3% vs 2026-07-14 close) while AMD/TSM hold roughly flat (+0.3% each). First real overnight-gap test of the session-bound morning trigger \u2014 it fired exactly on schedule (13:45 UTC) after this session sat idle since ~21:03 UTC the prior day, confirming the automation survives multi-hour idle periods.",
       "orders": [],
       "positions": [
-        {"symbol": "AMD", "shares": 0.911403, "entry": 556.43, "current": 549.99}
+        {
+          "symbol": "AMD",
+          "shares": 0.911403,
+          "entry": 556.43,
+          "current": 529.32
+        }
       ],
-      "account_value": 4983.55,
+      "account_value": 4966.19,
       "cash": 4482.15,
       "buying_power": 4482.15,
-      "daily_pl": -7.66,
-      "cumulative_pl": 24.73,
-      "notes": "AMD Signal D order from yesterday's pre-close run FILLED overnight at market open (13:30:01 UTC) — 0.911403 shares @ $556.43 avg cost, confirming the queued-order-fills-at-next-open behavior worked as expected. Exit check: stop $489.21 / target $690.87 (entry 556.43, ATR14=$38.41 from entry time); current price $549.99 is well above stop and held 0 days, so HOLD, no action. New-entry signal scan COULD NOT run this morning: get_equity_historicals returned 'MCP tool call requires approval' on 3 consecutive attempts, while get_accounts/get_portfolio/get_equity_positions/get_equity_quotes/get_equity_orders all worked fine — the same tool-specific block seen intermittently before, now confirmed to recur even on this reliable session after an idle period. No new entries evaluated or placed — refused to fabricate signal data without real historical bars. No stop-losses fired, no pause triggered."
+      "daily_pl": -25.02,
+      "cumulative_pl": 7.37,
+      "notes": "AMD Signal D order from yesterday's pre-close run FILLED overnight at market open (13:30:01 UTC) \u2014 0.911403 shares @ $556.43 avg cost, confirming the queued-order-fills-at-next-open behavior worked as expected. Exit check: stop $489.21 / target $690.87 (entry 556.43, ATR14=$38.41 from entry time); current price $549.99 is well above stop and held 0 days, so HOLD, no action. New-entry signal scan COULD NOT run this morning: get_equity_historicals returned 'MCP tool call requires approval' on 3 consecutive attempts, while get_accounts/get_portfolio/get_equity_positions/get_equity_quotes/get_equity_orders all worked fine \u2014 the same tool-specific block seen intermittently before, now confirmed to recur even on this reliable session after an idle period. No new entries evaluated or placed \u2014 refused to fabricate signal data without real historical bars. No stop-losses fired, no pause triggered. | Pre-close: Sharp broad selloff (MU -8.15%, SNDK -8.13%, WDC -8.88% vs 7/14 close; AMD -3.43%, TSM -0.18%). All four signals scanned on all 5 symbols using live-quote proxy for today price/volume (today daily bar not yet finalized) - none qualified (fresh breakdown day, not a reversal/breakout confirmation). TSM had a fakeout day (7/14) flagged by Signal A but the reclaim condition failed (proxy still below prior_support/day-k close). AMD exit check: HOLD, current 529.32 well above stop 489.21, held 0 days. No stops fired, no pause triggered. No orders placed."
     }
   ]
 }
