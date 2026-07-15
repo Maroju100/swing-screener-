@@ -317,14 +317,14 @@ def make_signals(ctx):
             return ((bars[gi]['close'] - S1) / S1 + 0.001, atr * 1.5, atr * 3.0)
         return None
 
+    # Minervini VCP and Donchian graduated to the live 6-Way Combo (2026-07-15) - removed here
+    # to avoid double-tracking; the remaining 7 stay in paper-only validation.
     return {
         'Bollinger Squeeze Breakout': sig_bollinger_squeeze,
-        'Donchian/Turtle Channel Breakout': sig_donchian_breakout,
         'Probe and Pullback': sig_probe_pullback,
         'MIDAS Anchored VWAP Bounce': sig_midas,
         'Perfect Storm (D/W/M alignment)': sig_perfect_storm,
         'ConnorsRSI Oversold Bounce': sig_connors_rsi,
-        'Minervini VCP Breakout': sig_minervini_vcp,
         'Ichimoku Kumo Breakout': sig_ichimoku,
         'Pivot Point S1 Bounce': sig_pivot_point_bounce,
     }

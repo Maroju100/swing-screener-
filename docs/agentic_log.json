@@ -1,6 +1,6 @@
 {
   "strategy": {
-    "name": "4-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse",
+    "name": "6-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse + Minervini VCP + Donchian Breakout",
     "status": "LIVE",
     "schedule": "Weekdays 13:45 UTC / 9:45 AM ET (morning, prior close) + 19:50 UTC / 3:50 PM ET (pre-close, same-day close proxy)",
     "account": "Robinhood 912291820 (Agentic 2, cash account)",
@@ -55,6 +55,25 @@
           "Entry today: Impulse color turns green today AND was not green yesterday (first day of fresh alignment)",
           "Score = today's MACD-Histogram value minus yesterday's + 0.01"
         ]
+      },
+      {
+        "id": "E",
+        "name": "Minervini Volatility Contraction Pattern (VCP) breakout",
+        "rules": [
+          "Swing pivots (strength 2) over last 60 bars; find successive pivot-high-to-next-pivot-low pullbacks",
+          "Base qualifies if there are 2+ pullbacks and each is a smaller % decline than the one before it (contracting volatility)",
+          "Entry today: close crosses above the high of the most recent (tightest) contraction (yesterday closed at/below it)",
+          "Score = (close - tightest contraction high) / tightest contraction high"
+        ]
+      },
+      {
+        "id": "F",
+        "name": "Donchian/Turtle Channel Breakout",
+        "rules": [
+          "20-day high = highest HIGH over the prior 20 trading days (not including today)",
+          "Entry today: close crosses above the 20-day high (yesterday closed at/below it)",
+          "Score = (close - 20-day high) / 20-day high"
+        ]
       }
     ],
     "ranking": "All signals compete for the same slots; a symbol with 2+ signals firing ranks first, otherwise by score descending",
@@ -98,6 +117,19 @@
       ],
       "total": 42794.29,
       "note": "Profitable in 3 of 4 windows, ~101 round trips total. Upgraded from the 3-signal combo (A+B+C only, which totaled +$36,812.04) by adding Signal D (Elder Impulse) \u2014 the 4th signal added +$5,982 (+16%) in total P&L versus the 3-signal version while leaving the one losing window (Feb-Mar 2026) essentially unchanged (-$987 vs -$935). Elder Impulse alone also backtested strongly on its own (+$32,428.62 total, same 3-of-4 pattern), which is why it was promoted from a candidate to a live signal. Separate 9-month same-close-vs-next-open timing test (Aug 2025-Jul 2026, 148 signals): same-day pre-close entry beat next-day-open entry, +$12,817 vs +$10,587 net, 71.4% vs 58.8% win rate \u2014 basis for the added 3:50pm ET pre-close run."
+    },
+    "signals_e_f_backtest": {
+      "base": 25000,
+      "method": "Deep-mined from a 174-book technical-analysis shortlist (Minervini VCP from 'Trade Like a Stock Market Wizard'; Donchian from classic Turtle/Donchian channel-breakout literature), then validated with a WINDOWED backtest split into 5 non-overlapping periods (resetting capital each window) on the same 5-symbol basket, deliberately matching the 4 windows the original A-D combo was validated against, plus one extra earlier window. A naive single continuous backtest over the same 1.5 years initially looked stronger for both, but a windowed re-test (matching this combo's own validation methodology) showed 3 other candidates tested alongside these two (Pivot Point S1 Bounce, MIDAS, Probe and Pullback) actually LOSE money once capital is reset per window instead of compounding through one continuous run \u2014 those three were kept in paper-tracking only, not promoted live.",
+      "windows": [
+        { "window": "W0: Jan-Sep 2025 (extra out-of-sample)", "minervini_vcp": 11048, "donchian": 6295 },
+        { "window": "W1: Oct-Nov 2025 (matches A-D combo's pure validation window)", "minervini_vcp": 2360, "donchian": 4571 },
+        { "window": "W2: Dec 2025-Jan 2026", "minervini_vcp": 2933, "donchian": -184 },
+        { "window": "W3: Feb-Mar 2026 (matches A-D combo's LOSING window)", "minervini_vcp": -918, "donchian": -3554 },
+        { "window": "W4: Apr-Jul 2026", "minervini_vcp": 1862, "donchian": 8693 }
+      ],
+      "totals": { "minervini_vcp": 17284, "donchian": 15821 },
+      "note": "Minervini VCP profitable in 4 of 5 windows (~33 trades total); Donchian profitable in 3 of 5 windows (~104 trades total, larger sample). Both lose in the same Feb-Mar 2026 window the live A-D combo also lost in \u2014 multiple independently-built systems agreeing on the same weak regime is a good cross-validation signal, not a red flag specific to either system. Backtested standalone with their own $25k pool, NOT yet tested combined with A-D as one portfolio competing for the same slots \u2014 that combined effect is unproven and will only be observed from here forward in live trading. Added to the live combo 2026-07-15 alongside A-D; the other 7 book-mined candidates (Bollinger Squeeze, Probe and Pullback, MIDAS, Perfect Storm, ConnorsRSI, Ichimoku, Pivot Point) remain in paper-tracking only pending further validation."
     }
   },
   "baseline": {
