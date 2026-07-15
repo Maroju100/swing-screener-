@@ -85,6 +85,78 @@
     "Opening Range Breakout": 0.0,
     "ID/NR4 Volatility Breakout": 0.0
    }
+  },
+  {
+   "timestamp": "2026-07-15T20:11:11.330906+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-15",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 15,
+     "price": 531.69
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-15",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 531.69,
+     "exit": 525.05,
+     "shares": 15,
+     "pnl": -99.55
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-15",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 5,
+     "price": 1646.04
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-15",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1646.04,
+     "exit": 1599.34,
+     "shares": 5,
+     "pnl": -233.48
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-15",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 19,
+     "price": 420.46
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-15",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 420.46,
+     "exit": 417.79,
+     "shares": 19,
+     "pnl": -50.73
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -383.76,
+    "Hybrid Disciplined Momentum Scalping": 0.0,
+    "Gap / High Change Momentum": 0.0,
+    "Turtle Soup Reversal": 341.15,
+    "Momentum Breakout": 0.0,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 0.0,
+    "ID/NR4 Volatility Breakout": 0.0
+   }
   }
  ]
 }
