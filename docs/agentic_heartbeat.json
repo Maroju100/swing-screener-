@@ -1,4 +1,9 @@
 {
+  "2026-07-15_morning": {
+    "run": "morning",
+    "stage": "started",
+    "started_at": "2026-07-15T13:46:06Z"
+  },
   "2026-07-14_pre_close": {
     "run": "pre_close",
     "stage": "completed",
