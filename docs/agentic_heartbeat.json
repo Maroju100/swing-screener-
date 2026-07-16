@@ -31,7 +31,9 @@
   },
   "2026-07-16_pre_close": {
     "run": "pre_close",
-    "stage": "started",
-    "started_at": "2026-07-16T19:50:43Z"
+    "stage": "completed",
+    "started_at": "2026-07-16T19:50:43Z",
+    "completed_at": "2026-07-16T19:58:00Z",
+    "orders_count": 0
   }
 }

@@ -212,15 +212,15 @@
           "symbol": "AMD",
           "shares": 0.911403,
           "entry": 556.43,
-          "current": 508.2
+          "current": 497.38
         }
       ],
-      "account_value": 4946.76,
+      "account_value": 4937.15,
       "cash": 4482.15,
       "buying_power": 4482.15,
-      "daily_pl": -19.43,
-      "cumulative_pl": -12.06,
-      "notes": "First live run of the 6-Way Combo's new Signals E/F. All six signals scanned on all 5 symbols using completed daily bars through 7/15 - none qualified (accelerating breakdown, not a reversal/breakout). TSM had a fakeout day (7/14) flagged by Signal A but reclaim failed; TSM also has a VCP base (Signal E) but hasn't broken the tightest contraction high yet. AMD exit check: HOLD, current 508.20 still above stop 489.21 (held 1 day). No stops fired, no pause triggered. No orders placed."
+      "daily_pl": -29.04,
+      "cumulative_pl": -21.67,
+      "notes": "First live run of the 6-Way Combo's new Signals E/F. All six signals scanned on all 5 symbols using completed daily bars through 7/15 - none qualified (accelerating breakdown, not a reversal/breakout). TSM had a fakeout day (7/14) flagged by Signal A but reclaim failed; TSM also has a VCP base (Signal E) but hasn't broken the tightest contraction high yet. AMD exit check: HOLD, current 508.20 still above stop 489.21 (held 1 day). No stops fired, no pause triggered. No orders placed. | Pre-close: Deepened further into the close (AMD -6.00%, MU -6.20%, WDC -9.88%, SNDK -12.79%, TSM -3.07% vs 7/15 close) - worst reading of the day for every name. All six signals scanned using live-quote proxy - none qualified (accelerating breakdown, not reversal/breakout). TSM fakeout day (7/14) reclaim still fails; TSM VCP base still far from its tightest-contraction high. AMD exit check: HOLD, current 497.38 only .17 above stop 489.21 (held 2 days) - closest to stop since entry. No stops fired, no pause triggered. No orders placed."
     }
   ]
 }
