@@ -122,13 +122,36 @@
       "base": 25000,
       "method": "Deep-mined from a 174-book technical-analysis shortlist (Minervini VCP from 'Trade Like a Stock Market Wizard'; Donchian from classic Turtle/Donchian channel-breakout literature), then validated with a WINDOWED backtest split into 5 non-overlapping periods (resetting capital each window) on the same 5-symbol basket, deliberately matching the 4 windows the original A-D combo was validated against, plus one extra earlier window. A naive single continuous backtest over the same 1.5 years initially looked stronger for both, but a windowed re-test (matching this combo's own validation methodology) showed 3 other candidates tested alongside these two (Pivot Point S1 Bounce, MIDAS, Probe and Pullback) actually LOSE money once capital is reset per window instead of compounding through one continuous run \u2014 those three were kept in paper-tracking only, not promoted live.",
       "windows": [
-        { "window": "W0: Jan-Sep 2025 (extra out-of-sample)", "minervini_vcp": 11048, "donchian": 6295 },
-        { "window": "W1: Oct-Nov 2025 (matches A-D combo's pure validation window)", "minervini_vcp": 2360, "donchian": 4571 },
-        { "window": "W2: Dec 2025-Jan 2026", "minervini_vcp": 2933, "donchian": -184 },
-        { "window": "W3: Feb-Mar 2026 (matches A-D combo's LOSING window)", "minervini_vcp": -918, "donchian": -3554 },
-        { "window": "W4: Apr-Jul 2026", "minervini_vcp": 1862, "donchian": 8693 }
+        {
+          "window": "W0: Jan-Sep 2025 (extra out-of-sample)",
+          "minervini_vcp": 11048,
+          "donchian": 6295
+        },
+        {
+          "window": "W1: Oct-Nov 2025 (matches A-D combo's pure validation window)",
+          "minervini_vcp": 2360,
+          "donchian": 4571
+        },
+        {
+          "window": "W2: Dec 2025-Jan 2026",
+          "minervini_vcp": 2933,
+          "donchian": -184
+        },
+        {
+          "window": "W3: Feb-Mar 2026 (matches A-D combo's LOSING window)",
+          "minervini_vcp": -918,
+          "donchian": -3554
+        },
+        {
+          "window": "W4: Apr-Jul 2026",
+          "minervini_vcp": 1862,
+          "donchian": 8693
+        }
       ],
-      "totals": { "minervini_vcp": 17284, "donchian": 15821 },
+      "totals": {
+        "minervini_vcp": 17284,
+        "donchian": 15821
+      },
       "note": "Minervini VCP profitable in 4 of 5 windows (~33 trades total); Donchian profitable in 3 of 5 windows (~104 trades total, larger sample). Both lose in the same Feb-Mar 2026 window the live A-D combo also lost in \u2014 multiple independently-built systems agreeing on the same weak regime is a good cross-validation signal, not a red flag specific to either system. Backtested standalone with their own $25k pool, NOT yet tested combined with A-D as one portfolio competing for the same slots \u2014 that combined effect is unproven and will only be observed from here forward in live trading. Added to the live combo 2026-07-15 alongside A-D; the other 7 book-mined candidates (Bollinger Squeeze, Probe and Pullback, MIDAS, Perfect Storm, ConnorsRSI, Ichimoku, Pivot Point) remain in paper-tracking only pending further validation."
     }
   },
@@ -179,6 +202,25 @@
       "daily_pl": -25.02,
       "cumulative_pl": 7.37,
       "notes": "AMD Signal D order from yesterday's pre-close run FILLED overnight at market open (13:30:01 UTC) \u2014 0.911403 shares @ $556.43 avg cost, confirming the queued-order-fills-at-next-open behavior worked as expected. Exit check: stop $489.21 / target $690.87 (entry 556.43, ATR14=$38.41 from entry time); current price $549.99 is well above stop and held 0 days, so HOLD, no action. New-entry signal scan COULD NOT run this morning: get_equity_historicals returned 'MCP tool call requires approval' on 3 consecutive attempts, while get_accounts/get_portfolio/get_equity_positions/get_equity_quotes/get_equity_orders all worked fine \u2014 the same tool-specific block seen intermittently before, now confirmed to recur even on this reliable session after an idle period. No new entries evaluated or placed \u2014 refused to fabricate signal data without real historical bars. No stop-losses fired, no pause triggered. | Pre-close: Sharp broad selloff (MU -8.15%, SNDK -8.13%, WDC -8.88% vs 7/14 close; AMD -3.43%, TSM -0.18%). All four signals scanned on all 5 symbols using live-quote proxy for today price/volume (today daily bar not yet finalized) - none qualified (fresh breakdown day, not a reversal/breakout confirmation). TSM had a fakeout day (7/14) flagged by Signal A but the reclaim condition failed (proxy still below prior_support/day-k close). AMD exit check: HOLD, current 529.32 well above stop 489.21, held 0 days. No stops fired, no pause triggered. No orders placed."
+    },
+    {
+      "date": "2026-07-16",
+      "regime": "Broad, accelerating semis/memory selloff (AMD -3.96%, MU -4.85%, WDC -6.91%, SNDK -9.24%, TSM -3.18% vs 7/15 close) - second straight day of broad weakness.",
+      "orders": [],
+      "positions": [
+        {
+          "symbol": "AMD",
+          "shares": 0.911403,
+          "entry": 556.43,
+          "current": 508.2
+        }
+      ],
+      "account_value": 4946.76,
+      "cash": 4482.15,
+      "buying_power": 4482.15,
+      "daily_pl": -19.43,
+      "cumulative_pl": -12.06,
+      "notes": "First live run of the 6-Way Combo's new Signals E/F. All six signals scanned on all 5 symbols using completed daily bars through 7/15 - none qualified (accelerating breakdown, not a reversal/breakout). TSM had a fakeout day (7/14) flagged by Signal A but reclaim failed; TSM also has a VCP base (Signal E) but hasn't broken the tightest contraction high yet. AMD exit check: HOLD, current 508.20 still above stop 489.21 (held 1 day). No stops fired, no pause triggered. No orders placed."
     }
   ]
 }
