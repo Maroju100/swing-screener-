@@ -1,0 +1,76 @@
+{
+ "capital_per_strategy": 25000.0,
+ "symbols": [
+  "AMD",
+  "MU",
+  "WDC",
+  "SNDK",
+  "TSM"
+ ],
+ "strategies": [
+  "Bollinger Squeeze Breakout",
+  "Probe and Pullback",
+  "MIDAS Anchored VWAP Bounce",
+  "Perfect Storm (D/W/M alignment)",
+  "ConnorsRSI Oversold Bounce",
+  "Ichimoku Kumo Breakout",
+  "Pivot Point S1 Bounce"
+ ],
+ "note": "PAPER TRADING ONLY - no real orders placed. Daily bars, multi-day holds.",
+ "runs": [
+  {
+   "timestamp": "2026-07-17T00:44:39.904530+00:00",
+   "trades": [
+    {
+     "strategy": "MIDAS Anchored VWAP Bounce",
+     "date": "2026-07-14",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 9,
+     "price": 548.13
+    },
+    {
+     "strategy": "MIDAS Anchored VWAP Bounce",
+     "date": "2026-07-14",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 8,
+     "price": 563.32
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-07-14",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 9,
+     "price": 548.13
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-07-14",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 5,
+     "price": 983.12
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-07-14",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 8,
+     "price": 563.32
+    }
+   ],
+   "equity_snapshot": {
+    "Bollinger Squeeze Breakout": 0.0,
+    "Probe and Pullback": 0.0,
+    "MIDAS Anchored VWAP Bounce": -566.75,
+    "Perfect Storm (D/W/M alignment)": 0.0,
+    "ConnorsRSI Oversold Bounce": 0.0,
+    "Ichimoku Kumo Breakout": 0.0,
+    "Pivot Point S1 Bounce": -960.95
+   }
+  }
+ ]
+}

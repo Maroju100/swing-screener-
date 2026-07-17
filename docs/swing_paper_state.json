@@ -1,0 +1,116 @@
+{
+ "Bollinger Squeeze Breakout": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-07-15",
+   "MU": "2026-07-15",
+   "WDC": "2026-07-15",
+   "SNDK": "2026-07-15",
+   "TSM": "2026-07-15"
+  }
+ },
+ "Probe and Pullback": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-07-15",
+   "MU": "2026-07-15",
+   "WDC": "2026-07-15",
+   "SNDK": "2026-07-15",
+   "TSM": "2026-07-15"
+  }
+ },
+ "MIDAS Anchored VWAP Bounce": {
+  "cash": 15560.27,
+  "positions": {
+   "AMD": {
+    "entry": 548.13,
+    "shares": 9,
+    "entry_gi": 381,
+    "stop": 484.8945537956494,
+    "target": 674.6008924087012
+   },
+   "WDC": {
+    "entry": 563.32,
+    "shares": 8,
+    "entry_gi": 381,
+    "stop": 472.3773219980785,
+    "target": 745.2053560038431
+   }
+  },
+  "last_processed_date": {
+   "AMD": "2026-07-15",
+   "MU": "2026-07-15",
+   "WDC": "2026-07-15",
+   "SNDK": "2026-07-15",
+   "TSM": "2026-07-15"
+  }
+ },
+ "Perfect Storm (D/W/M alignment)": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-07-15",
+   "MU": "2026-07-15",
+   "WDC": "2026-07-15",
+   "SNDK": "2026-07-15",
+   "TSM": "2026-07-15"
+  }
+ },
+ "ConnorsRSI Oversold Bounce": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-07-15",
+   "MU": "2026-07-15",
+   "WDC": "2026-07-15",
+   "SNDK": "2026-07-15",
+   "TSM": "2026-07-15"
+  }
+ },
+ "Ichimoku Kumo Breakout": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-07-15",
+   "MU": "2026-07-15",
+   "WDC": "2026-07-15",
+   "SNDK": "2026-07-15",
+   "TSM": "2026-07-15"
+  }
+ },
+ "Pivot Point S1 Bounce": {
+  "cash": 10644.670000000002,
+  "positions": {
+   "AMD": {
+    "entry": 548.13,
+    "shares": 9,
+    "entry_gi": 381,
+    "stop": 493.9281889676995,
+    "target": 656.533622064601
+   },
+   "MU": {
+    "entry": 983.12,
+    "shares": 5,
+    "entry_gi": 381,
+    "stop": 856.7518076477751,
+    "target": 1235.85638470445
+   },
+   "WDC": {
+    "entry": 563.32,
+    "shares": 8,
+    "entry_gi": 381,
+    "stop": 485.36913314121017,
+    "target": 719.2217337175798
+   }
+  },
+  "last_processed_date": {
+   "AMD": "2026-07-15",
+   "MU": "2026-07-15",
+   "WDC": "2026-07-15",
+   "SNDK": "2026-07-15",
+   "TSM": "2026-07-15"
+  }
+ }
+}
