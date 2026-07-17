@@ -1,44 +1,49 @@
 {
-  "2026-07-15_morning": {
-    "run": "morning",
-    "stage": "completed",
-    "started_at": "2026-07-15T13:46:06Z",
-    "completed_at": "2026-07-15T13:52:00Z",
-    "orders_count": 0,
-    "note": "First real overnight-gap firing \u2014 trigger fired exactly on schedule after an idle session, confirming automation survives multi-hour gaps. AMD's queued order from yesterday filled at open ($556.43). New-entry scan blocked again by get_equity_historicals ('MCP tool call requires approval'), so no new signals evaluated. Exit check on AMD: HOLD (well above stop, held 0 days)."
-  },
-  "2026-07-14_pre_close": {
-    "run": "pre_close",
-    "stage": "completed",
-    "started_at": "2026-07-14T20:50:33Z",
-    "completed_at": "2026-07-14T20:53:15Z",
-    "orders_count": 1,
-    "note": "Fractional-share sizing worked: AMD Signal D sized to 0.911403 shares (was 0 under whole-share rules) and a real market order was placed (order id 6a56a1a6-1fc2-421b-831d-fdffda2d299c, state=queued, will fill at next regular open since it was placed after today's close)."
-  },
-  "2026-07-15_pre_close": {
-    "run": "pre_close",
-    "stage": "completed",
-    "started_at": "2026-07-15T19:50:12Z",
-    "completed_at": "2026-07-15T19:58:30Z",
-    "orders_count": 0
-  },
-  "2026-07-16_morning": {
-    "run": "morning",
-    "stage": "completed",
-    "started_at": "2026-07-16T13:46:13Z",
-    "completed_at": "2026-07-16T13:52:00Z",
-    "orders_count": 0
-  },
-  "2026-07-16_pre_close": {
-    "run": "pre_close",
-    "stage": "completed",
-    "started_at": "2026-07-16T19:50:43Z",
-    "completed_at": "2026-07-16T19:58:00Z",
-    "orders_count": 0
-  },
-  "2026-07-17_morning": {
-    "run": "morning",
-    "stage": "started",
-    "started_at": "2026-07-17T13:45:50Z"
-  }
+ "2026-07-15_morning": {
+  "run": "morning",
+  "stage": "completed",
+  "started_at": "2026-07-15T13:46:06Z",
+  "completed_at": "2026-07-15T13:52:00Z",
+  "orders_count": 0,
+  "note": "First real overnight-gap firing \u2014 trigger fired exactly on schedule after an idle session, confirming automation survives multi-hour gaps. AMD's queued order from yesterday filled at open ($556.43). New-entry scan blocked again by get_equity_historicals ('MCP tool call requires approval'), so no new signals evaluated. Exit check on AMD: HOLD (well above stop, held 0 days)."
+ },
+ "2026-07-14_pre_close": {
+  "run": "pre_close",
+  "stage": "completed",
+  "started_at": "2026-07-14T20:50:33Z",
+  "completed_at": "2026-07-14T20:53:15Z",
+  "orders_count": 1,
+  "note": "Fractional-share sizing worked: AMD Signal D sized to 0.911403 shares (was 0 under whole-share rules) and a real market order was placed (order id 6a56a1a6-1fc2-421b-831d-fdffda2d299c, state=queued, will fill at next regular open since it was placed after today's close)."
+ },
+ "2026-07-15_pre_close": {
+  "run": "pre_close",
+  "stage": "completed",
+  "started_at": "2026-07-15T19:50:12Z",
+  "completed_at": "2026-07-15T19:58:30Z",
+  "orders_count": 0
+ },
+ "2026-07-16_morning": {
+  "run": "morning",
+  "stage": "completed",
+  "started_at": "2026-07-16T13:46:13Z",
+  "completed_at": "2026-07-16T13:52:00Z",
+  "orders_count": 0
+ },
+ "2026-07-16_pre_close": {
+  "run": "pre_close",
+  "stage": "completed",
+  "started_at": "2026-07-16T19:50:43Z",
+  "completed_at": "2026-07-16T19:58:00Z",
+  "orders_count": 0
+ },
+ "2026-07-17_morning": {
+  "run": "morning",
+  "stage": "started",
+  "started_at": "2026-07-17T13:45:50Z"
+ },
+ "2026-07-17_pre_close": {
+  "run": "pre_close",
+  "stage": "started",
+  "started_at": "2026-07-17T20:13:16.680241+00:00"
+ }
 }
