@@ -826,6 +826,20 @@
     "Opening Range Breakout": 0.0,
     "ID/NR4 Volatility Breakout": 0.0
    }
+  },
+  {
+   "timestamp": "2026-07-17T20:18:46.323502+00:00",
+   "trades": [],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -1106.47,
+    "Hybrid Disciplined Momentum Scalping": -111.2,
+    "Gap / High Change Momentum": 0.0,
+    "Turtle Soup Reversal": -403.7,
+    "Momentum Breakout": -171.72,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 0.0,
+    "ID/NR4 Volatility Breakout": 0.0
+   }
   }
  ]
 }
