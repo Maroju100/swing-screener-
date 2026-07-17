@@ -520,6 +520,116 @@
     "Opening Range Breakout": 0.0,
     "ID/NR4 Volatility Breakout": 0.0
    }
+  },
+  {
+   "timestamp": "2026-07-17T15:11:45.945724+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-17",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 9,
+     "price": 872.02
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-17",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 872.02,
+     "exit": 852.94,
+     "shares": 9,
+     "pnl": -171.72
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-17",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 9,
+     "price": 872.02
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-17",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 872.02,
+     "exit": 852.94,
+     "shares": 9,
+     "pnl": -171.72
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-17",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 17,
+     "price": 461.07
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-17",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 461.07,
+     "exit": 458.7,
+     "shares": 17,
+     "pnl": -40.29
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-17",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 5,
+     "price": 1440.0
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-17",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 1440.0,
+     "exit": 1412.26,
+     "shares": 5,
+     "pnl": -138.7
+    },
+    {
+     "strategy": "Momentum Breakout",
+     "date": "2026-07-17",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 9,
+     "price": 872.02
+    },
+    {
+     "strategy": "Momentum Breakout",
+     "date": "2026-07-17",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 872.02,
+     "exit": 852.94,
+     "shares": 9,
+     "pnl": -171.72
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -662.83,
+    "Hybrid Disciplined Momentum Scalping": 0.0,
+    "Gap / High Change Momentum": 0.0,
+    "Turtle Soup Reversal": -403.7,
+    "Momentum Breakout": -171.72,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 0.0,
+    "ID/NR4 Volatility Breakout": 0.0
+   }
   }
  ]
 }
