@@ -71,6 +71,64 @@
     "Ichimoku Kumo Breakout": 0.0,
     "Pivot Point S1 Bounce": -960.95
    }
+  },
+  {
+   "timestamp": "2026-07-17T21:06:23.911570+00:00",
+   "trades": [
+    {
+     "strategy": "MIDAS Anchored VWAP Bounce",
+     "date": "2026-07-16",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 563.32,
+     "exit": 472.38,
+     "shares": 8,
+     "pnl": -727.54
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-07-16",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 548.13,
+     "exit": 493.93,
+     "shares": 9,
+     "pnl": -487.82
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-07-16",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 983.12,
+     "exit": 856.75,
+     "shares": 5,
+     "pnl": -631.84
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-07-16",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 563.32,
+     "exit": 485.37,
+     "shares": 8,
+     "pnl": -623.61
+    }
+   ],
+   "equity_snapshot": {
+    "Bollinger Squeeze Breakout": 0.0,
+    "Probe and Pullback": 0.0,
+    "MIDAS Anchored VWAP Bounce": -1152.25,
+    "Perfect Storm (D/W/M alignment)": 0.0,
+    "ConnorsRSI Oversold Bounce": 0.0,
+    "Ichimoku Kumo Breakout": 0.0,
+    "Pivot Point S1 Bounce": -1743.26
+   }
   }
  ]
 }
