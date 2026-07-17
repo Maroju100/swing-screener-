@@ -630,6 +630,97 @@
     "Opening Range Breakout": 0.0,
     "ID/NR4 Volatility Breakout": 0.0
    }
+  },
+  {
+   "timestamp": "2026-07-17T17:10:48.557535+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-17",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 16,
+     "price": 500.16
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-17",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 500.16,
+     "exit": 501.48,
+     "shares": 16,
+     "pnl": 21.12
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-17",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 9,
+     "price": 884.34
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-17",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 884.34,
+     "exit": 893.36,
+     "shares": 9,
+     "pnl": 81.13
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-17",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 17,
+     "price": 475.4
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-17",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 475.4,
+     "exit": 479.89,
+     "shares": 17,
+     "pnl": 76.25
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-17",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 5,
+     "price": 1485.73
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-17",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1485.73,
+     "exit": 1429.51,
+     "shares": 5,
+     "pnl": -281.11
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -765.44,
+    "Hybrid Disciplined Momentum Scalping": 0.0,
+    "Gap / High Change Momentum": 0.0,
+    "Turtle Soup Reversal": -403.7,
+    "Momentum Breakout": -171.72,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 0.0,
+    "ID/NR4 Volatility Breakout": 0.0
+   }
   }
  ]
 }
