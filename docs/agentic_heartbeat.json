@@ -45,5 +45,10 @@
   "run": "pre_close",
   "stage": "started",
   "started_at": "2026-07-17T20:13:16.680241+00:00"
+ },
+ "2026-07-20_morning": {
+  "run": "morning",
+  "stage": "started",
+  "started_at": "2026-07-20T13:46:26.386129+00:00"
  }
 }
