@@ -1208,6 +1208,40 @@
     "Opening Range Breakout": 0.0,
     "ID/NR4 Volatility Breakout": 0.0
    }
+  },
+  {
+   "timestamp": "2026-07-20T18:11:11.664255+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-20",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 15,
+     "price": 511.64
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-20",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 511.64,
+     "exit": 512.75,
+     "shares": 15,
+     "pnl": 16.62
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -1521.39,
+    "Hybrid Disciplined Momentum Scalping": -514.84,
+    "Gap / High Change Momentum": -376.33,
+    "Turtle Soup Reversal": -403.7,
+    "Momentum Breakout": -234.12,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 0.0,
+    "ID/NR4 Volatility Breakout": 0.0
+   }
   }
  ]
 }
