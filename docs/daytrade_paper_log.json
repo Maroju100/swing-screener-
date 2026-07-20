@@ -1136,6 +1136,78 @@
     "Opening Range Breakout": 0.0,
     "ID/NR4 Volatility Breakout": 0.0
    }
+  },
+  {
+   "timestamp": "2026-07-20T17:11:17.968557+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-20",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 8,
+     "price": 894.37
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-20",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 894.37,
+     "exit": 889.28,
+     "shares": 8,
+     "pnl": -40.72
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-20",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 5,
+     "price": 1440.97
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-20",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 1440.97,
+     "exit": 1432.64,
+     "shares": 5,
+     "pnl": -41.69
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-20",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 19,
+     "price": 406.3
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-20",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 406.3,
+     "exit": 404.16,
+     "shares": 19,
+     "pnl": -40.73
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -1538.01,
+    "Hybrid Disciplined Momentum Scalping": -514.84,
+    "Gap / High Change Momentum": -376.33,
+    "Turtle Soup Reversal": -403.7,
+    "Momentum Breakout": -234.12,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 0.0,
+    "ID/NR4 Volatility Breakout": 0.0
+   }
   }
  ]
 }
