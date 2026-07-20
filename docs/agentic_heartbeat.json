@@ -48,7 +48,9 @@
  },
  "2026-07-20_morning": {
   "run": "morning",
-  "stage": "started",
-  "started_at": "2026-07-20T13:46:26.386129+00:00"
+  "stage": "completed",
+  "started_at": "2026-07-20T13:46:26.386129+00:00",
+  "completed_at": "2026-07-20T15:12:36.208723+00:00",
+  "orders_count": 0
  }
 }
