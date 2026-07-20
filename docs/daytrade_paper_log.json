@@ -1083,6 +1083,59 @@
     "Opening Range Breakout": 0.0,
     "ID/NR4 Volatility Breakout": 0.0
    }
+  },
+  {
+   "timestamp": "2026-07-20T16:12:06.586308+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-20",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 8,
+     "price": 886.21
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-20",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 886.21,
+     "exit": 892.39,
+     "shares": 8,
+     "pnl": 49.44
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-20",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 19,
+     "price": 404.42
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-20",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 404.42,
+     "exit": 404.55,
+     "shares": 19,
+     "pnl": 2.47
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -1414.87,
+    "Hybrid Disciplined Momentum Scalping": -514.84,
+    "Gap / High Change Momentum": -376.33,
+    "Turtle Soup Reversal": -403.7,
+    "Momentum Breakout": -234.12,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 0.0,
+    "ID/NR4 Volatility Breakout": 0.0
+   }
   }
  ]
 }
