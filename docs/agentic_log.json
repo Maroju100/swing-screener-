@@ -224,22 +224,22 @@
   },
   {
    "date": "2026-07-20",
-   "regime": "Strong broad bounce in semis/memory after the multi-day selloff - AMD +4.9%, MU +5.3%, WDC +5.5%, SNDK +5.5%, TSM +2.4% vs Friday's close as of mid-morning.",
+   "regime": "Broad continued bounce in semis/memory - AMD +2.1%, MU +1.8%, WDC +2.3%, SNDK +2.9%, TSM +1.1% vs Friday close as of ~3:51pm ET pre-close check.",
    "orders": [],
    "positions": [
     {
      "symbol": "AMD",
      "shares": 0.911403,
      "entry": 556.43,
-     "current": 520.09
+     "current": 506.25
     }
    ],
-   "account_value": 4947.33,
+   "account_value": 4945.4,
    "cash": 4482.15,
    "buying_power": 4482.15,
-   "daily_pl": 10.18,
-   "cumulative_pl": -11.49,
-   "notes": "No trades - none of Signals A-F qualified on any of the 5 symbols using completed bars through 7/17 close (Impulse color red on all 5, no fresh breakouts/reclaims). AMD (Signal D, entered 7/15) exit check: HOLD, current 520.09 well above stop 489.21, held 5 days, target 690.87 not reached. No stop-losses fired, no pause triggered. Note: 2026-07-17 morning/pre-close runs were both interrupted before logging (tool issues) - no entry exists for that date; this entry's daily_pl is computed against the last logged run (7/16)."
+   "daily_pl": 8.25,
+   "cumulative_pl": -13.42,
+   "notes": "Morning: No trades - none of Signals A-F qualified on any of the 5 symbols using completed bars through 7/17 close (Impulse color red on all 5, no fresh breakouts/reclaims). AMD (Signal D, entered 7/15) exit check: HOLD, current 520.09 well above stop 489.21, held 5 days, target 690.87 not reached. No stop-losses fired, no pause triggered. Note: 2026-07-17 morning/pre-close runs were both interrupted before logging (tool issues) - no entry exists for that date; this entry's daily_pl is computed against the last logged run (7/16). | Pre-close: Signal A came close on AMD (proxy 506.25 > prior_support 498.15 and > fakeout-day 7/16 close) but FAILED the volume confirmation - today's volume-so-far (~9.37M through ~3:55pm ET) is only ~35% of the 7/16 fakeout day's volume (27.09M), nowhere near the 90% soft threshold. No other signal qualified on any symbol (all Impulse colors still red/blue, no breakout/reclaim confirmed). AMD exit check: HOLD, current 506.25 well above stop 489.21, target 690.87 not reached, held 5 days. No stops fired, no pause triggered. No orders placed."
   }
  ]
 }
