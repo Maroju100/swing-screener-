@@ -244,21 +244,48 @@
   {
    "date": "2026-07-21",
    "regime": "Third straight day of the semis/memory bounce - AMD +4.8%, MU +7.3%, WDC +8.2%, SNDK +9.5%, TSM +3.6% vs 7/20 close as of morning open. Signals evaluated on completed bars through 7/20.",
-   "orders": [],
+   "orders": [
+    {
+     "symbol": "WDC",
+     "shares": 0.911068,
+     "signal": "MULTI (C+D)",
+     "price": 546.57,
+     "notional": 497.96
+    },
+    {
+     "symbol": "TSM",
+     "shares": 1.172707,
+     "signal": "MULTI (C+D)",
+     "price": 424.01,
+     "notional": 497.24
+    }
+   ],
    "positions": [
     {
      "symbol": "AMD",
      "shares": 0.911403,
      "entry": 556.43,
-     "current": 527.71
+     "current": 543.37
+    },
+    {
+     "symbol": "WDC",
+     "shares": 0.911068,
+     "entry": 546.57,
+     "current": 546.57
+    },
+    {
+     "symbol": "TSM",
+     "shares": 1.172707,
+     "entry": 424.01,
+     "current": 424.01
     }
    ],
-   "account_value": 4964.74,
-   "cash": 4482.15,
-   "buying_power": 4482.15,
+   "account_value": 4979.08,
+   "cash": 3486.95,
+   "buying_power": 3486.95,
    "daily_pl": 19.34,
    "cumulative_pl": 5.92,
-   "notes": "No trades - none of Signals A-G qualified on any of the 5 symbols using completed bars through 7/20 (Impulse color red/blue on all 5, no fresh breakouts/reclaims). Signal G (Asymmetric Pullback, added 2026-07-21) scanned for the first time this run: SNDK (RSI2=29.4) and TSM (RSI2=31.1) show qualifying pullback readings, but neither has reclaimed its 20-day MA yet (uptrend_intact=False for all 5 symbols) - Signal G's AND condition blocks entry until both the pullback AND the uptrend-intact condition are met together. AMD exit check: HOLD, current 527.71 well above stop 489.21, target 690.87 not reached, held 6 days. No stop-losses fired, no pause triggered. No orders placed."
+   "notes": "Morning: No trades - none of Signals A-G qualified on any of the 5 symbols using completed bars through 7/20 (Impulse color red/blue on all 5, no fresh breakouts/reclaims). Signal G (Asymmetric Pullback, added 2026-07-21) scanned for the first time this run: SNDK (RSI2=29.4) and TSM (RSI2=31.1) show qualifying pullback readings, but neither has reclaimed its 20-day MA yet (uptrend_intact=False for all 5 symbols) - Signal G's AND condition blocks entry until both the pullback AND the uptrend-intact condition are met together. AMD exit check: HOLD, current 527.71 well above stop 489.21, target 690.87 not reached, held 6 days. No stop-losses fired, no pause triggered. No orders placed. | Pre-close: Pre-close (live-quote proxy ~3:53pm ET): 2 new entries placed. WDC MULTI (Signal C Bressert RSI3M3 turn-up from setup bar 7/20 high 505.99 + Signal D Elder Impulse fresh green-turn) bought 0.911068 sh @ ~546.57 (ATR14=52.68, vol haircut applied since ATR/close ratio 0.108 > 20-day avg 0.094; stop 454.33 / target 730.87). TSM MULTI (same C+D combo, setup bar 7/20 high 409.89) bought 1.172707 sh @ ~424.01 (ATR14=18.64, vol haircut applied 0.046>0.045; stop 391.97 / target 489.81). MU had a lone Signal D fire but lost both new-entry slots to the two MULTI candidates. SNDK: no signals (Impulse stayed blue; Signal G blocked, still 14.5% below its 20-day SMA). AMD (existing position): HOLD, current 543.37 well above stop 489.21, target 690.87 not reached, held 6 days. No stop-losses fired, pause rule not triggered. All 'today' inputs are live-quote/volume-so-far proxies, not the final settled close."
   }
  ]
 }
