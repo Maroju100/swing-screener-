@@ -1304,6 +1304,97 @@
     "Opening Range Breakout": 0.0,
     "ID/NR4 Volatility Breakout": 0.0
    }
+  },
+  {
+   "timestamp": "2026-07-21T15:17:49.963165+00:00",
+   "trades": [
+    {
+     "strategy": "Gap / High Change Momentum",
+     "date": "2026-07-21",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 15,
+     "price": 531.0
+    },
+    {
+     "strategy": "Gap / High Change Momentum",
+     "date": "2026-07-21",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 531.0,
+     "exit": 534.59,
+     "shares": 15,
+     "pnl": 53.85
+    },
+    {
+     "strategy": "Gap / High Change Momentum",
+     "date": "2026-07-21",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 15,
+     "price": 538.11
+    },
+    {
+     "strategy": "Gap / High Change Momentum",
+     "date": "2026-07-21",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 538.11,
+     "exit": 549.6,
+     "shares": 15,
+     "pnl": 172.35
+    },
+    {
+     "strategy": "Gap / High Change Momentum",
+     "date": "2026-07-21",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 19,
+     "price": 417.74
+    },
+    {
+     "strategy": "Gap / High Change Momentum",
+     "date": "2026-07-21",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 417.74,
+     "exit": 420.61,
+     "shares": 19,
+     "pnl": 54.53
+    },
+    {
+     "strategy": "Opening Range Breakout",
+     "date": "2026-07-21",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 15,
+     "price": 545.62
+    },
+    {
+     "strategy": "Opening Range Breakout",
+     "date": "2026-07-21",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 545.62,
+     "exit": 549.6,
+     "shares": 15,
+     "pnl": 59.63
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -1562.72,
+    "Hybrid Disciplined Momentum Scalping": -514.84,
+    "Gap / High Change Momentum": -95.6,
+    "Turtle Soup Reversal": -403.7,
+    "Momentum Breakout": -234.12,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 59.62,
+    "ID/NR4 Volatility Breakout": 0.0
+   }
   }
  ]
 }
