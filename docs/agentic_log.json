@@ -240,6 +240,25 @@
    "daily_pl": 8.25,
    "cumulative_pl": -13.42,
    "notes": "Morning: No trades - none of Signals A-F qualified on any of the 5 symbols using completed bars through 7/17 close (Impulse color red on all 5, no fresh breakouts/reclaims). AMD (Signal D, entered 7/15) exit check: HOLD, current 520.09 well above stop 489.21, held 5 days, target 690.87 not reached. No stop-losses fired, no pause triggered. Note: 2026-07-17 morning/pre-close runs were both interrupted before logging (tool issues) - no entry exists for that date; this entry's daily_pl is computed against the last logged run (7/16). | Pre-close: Signal A came close on AMD (proxy 506.25 > prior_support 498.15 and > fakeout-day 7/16 close) but FAILED the volume confirmation - today's volume-so-far (~9.37M through ~3:55pm ET) is only ~35% of the 7/16 fakeout day's volume (27.09M), nowhere near the 90% soft threshold. No other signal qualified on any symbol (all Impulse colors still red/blue, no breakout/reclaim confirmed). AMD exit check: HOLD, current 506.25 well above stop 489.21, target 690.87 not reached, held 5 days. No stops fired, no pause triggered. No orders placed."
+  },
+  {
+   "date": "2026-07-21",
+   "regime": "Third straight day of the semis/memory bounce - AMD +4.8%, MU +7.3%, WDC +8.2%, SNDK +9.5%, TSM +3.6% vs 7/20 close as of morning open. Signals evaluated on completed bars through 7/20.",
+   "orders": [],
+   "positions": [
+    {
+     "symbol": "AMD",
+     "shares": 0.911403,
+     "entry": 556.43,
+     "current": 527.71
+    }
+   ],
+   "account_value": 4964.74,
+   "cash": 4482.15,
+   "buying_power": 4482.15,
+   "daily_pl": 19.34,
+   "cumulative_pl": 5.92,
+   "notes": "No trades - none of Signals A-G qualified on any of the 5 symbols using completed bars through 7/20 (Impulse color red/blue on all 5, no fresh breakouts/reclaims). Signal G (Asymmetric Pullback, added 2026-07-21) scanned for the first time this run: SNDK (RSI2=29.4) and TSM (RSI2=31.1) show qualifying pullback readings, but neither has reclaimed its 20-day MA yet (uptrend_intact=False for all 5 symbols) - Signal G's AND condition blocks entry until both the pullback AND the uptrend-intact condition are met together. AMD exit check: HOLD, current 527.71 well above stop 489.21, target 690.87 not reached, held 6 days. No stop-losses fired, no pause triggered. No orders placed."
   }
  ]
 }
