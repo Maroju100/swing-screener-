@@ -66,5 +66,10 @@
   "started_at": "2026-07-21T13:46:44.484744+00:00",
   "completed_at": "2026-07-21T13:48:44.911169+00:00",
   "orders_count": 0
+ },
+ "2026-07-21_pre_close": {
+  "run": "pre_close",
+  "stage": "started",
+  "started_at": "2026-07-21T19:51:03.536159+00:00"
  }
 }
