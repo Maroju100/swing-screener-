@@ -32,6 +32,7 @@ STATE_PATH = os.path.join(ROOT, 'docs', 'daytrade_live_state.json')
 SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM"]
 MAXP = 3
 MIN_NOTIONAL = 25.0  # skip a new entry if it would size to a trivially small dollar amount
+LOOKBACK_BARS = 3  # ~1.5hrs of 30-min bars — matches the live trigger's hourly cadence
 
 
 def next_business_day(d):
@@ -286,14 +287,35 @@ def cmd_plan(raw_path, real_cash, held_symbols):
         for sym in SYMBOLS:
             if sym in held_symbols or sym in state['open_positions']: continue
             if sym not in bars_by_sym: continue
-            gi = len(bars_by_sym[sym]) - 1
-            meta = DAYIDX[sym][gi]
-            if meta['is_last']: continue
-            for name, fn in signals.items():
-                r = fn(sym, gi)
-                if r is None: continue
-                score, stop_dist, target_dist = r
-                cands.append((score, sym, name, bars_by_sym[sym][gi]['close'], stop_dist, target_dist))
+            bars = bars_by_sym[sym]
+            last_gi = len(bars) - 1
+            # Scan back a few bars (not just the single most recent one) so a
+            # signal that fired between two hourly LIVE runs isn't missed just
+            # because this engine wasn't called at that exact bar — mirrors how
+            # the paper engine catches every bar incrementally. Bounded to
+            # LOOKBACK_BARS (matches the live trigger's own ~hourly cadence, so
+            # it closes the gap between runs) and never crosses into a prior
+            # day. Deliberately NOT a whole-day scan: a signal that fired hours
+            # ago (e.g. at the opening bell) would otherwise get "entered" now
+            # at a much higher chased price with a stop/target sized off that
+            # morning's lower volatility — a different, worse trade than the
+            # one the backtest actually validated.
+            today_date = bars[last_gi]['date']
+            today_start_gi = next(i for i, b in enumerate(bars) if b['date'] == today_date)
+            scan_start_gi = max(today_start_gi, last_gi - LOOKBACK_BARS)
+            best = None
+            for gi in range(scan_start_gi, last_gi + 1):
+                meta = DAYIDX[sym][gi]
+                if meta['is_last']: continue
+                for name, fn in signals.items():
+                    r = fn(sym, gi)
+                    if r is None: continue
+                    score, stop_dist, target_dist = r
+                    if best is None or gi > best[0]:
+                        best = (gi, score, name, stop_dist, target_dist)
+            if best is not None:
+                gi, score, name, stop_dist, target_dist = best
+                cands.append((score, sym, name, bars[last_gi]['close'], stop_dist, target_dist))
         cands.sort(key=lambda x: -x[0])
         seen_syms = set()
         for score, sym, name, price, stop_dist, target_dist in cands:
