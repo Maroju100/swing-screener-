@@ -162,6 +162,52 @@
     "Ichimoku Kumo Breakout": 0.0,
     "Pivot Point S1 Bounce": -1743.26
    }
+  },
+  {
+   "timestamp": "2026-07-21T21:06:02.295777+00:00",
+   "trades": [
+    {
+     "strategy": "MIDAS Anchored VWAP Bounce",
+     "date": "2026-07-20",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 5,
+     "price": 865.46
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-07-20",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 9,
+     "price": 503.57
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-07-20",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 5,
+     "price": 865.46
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-07-20",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 11,
+     "price": 402.3
+    }
+   ],
+   "equity_snapshot": {
+    "Bollinger Squeeze Breakout": 0.0,
+    "Probe and Pullback": 0.0,
+    "MIDAS Anchored VWAP Bounce": -1296.66,
+    "Perfect Storm (D/W/M alignment)": 0.0,
+    "ConnorsRSI Oversold Bounce": 0.0,
+    "Ichimoku Kumo Breakout": 0.0,
+    "Pivot Point S1 Bounce": -1651.46
+   }
   }
  ]
 }
