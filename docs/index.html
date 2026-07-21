@@ -171,13 +171,30 @@ function renderRuns(log){
       '<div class="pos-row"><span style="color:var(--muted)">'+p.symbol+' &times;'+p.shares+' @ $'+Number(p.entry).toFixed(2)+'</span>' +
       '<span>'+(p.current!=null?'$'+Number(p.current).toFixed(2):'')+'</span></div>'
     ).join('') || '<div style="font-size:11px;color:var(--muted)">No open positions</div>';
+    let notesHtml = '';
+    if(r.notes){
+      const marker = ' | Pre-close: ';
+      const idx = r.notes.indexOf(marker);
+      if(idx !== -1){
+        let morning = r.notes.slice(0, idx);
+        if(morning.indexOf('Morning: ') === 0) morning = morning.slice('Morning: '.length);
+        const preclose = r.notes.slice(idx + marker.length);
+        notesHtml =
+          '<div class="section-mini">Morning Run &middot; 9:45 AM ET (prior close)</div>' +
+          '<div class="verdict-bar">'+morning+'</div>' +
+          '<div class="section-mini">Pre-Close Run &middot; 3:50 PM ET (live-quote proxy)</div>' +
+          '<div class="verdict-bar">'+preclose+'</div>';
+      } else {
+        notesHtml = '<div class="verdict-bar">'+r.notes+'</div>';
+      }
+    }
     return '<div class="cycle-card">' +
       '<div class="cycle-header"><div class="cycle-meta"><span class="cycle-num">'+r.date+'</span>' +
       '<span class="cycle-strategy">'+(r.regime||'')+'</span></div></div>' + orders +
       '<div class="section-mini">Positions</div>' + pos +
       '<div class="account-row"><span>Account: '+money(r.account_value)+'</span><span>Cash: '+(r.cash!=null?money(r.cash):'&mdash;')+'</span></div>' +
       '<div class="account-row"><span>Daily P&amp;L: '+pnlSpan(r.daily_pl)+'</span><span>Total: '+pnlSpan(r.cumulative_pl)+'</span></div>' +
-      (r.notes?'<div class="verdict-bar">'+r.notes+'</div>':'') + '</div>';
+      notesHtml + '</div>';
   }).join('');
 }
 
@@ -249,11 +266,29 @@ function computeDayTradePnl(log){
   return {realized, closedCount};
 }
 
+const DAYTRADE_STRATEGIES = [
+  {name:'Swing Pullback / Anti', rule:'EMA9 rising; price touches EMA9 then bounces with a higher close', score:'Distance above EMA9'},
+  {name:'Hybrid Disciplined Momentum Scalping', rule:'RSI14 50–75 and rising, volume ≥ 1.5× 5-bar avg, breaks above prior 3-bar high', score:'Volume surge ratio'},
+  {name:'Gap / High Change Momentum', rule:'Opens ≥ 1.5% gap up, holds and confirms in the next bar', score:'Gap size %'},
+  {name:'Turtle Soup Reversal', rule:'False breakdown below the 20-bar low reverses back above it', score:'Breakdown depth %'},
+  {name:'Momentum Breakout', rule:'Closes above the prior 5-bar high on ≥ 2× 10-bar avg volume', score:'Breakout %'},
+  {name:'Mid-Range Reversion Rule', rule:'Pulls back below the day’s mid-range (4th bar) while still above the day’s open', score:'Distance below mid-range'},
+  {name:'Opening Range Breakout', rule:'Breaks above the first hour’s range high (3rd bar) on above-average volume', score:'Breakout %'},
+  {name:'ID/NR4 Volatility Breakout', rule:'Yesterday was an inside day AND the narrowest range of the last 5 days; breaks above yesterday’s high', score:'Yesterday’s range as % of its high'},
+];
+
 function renderDayTrade(log, state){
   const el = document.getElementById('daytrade-list');
+  const stratHtml = '<div class="cycle-card"><div class="cycle-num">8 Strategies &middot; scanned every run</div>' +
+    '<div class="exec-reason">Runs hourly, weekdays 14:10&ndash;20:10 UTC (10:10am&ndash;4:10pm ET) &middot; each strategy scans every eligible symbol (AMD/MU/WDC/SNDK/TSM minus anything held by the 7-Way Combo) on the last ~3 bars (1.5hrs) each run &middot; a symbol with 2+ strategies agreeing wins priority, otherwise highest score wins remaining slots &middot; max 3 open positions, settled-cash-only sizing</div>' +
+    DAYTRADE_STRATEGIES.map(s=>
+      '<div class="pos-row"><span style="color:var(--muted)">'+s.name+'<br><span style="font-size:11px">'+s.rule+'</span></span>' +
+      '<span style="text-align:right;font-size:11px;color:var(--muted)">score:<br>'+s.score+'</span></div>'
+    ).join('') + '</div>';
+
   if(!log && !state){
-    el.innerHTML = '<div class="cycle-card"><div class="cycle-num">Day-Trading LIVE &middot; Real Money</div>' +
-      '<div class="exec-reason">No runs logged yet. Fires up to 7x per weekday (10:10am&ndash;4:10pm ET) once market data allows. Uses 8 backtested day-trading strategies with settled-cash-only sizing to avoid Good Faith Violations on this cash account.</div></div>';
+    el.innerHTML = stratHtml + '<div class="cycle-card"><div class="cycle-num">Day-Trading LIVE &middot; Real Money</div>' +
+      '<div class="exec-reason">No runs logged yet (a run only commits a log entry once it actually places an order). Uses these 8 backtested day-trading strategies with settled-cash-only sizing to avoid Good Faith Violations on this cash account.</div></div>';
     return;
   }
   const pending = state ? (state.pending_settlement||[]).reduce((s,p)=>s+p.amount,0) : 0;
@@ -261,7 +296,7 @@ function renderDayTrade(log, state){
   const {realized, closedCount} = computeDayTradePnl(log);
   const runs = (log && log.runs || []).slice().reverse();
 
-  let html = '<div class="cycle-card"><div class="cycle-num">Day-Trading LIVE &middot; Real Money</div>' +
+  let html = stratHtml + '<div class="cycle-card"><div class="cycle-num">Day-Trading LIVE &middot; Real Money</div>' +
     '<div class="exec-reason">Settled-cash-only sizing (GFV-safe) &middot; fractional shares &middot; excludes any symbol the 7-Way Combo swing system already holds</div>' +
     '<div class="account-row"><span>Pending settlement (locked until next business day)</span><span>'+money(pending)+'</span></div>' +
     '<div class="account-row"><span>Realized P&amp;L ('+closedCount+' closed round trips)</span>'+pnlSpan(realized)+'</div></div>';
