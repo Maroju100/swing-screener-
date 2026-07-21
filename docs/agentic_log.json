@@ -1,6 +1,6 @@
 {
  "strategy": {
-  "name": "6-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse + Minervini VCP + Donchian Breakout",
+  "name": "7-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse + Minervini VCP + Donchian + Asymmetric Pullback",
   "status": "LIVE",
   "schedule": "Weekdays 13:45 UTC / 9:45 AM ET (morning, prior close) + 19:50 UTC / 3:50 PM ET (pre-close, same-day close proxy)",
   "account": "Robinhood 912291820 (Agentic 2, cash account)",
@@ -73,6 +73,17 @@
      "20-day high = highest HIGH over the prior 20 trading days (not including today)",
      "Entry today: close crosses above the 20-day high (yesterday closed at/below it)",
      "Score = (close - 20-day high) / 20-day high"
+    ]
+   },
+   {
+    "id": "G",
+    "name": "Asymmetric Pullback (added 2026-07-21)",
+    "rules": [
+     "Reverse-engineered from ~5 months of the user's real Margin account trade history — winners came from buying shallow pullbacks in an uptrend and cutting losses fast, not from a high win rate",
+     "Entry today: close > 20-day SMA (uptrend intact) AND RSI(2) <= 40 (shallow pullback, not capitulation)",
+     "Score = 40 - today's RSI(2); deeper pullbacks within the uptrend rank higher",
+     "Backtest (separate 5-window portfolio, not yet combined with A-F): $18,727 total, 83 trades, 64% win rate — skipped paper-tracking before going live, treat with more scrutiny than A-F",
+     "Validated ONLY on this 5-symbol basket — loses money on 25- or 50-stock universes"
     ]
    }
   ],

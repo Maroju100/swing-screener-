@@ -103,7 +103,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <h1>&#9889; Swing Screener</h1>
-      <div class="strategy-badge">6-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse + Minervini VCP + Donchian · Agentic 2 · LIVE</div>
+      <div class="strategy-badge">7-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse + Minervini VCP + Donchian + Asymmetric Pullback · Agentic 2 · LIVE</div>
       <div class="meta-bar">
         <span class="live-dot"></span>
         <span class="meta-time" id="meta-updated">Loading&hellip;</span>
@@ -131,8 +131,8 @@
   <div class="main-panel" id="main-panel">
     <div class="empty-state">
       <div class="empty-icon">&#128200;</div>
-      <h2>6-Way Combo &mdash; Live</h2>
-      <p>Whipsaw Reversal + 1-2-3 Breakout + Bressert RSI-3M3 + Elder Impulse + Minervini VCP + Donchian Breakout on AMD / MU / WDC / SNDK / TSM &bull; runs weekdays 13:45 UTC &amp; 19:50 UTC &bull; see the Runs, Rules and P&amp;L tabs for the daily log</p>
+      <h2>7-Way Combo &mdash; Live</h2>
+      <p>Whipsaw Reversal + 1-2-3 Breakout + Bressert RSI-3M3 + Elder Impulse + Minervini VCP + Donchian Breakout + Asymmetric Pullback (added 2026-07-21) on AMD / MU / WDC / SNDK / TSM &bull; runs weekdays 13:45 UTC &amp; 19:50 UTC &bull; see the Runs, Rules and P&amp;L tabs for the daily log</p>
     </div>
   </div>
 </div>
@@ -262,7 +262,7 @@ function renderDayTrade(log, state){
   const runs = (log && log.runs || []).slice().reverse();
 
   let html = '<div class="cycle-card"><div class="cycle-num">Day-Trading LIVE &middot; Real Money</div>' +
-    '<div class="exec-reason">Settled-cash-only sizing (GFV-safe) &middot; fractional shares &middot; excludes any symbol the 6-Way Combo swing system already holds</div>' +
+    '<div class="exec-reason">Settled-cash-only sizing (GFV-safe) &middot; fractional shares &middot; excludes any symbol the 7-Way Combo swing system already holds</div>' +
     '<div class="account-row"><span>Pending settlement (locked until next business day)</span><span>'+money(pending)+'</span></div>' +
     '<div class="account-row"><span>Realized P&amp;L ('+closedCount+' closed round trips)</span>'+pnlSpan(realized)+'</div></div>';
 
