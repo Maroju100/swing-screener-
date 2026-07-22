@@ -1,0 +1,10 @@
+{
+  "total_allocated": 5000.00,
+  "allocations": {
+    "swing": 1666.67,
+    "daytrade": 1666.67,
+    "margin_style": 1666.66
+  },
+  "created_at": "2026-07-22T21:00:00Z",
+  "notes": "Equal 3-way split of $5000 across the three real-money live systems on Agentic 2 (912291820), per explicit user request 2026-07-22. Robinhood has no sub-account/bucket feature - this is a software-only convention enforced by each system's own position-sizing formula referencing its allocation cap via scripts/capital_ledger.py, not by any actual segregation of cash at the broker. At creation time, the swing system already held $2,992.43 of stock across its 5 positions (AMD/WDC/TSM/MU/SNDK) - $1,325.76 OVER its new $1,666.67 allocation. Nothing was force-sold to fit the new cap; the swing system is simply blocked from new buys until its own stop/target exits organically bring its holdings back under $1,666.67."
+}
