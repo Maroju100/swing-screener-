@@ -103,7 +103,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <h1>&#9889; Swing Screener</h1>
-      <div class="strategy-badge">7-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse + Minervini VCP + Donchian + Asymmetric Pullback · Agentic 2 · LIVE</div>
+      <div class="strategy-badge">9-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse + Minervini VCP + Donchian + Asymmetric Pullback · Agentic 2 · LIVE</div>
       <div class="meta-bar">
         <span class="live-dot"></span>
         <span class="meta-time" id="meta-updated">Loading&hellip;</span>
@@ -131,7 +131,7 @@
   <div class="main-panel" id="main-panel">
     <div class="empty-state">
       <div class="empty-icon">&#128200;</div>
-      <h2>7-Way Combo &mdash; Live</h2>
+      <h2>9-Way Combo &mdash; Live</h2>
       <p>Whipsaw Reversal + 1-2-3 Breakout + Bressert RSI-3M3 + Elder Impulse + Minervini VCP + Donchian Breakout + Asymmetric Pullback (added 2026-07-21) on AMD / MU / WDC / SNDK / TSM &bull; runs weekdays every ~3 hours (13:45, 16:45, 19:45 UTC) since 2026-07-22 &bull; see the Runs, Rules and P&amp;L tabs for the daily log</p>
     </div>
   </div>
@@ -271,14 +271,17 @@ const DAYTRADE_STRATEGIES = [
   {name:'Mid-Range Reversion Rule', rule:'Pulls back below the day’s mid-range (4th bar) while still above the day’s open', score:'Distance below mid-range'},
   {name:'Opening Range Breakout', rule:'Breaks above the first hour’s range high (3rd bar) on above-average volume', score:'Breakout %'},
   {name:'ID/NR4 Volatility Breakout', rule:'Yesterday was an inside day AND the narrowest range of the last 5 days; breaks above yesterday’s high', score:'Yesterday’s range as % of its high'},
+  {name:'VWAP Reclaim (added 2026-07-22)', rule:'Price closes below intraday VWAP one bar, reclaims above it the next', score:'Distance above VWAP', note:'skipped paper-tracking, went straight to real money'},
+  {name:'First Pullback After ORB (added 2026-07-22)', rule:'After an opening-range breakout holds, buy the first pullback that bounces without breaking back below the range', score:'Distance above opening-range high', note:'skipped paper-tracking, went straight to real money'},
 ];
 
 function renderDayTrade(log, state){
   const el = document.getElementById('daytrade-list');
   const stratHtml = '<div class="cycle-card"><div class="cycle-num">8 Strategies &middot; scanned every run</div>' +
-    '<div class="exec-reason">Runs hourly, weekdays 14:10&ndash;20:10 UTC (10:10am&ndash;4:10pm ET) &middot; each strategy scans every eligible symbol (AMD/MU/WDC/SNDK/TSM minus anything held by the 7-Way Combo) on the last ~3 bars (1.5hrs) each run &middot; a symbol with 2+ strategies agreeing wins priority, otherwise highest score wins remaining slots &middot; max 3 open positions, settled-cash-only sizing</div>' +
+    '<div class="exec-reason">Runs hourly, weekdays 14:10&ndash;20:10 UTC (10:10am&ndash;4:10pm ET) &middot; each strategy scans every eligible symbol (AMD/MU/WDC/SNDK/TSM minus anything held by the 9-Way Combo) on the last ~3 bars (1.5hrs) each run &middot; a symbol with 2+ strategies agreeing wins priority, otherwise highest score wins remaining slots &middot; max 3 open positions, settled-cash-only sizing</div>' +
     DAYTRADE_STRATEGIES.map(s=>
-      '<div class="pos-row"><span style="color:var(--muted)">'+s.name+'<br><span style="font-size:11px">'+s.rule+'</span></span>' +
+      '<div class="pos-row"><span style="color:var(--muted)">'+s.name+'<br><span style="font-size:11px">'+s.rule+
+      (s.note?'<br><span style="color:var(--orange)">'+s.note+'</span>':'')+'</span></span>' +
       '<span style="text-align:right;font-size:11px;color:var(--muted)">score:<br>'+s.score+'</span></div>'
     ).join('') + '</div>';
 
@@ -293,7 +296,7 @@ function renderDayTrade(log, state){
   const runs = (log && log.runs || []).slice().reverse();
 
   let html = stratHtml + '<div class="cycle-card"><div class="cycle-num">Day-Trading LIVE &middot; Real Money</div>' +
-    '<div class="exec-reason">Settled-cash-only sizing (GFV-safe) &middot; fractional shares &middot; excludes any symbol the 7-Way Combo swing system already holds</div>' +
+    '<div class="exec-reason">Settled-cash-only sizing (GFV-safe) &middot; fractional shares &middot; excludes any symbol the 9-Way Combo swing system already holds</div>' +
     '<div class="account-row"><span>Pending settlement (locked until next business day)</span><span>'+money(pending)+'</span></div>' +
     '<div class="account-row"><span>Realized P&amp;L ('+closedCount+' closed round trips)</span>'+pnlSpan(realized)+'</div></div>';
 

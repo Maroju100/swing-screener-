@@ -1,6 +1,6 @@
 {
  "strategy": {
-  "name": "7-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse + Minervini VCP + Donchian + Asymmetric Pullback",
+  "name": "9-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse + Minervini VCP + Donchian + Asymmetric Pullback + MA Crossover + Darvas Box",
   "status": "LIVE",
   "schedule": "Weekdays every ~3 hours during the session: 13:45, 16:45, 19:45 UTC / 9:45 AM, 12:45 PM, 3:45 PM ET (all three use a live-quote proxy for today's price) — changed 2026-07-22 from the prior twice-daily schedule based on a backtest showing 3-hour checks outperformed both hourly and twice-daily over ~4.5 months of real intraday data; this schedule change itself skipped paper-tracking validation, treat with elevated scrutiny",
   "account": "Robinhood 912291820 (Agentic 2, cash account)",
@@ -84,6 +84,27 @@
      "Score = 40 - today's RSI(2); deeper pullbacks within the uptrend rank higher",
      "Backtest (separate 5-window portfolio, not yet combined with A-F): $18,727 total, 83 trades, 64% win rate — skipped paper-tracking before going live, treat with more scrutiny than A-F",
      "Validated ONLY on this 5-symbol basket — loses money on 25- or 50-stock universes"
+    ]
+   },
+   {
+    "id": "H",
+    "name": "MA Crossover (EMA9/EMA21 golden cross, added 2026-07-22)",
+    "rules": [
+     "Sourced from widely-cited retail/YouTube trading content, backtested on the same $25k 5-window methodology as every other signal",
+     "Entry today: EMA9 crosses above EMA21 (was not above yesterday) using today's proxy price as the latest input",
+     "Score = (EMA9 - EMA21) / EMA21",
+     "Backtest (standalone, not yet combined with A-G as one portfolio): $7,225 total, 25 trades, 52% win rate, profitable 4/5 windows — skipped paper-tracking before going live at explicit user request"
+    ]
+   },
+   {
+    "id": "I",
+    "name": "Darvas Box (new 52-week high + box breakout, added 2026-07-22)",
+    "rules": [
+     "Sourced from widely-cited retail/YouTube trading content, backtested on the same $25k 5-window methodology as every other signal",
+     "Find a day within the last 2-11 days whose high is within 0.5% of the trailing 252-day high; box = high/low range from that day through yesterday, valid only if box range <= 8% of its top",
+     "Entry today: proxy price > box top AND yesterday's close <= box top",
+     "Score = (proxy price - box top) / box top",
+     "Backtest (standalone, not yet combined with A-G/H as one portfolio): $5,036 total, 31 trades, 55% win rate, profitable 4/5 windows — skipped paper-tracking before going live at explicit user request"
     ]
    }
   ],
