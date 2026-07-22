@@ -1,0 +1,11 @@
+{
+  "runs": [
+    {
+      "timestamp": "2026-07-22T20:15:00Z",
+      "event": "SYSTEM_ACTIVATED",
+      "orders": [],
+      "safe_settled_cash": 1983.95,
+      "notes": "First live run of the margin-style Scaled Dip-Buy/Scaled Peak-Sell engine (Winner config: -25.5% cumulative drawdown / 22-day lookback, 44.6% normal-dip tranche up to 5, 74.3% huge-dip deploy, -1.51% intraday stop, 74.3% peak-sell, gain tiers 5/10/20 -> 20/50/90). Deployed straight to real money at explicit user request with zero prior paper-tracking or live track record beyond backtest (in-sample 5 windows + 2 out-of-sample holdouts). Shares the Agentic 2 cash pool with the 9-Way Combo swing system and Day-Trading LIVE; follows the same cross-system symbol-exclusion rule Day-Trading LIVE already uses. This run: no orders - all 5 basket symbols (AMD/MU/WDC/SNDK/TSM) currently held by the swing system, so every symbol was excluded. No open positions in this system yet."
+    }
+  ]
+}
