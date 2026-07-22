@@ -2,7 +2,7 @@
  "strategy": {
   "name": "7-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse + Minervini VCP + Donchian + Asymmetric Pullback",
   "status": "LIVE",
-  "schedule": "Weekdays 13:45 UTC / 9:45 AM ET (morning, prior close) + 19:50 UTC / 3:50 PM ET (pre-close, same-day close proxy)",
+  "schedule": "Weekdays every ~3 hours during the session: 13:45, 16:45, 19:45 UTC / 9:45 AM, 12:45 PM, 3:45 PM ET (all three use a live-quote proxy for today's price) — changed 2026-07-22 from the prior twice-daily schedule based on a backtest showing 3-hour checks outperformed both hourly and twice-daily over ~4.5 months of real intraday data; this schedule change itself skipped paper-tracking validation, treat with elevated scrutiny",
   "account": "Robinhood 912291820 (Agentic 2, cash account)",
   "universe": [
    "AMD",

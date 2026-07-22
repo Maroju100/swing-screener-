@@ -1,5 +1,12 @@
 # Signal G Addendum — Asymmetric Pullback (added 2026-07-21)
 
+**Update 2026-07-22:** the Morning Run and Pre-Close Run triggers this file was written for have been
+disabled and replaced by "Agentic-2 7-Way Combo (LIVE) - 3-Hour Check" (trig_01AZXmLrvMg4B1Gka5kreqcR,
+fires every ~3 hours at 13:45/16:45/19:45 UTC). Signal G is now written directly into that trigger's
+own prompt as Signal G — this addendum's workaround is no longer needed for it and this file is kept
+as historical record. It would become relevant again only if the old twice-daily triggers are ever
+re-enabled with a directly-edited prompt still missing G.
+
 The 6-Way Combo's live trigger prompts (Morning Run, Pre-Close Run) cannot be edited in place
 (`update_trigger` returns `prompt_update_disabled` on live-trading routines — a deliberate
 platform safety rail). This file is the authoritative spec for Signal G. Every future firing of

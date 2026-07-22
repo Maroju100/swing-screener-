@@ -132,7 +132,7 @@
     <div class="empty-state">
       <div class="empty-icon">&#128200;</div>
       <h2>7-Way Combo &mdash; Live</h2>
-      <p>Whipsaw Reversal + 1-2-3 Breakout + Bressert RSI-3M3 + Elder Impulse + Minervini VCP + Donchian Breakout + Asymmetric Pullback (added 2026-07-21) on AMD / MU / WDC / SNDK / TSM &bull; runs weekdays 13:45 UTC &amp; 19:50 UTC &bull; see the Runs, Rules and P&amp;L tabs for the daily log</p>
+      <p>Whipsaw Reversal + 1-2-3 Breakout + Bressert RSI-3M3 + Elder Impulse + Minervini VCP + Donchian Breakout + Asymmetric Pullback (added 2026-07-21) on AMD / MU / WDC / SNDK / TSM &bull; runs weekdays every ~3 hours (13:45, 16:45, 19:45 UTC) since 2026-07-22 &bull; see the Runs, Rules and P&amp;L tabs for the daily log</p>
     </div>
   </div>
 </div>
@@ -173,20 +173,16 @@ function renderRuns(log){
     ).join('') || '<div style="font-size:11px;color:var(--muted)">No open positions</div>';
     let notesHtml = '';
     if(r.notes){
-      const marker = ' | Pre-close: ';
-      const idx = r.notes.indexOf(marker);
-      if(idx !== -1){
-        let morning = r.notes.slice(0, idx);
-        if(morning.indexOf('Morning: ') === 0) morning = morning.slice('Morning: '.length);
-        const preclose = r.notes.slice(idx + marker.length);
-        notesHtml =
-          '<div class="section-mini">Morning Run &middot; 9:45 AM ET (prior close)</div>' +
-          '<div class="verdict-bar">'+morning+'</div>' +
-          '<div class="section-mini">Pre-Close Run &middot; 3:50 PM ET (live-quote proxy)</div>' +
-          '<div class="verdict-bar">'+preclose+'</div>';
-      } else {
-        notesHtml = '<div class="verdict-bar">'+r.notes+'</div>';
-      }
+      // Splits on " | " into per-check segments (works for the old 2-run Morning/Pre-close
+      // format and the new up-to-3-run check_0945/check_1245/check_1545 format alike).
+      const segments = r.notes.split(' | ');
+      notesHtml = segments.map(seg => {
+        const m = seg.match(/^([^:]{1,40}):\s([\s\S]*)$/);
+        if(m){
+          return '<div class="section-mini">'+m[1]+'</div><div class="verdict-bar">'+m[2]+'</div>';
+        }
+        return '<div class="verdict-bar">'+seg+'</div>';
+      }).join('');
     }
     return '<div class="cycle-card">' +
       '<div class="cycle-header"><div class="cycle-meta"><span class="cycle-num">'+r.date+'</span>' +
