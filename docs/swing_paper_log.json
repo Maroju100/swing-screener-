@@ -227,6 +227,42 @@
     "RSI Bullish Divergence": 0.0,
     "Bull Flag Breakout": 0.0
    }
+  },
+  {
+   "timestamp": "2026-07-22T21:07:29.490517+00:00",
+   "trades": [
+    {
+     "strategy": "MIDAS Anchored VWAP Bounce",
+     "date": "2026-07-21",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 3,
+     "price": 1589.4
+    },
+    {
+     "strategy": "Relative Strength Leader Pullback",
+     "date": "2026-07-21",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 9,
+     "price": 544.43
+    }
+   ],
+   "equity_snapshot": {
+    "Bollinger Squeeze Breakout": 0.0,
+    "Probe and Pullback": 0.0,
+    "MIDAS Anchored VWAP Bounce": -769.86,
+    "Perfect Storm (D/W/M alignment)": 0.0,
+    "ConnorsRSI Oversold Bounce": 0.0,
+    "Ichimoku Kumo Breakout": 0.0,
+    "Pivot Point S1 Bounce": 37.22,
+    "Cup and Handle": 0.0,
+    "High Tight Flagpole": 0.0,
+    "Relative Strength Leader Pullback": 0.0,
+    "Fibonacci 61.8% Retracement Bounce": 0.0,
+    "RSI Bullish Divergence": 0.0,
+    "Bull Flag Breakout": 0.0
+   }
   }
  ]
 }
