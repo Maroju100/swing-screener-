@@ -208,6 +208,25 @@
     "Ichimoku Kumo Breakout": 0.0,
     "Pivot Point S1 Bounce": -1651.46
    }
+  },
+  {
+   "timestamp": "2026-07-22T06:09:38.706028+00:00",
+   "trades": [],
+   "equity_snapshot": {
+    "Bollinger Squeeze Breakout": 0.0,
+    "Probe and Pullback": 0.0,
+    "MIDAS Anchored VWAP Bounce": -1296.66,
+    "Perfect Storm (D/W/M alignment)": 0.0,
+    "ConnorsRSI Oversold Bounce": 0.0,
+    "Ichimoku Kumo Breakout": 0.0,
+    "Pivot Point S1 Bounce": -1651.46,
+    "Cup and Handle": 0.0,
+    "High Tight Flagpole": 0.0,
+    "Relative Strength Leader Pullback": 0.0,
+    "Fibonacci 61.8% Retracement Bounce": 0.0,
+    "RSI Bullish Divergence": 0.0,
+    "Bull Flag Breakout": 0.0
+   }
   }
  ]
 }

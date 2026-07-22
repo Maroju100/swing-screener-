@@ -169,6 +169,43 @@ def sig_id_nr4_breakout(bars_by_sym, IND, DAYIDX, sym, gi):
             return (yest_range / yest['high'], yest_range, yest_range * 2)
     return None
 
+def sig_relative_volume_leader(bars_by_sym, IND, DAYIDX, sym, gi):
+    meta = DAYIDX[sym][gi]
+    if meta['i_in_day'] < 6: return None
+    bars = bars_by_sym[sym]
+    ratios = {}
+    for s in bars_by_sym:
+        b2 = bars_by_sym[s]; m2 = DAYIDX[s]
+        if gi >= len(b2) or m2[gi]['i_in_day'] < 6: continue
+        avg5 = sum(b2[j]['volume'] for j in range(gi-5, gi)) / 5
+        if avg5 <= 0: continue
+        ratios[s] = b2[gi]['volume'] / avg5
+    if not ratios or sym not in ratios: return None
+    if ratios[sym] != max(ratios.values()) or ratios[sym] < 1.5: return None
+    if bars[gi]['close'] <= max(bars[j]['high'] for j in range(gi-3, gi)): return None
+    rng = sum(bars[j]['high']-bars[j]['low'] for j in range(gi-5, gi+1)) / 6
+    if rng <= 0: return None
+    return (ratios[sym], rng, rng * 2)
+
+def sig_oversold_snapback(bars_by_sym, IND, DAYIDX, sym, gi):
+    meta = DAYIDX[sym][gi]
+    if meta['i_in_day'] < 4: return None
+    bars = bars_by_sym[sym]
+    start_price = bars[gi-3]['close']
+    low_price = min(bars[j]['low'] for j in range(gi-3, gi))
+    drop = (start_price - low_price) / start_price
+    if drop < 0.02: return None
+    midpoint = (start_price+low_price)/2
+    if bars[gi]['close'] > midpoint and bars[gi]['close'] > bars[gi-1]['close']:
+        rng = sum(bars[j]['high']-bars[j]['low'] for j in range(gi-3, gi+1)) / 4
+        if rng <= 0: return None
+        return (drop, rng, rng * 2)
+    return None
+
+# VWAP Reclaim and First Pullback After ORB graduated to Day-Trading LIVE (2026-07-22) -
+# removed here to avoid double-tracking. Relative Volume Leader Momentum and Oversold Snapback
+# Fade are paper-only pending further validation; Oversold Snapback Fade backtested negative
+# (-$319.98) and is included here for continued observation, not because it looked promising.
 STRATEGIES = {
     'Swing Pullback / Anti': sig_swing_pullback,
     'Hybrid Disciplined Momentum Scalping': sig_hybrid_scalping,
@@ -178,6 +215,8 @@ STRATEGIES = {
     'Mid-Range Reversion Rule': sig_mid_range_reversion,
     'Opening Range Breakout': sig_opening_range_breakout,
     'ID/NR4 Volatility Breakout': sig_id_nr4_breakout,
+    'Relative Volume Leader Momentum': sig_relative_volume_leader,
+    'Oversold Snapback Fade': sig_oversold_snapback,
 }
 
 def build_indicators(raw_path):

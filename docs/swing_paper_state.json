@@ -112,5 +112,71 @@
    "SNDK": "2026-07-20",
    "TSM": "2026-07-20"
   }
+ },
+ "Cup and Handle": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-07-20",
+   "MU": "2026-07-20",
+   "WDC": "2026-07-20",
+   "SNDK": "2026-07-20",
+   "TSM": "2026-07-20"
+  }
+ },
+ "High Tight Flagpole": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-07-20",
+   "MU": "2026-07-20",
+   "WDC": "2026-07-20",
+   "SNDK": "2026-07-20",
+   "TSM": "2026-07-20"
+  }
+ },
+ "Relative Strength Leader Pullback": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-07-20",
+   "MU": "2026-07-20",
+   "WDC": "2026-07-20",
+   "SNDK": "2026-07-20",
+   "TSM": "2026-07-20"
+  }
+ },
+ "Fibonacci 61.8% Retracement Bounce": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-07-20",
+   "MU": "2026-07-20",
+   "WDC": "2026-07-20",
+   "SNDK": "2026-07-20",
+   "TSM": "2026-07-20"
+  }
+ },
+ "RSI Bullish Divergence": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-07-20",
+   "MU": "2026-07-20",
+   "WDC": "2026-07-20",
+   "SNDK": "2026-07-20",
+   "TSM": "2026-07-20"
+  }
+ },
+ "Bull Flag Breakout": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-07-20",
+   "MU": "2026-07-20",
+   "WDC": "2026-07-20",
+   "SNDK": "2026-07-20",
+   "TSM": "2026-07-20"
+  }
  }
 }

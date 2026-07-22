@@ -92,6 +92,24 @@ def find_pivot_lows(bars, strength=5):
     return pivots
 
 
+def ema_series(vals, period):
+    k = 2 / (period + 1)
+    out = [vals[0]]
+    for v in vals[1:]: out.append(v * k + out[-1] * (1 - k))
+    return out
+
+
+def find_pivots_hl(bars, strength=2):
+    pivots = []
+    for i in range(strength, len(bars) - strength):
+        whigh = [bars[j]['high'] for j in range(i-strength, i+strength+1)]
+        wlow = [bars[j]['low'] for j in range(i-strength, i+strength+1)]
+        if bars[i]['high'] == max(whigh): pivots.append(('H', i, bars[i]['high']))
+        if bars[i]['low'] == min(wlow): pivots.append(('L', i, bars[i]['low']))
+    pivots.sort(key=lambda x: x[1])
+    return pivots
+
+
 def resample(bars, key_fn):
     groups = {}
     for b in bars:
@@ -139,11 +157,14 @@ def build_context(raw_path):
     WEEKLY = {sym: resample(bars_by_sym[sym], lambda dte: dte[:8] + str(int(dte[8:10]) // 7)) for sym in SYMBOLS if sym in bars_by_sym}
     MONTHLY = {sym: resample(bars_by_sym[sym], lambda dte: dte[:7]) for sym in SYMBOLS if sym in bars_by_sym}
     ICHI = {sym: ichimoku_series(bars_by_sym[sym]) for sym in SYMBOLS if sym in bars_by_sym}
-    return bars_by_sym, ATR, CRSI, PIVOT_LOWS, WEEKLY, MONTHLY, ICHI
+    RSI14 = {sym: rsi_n([b['close'] for b in bars_by_sym[sym]], 14) for sym in SYMBOLS if sym in bars_by_sym}
+    EMA21 = {sym: ema_series([b['close'] for b in bars_by_sym[sym]], 21) for sym in SYMBOLS if sym in bars_by_sym}
+    PIVOTS_HL = {sym: find_pivots_hl(bars_by_sym[sym]) for sym in SYMBOLS if sym in bars_by_sym}
+    return bars_by_sym, ATR, CRSI, PIVOT_LOWS, WEEKLY, MONTHLY, ICHI, RSI14, EMA21, PIVOTS_HL
 
 
 def make_signals(ctx):
-    bars_by_sym, ATR, CRSI, PIVOT_LOWS, WEEKLY, MONTHLY, ICHI = ctx
+    bars_by_sym, ATR, CRSI, PIVOT_LOWS, WEEKLY, MONTHLY, ICHI, RSI14, EMA21, PIVOTS_HL = ctx
 
     def sig_bollinger_squeeze(sym, gi):
         bars = bars_by_sym[sym]
@@ -317,8 +338,139 @@ def make_signals(ctx):
             return ((bars[gi]['close'] - S1) / S1 + 0.001, atr * 1.5, atr * 3.0)
         return None
 
-    # Minervini VCP and Donchian graduated to the live 6-Way Combo (2026-07-15) - removed here
-    # to avoid double-tracking; the remaining 7 stay in paper-only validation.
+    def sig_cup_and_handle(sym, gi):
+        bars = bars_by_sym[sym]
+        if gi < 90: return None
+        for cup_len in (90, 70, 50, 40):
+            cup_start = gi - cup_len
+            if cup_start < 0: continue
+            left_rim = max(bars[j]['high'] for j in range(cup_start, cup_start+5))
+            cup_bottom_idx = min(range(cup_start, gi), key=lambda j: bars[j]['low'])
+            cup_bottom = bars[cup_bottom_idx]['low']
+            if cup_bottom_idx - cup_start < cup_len*0.25 or gi - cup_bottom_idx < cup_len*0.15: continue
+            cup_depth = left_rim - cup_bottom
+            if cup_depth <= 0: continue
+            handle_start = cup_bottom_idx + int(cup_len*0.5)
+            if handle_start >= gi - 2: continue
+            handle_low = min(bars[j]['low'] for j in range(handle_start, gi))
+            handle_depth = left_rim - handle_low
+            if handle_depth > cup_depth/3: continue
+            rim = left_rim
+            if bars[gi-1]['close'] > rim: continue
+            if bars[gi]['close'] > rim:
+                atr = ATR[sym][gi]
+                if not atr: return None
+                return ((bars[gi]['close']-rim)/rim, atr*1.75, atr*3.5)
+        return None
+
+    def sig_high_tight_flagpole(sym, gi):
+        bars = bars_by_sym[sym]
+        if gi < 50: return None
+        for pole_len in (40, 30, 20):
+            pole_start = gi - pole_len - 15
+            if pole_start < 0: continue
+            for flag_len in range(5, 16):
+                pole_end = gi - flag_len
+                if pole_end - pole_start < 10: continue
+                pole_low = min(bars[j]['low'] for j in range(pole_start, pole_end))
+                pole_high = max(bars[j]['high'] for j in range(pole_start, pole_end))
+                gain = (pole_high - pole_low) / pole_low
+                if gain < 0.90: continue
+                flag_high = pole_high
+                flag_low = min(bars[j]['low'] for j in range(pole_end, gi))
+                pullback = (flag_high - flag_low) / flag_high
+                if not (0.10 <= pullback <= 0.25): continue
+                if bars[gi-1]['close'] > flag_high: continue
+                if bars[gi]['close'] > flag_high:
+                    atr = ATR[sym][gi]
+                    if not atr: return None
+                    return (gain, atr*1.75, atr*3.5)
+        return None
+
+    def sig_rs_leader_pullback(sym, gi):
+        bars = bars_by_sym[sym]
+        if gi < 25: return None
+        rets = {}
+        for s in SYMBOLS:
+            b = bars_by_sym.get(s)
+            if not b or gi >= len(b) or gi < 21: continue
+            rets[s] = (b[gi-1]['close'] - b[gi-21]['close']) / b[gi-21]['close']
+        if not rets or sym not in rets: return None
+        if rets[sym] != max(rets.values()): return None
+        r = RSI14[sym][gi]
+        if r is None or not (40 <= r <= 55): return None
+        ema21 = EMA21[sym][gi]
+        if bars[gi]['close'] <= ema21: return None
+        if not (bars[gi]['close'] > bars[gi-1]['close']): return None
+        atr = ATR[sym][gi]
+        if not atr: return None
+        return (rets[sym], atr*1.75, atr*3.5)
+
+    def sig_fib_618_retracement(sym, gi):
+        bars = bars_by_sym[sym]
+        if gi < 30: return None
+        piv = [p for p in PIVOTS_HL[sym] if p[1] < gi]
+        if len(piv) < 2: return None
+        last2 = piv[-2:]
+        if not (last2[0][0]=='L' and last2[1][0]=='H'): return None
+        swing_low, swing_high = last2[0][2], last2[1][2]
+        if swing_high <= swing_low: return None
+        fib618 = swing_high - 0.618*(swing_high-swing_low)
+        fib50 = swing_high - 0.5*(swing_high-swing_low)
+        touched = bars[gi-1]['low'] <= fib50 and bars[gi-1]['low'] >= fib618*0.98
+        bounced = bars[gi]['close'] > bars[gi-1]['high'] and bars[gi]['close'] > fib50
+        if touched and bounced:
+            atr = ATR[sym][gi]
+            if not atr: return None
+            return ((bars[gi]['close']-fib618)/fib618, atr*1.75, atr*3.5)
+        return None
+
+    def sig_rsi_bullish_divergence(sym, gi):
+        bars = bars_by_sym[sym]
+        r = RSI14[sym]
+        if gi < 30: return None
+        piv_lows = [p for p in PIVOTS_HL[sym] if p[0]=='L' and p[1] < gi]
+        if len(piv_lows) < 2: return None
+        p1, p2 = piv_lows[-2], piv_lows[-1]
+        if p2[2] >= p1[2]: return None
+        if r[p1[1]] is None or r[p2[1]] is None: return None
+        if r[p2[1]] <= r[p1[1]]: return None
+        piv_highs = [p for p in PIVOTS_HL[sym] if p[0]=='H' and p1[1] < p[1] < p2[1]]
+        if not piv_highs: return None
+        confirm_level = max(p[2] for p in piv_highs)
+        if bars[gi-1]['close'] > confirm_level: return None
+        if bars[gi]['close'] > confirm_level:
+            atr = ATR[sym][gi]
+            if not atr: return None
+            return ((r[p2[1]]-r[p1[1]]) + 0.01, atr*1.75, atr*3.5)
+        return None
+
+    def sig_bull_flag_swing(sym, gi):
+        bars = bars_by_sym[sym]
+        if gi < 25: return None
+        for flag_len in range(5, 16):
+            pole_end = gi - flag_len
+            if pole_end < 10: continue
+            pole_start = pole_end - 10
+            pole_low = min(bars[j]['low'] for j in range(pole_start, pole_end))
+            pole_high = max(bars[j]['high'] for j in range(pole_start, pole_end))
+            gain = (pole_high-pole_low)/pole_low
+            if gain < 0.15: continue
+            flag_low = min(bars[j]['low'] for j in range(pole_end, gi))
+            pullback = (pole_high-flag_low)/pole_high
+            if not (0.30 <= pullback <= 0.50): continue
+            if bars[gi-1]['close'] > pole_high: continue
+            if bars[gi]['close'] > pole_high:
+                atr = ATR[sym][gi]
+                if not atr: return None
+                return (gain, atr*1.75, atr*3.5)
+        return None
+
+    # Minervini VCP, Donchian, Asymmetric Pullback, MA Crossover, and Darvas Box graduated to
+    # the live 9-Way Combo - removed here to avoid double-tracking. The 6 setups below (sourced
+    # from widely-cited retail/YouTube trading content) are paper-only pending further validation;
+    # Relative Strength Leader Pullback backtested negative (-$582, 0/5 windows) and is included
+    # here for continued observation, not because it looked promising.
     return {
         'Bollinger Squeeze Breakout': sig_bollinger_squeeze,
         'Probe and Pullback': sig_probe_pullback,
@@ -327,6 +479,12 @@ def make_signals(ctx):
         'ConnorsRSI Oversold Bounce': sig_connors_rsi,
         'Ichimoku Kumo Breakout': sig_ichimoku,
         'Pivot Point S1 Bounce': sig_pivot_point_bounce,
+        'Cup and Handle': sig_cup_and_handle,
+        'High Tight Flagpole': sig_high_tight_flagpole,
+        'Relative Strength Leader Pullback': sig_rs_leader_pullback,
+        'Fibonacci 61.8% Retracement Bounce': sig_fib_618_retracement,
+        'RSI Bullish Divergence': sig_rsi_bullish_divergence,
+        'Bull Flag Breakout': sig_bull_flag_swing,
     }
 
 
