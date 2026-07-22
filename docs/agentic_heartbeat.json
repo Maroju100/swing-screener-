@@ -84,7 +84,9 @@
   },
   "2026-07-22_check_1245": {
     "run": "check_1245",
-    "stage": "started",
-    "started_at": "2026-07-22T16:46:09Z"
+    "stage": "completed",
+    "started_at": "2026-07-22T16:46:09Z",
+    "completed_at": "2026-07-22T16:50:00Z",
+    "orders_count": 0
   }
 }

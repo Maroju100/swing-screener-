@@ -343,39 +343,39 @@
           "symbol": "AMD",
           "shares": 0.911403,
           "entry": 556.43,
-          "current": 554.53
+          "current": 554.37
         },
         {
           "symbol": "WDC",
           "shares": 0.911068,
           "entry": 546.57,
-          "current": 559.41
+          "current": 560.22
         },
         {
           "symbol": "TSM",
           "shares": 1.172707,
           "entry": 424.01,
-          "current": 422.91
+          "current": 422.05
         },
         {
           "symbol": "MU",
           "shares": 1.028878,
           "entry": 974.21,
-          "current": 974.21
+          "current": 971.5
         },
         {
           "symbol": "SNDK",
           "shares": 0.313225,
           "entry": 1599.01,
-          "current": 1599.01
+          "current": 1603.0
         }
       ],
-      "account_value": 5004.43,
+      "account_value": 4998.93,
       "cash": 1983.95,
       "buying_power": 1983.95,
-      "daily_pl": 25.35,
-      "cumulative_pl": 31.27,
-      "notes": "check_0945 (3-hour cadence, live-quote proxy ~13:47 UTC): Signal C (Bressert RSI-3M3) fired on MU/WDC/TSM; WDC and TSM already held so skipped (never re-enter); MU was the lone new-entry candidate but the order review was interrupted before completion this run - no order placed at that time. Manual re-check (~15:57-15:59 UTC, user-requested, live quotes refreshed): Signal C now fired on all 5 symbols as price extended further; AMD/WDC/TSM still excluded (already held). Two new-entry candidates: MU (score 0.079, stronger) and SNDK (score 0.0004, weak edge, volatility haircut applied per ATR/close ratio 0.126 > 20-day avg 0.113). Both approved by user and placed within the 2-new-entry/5-position caps: MU 1.028878 sh @ 974.21 (ATR14=85.62, no haircut; stop 822.11 / target 1271.59), SNDK 0.313225 sh @ 1599.01 (ATR14=199.93, haircut applied; stop 1246.42 / target 2296.07). Cross-system note: the separate Day-Trading LIVE system had a pending plan to buy these same two symbols (MU, SNDK) via its own Swing Pullback/Anti strategy - those orders were dropped/skipped per the cross-system exclusion rule now that this swing system holds both. Existing positions (AMD/WDC/TSM): all HOLD, well above stops, no targets reached. No stop-losses fired, no pause triggered. All same-day price inputs are live-quote approximations, not final settled values."
+      "daily_pl": 19.85,
+      "cumulative_pl": 25.77,
+      "notes": "check_0945 (3-hour cadence, live-quote proxy ~13:47 UTC): Signal C (Bressert RSI-3M3) fired on MU/WDC/TSM; WDC and TSM already held so skipped (never re-enter); MU was the lone new-entry candidate but the order review was interrupted before completion this run - no order placed at that time. Manual re-check (~15:57-15:59 UTC, user-requested, live quotes refreshed): Signal C now fired on all 5 symbols as price extended further; AMD/WDC/TSM still excluded (already held). Two new-entry candidates: MU (score 0.079, stronger) and SNDK (score 0.0004, weak edge, volatility haircut applied per ATR/close ratio 0.126 > 20-day avg 0.113). Both approved by user and placed within the 2-new-entry/5-position caps: MU 1.028878 sh @ 974.21 (ATR14=85.62, no haircut; stop 822.11 / target 1271.59), SNDK 0.313225 sh @ 1599.01 (ATR14=199.93, haircut applied; stop 1246.42 / target 2296.07). Cross-system note: the separate Day-Trading LIVE system had a pending plan to buy these same two symbols (MU, SNDK) via its own Swing Pullback/Anti strategy - those orders were dropped/skipped per the cross-system exclusion rule now that this swing system holds both. Existing positions (AMD/WDC/TSM): all HOLD, well above stops, no targets reached. No stop-losses fired, no pause triggered. All same-day price inputs are live-quote approximations, not final settled values. | check_1245: Signal C fired on all 5 symbols (AMD/MU/WDC/SNDK/TSM) but no new-entry slots available - all 5 basket positions already held (5/5 cap reached after the check_0945 manual resume). No H/I firings this run. Exit check on all 5: AMD HOLD (554.37, held 7d, above stop 489.21, below target 690.87), WDC HOLD (560.22, held 1d, below 2-day min hold), TSM HOLD (422.05, held 1d, below 2-day min hold), MU HOLD (971.50, opened today), SNDK HOLD (1603.00, opened today). No stops fired, no pause triggered, no orders placed."
     }
   ]
 }
