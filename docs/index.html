@@ -103,17 +103,19 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <h1>&#9889; Swing Screener</h1>
-      <div class="strategy-badge">9-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse + Minervini VCP + Donchian + Asymmetric Pullback · Agentic 2 · LIVE</div>
+      <div class="strategy-badge">9-Way Combo: Whipsaw + 1-2-3 + Bressert + Elder Impulse + Minervini VCP + Donchian + Asymmetric Pullback + MA Crossover + Darvas Box · Agentic 2 · LIVE</div>
       <div class="meta-bar">
         <span class="live-dot"></span>
         <span class="meta-time" id="meta-updated">Loading&hellip;</span>
       </div>
     </div>
-    <div class="tab-bar">
-      <div class="tab active" onclick="switchTab('runs',this)">Runs</div>
-      <div class="tab" onclick="switchTab('rules',this)">Rules</div>
-      <div class="tab" onclick="switchTab('pnl',this)">P&amp;L</div>
-      <div class="tab" onclick="switchTab('daytrade',this)">Day Trades</div>
+    <div class="tab-bar" style="flex-wrap:wrap">
+      <div class="tab active" onclick="switchTab('runs',this)" style="font-size:11px">Runs</div>
+      <div class="tab" onclick="switchTab('rules',this)" style="font-size:11px">Rules</div>
+      <div class="tab" onclick="switchTab('pnl',this)" style="font-size:11px">P&amp;L</div>
+      <div class="tab" onclick="switchTab('daytrade',this)" style="font-size:11px">Day Trades</div>
+      <div class="tab" onclick="switchTab('marginstyle',this)" style="font-size:11px">Margin-Style</div>
+      <div class="tab" onclick="switchTab('capital',this)" style="font-size:11px">Capital</div>
     </div>
     <div class="tab-pane active" id="tab-runs">
       <div class="activity-list" id="runs-list"></div>
@@ -127,12 +129,18 @@
     <div class="tab-pane" id="tab-daytrade">
       <div class="activity-list" id="daytrade-list"></div>
     </div>
+    <div class="tab-pane" id="tab-marginstyle">
+      <div class="activity-list" id="marginstyle-list"></div>
+    </div>
+    <div class="tab-pane" id="tab-capital">
+      <div class="activity-list" id="capital-list"></div>
+    </div>
   </div>
   <div class="main-panel" id="main-panel">
     <div class="empty-state">
       <div class="empty-icon">&#128200;</div>
-      <h2>9-Way Combo &mdash; Live</h2>
-      <p>Whipsaw Reversal + 1-2-3 Breakout + Bressert RSI-3M3 + Elder Impulse + Minervini VCP + Donchian Breakout + Asymmetric Pullback (added 2026-07-21) on AMD / MU / WDC / SNDK / TSM &bull; runs weekdays every ~3 hours (13:45, 16:45, 19:45 UTC) since 2026-07-22 &bull; see the Runs, Rules and P&amp;L tabs for the daily log</p>
+      <h2>3 Real-Money Systems &mdash; Live</h2>
+      <p>9-Way Combo swing (Whipsaw Reversal + 1-2-3 Breakout + Bressert RSI-3M3 + Elder Impulse + Minervini VCP + Donchian Breakout + Asymmetric Pullback + MA Crossover + Darvas Box), Day-Trading LIVE (10 strategies), and Margin-Style Live (Scaled Dip-Buy/Peak-Sell) all trade AMD / MU / WDC / SNDK / TSM on the same Agentic 2 account (912291820), now split into three $1,666.67-ish capital allocations so no system can eat another's cash &bull; see the Runs, Day Trades, Margin-Style and Capital tabs for details</p>
     </div>
   </div>
 </div>
@@ -277,8 +285,8 @@ const DAYTRADE_STRATEGIES = [
 
 function renderDayTrade(log, state){
   const el = document.getElementById('daytrade-list');
-  const stratHtml = '<div class="cycle-card"><div class="cycle-num">8 Strategies &middot; scanned every run</div>' +
-    '<div class="exec-reason">Runs hourly, weekdays 14:10&ndash;20:10 UTC (10:10am&ndash;4:10pm ET) &middot; each strategy scans every eligible symbol (AMD/MU/WDC/SNDK/TSM minus anything held by the 9-Way Combo) on the last ~3 bars (1.5hrs) each run &middot; a symbol with 2+ strategies agreeing wins priority, otherwise highest score wins remaining slots &middot; max 3 open positions, settled-cash-only sizing</div>' +
+  const stratHtml = '<div class="cycle-card"><div class="cycle-num">10 Strategies &middot; scanned every run</div>' +
+    '<div class="exec-reason">Runs hourly, weekdays 14:10&ndash;20:10 UTC (10:10am&ndash;4:10pm ET) &middot; each strategy scans every eligible symbol (AMD/MU/WDC/SNDK/TSM minus anything held by the 9-Way Combo swing system OR the Margin-Style Live system) on the last ~3 bars (1.5hrs) each run &middot; a symbol with 2+ strategies agreeing wins priority, otherwise highest score wins remaining slots &middot; max 3 open positions, settled-cash-only sizing, capped to this system\'s $1,666.67 capital allocation (see the Capital tab)</div>' +
     DAYTRADE_STRATEGIES.map(s=>
       '<div class="pos-row"><span style="color:var(--muted)">'+s.name+'<br><span style="font-size:11px">'+s.rule+
       (s.note?'<br><span style="color:var(--orange)">'+s.note+'</span>':'')+'</span></span>' +
@@ -334,9 +342,126 @@ function loadDayTrade(){
   Promise.all([
     fetch('daytrade_live_log.json?t=' + Date.now()).then(r=>r.ok?r.json():null).catch(()=>null),
     fetch('daytrade_live_state.json?t=' + Date.now()).then(r=>r.ok?r.json():null).catch(()=>null)
-  ]).then(([log, state]) => { DAYTRADE_LOG = log; DAYTRADE_STATE = state; renderDayTrade(log, state); });
+  ]).then(([log, state]) => { DAYTRADE_LOG = log; DAYTRADE_STATE = state; renderDayTrade(log, state); renderCapital(); });
 }
 loadDayTrade();
+
+/* ---------- Margin-Style Live (real money, Scaled Dip-Buy/Peak-Sell) ---------- */
+const MARGINSTYLE_RULES = [
+  {name:'HUGE_DIP (buy)', rule:'Yesterday\'s close is down &ge; 25.5% cumulative from the highest close in the trailing 22 trading days', action:'deploy 74.3% of this system\'s available allocation'},
+  {name:'NORMAL_DIP (buy)', rule:'Yesterday\'s close < the close 2 days ago (any down day, any size), fewer than 5 tranches since last full exit', action:'deploy 44.6% of this system\'s available allocation'},
+  {name:'INTRADAY STOP (sell)', rule:'Live price &le; prior close &times; (1 &minus; 1.51%)', action:'sell the entire position immediately &mdash; highest priority'},
+  {name:'PEAK SELL (sell)', rule:'Live price is a new closing high since the position was opened', action:'sell 74.3% of current shares'},
+  {name:'GAIN TIERS (sell)', rule:'Gain from entry &ge; 20% / &ge; 10% / &ge; 5% (checked only if not a new peak)', action:'sell 90% / 50% / 20% respectively'},
+];
+
+function renderMarginStyle(log, state){
+  const el = document.getElementById('marginstyle-list');
+  const ruleHtml = '<div class="cycle-card"><div class="cycle-num">Scaled Dip-Buy / Scaled Peak-Sell &middot; "Winner" config</div>' +
+    '<div class="exec-reason">Reverse-engineered from the user\'s separate Margin account\'s trading behavior, then parameter-optimized via a joint random-search + walk-forward validation (2026-07-22) &middot; runs hourly, weekdays 13:35&ndash;20:35 UTC &middot; excludes any symbol held by the 9-Way Combo swing system or Day-Trading LIVE &middot; capped to this system\'s own capital allocation (see Capital tab)</div>' +
+    '<div style="background:rgba(240,136,62,0.08);border:1px solid rgba(240,136,62,0.3);border-radius:8px;padding:8px 10px;margin-top:8px;font-size:11px;color:var(--orange)">&#9888; Zero paper-tracking or live track record beyond the backtest &mdash; deployed straight to real money at explicit user request. Treat with elevated scrutiny vs. every other signal here.</div>' +
+    MARGINSTYLE_RULES.map(r=>
+      '<div class="pos-row"><span style="color:var(--muted)">'+r.name+'<br><span style="font-size:11px">'+r.rule+'</span></span>' +
+      '<span style="text-align:right;font-size:11px;color:var(--muted)">'+r.action+'</span></div>'
+    ).join('') + '</div>';
+
+  if(!log && !state){
+    el.innerHTML = ruleHtml + '<div class="cycle-card"><div class="cycle-num">Margin-Style Live &middot; Real Money</div>' +
+      '<div class="exec-reason">No runs logged yet.</div></div>';
+    return;
+  }
+  const pending = state ? (state.pending_settlement||[]).reduce((s,p)=>s+p.amount,0) : 0;
+  const openPos = state ? Object.entries(state.open_positions||{}) : [];
+  const runs = (log && log.runs || []).slice().reverse();
+
+  let html = ruleHtml + '<div class="cycle-card"><div class="cycle-num">Open positions ('+openPos.length+')</div>' +
+    (openPos.length ? openPos.map(([sym,p])=>
+      '<div class="pos-row"><span style="color:var(--muted)">'+sym+' &times;'+p.shares+' @ $'+Number(p.entry).toFixed(2)+' (tranches: '+(p.tranches||1)+')</span>' +
+      '<span>peak $'+Number(p.peak).toFixed(2)+'</span></div>'
+    ).join('') : '<div style="font-size:11px;color:var(--muted)">None open</div>') +
+    (pending ? '<div class="account-row"><span>Pending settlement</span><span>'+money(pending)+'</span></div>' : '') + '</div>';
+
+  if(!runs.length){
+    html += '<div class="cycle-card"><div class="cycle-num">No runs logged yet</div></div>';
+  } else {
+    html += runs.map(r=>{
+      const orders = (r.orders||[]).map(o=>{
+        const cls = (o.side||'').toUpperCase()==='BUY'?'buy':'sell';
+        return '<div class="exec-item '+cls+'"><div><span class="exec-sym">'+o.symbol+'</span>' +
+          '<span class="exec-tag '+cls+'">'+(o.side||'').toUpperCase()+'</span>' +
+          (o.reason?'<span class="exec-tag buy" style="background:rgba(88,166,255,0.15);color:var(--accent)">'+o.reason+'</span>':'') +
+          ' '+o.shares+' sh @ $'+Number(o.price).toFixed(2)+'</div></div>';
+      }).join('') || '<div class="exec-item none">No orders this run</div>';
+      return '<div class="cycle-card"><div class="cycle-header"><div class="cycle-meta">' +
+        '<span class="cycle-num">'+(r.timestamp||'').slice(0,16).replace('T',' ')+' UTC</span>' +
+        (r.event?'<span class="cycle-strategy">'+r.event+'</span>':'')+'</div></div>' +
+        orders +
+        (r.notes?'<div class="verdict-bar">'+r.notes+'</div>':'') +
+        (r.safe_settled_cash!=null?'<div class="account-row"><span>Safe settled cash</span><span>'+money(r.safe_settled_cash)+'</span></div>':'') +
+        '</div>';
+    }).join('');
+  }
+  el.innerHTML = html;
+}
+
+let MARGINSTYLE_LOG = null, MARGINSTYLE_STATE = null;
+function loadMarginStyle(){
+  Promise.all([
+    fetch('margin_style_live_log.json?t=' + Date.now()).then(r=>r.ok?r.json():null).catch(()=>null),
+    fetch('margin_style_live_state.json?t=' + Date.now()).then(r=>r.ok?r.json():null).catch(()=>null)
+  ]).then(([log, state]) => { MARGINSTYLE_LOG = log; MARGINSTYLE_STATE = state; renderMarginStyle(log, state); renderCapital(); });
+}
+loadMarginStyle();
+
+/* ---------- Capital allocation (shared across the 3 real-money systems) ---------- */
+function swingUsedFromLog(log){
+  const runs = (log && log.runs) || [];
+  if(!runs.length) return {used:0, positions:[]};
+  const last = runs[runs.length-1];
+  const positions = last.positions || [];
+  const used = positions.reduce((s,p)=> s + Number(p.shares) * Number(p.current!=null?p.current:p.entry), 0);
+  return {used, positions};
+}
+function stateUsed(state, priceKey){
+  if(!state) return {used:0, positions:[]};
+  const entries = Object.entries(state.open_positions||{});
+  const used = entries.reduce((s,[sym,p])=> s + Number(p.shares) * Number(p.entry), 0);
+  return {used, positions: entries};
+}
+
+function renderCapital(){
+  const el = document.getElementById('capital-list');
+  fetch('capital_allocations.json?t=' + Date.now()).then(r=>r.ok?r.json():null).catch(()=>null).then(ledger=>{
+    if(!ledger){ el.innerHTML = '<div class="exec-item none">Could not load capital_allocations.json</div>'; return; }
+    const swing = swingUsedFromLog(AGENTIC_LOG);
+    const daytrade = stateUsed(DAYTRADE_STATE);
+    const marginStyle = stateUsed(MARGINSTYLE_STATE);
+    const rows = [
+      {key:'swing', label:'9-Way Combo (swing)', used: swing.used},
+      {key:'daytrade', label:'Day-Trading LIVE', used: daytrade.used},
+      {key:'margin_style', label:'Margin-Style Live', used: marginStyle.used},
+    ];
+    const total = ledger.total_allocated;
+    const rowsHtml = rows.map(r=>{
+      const alloc = ledger.allocations[r.key];
+      const avail = Math.max(0, alloc - r.used);
+      const pct = Math.min(100, 100*r.used/alloc);
+      const over = r.used > alloc;
+      return '<div class="cycle-card">' +
+        '<div class="cycle-num">'+r.label+'</div>' +
+        '<div class="account-row"><span>Allocation</span><span>'+money(alloc)+'</span></div>' +
+        '<div class="account-row"><span>Used (as of last commit)</span><span'+(over?' class="down"':'')+'>'+money(r.used)+(over?' (OVER CAP)':'')+'</span></div>' +
+        '<div class="account-row"><span>Available for new buys</span><span'+(avail<=0.5?' class="down"':' class="up"')+'>'+money(avail)+'</span></div>' +
+        '<div class="rsi-track"><div class="rsi-fill" style="width:'+pct+'%;background:'+(over?'var(--red)':'var(--accent)')+'"></div></div>' +
+        '</div>';
+    }).join('');
+    el.innerHTML = '<div class="cycle-card"><div class="cycle-num">Total allocated: '+money(total)+'</div>' +
+      '<div class="exec-reason">Robinhood has no sub-account feature &mdash; this is a software-only convention. Each system\'s position-sizing is capped to its own slice (scripts/capital_ledger.py), computed from its own state file so the three never double-count the same dollar. "Used" below reflects the last time each system committed a trade or logged a run, not a live mark-to-market price.</div></div>' +
+      rowsHtml +
+      '<div class="cycle-card"><div class="cycle-num">Why this exists</div>' +
+      '<div class="verdict-bar">Before 2026-07-22, all three real-money systems shared one blended cash pool with no reserved slice per strategy &mdash; whichever system ran first and claimed a symbol could size against the entire account, making it impossible to attribute P&amp;L cleanly per strategy. The swing system already held $2,992.43 across its 5 positions when this cap was introduced &mdash; well over its new $1,666.67 slice. Nothing was force-sold; it is simply blocked from new buys until its own stop/target exits bring it back under the cap.</div></div>';
+  });
+}
 
 let AGENTIC_LOG = null;
 function updateMetaTimestamp(j){
@@ -347,7 +472,7 @@ function updateMetaTimestamp(j){
 }
 fetch('agentic_log.json?t=' + Date.now())
   .then(r => { if(!r.ok) throw new Error(r.status); return r.json(); })
-  .then(j => { AGENTIC_LOG = j; renderRuns(j); renderRules(j); renderPnl(j); updateMetaTimestamp(j); })
+  .then(j => { AGENTIC_LOG = j; renderRuns(j); renderRules(j); renderPnl(j); updateMetaTimestamp(j); renderCapital(); })
   .catch(() => { renderRuns(null); renderRules(null); renderPnl(null); document.getElementById('meta-updated').textContent = 'Could not load'; });
 
 </script>
