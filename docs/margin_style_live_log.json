@@ -6,6 +6,14 @@
       "orders": [],
       "safe_settled_cash": 1983.95,
       "notes": "First live run of the margin-style Scaled Dip-Buy/Scaled Peak-Sell engine (Winner config: -25.5% cumulative drawdown / 22-day lookback, 44.6% normal-dip tranche up to 5, 74.3% huge-dip deploy, -1.51% intraday stop, 74.3% peak-sell, gain tiers 5/10/20 -> 20/50/90). Deployed straight to real money at explicit user request with zero prior paper-tracking or live track record beyond backtest (in-sample 5 windows + 2 out-of-sample holdouts). Shares the Agentic 2 cash pool with the 9-Way Combo swing system and Day-Trading LIVE; follows the same cross-system symbol-exclusion rule Day-Trading LIVE already uses. This run: no orders - all 5 basket symbols (AMD/MU/WDC/SNDK/TSM) currently held by the swing system, so every symbol was excluded. No open positions in this system yet."
+    },
+    {
+      "timestamp": "2026-07-23T17:37:00Z",
+      "orders": [],
+      "allocation": 1666.66,
+      "used_capital": 0,
+      "available_capital": 1666.66,
+      "notes": "No orders - all 5 basket symbols (AMD/MU/WDC/SNDK/TSM) currently held by the 9-Way Combo swing system, so every symbol was excluded per the cross-system rule. No existing margin-style positions to manage. This is the first run since the trigger was fixed to bind to this persistent session (previously fired into disconnected fresh sessions with no tool access and silently did nothing since creation on 7/22). Zero paper-tracking or live track record beyond backtest - unproven live."
     }
   ]
 }
