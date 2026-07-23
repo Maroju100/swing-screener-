@@ -386,39 +386,39 @@
           "symbol": "AMD",
           "shares": 0.911403,
           "entry": 556.43,
-          "current": 553.25
+          "current": 538.035
         },
         {
           "symbol": "WDC",
           "shares": 0.911068,
           "entry": 546.57,
-          "current": 571.87
+          "current": 570.09
         },
         {
           "symbol": "TSM",
           "shares": 1.172707,
           "entry": 424.01,
-          "current": 419.465
+          "current": 417.65
         },
         {
           "symbol": "MU",
           "shares": 1.028878,
           "entry": 974.21,
-          "current": 994.55
+          "current": 998.74
         },
         {
           "symbol": "SNDK",
           "shares": 0.313225,
           "entry": 1599.01,
-          "current": 1635.01
+          "current": 1679.1
         }
       ],
-      "account_value": 5045.05,
+      "account_value": 5040.13,
       "cash": 1983.95,
       "buying_power": 1983.95,
-      "daily_pl": 45.33,
-      "cumulative_pl": 71.89,
-      "notes": "check_0945: Capital allocation cap now in effect (new 2026-07-22) - this system's ledger shows used capital $3,052.55 against its $1,666.67 allocation, so available=$0.00 and no new entries were considered this run regardless of signals. Signal C (Bressert RSI-3M3) fired on all 5 symbols but all 5 are already held - no new-entry candidates possible either way. No H/I firings. Exit check on all 5: AMD HOLD (553.25, held 8d, above stop 489.21, below target 690.87), WDC HOLD (571.87, held 2d, above stop 454.33, target 730.87 not reached), TSM HOLD (419.465, held 2d, above stop 391.97, target 489.81 not reached), MU HOLD (994.55, held 1d, below 2-day min hold), SNDK HOLD (1635.01, held 1d, below 2-day min hold). No stops fired, no pause triggered, no orders placed."
+      "daily_pl": 40.41,
+      "cumulative_pl": 66.97,
+      "notes": "check_0945: Capital allocation cap now in effect (new 2026-07-22) - this system's ledger shows used capital $3,052.55 against its $1,666.67 allocation, so available=$0.00 and no new entries were considered this run regardless of signals. Signal C (Bressert RSI-3M3) fired on all 5 symbols but all 5 are already held - no new-entry candidates possible either way. No H/I firings. Exit check on all 5: AMD HOLD (553.25, held 8d, above stop 489.21, below target 690.87), WDC HOLD (571.87, held 2d, above stop 454.33, target 730.87 not reached), TSM HOLD (419.465, held 2d, above stop 391.97, target 489.81 not reached), MU HOLD (994.55, held 1d, below 2-day min hold), SNDK HOLD (1635.01, held 1d, below 2-day min hold). No stops fired, no pause triggered, no orders placed. | check_1245: Signal C fired on MU/WDC/SNDK/TSM (not AMD, which pulled back below its setup threshold). SNDK also showed a fresh Signal D green-turn (MULTI C+D), but no new-entry slots available - allocation cap still at $0.00 (used $3,053.06 vs $1,666.67 cap). Exit check on all 5: AMD HOLD (538.035, held 9d), WDC HOLD (570.09, held 2d, target not reached), TSM HOLD (417.65, held 2d, target not reached), MU HOLD (998.74, held 1d, below 2-day min hold), SNDK HOLD (1679.10, held 1d, below 2-day min hold). No stops fired, no pause triggered, no orders placed."
     }
   ]
 }
