@@ -17,6 +17,15 @@
       "pending_settlement": 0,
       "available": 1666.67,
       "notes": "No qualifying signals, no exits due. All 5 basket symbols (AMD/MU/WDC/SNDK/TSM) currently excluded - held by the live 9-Way Combo swing system. No open day-trading positions of its own."
+    },
+    {
+      "timestamp": "2026-07-23T20:11:00Z",
+      "orders": [],
+      "allocation": 1666.67,
+      "used": 0,
+      "pending_settlement": 0,
+      "available": 1666.67,
+      "notes": "No qualifying signals, no exits due. All 5 basket symbols (AMD/MU/WDC/SNDK/TSM) currently excluded - held by the live 9-Way Combo swing system. No open day-trading positions of its own. Regular session closed just before this run; quotes reflect early extended-hours activity."
     }
   ]
 }
