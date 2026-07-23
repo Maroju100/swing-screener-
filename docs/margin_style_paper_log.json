@@ -129,6 +129,78 @@
     }
    ],
    "cumulative_pl": 3574.37
+  },
+  {
+   "timestamp": "2026-07-23T17:37:21.571851+00:00",
+   "trades": [
+    {
+     "symbol": "AMD",
+     "date": "2026-07-22",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 503.57,
+     "exit": 536.2091,
+     "shares": 5.690470000000001,
+     "pnl": 185.73
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-07-22",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 944.7377,
+     "exit": 956.1606,
+     "shares": 20.326691999999998,
+     "pnl": 232.19
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-07-22",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 533.2867,
+     "exit": 540.1093,
+     "shares": 8.122478000000001,
+     "pnl": 55.42
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-07-22",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 36.188193,
+     "price": 556.67
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-07-22",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1540.0731,
+     "exit": 1565.4001,
+     "shares": 0.640155,
+     "pnl": 16.21
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-07-22",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 3.702811,
+     "price": 1599.27
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-07-22",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 402.3,
+     "exit": 418.1984,
+     "shares": 0.07534899999999997,
+     "pnl": 1.2
+    }
+   ],
+   "cumulative_pl": 3146.51
   }
  ]
 }
