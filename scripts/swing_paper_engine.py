@@ -159,12 +159,13 @@ def build_context(raw_path):
     ICHI = {sym: ichimoku_series(bars_by_sym[sym]) for sym in SYMBOLS if sym in bars_by_sym}
     RSI14 = {sym: rsi_n([b['close'] for b in bars_by_sym[sym]], 14) for sym in SYMBOLS if sym in bars_by_sym}
     EMA21 = {sym: ema_series([b['close'] for b in bars_by_sym[sym]], 21) for sym in SYMBOLS if sym in bars_by_sym}
+    EMA9 = {sym: ema_series([b['close'] for b in bars_by_sym[sym]], 9) for sym in SYMBOLS if sym in bars_by_sym}
     PIVOTS_HL = {sym: find_pivots_hl(bars_by_sym[sym]) for sym in SYMBOLS if sym in bars_by_sym}
-    return bars_by_sym, ATR, CRSI, PIVOT_LOWS, WEEKLY, MONTHLY, ICHI, RSI14, EMA21, PIVOTS_HL
+    return bars_by_sym, ATR, CRSI, PIVOT_LOWS, WEEKLY, MONTHLY, ICHI, RSI14, EMA21, PIVOTS_HL, EMA9
 
 
 def make_signals(ctx):
-    bars_by_sym, ATR, CRSI, PIVOT_LOWS, WEEKLY, MONTHLY, ICHI, RSI14, EMA21, PIVOTS_HL = ctx
+    bars_by_sym, ATR, CRSI, PIVOT_LOWS, WEEKLY, MONTHLY, ICHI, RSI14, EMA21, PIVOTS_HL, EMA9 = ctx
 
     def sig_bollinger_squeeze(sym, gi):
         bars = bars_by_sym[sym]
@@ -466,11 +467,52 @@ def make_signals(ctx):
                 return (gain, atr*1.75, atr*3.5)
         return None
 
-    # Minervini VCP, Donchian, Asymmetric Pullback, MA Crossover, and Darvas Box graduated to
-    # the live 9-Way Combo - removed here to avoid double-tracking. The 6 setups below (sourced
-    # from widely-cited retail/YouTube trading content) are paper-only pending further validation;
-    # Relative Strength Leader Pullback backtested negative (-$582, 0/5 windows) and is included
-    # here for continued observation, not because it looked promising.
+    def sig_ma_crossover(sym, gi):
+        # Same math as live 9-Way Combo Signal H, using the completed daily bar as "today"
+        # (no live-quote proxy needed in a daily-bar paper backtest).
+        bars = bars_by_sym[sym]
+        if gi < 22: return None
+        e9, e21 = EMA9[sym], EMA21[sym]
+        if e9[gi] is None or e21[gi] is None or e9[gi-1] is None or e21[gi-1] is None: return None
+        if e9[gi] > e21[gi] and not (e9[gi-1] > e21[gi-1]):
+            atr = ATR[sym][gi]
+            if not atr: return None
+            return ((e9[gi] - e21[gi]) / e21[gi], atr * 1.75, atr * 3.5)
+        return None
+
+    def sig_darvas_box(sym, gi):
+        # Same math as live 9-Way Combo Signal I.
+        bars = bars_by_sym[sym]
+        if gi < 30: return None
+        lookback_start = max(0, gi - 252)
+        high_ref = max(bars[j]['high'] for j in range(lookback_start, gi))
+        box_candidates = []
+        for k_off in range(2, 12):
+            k = gi - k_off
+            if k < 0: continue
+            if abs(bars[k]['high'] - high_ref) / high_ref <= 0.005:
+                box_candidates.append(k)
+        if not box_candidates: return None
+        box_start = min(box_candidates)
+        span = bars[box_start:gi]
+        if not span: return None
+        box_top = max(b['high'] for b in span)
+        box_bottom = min(b['low'] for b in span)
+        if box_top <= 0 or (box_top - box_bottom) / box_top > 0.08: return None
+        if bars[gi-1]['close'] <= box_top and bars[gi]['close'] > box_top:
+            atr = ATR[sym][gi]
+            if not atr: return None
+            return ((bars[gi]['close'] - box_top) / box_top, atr * 1.75, atr * 3.5)
+        return None
+
+    # Minervini VCP, Donchian, and Asymmetric Pullback graduated to the live 9-Way Combo -
+    # removed here to avoid double-tracking. MA Crossover and Darvas Box (added 2026-07-22 to
+    # the live combo directly, skipping paper-tracking per explicit user request) are added here
+    # too so their behavior can now also be observed on an isolated $25k paper account, same as
+    # every other not-yet-fully-vetted signal. The 6 setups below them (sourced from widely-cited
+    # retail/YouTube trading content) are paper-only pending further validation; Relative Strength
+    # Leader Pullback backtested negative (-$582, 0/5 windows) and is included here for continued
+    # observation, not because it looked promising.
     return {
         'Bollinger Squeeze Breakout': sig_bollinger_squeeze,
         'Probe and Pullback': sig_probe_pullback,
@@ -485,6 +527,8 @@ def make_signals(ctx):
         'Fibonacci 61.8% Retracement Bounce': sig_fib_618_retracement,
         'RSI Bullish Divergence': sig_rsi_bullish_divergence,
         'Bull Flag Breakout': sig_bull_flag_swing,
+        'MA Crossover (H)': sig_ma_crossover,
+        'Darvas Box (I)': sig_darvas_box,
     }
 
 

@@ -202,10 +202,51 @@ def sig_oversold_snapback(bars_by_sym, IND, DAYIDX, sym, gi):
         return (drop, rng, rng * 2)
     return None
 
-# VWAP Reclaim and First Pullback After ORB graduated to Day-Trading LIVE (2026-07-22) -
-# removed here to avoid double-tracking. Relative Volume Leader Momentum and Oversold Snapback
-# Fade are paper-only pending further validation; Oversold Snapback Fade backtested negative
-# (-$319.98) and is included here for continued observation, not because it looked promising.
+def sig_vwap_reclaim(bars_by_sym, IND, DAYIDX, sym, gi):
+    bars = bars_by_sym[sym]
+    meta = DAYIDX[sym][gi]
+    if meta['i_in_day'] < 3: return None
+    day_start = gi - meta['i_in_day']
+    def vwap_through(k):
+        cum_pv = cum_v = 0.0
+        for j in range(day_start, k + 1):
+            tp = (bars[j]['high'] + bars[j]['low'] + bars[j]['close']) / 3
+            v = bars[j]['volume'] or 1
+            cum_pv += tp * v; cum_v += v
+        return cum_pv / cum_v if cum_v else bars[k]['close']
+    vwap_now = vwap_through(gi)
+    vwap_prev = vwap_through(gi - 1)
+    if bars[gi - 1]['close'] >= vwap_prev: return None
+    if bars[gi]['close'] > vwap_now:
+        span = max(1, min(6, gi - day_start + 1))
+        rng = sum(bars[j]['high'] - bars[j]['low'] for j in range(gi - span + 1, gi + 1)) / span
+        if rng <= 0: return None
+        return ((bars[gi]['close'] - vwap_now) / vwap_now, rng, rng * 2)
+    return None
+
+def sig_first_pullback_after_orb(bars_by_sym, IND, DAYIDX, sym, gi):
+    bars = bars_by_sym[sym]
+    meta = DAYIDX[sym][gi]
+    day_start = gi - meta['i_in_day']
+    if meta['i_in_day'] < 3: return None
+    or_high = max(bars[day_start]['high'], bars[day_start + 1]['high'])
+    broke_out = any(bars[j]['close'] > or_high for j in range(day_start + 2, gi))
+    if not broke_out: return None
+    if bars[gi - 1]['close'] <= or_high: return None
+    pulled_back = gi - 2 >= day_start and bars[gi - 1]['low'] <= bars[gi - 2]['high']
+    bounced = bars[gi]['close'] > bars[gi - 1]['close'] and bars[gi]['close'] > or_high
+    if pulled_back and bounced:
+        rng = or_high - min(bars[day_start]['low'], bars[day_start + 1]['low'])
+        if rng <= 0: return None
+        return ((bars[gi]['close'] - or_high) / or_high, rng * 0.5, rng)
+    return None
+
+# Relative Volume Leader Momentum and Oversold Snapback Fade are paper-only pending further
+# validation; Oversold Snapback Fade backtested negative (-$319.98) and is included here for
+# continued observation, not because it looked promising. VWAP Reclaim and First Pullback After
+# ORB (added 2026-07-22 to Day-Trading LIVE directly, skipping paper-tracking per explicit user
+# request) are added here too so their behavior can also be observed on an isolated $25k paper
+# account, same as every other not-yet-fully-vetted signal.
 STRATEGIES = {
     'Swing Pullback / Anti': sig_swing_pullback,
     'Hybrid Disciplined Momentum Scalping': sig_hybrid_scalping,
@@ -217,6 +258,8 @@ STRATEGIES = {
     'ID/NR4 Volatility Breakout': sig_id_nr4_breakout,
     'Relative Volume Leader Momentum': sig_relative_volume_leader,
     'Oversold Snapback Fade': sig_oversold_snapback,
+    'VWAP Reclaim (H2)': sig_vwap_reclaim,
+    'First Pullback After ORB (H2)': sig_first_pullback_after_orb,
 }
 
 def build_indicators(raw_path):

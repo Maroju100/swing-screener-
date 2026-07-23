@@ -1,0 +1,134 @@
+{
+ "capital": 25000.0,
+ "symbols": [
+  "AMD",
+  "MU",
+  "WDC",
+  "SNDK",
+  "TSM"
+ ],
+ "strategy": "Scaled Dip-Buy / Scaled Peak-Sell (Winner config)",
+ "note": "PAPER TRADING ONLY - no real orders placed. Daily bars. This strategy is otherwise LIVE on real money (scripts/margin_style_live_engine.py); this paper track is a separate, non-connected comparison only.",
+ "runs": [
+  {
+   "timestamp": "2026-07-23T14:35:18.301497+00:00",
+   "trades": [
+    {
+     "symbol": "AMD",
+     "date": "2026-07-20",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 22.141907,
+     "price": 503.57
+    },
+    {
+     "symbol": "AMD",
+     "date": "2026-07-21",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 503.57,
+     "exit": 544.43,
+     "shares": 16.451437,
+     "pnl": 672.21
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-07-20",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 19.579582,
+     "price": 865.46
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-07-21",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 865.46,
+     "exit": 970.82,
+     "shares": 14.547629,
+     "pnl": 1532.74
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-07-21",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 15.294739,
+     "price": 970.82
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-07-20",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 7.829077,
+     "price": 487.42
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-07-21",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 487.42,
+     "exit": 548.39,
+     "shares": 5.817004,
+     "pnl": 354.66
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-07-21",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 6.110405,
+     "price": 548.39
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-07-20",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 0.619129,
+     "price": 1390.95
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-07-21",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 1390.95,
+     "exit": 1589.4,
+     "shares": 0.460013,
+     "pnl": 91.29
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-07-21",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 0.481039,
+     "price": 1589.4
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-07-20",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 0.293185,
+     "price": 402.3
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-07-21",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 402.3,
+     "exit": 424.61,
+     "shares": 0.217836,
+     "pnl": 4.86
+    }
+   ],
+   "cumulative_pl": 3574.37
+  }
+ ]
+}
