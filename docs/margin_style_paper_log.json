@@ -201,6 +201,56 @@
     }
    ],
    "cumulative_pl": 3146.51
+  },
+  {
+   "timestamp": "2026-07-24T13:40:44.822039+00:00",
+   "trades": [
+    {
+     "symbol": "MU",
+     "date": "2026-07-23",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 0.936775,
+     "price": 990.21
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-07-23",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 556.67,
+     "exit": 558.3,
+     "shares": 26.887827,
+     "pnl": 43.83
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-07-23",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1599.27,
+     "exit": 1575.121,
+     "shares": 3.702811,
+     "pnl": -89.42
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-07-23",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 10.148903,
+     "price": 1610.33
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-07-23",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 6.066784,
+     "price": 415.58
+    }
+   ],
+   "cumulative_pl": 3116.07
   }
  ]
 }
