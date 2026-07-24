@@ -381,6 +381,13 @@ def cmd_commit(actions_path):
     today = datetime.now(timezone.utc).date()
     settle_date = next_business_day(today).isoformat()
 
+    # Prune already-settled entries before appending new ones - previously this list
+    # only ever grew (cmd_plan filters expired entries for its own calculation but never
+    # persists that), so capital_ledger.py's "available" figure would keep shrinking
+    # forever even after cash had genuinely settled and become spendable again.
+    state['pending_settlement'] = [p for p in state.get('pending_settlement', [])
+                                    if p['settle_date'] > today.isoformat()]
+
     for s in actions.get('sells', []):
         sym = s['symbol']
         if sym in state['open_positions']:

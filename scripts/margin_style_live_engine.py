@@ -70,6 +70,16 @@ PEAK_SELL_PCT = 0.743
 GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]
 MIN_NOTIONAL = 25.0
 
+# Added 2026-07-24 after a code review surfaced three gaps versus the backtest:
+MAX_SYMBOL_ALLOCATION_PCT = 0.50  # no single symbol may hold more than 50% of this
+                                  # system's total equity (available cash + mark-to-market
+                                  # of its own open positions) - caps concentration risk from
+                                  # a symbol hitting all 5 tranches in a row.
+CIRCUIT_BREAKER_STOP_COUNT = 2    # if this many STOP exits fire in the same run (a broad,
+                                  # simultaneous selloff across the basket), skip all new
+                                  # entries this run - stops/exits still execute normally,
+                                  # only fresh buys pause. Re-evaluated fresh next run.
+
 
 def next_business_day(d):
     d2 = d + timedelta(days=1)
@@ -137,47 +147,77 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
                                   'reason': f'GAIN{int(pct*100)}', 'entry': pos['entry']})
                 break
 
+    stop_count = sum(1 for s in sells if s['reason'] == 'STOP')
+    circuit_breaker_triggered = stop_count >= CIRCUIT_BREAKER_STOP_COUNT
+
+    # Total equity this system controls right now, for the concentration cap below.
+    # (Available cash + mark-to-market of its own open positions - does not include
+    # pending_settlement, which is temporarily locked but still "its" money; a minor
+    # underestimate that only makes the cap slightly more conservative, never less.)
+    total_equity = safe_cash + sum(pos['shares'] * quotes.get(sym, 0.0)
+                                    for sym, pos in state['open_positions'].items() if sym in quotes)
+
+    candidates = []
+    if not circuit_breaker_triggered:
+        for sym in SYMBOLS:
+            if sym in excluded_symbols or sym not in bars_by_sym or sym not in quotes:
+                continue
+            pos = state['open_positions'].get(sym)
+            if pos and pos.get('tranches', 0) >= MAX_TRANCHES:
+                continue
+            bars = bars_by_sym[sym]
+            if len(bars) < 2:
+                continue
+            yesterday_close = bars[-1]['close']
+            day_before_close = bars[-2]['close']
+            day_return = (yesterday_close - day_before_close) / day_before_close
+            lb_bars = bars[-(LOOKBACK_DAYS + 1):-1] if len(bars) > LOOKBACK_DAYS else bars[:-1]
+            trailing_high = max(b['close'] for b in lb_bars) if lb_bars else yesterday_close
+            drawdown = (yesterday_close - trailing_high) / trailing_high
+
+            if drawdown <= HUGE_DIP_DRAWDOWN:
+                reason = 'HUGE_DIP'
+            elif day_return < 0 and (not pos or pos.get('tranches', 0) < MAX_TRANCHES):
+                reason = 'NORMAL_DIP'
+            else:
+                continue
+            candidates.append({'symbol': sym, 'drawdown': drawdown, 'day_return': day_return, 'reason': reason})
+
+    # Deepest drawdown gets first claim on remaining cash each run, instead of a fixed
+    # symbol always winning ties (was AMD, MU, WDC, SNDK, TSM list order every time).
+    candidates.sort(key=lambda c: c['drawdown'])
+
     buys = []
-    for sym in SYMBOLS:
-        if sym in excluded_symbols or sym not in bars_by_sym or sym not in quotes:
-            continue
-        pos = state['open_positions'].get(sym)
-        if pos and pos.get('tranches', 0) >= MAX_TRANCHES:
-            continue
-        bars = bars_by_sym[sym]
-        if len(bars) < 2:
-            continue
-        yesterday_close = bars[-1]['close']
-        day_before_close = bars[-2]['close']
-        day_return = (yesterday_close - day_before_close) / day_before_close
-        lb_bars = bars[-(LOOKBACK_DAYS + 1):-1] if len(bars) > LOOKBACK_DAYS else bars[:-1]
-        trailing_high = max(b['close'] for b in lb_bars) if lb_bars else yesterday_close
-        drawdown = (yesterday_close - trailing_high) / trailing_high
-        live_price = quotes[sym]
+    for c in candidates:
+        sym = c['symbol']
         if safe_cash <= 1.0:
-            continue
+            break
+        live_price = quotes[sym]
+        pct = HUGE_DIP_PCT if c['reason'] == 'HUGE_DIP' else TRANCHE_PCT
+        deploy = safe_cash * pct
 
-        if drawdown <= HUGE_DIP_DRAWDOWN:
-            deploy = safe_cash * HUGE_DIP_PCT
-            reason = 'HUGE_DIP'
-        elif day_return < 0 and (not pos or pos.get('tranches', 0) < MAX_TRANCHES):
-            deploy = safe_cash * TRANCHE_PCT
-            reason = 'NORMAL_DIP'
-        else:
-            continue
+        pos = state['open_positions'].get(sym)
+        current_value = pos['shares'] * live_price if pos else 0.0
+        room = max(0.0, MAX_SYMBOL_ALLOCATION_PCT * total_equity - current_value)
+        capped = min(deploy, room)
 
-        if deploy < MIN_NOTIONAL:
+        if capped < MIN_NOTIONAL:
             continue
-        shares = round(deploy / live_price, 6)
+        shares = round(capped / live_price, 6)
         if shares <= 0:
             continue
+        actual_deploy = shares * live_price
         buys.append({'symbol': sym, 'shares': shares, 'price': round(live_price, 4),
-                     'notional': round(shares * live_price, 2), 'reason': reason,
-                     'drawdown': round(drawdown, 4), 'day_return': round(day_return, 4)})
-        safe_cash -= deploy  # subsequent symbols this run see reduced remaining cash
+                     'notional': round(actual_deploy, 2), 'reason': c['reason'],
+                     'drawdown': round(c['drawdown'], 4), 'day_return': round(c['day_return'], 4),
+                     'capped_by_concentration_limit': capped < deploy})
+        safe_cash -= actual_deploy  # subsequent symbols this run see reduced remaining cash
 
     print(json.dumps({'real_cash': real_cash, 'pending_settlement_total': round(pending_total, 2),
                       'safe_settled_cash': round(max(0.0, real_cash - pending_total), 2),
+                      'total_equity': round(total_equity, 2),
+                      'circuit_breaker_triggered': circuit_breaker_triggered,
+                      'stop_count_this_run': stop_count,
                       'open_positions': state['open_positions'], 'sells': sells, 'buys': buys}, indent=1))
 
 
@@ -186,6 +226,13 @@ def cmd_commit(actions_path):
     state = load_state()
     today = datetime.now(timezone.utc).date()
     settle_date = next_business_day(today).isoformat()
+
+    # Prune already-settled entries before appending new ones - previously this list
+    # only ever grew (cmd_plan filters expired entries for its own calculation but never
+    # persists that), so capital_ledger.py's "available" figure would keep shrinking
+    # forever even after cash had genuinely settled and become spendable again.
+    state['pending_settlement'] = [p for p in state.get('pending_settlement', [])
+                                    if p['settle_date'] > today.isoformat()]
 
     for s in actions.get('sells', []):
         sym = s['symbol']
