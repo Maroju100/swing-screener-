@@ -429,39 +429,39 @@
           "symbol": "AMD",
           "shares": 0.911403,
           "entry": 556.43,
-          "current": 533.32
+          "current": 532.72
         },
         {
           "symbol": "WDC",
           "shares": 0.911068,
           "entry": 546.57,
-          "current": 538.39
+          "current": 527.93
         },
         {
           "symbol": "TSM",
           "shares": 1.172707,
           "entry": 424.01,
-          "current": 408.92
+          "current": 405.94
         },
         {
           "symbol": "MU",
           "shares": 1.028878,
           "entry": 974.21,
-          "current": 948.27
+          "current": 934.555
         },
         {
           "symbol": "SNDK",
           "shares": 0.313225,
           "entry": 1599.01,
-          "current": 1532.102
+          "current": 1484.06
         }
       ],
-      "account_value": 4897.58,
+      "account_value": 4854.85,
       "cash": 1983.95,
       "buying_power": 1983.95,
       "daily_pl": -85.15,
       "cumulative_pl": -18.18,
-      "notes": "check_0945: Quiet session so far - no signals fired on any of the 5 symbols (A-I all false). All 5 basket names down today (AMD -1.18%, MU -4.24%, WDC -3.57%, SNDK -4.86%, TSM -1.60% vs 7/23 close), a broad sector pullback. No new-entry slots available either way - all 5 basket positions already held (5/5 cap), and capital allocation cap remains at $0.00 available (used $2,911.67 vs $1,666.67 cap). Exit check on all 5: AMD HOLD (533.32, held 10d, above stop 489.21, below target 690.87), WDC HOLD (538.39, held 3d, above stop 454.33, target 730.87 not reached), TSM HOLD (408.92, held 3d, above stop 391.97, target 489.81 not reached), MU HOLD (948.27, held 2d, above stop 822.11, target 1271.59 not reached), SNDK HOLD (1532.102, held 2d, above stop 1246.42, target 2296.07 not reached). No stops fired, no pause triggered, no orders placed. All same-day price/volume inputs are live-quote proxies, not final settled values."
+      "notes": "check_0945: Quiet session so far - no signals fired on any of the 5 symbols (A-I all false). All 5 basket names down today (AMD -1.18%, MU -4.24%, WDC -3.57%, SNDK -4.86%, TSM -1.60% vs 7/23 close), a broad sector pullback. No new-entry slots available either way - all 5 basket positions already held (5/5 cap), and capital allocation cap remains at $0.00 available (used $2,911.67 vs $1,666.67 cap). Exit check on all 5: AMD HOLD (533.32, held 10d, above stop 489.21, below target 690.87), WDC HOLD (538.39, held 3d, above stop 454.33, target 730.87 not reached), TSM HOLD (408.92, held 3d, above stop 391.97, target 489.81 not reached), MU HOLD (948.27, held 2d, above stop 822.11, target 1271.59 not reached), SNDK HOLD (1532.102, held 2d, above stop 1246.42, target 2296.07 not reached). No stops fired, no pause triggered, no orders placed. All same-day price/volume inputs are live-quote proxies, not final settled values. | check_1245: Quiet run again - no signals fired on any of the 5 symbols (A-I all false), same as check_0945. Sector selloff continuing to deepen: AMD -1.29%, MU -5.62%, WDC -5.44%, SNDK -7.84%, TSM -2.32% vs 7/23 close. No new-entry slots available either way - all 5 basket positions already held (5/5 cap), capital allocation cap remains at $0.00 available (used $2,868.94 vs $1,666.67 cap). Exit check on all 5: AMD HOLD (532.72, held 10d, above stop 489.21, below target 690.87), WDC HOLD (527.93, held 3d, above stop 454.33, target 730.87 not reached), TSM HOLD (405.94, held 3d, above stop 391.97, target 489.81 not reached), MU HOLD (934.555, held 2d, above stop 822.11, target 1271.59 not reached), SNDK HOLD (1484.06, held 2d, above stop 1246.42, target 2296.07 not reached). No stops fired, no pause triggered, no orders placed. All same-day price/volume inputs are live-quote proxies, not final settled values."
     }
   ]
 }
