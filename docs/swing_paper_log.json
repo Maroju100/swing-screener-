@@ -323,6 +323,27 @@
     "MA Crossover (H)": 71.1,
     "Darvas Box (I)": 0.0
    }
+  },
+  {
+   "timestamp": "2026-07-24T21:07:13.034115+00:00",
+   "trades": [],
+   "equity_snapshot": {
+    "Bollinger Squeeze Breakout": 0.0,
+    "Probe and Pullback": 0.0,
+    "MIDAS Anchored VWAP Bounce": -610.12,
+    "Perfect Storm (D/W/M alignment)": 0.0,
+    "ConnorsRSI Oversold Bounce": 0.0,
+    "Ichimoku Kumo Breakout": 0.0,
+    "Pivot Point S1 Bounce": 114.55,
+    "Cup and Handle": 0.0,
+    "High Tight Flagpole": 0.0,
+    "Relative Strength Leader Pullback": -42.66,
+    "Fibonacci 61.8% Retracement Bounce": 0.0,
+    "RSI Bullish Divergence": 0.0,
+    "Bull Flag Breakout": 0.0,
+    "MA Crossover (H)": -42.66,
+    "Darvas Box (I)": 0.0
+   }
   }
  ]
 }
