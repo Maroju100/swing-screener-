@@ -2371,6 +2371,44 @@
     "VWAP Reclaim (H2)": -126.41,
     "First Pullback After ORB (H2)": -28.0
    }
+  },
+  {
+   "timestamp": "2026-07-24T15:12:27.655710+00:00",
+   "trades": [
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-24",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 15,
+     "price": 531.27
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-24",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 531.27,
+     "exit": 520.97,
+     "shares": 15,
+     "pnl": -154.5
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -2187.68,
+    "Hybrid Disciplined Momentum Scalping": -559.26,
+    "Gap / High Change Momentum": -163.48,
+    "Turtle Soup Reversal": -639.97,
+    "Momentum Breakout": -234.12,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 59.62,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -44.41,
+    "Oversold Snapback Fade": -21.07,
+    "VWAP Reclaim (H2)": -126.41,
+    "First Pullback After ORB (H2)": -28.0
+   }
   }
  ]
 }
