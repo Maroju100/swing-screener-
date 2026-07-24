@@ -1,10 +1,11 @@
 {
   "total_allocated": 5000.00,
   "allocations": {
-    "swing": 1666.67,
-    "daytrade": 1666.67,
-    "margin_style": 1666.66
+    "swing": 0.00,
+    "daytrade": 0.00,
+    "margin_style": 5000.00
   },
   "created_at": "2026-07-22T21:00:00Z",
-  "notes": "Equal 3-way split of $5000 across the three real-money live systems on Agentic 2 (912291820), per explicit user request 2026-07-22. Robinhood has no sub-account/bucket feature - this is a software-only convention enforced by each system's own position-sizing formula referencing its allocation cap via scripts/capital_ledger.py, not by any actual segregation of cash at the broker. At creation time, the swing system already held $2,992.43 of stock across its 5 positions (AMD/WDC/TSM/MU/SNDK) - $1,325.76 OVER its new $1,666.67 allocation. Nothing was force-sold to fit the new cap; the swing system is simply blocked from new buys until its own stop/target exits organically bring its holdings back under $1,666.67."
+  "updated_at": "2026-07-24T18:31:00Z",
+  "notes": "RESET 2026-07-24: per explicit user request, live trading is now consolidated to Margin-Style only after multi-frequency backtesting showed it as the sole system with consistent (3/5 window) profitability at every check frequency, while 9-Way Combo and Day-Trading LIVE showed only 1-2/5 window consistency. The 9-Way Combo LIVE trigger (trig_01AZXmLrvMg4B1Gka5kreqcR) and Day-Trading LIVE trigger (trig_01GY1mk2Eo68gMX5YdS34zGW) were disabled the same day. All 5 of 9-Way Combo's real positions (AMD/MU/WDC/SNDK/TSM) were liquidated to free their capital (realized ~-$181.68); Day-Trading LIVE held no positions. Margin-Style Live now sizes against the full $5,000. Both paper trackers (9-Way/swing paper, day-trading paper) keep running unaffected so either system can be re-evaluated and brought back live later. Original equal 3-way split notes (2026-07-22) superseded by this entry."
 }

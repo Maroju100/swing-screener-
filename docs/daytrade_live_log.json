@@ -71,6 +71,15 @@
    "pending_settlement": 0,
    "available": 1666.67,
    "notes": "No qualifying signals, no exits due. All 5 basket symbols (AMD/MU/WDC/SNDK/TSM) currently excluded - held by the live 9-Way Combo swing system. No open day-trading positions of its own."
+  },
+  {
+   "timestamp": "2026-07-24T18:31:00Z",
+   "orders": [],
+   "allocation": 0.0,
+   "used": 0,
+   "pending_settlement": 0,
+   "available": 0.0,
+   "notes": "SYSTEM RESET: per explicit user request, this trigger (trig_01GY1mk2Eo68gMX5YdS34zGW) has been DISABLED and its capital allocation reduced to $0 - all real-money capital consolidated into Margin-Style Live, the only system showing consistent (3/5 window) profitability across all backtested check frequencies. This system held no open positions at reset time, so nothing to liquidate. The Day-Trading Paper Tracker continues running unaffected so this system can be re-evaluated and brought back live later."
   }
  ]
 }
