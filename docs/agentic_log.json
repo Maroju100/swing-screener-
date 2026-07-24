@@ -419,6 +419,49 @@
       "daily_pl": 40.41,
       "cumulative_pl": 66.97,
       "notes": "check_0945: Capital allocation cap now in effect (new 2026-07-22) - this system's ledger shows used capital $3,052.55 against its $1,666.67 allocation, so available=$0.00 and no new entries were considered this run regardless of signals. Signal C (Bressert RSI-3M3) fired on all 5 symbols but all 5 are already held - no new-entry candidates possible either way. No H/I firings. Exit check on all 5: AMD HOLD (553.25, held 8d, above stop 489.21, below target 690.87), WDC HOLD (571.87, held 2d, above stop 454.33, target 730.87 not reached), TSM HOLD (419.465, held 2d, above stop 391.97, target 489.81 not reached), MU HOLD (994.55, held 1d, below 2-day min hold), SNDK HOLD (1635.01, held 1d, below 2-day min hold). No stops fired, no pause triggered, no orders placed. | check_1245: Signal C fired on MU/WDC/SNDK/TSM (not AMD, which pulled back below its setup threshold). SNDK also showed a fresh Signal D green-turn (MULTI C+D), but no new-entry slots available - allocation cap still at $0.00 (used $3,053.06 vs $1,666.67 cap). Exit check on all 5: AMD HOLD (538.035, held 9d), WDC HOLD (570.09, held 2d, target not reached), TSM HOLD (417.65, held 2d, target not reached), MU HOLD (998.74, held 1d, below 2-day min hold), SNDK HOLD (1679.10, held 1d, below 2-day min hold). No stops fired, no pause triggered, no orders placed. | check_1545: Signal C (Bressert RSI-3M3) fired on MU/WDC/SNDK/TSM (not AMD, which stayed below its setup threshold). No H/I firings this run. No new-entry slots available either way - all 5 basket positions already held (5/5 cap), and capital allocation cap remains at $0.00 available (used $2,996.82 vs $1,666.67 cap). Exit check on all 5: AMD HOLD (536.96, held 9d, above stop 489.21, below target 690.87), WDC HOLD (558.165, held 2d, above stop 454.33, target 730.87 not reached), TSM HOLD (413.34, held 2d, above stop 391.97, target 489.81 not reached), MU HOLD (981.83, held 1d, below 2-day min hold, above stop 822.11), SNDK HOLD (1609.05, held 1d, below 2-day min hold, above stop 1246.42). No stops fired, no pause triggered, no orders placed. Session-so-far mixed for semis: AMD -2.78%, TSM -1.87% vs 7/22 close; MU +2.33%, WDC +0.27%, SNDK +0.61%. All same-day price/volume inputs are live-quote proxies, not final settled values."
+    },
+    {
+      "date": "2026-07-24",
+      "regime": "Broad sector pullback - all 5 basket names down vs 7/23 close (AMD -1.18%, MU -4.24%, WDC -3.57%, SNDK -4.86%, TSM -1.60%). Bearish session-so-far for AI/semis.",
+      "orders": [],
+      "positions": [
+        {
+          "symbol": "AMD",
+          "shares": 0.911403,
+          "entry": 556.43,
+          "current": 533.32
+        },
+        {
+          "symbol": "WDC",
+          "shares": 0.911068,
+          "entry": 546.57,
+          "current": 538.39
+        },
+        {
+          "symbol": "TSM",
+          "shares": 1.172707,
+          "entry": 424.01,
+          "current": 408.92
+        },
+        {
+          "symbol": "MU",
+          "shares": 1.028878,
+          "entry": 974.21,
+          "current": 948.27
+        },
+        {
+          "symbol": "SNDK",
+          "shares": 0.313225,
+          "entry": 1599.01,
+          "current": 1532.102
+        }
+      ],
+      "account_value": 4897.58,
+      "cash": 1983.95,
+      "buying_power": 1983.95,
+      "daily_pl": -85.15,
+      "cumulative_pl": -18.18,
+      "notes": "check_0945: Quiet session so far - no signals fired on any of the 5 symbols (A-I all false). All 5 basket names down today (AMD -1.18%, MU -4.24%, WDC -3.57%, SNDK -4.86%, TSM -1.60% vs 7/23 close), a broad sector pullback. No new-entry slots available either way - all 5 basket positions already held (5/5 cap), and capital allocation cap remains at $0.00 available (used $2,911.67 vs $1,666.67 cap). Exit check on all 5: AMD HOLD (533.32, held 10d, above stop 489.21, below target 690.87), WDC HOLD (538.39, held 3d, above stop 454.33, target 730.87 not reached), TSM HOLD (408.92, held 3d, above stop 391.97, target 489.81 not reached), MU HOLD (948.27, held 2d, above stop 822.11, target 1271.59 not reached), SNDK HOLD (1532.102, held 2d, above stop 1246.42, target 2296.07 not reached). No stops fired, no pause triggered, no orders placed. All same-day price/volume inputs are live-quote proxies, not final settled values."
     }
   ]
 }

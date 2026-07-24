@@ -119,7 +119,9 @@
   },
   "2026-07-24_check_0945": {
     "run": "check_0945",
-    "stage": "started",
-    "started_at": "2026-07-24T13:45:33Z"
+    "stage": "completed",
+    "started_at": "2026-07-24T13:45:33Z",
+    "completed_at": "2026-07-24T13:50:00Z",
+    "orders_count": 0
   }
 }
