@@ -34,7 +34,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LEDGER_PATH = os.path.join(ROOT, 'docs', 'capital_allocations.json')
 DAYTRADE_STATE = os.path.join(ROOT, 'docs', 'daytrade_live_state.json')
 MARGIN_STATE = os.path.join(ROOT, 'docs', 'margin_style_live_state.json')
-SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM"]
+# 2026-07-25: expanded to match margin_style_live_engine.py's 8-name universe.
+SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM", "INTC", "LRCX", "STX"]
 
 
 def load_json(path, default):

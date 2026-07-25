@@ -58,7 +58,12 @@ from datetime import datetime, timezone, timedelta
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE_PATH = os.path.join(ROOT, 'docs', 'margin_style_live_state.json')
-SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM"]
+# Universe expanded 2026-07-25 from the original 5 to 8 names after honest-fill
+# backtesting showed +INTC+LRCX+STX improves every robustness metric (6/6 quarters
+# won vs 5/6, worst quarter +$2,284 vs -$901, total +$77,174 vs +$64,443 over
+# Jan'25-Jul'26), with the improvement present in BOTH the 2025 and 2026 halves.
+# NVDA tested and rejected (-$10-12k drag in every combination; also prohibited live).
+SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM", "INTC", "LRCX", "STX"]
 
 HUGE_DIP_DRAWDOWN = -0.255
 LOOKBACK_DAYS = 22

@@ -23,7 +23,10 @@ from datetime import datetime, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE_PATH = os.path.join(ROOT, 'docs', 'margin_style_paper_state.json')
 LOG_PATH = os.path.join(ROOT, 'docs', 'margin_style_paper_log.json')
-SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM"]
+# 2026-07-25: expanded to match the live system's 8-name universe so the $25k
+# paper mirror stays a valid side-by-side comparison. New symbols initialize
+# fresh in state (incremental tracking is per-symbol).
+SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM", "INTC", "LRCX", "STX"]
 CAPITAL = 25000.0
 
 # "Winner" config (joint random-search + walk-forward validated, 2026-07-22)
