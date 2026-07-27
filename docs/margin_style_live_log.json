@@ -78,6 +78,54 @@
       "used_capital": 0,
       "available_capital": 1666.66,
       "notes": "No orders - all 5 basket symbols (AMD/MU/WDC/SNDK/TSM) currently held by the 9-Way Combo swing system, so every symbol was excluded per the cross-system rule. No existing margin-style positions to manage. Zero paper-tracking or live track record beyond backtest remains true - unproven live."
+    },
+    {
+      "timestamp": "2026-07-27T14:42:00Z",
+      "orders": [
+        {
+          "symbol": "SNDK",
+          "side": "buy",
+          "shares": 2.001409,
+          "price": 1249.6199,
+          "reason": "HUGE_DIP",
+          "notional": 2501.0
+        },
+        {
+          "symbol": "INTC",
+          "side": "buy",
+          "shares": 21.169297,
+          "price": 87.2547,
+          "reason": "HUGE_DIP",
+          "notional": 1847.12
+        },
+        {
+          "symbol": "MU",
+          "side": "buy",
+          "shares": 0.085625,
+          "price": 857.7498,
+          "reason": "NORMAL_DIP",
+          "notional": 73.44
+        },
+        {
+          "symbol": "WDC",
+          "side": "buy",
+          "shares": 0.08565,
+          "price": 472.3899,
+          "reason": "NORMAL_DIP",
+          "notional": 40.46
+        }
+      ],
+      "skipped": [
+        {
+          "symbol": "LRCX",
+          "side": "buy",
+          "reason": "insufficient buying power at placement time (real account cash consumed by earlier fills in this run) - skipped, not resized or retried"
+        }
+      ],
+      "allocation": 5000.0,
+      "used_before_run": 0.0,
+      "available_before_run": 5000.0,
+      "notes": "First real trades for this system - basket-wide selloff deepened through the session (SNDK/INTC/LRCX all past HUGE_DIP threshold, MU/WDC NORMAL_DIP). Deepest-drawdown-first ordering: SNDK(-38.5%) > INTC(-33.9%) > LRCX(-29.6%) > MU(-24.1%) > WDC(-23.0%). LRCX capped-by-concentration-limit was false in the plan but the order still failed at placement on real insufficient buying power once SNDK+INTC consumed most of the k. No circuit breaker triggered (0 stops this run, no prior positions). Elevated-scrutiny status remains: this strategy has minimal live track record beyond backtest validation - watch for divergence from the ~+50-500/month honest-fill expectation."
     }
   ]
 }
