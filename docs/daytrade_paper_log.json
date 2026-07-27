@@ -2728,6 +2728,177 @@
     "VWAP Reclaim (H2)": -225.16,
     "First Pullback After ORB (H2)": -28.0
    }
+  },
+  {
+   "timestamp": "2026-07-27T19:11:40.800638+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-27",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 8,
+     "price": 884.65
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-27",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 884.65,
+     "exit": 892.75,
+     "shares": 8,
+     "pnl": 64.72
+    },
+    {
+     "strategy": "Oversold Snapback Fade",
+     "date": "2026-07-27",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 17,
+     "price": 486.17
+    },
+    {
+     "strategy": "Oversold Snapback Fade",
+     "date": "2026-07-27",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 486.17,
+     "exit": 488.95,
+     "shares": 17,
+     "pnl": 47.26
+    },
+    {
+     "strategy": "Oversold Snapback Fade",
+     "date": "2026-07-27",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 9,
+     "price": 881.34
+    },
+    {
+     "strategy": "Oversold Snapback Fade",
+     "date": "2026-07-27",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 881.34,
+     "exit": 866.39,
+     "shares": 9,
+     "pnl": -134.59
+    },
+    {
+     "strategy": "Oversold Snapback Fade",
+     "date": "2026-07-27",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 16,
+     "price": 493.81
+    },
+    {
+     "strategy": "Oversold Snapback Fade",
+     "date": "2026-07-27",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 493.81,
+     "exit": 495.38,
+     "shares": 16,
+     "pnl": 25.04
+    },
+    {
+     "strategy": "Oversold Snapback Fade",
+     "date": "2026-07-27",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 6,
+     "price": 1292.07
+    },
+    {
+     "strategy": "Oversold Snapback Fade",
+     "date": "2026-07-27",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1292.07,
+     "exit": 1252.17,
+     "shares": 6,
+     "pnl": -239.43
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-07-27",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 9,
+     "price": 884.65
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-07-27",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 884.65,
+     "exit": 892.75,
+     "shares": 9,
+     "pnl": 72.81
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-07-27",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 16,
+     "price": 493.81
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-07-27",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 493.81,
+     "exit": 495.38,
+     "shares": 16,
+     "pnl": 25.04
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-07-27",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 20,
+     "price": 396.02
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-07-27",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 396.02,
+     "exit": 394.99,
+     "shares": 20,
+     "pnl": -20.6
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -2216.66,
+    "Hybrid Disciplined Momentum Scalping": -559.26,
+    "Gap / High Change Momentum": -163.48,
+    "Turtle Soup Reversal": -113.96,
+    "Momentum Breakout": -234.12,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 59.62,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -44.41,
+    "Oversold Snapback Fade": -421.54,
+    "VWAP Reclaim (H2)": -147.91,
+    "First Pullback After ORB (H2)": -28.0
+   }
   }
  ]
 }
