@@ -1,13 +1,12 @@
 {
- "pending_settlement": [],
+ "pending_settlement": [
+  {
+   "amount": 2537.21,
+   "settle_date": "2026-07-28",
+   "symbol": "SNDK"
+  }
+ ],
  "open_positions": {
-  "SNDK": {
-   "shares": 2.001409,
-   "entry": 1249.6199,
-   "peak": 1249.6199,
-   "tranches": 1,
-   "opened": "2026-07-27"
-  },
   "INTC": {
    "shares": 21.169297,
    "entry": 87.2547,
