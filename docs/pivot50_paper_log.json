@@ -102,6 +102,18 @@
     "CAT": 5,
     "CSCO": 43
    }
+  },
+  {
+   "timestamp": "2026-07-27T21:16:46.394161+00:00",
+   "trades": [],
+   "cumulative_pl": -21.27,
+   "open_positions": {
+    "ABBV": 19,
+    "ABT": 49,
+    "AMAT": 8,
+    "CAT": 5,
+    "CSCO": 43
+   }
   }
  ]
 }
