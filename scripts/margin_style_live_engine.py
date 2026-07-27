@@ -85,6 +85,15 @@ CIRCUIT_BREAKER_STOP_COUNT = 2    # if this many STOP exits fire in the same run
                                   # entries this run - stops/exits still execute normally,
                                   # only fresh buys pause. Re-evaluated fresh next run.
 
+# Added 2026-07-27 per explicit user request after a single-day run put ~90% of the
+# $5,000 allocation into 2 trades (44.6%/74.3%-of-cash sizing has no per-trade ceiling
+# on its own), leaving no room for further entries and no settled cash for days once
+# those positions later stopped out. Backtested trade-off (honest fills, 6 quarters,
+# $5k): uncapped totals +$15,647 (6/6 quarters, worst +$502); capped at $1,000 totals
+# +$10,110 (5/6, worst -$74) - a real cost in expected return, accepted deliberately in
+# exchange for more concurrent positions and faster access to settled cash.
+MAX_TRADE_NOTIONAL = 1000.0
+
 
 def next_business_day(d):
     d2 = d + timedelta(days=1)
@@ -199,7 +208,8 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
             break
         live_price = quotes[sym]
         pct = HUGE_DIP_PCT if c['reason'] == 'HUGE_DIP' else TRANCHE_PCT
-        deploy = safe_cash * pct
+        uncapped_deploy = safe_cash * pct
+        deploy = min(uncapped_deploy, MAX_TRADE_NOTIONAL)
 
         pos = state['open_positions'].get(sym)
         current_value = pos['shares'] * live_price if pos else 0.0
@@ -215,6 +225,7 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
         buys.append({'symbol': sym, 'shares': shares, 'price': round(live_price, 4),
                      'notional': round(actual_deploy, 2), 'reason': c['reason'],
                      'drawdown': round(c['drawdown'], 4), 'day_return': round(c['day_return'], 4),
+                     'capped_by_trade_notional_limit': deploy < uncapped_deploy,
                      'capped_by_concentration_limit': capped < deploy})
         safe_cash -= actual_deploy  # subsequent symbols this run see reduced remaining cash
 

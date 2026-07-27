@@ -39,6 +39,11 @@ INTRADAY_STOP = -0.0151
 PEAK_SELL_PCT = 0.743
 GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]
 
+# 2026-07-27: mirrors the live engine's MAX_TRADE_NOTIONAL, scaled by the same 5x
+# capital ratio ($1,000 on live's $5,000 = 20% of allocation; $5,000 here on this
+# tracker's $25,000 preserves that same 20% ratio) so the two stay comparable.
+MAX_TRADE_NOTIONAL = 5000.0
+
 
 def build_context(raw_path):
     d = json.load(open(raw_path))
@@ -150,9 +155,9 @@ def run(raw_path):
 
             deploy = None
             if drawdown <= HUGE_DIP_DRAWDOWN:
-                deploy = cash * HUGE_DIP_PCT
+                deploy = min(cash * HUGE_DIP_PCT, MAX_TRADE_NOTIONAL)
             elif day_return < 0 and (not p or p.get('tranches', 0) < MAX_TRANCHES):
-                deploy = cash * TRANCHE_PCT
+                deploy = min(cash * TRANCHE_PCT, MAX_TRADE_NOTIONAL)
             if deploy and deploy >= 25.0 and cash > 1.0:
                 shares = round(deploy / close, 6)
                 if shares > 0:
