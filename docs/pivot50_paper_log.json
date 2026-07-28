@@ -114,6 +114,36 @@
     "CAT": 5,
     "CSCO": 43
    }
+  },
+  {
+   "timestamp": "2026-07-28T21:16:44.538787+00:00",
+   "trades": [
+    {
+     "date": "2026-07-27",
+     "symbol": "AMAT",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 562.8,
+     "exit": 500.23,
+     "shares": 8,
+     "pnl": -500.52
+    },
+    {
+     "date": "2026-07-27",
+     "symbol": "AXP",
+     "side": "BUY",
+     "shares": 14,
+     "price": 335.39
+    }
+   ],
+   "cumulative_pl": -345.92,
+   "open_positions": {
+    "ABBV": 19,
+    "ABT": 49,
+    "CAT": 5,
+    "CSCO": 43,
+    "AXP": 14
+   }
   }
  ]
 }
