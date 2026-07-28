@@ -365,6 +365,72 @@
     "MA Crossover (H)": -202.32,
     "Darvas Box (I)": 0.0
    }
+  },
+  {
+   "timestamp": "2026-07-28T21:06:29.751591+00:00",
+   "trades": [
+    {
+     "strategy": "MIDAS Anchored VWAP Bounce",
+     "date": "2026-07-27",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1589.4,
+     "exit": 1239.51,
+     "shares": 3,
+     "pnl": -1049.66
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-07-27",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1599.27,
+     "exit": 1308.75,
+     "shares": 3,
+     "pnl": -871.57
+    },
+    {
+     "strategy": "Relative Strength Leader Pullback",
+     "date": "2026-07-27",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 544.43,
+     "exit": 478.86,
+     "shares": 9,
+     "pnl": -590.1
+    },
+    {
+     "strategy": "MA Crossover (H)",
+     "date": "2026-07-27",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 544.43,
+     "exit": 478.86,
+     "shares": 9,
+     "pnl": -590.1
+    }
+   ],
+   "equity_snapshot": {
+    "Bollinger Squeeze Breakout": 0.0,
+    "Probe and Pullback": 0.0,
+    "MIDAS Anchored VWAP Bounce": -2172.62,
+    "Perfect Storm (D/W/M alignment)": 0.0,
+    "ConnorsRSI Oversold Bounce": 0.0,
+    "Ichimoku Kumo Breakout": 0.0,
+    "Pivot Point S1 Bounce": -2367.72,
+    "Cup and Handle": 0.0,
+    "High Tight Flagpole": 0.0,
+    "Relative Strength Leader Pullback": -590.1,
+    "Fibonacci 61.8% Retracement Bounce": 0.0,
+    "RSI Bullish Divergence": 0.0,
+    "Bull Flag Breakout": 0.0,
+    "MA Crossover (H)": -590.1,
+    "Darvas Box (I)": 0.0
+   }
   }
  ]
 }
