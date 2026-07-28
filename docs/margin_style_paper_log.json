@@ -403,6 +403,126 @@
    "timestamp": "2026-07-27T20:41:35.192006+00:00",
    "trades": [],
    "cumulative_pl": 2671.66
+  },
+  {
+   "timestamp": "2026-07-28T13:43:51.299034+00:00",
+   "trades": [
+    {
+     "symbol": "AMD",
+     "date": "2026-07-27",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 521.95,
+     "exit": 514.0686,
+     "shares": 2.676049,
+     "pnl": -21.09
+    },
+    {
+     "symbol": "AMD",
+     "date": "2026-07-27",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 1.517335,
+     "price": 494.95
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-07-27",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 0.462183,
+     "price": 900.2
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-07-27",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 0.462917,
+     "price": 497.92
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-07-27",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1436.56,
+     "exit": 1414.8679,
+     "shares": 12.339999,
+     "pnl": -267.68
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-07-27",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 3.911659,
+     "price": 1278.23
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-07-27",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 403.41,
+     "exit": 397.3185,
+     "shares": 9.524414,
+     "pnl": -58.02
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-07-27",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 12.528502,
+     "price": 399.09
+    },
+    {
+     "symbol": "INTC",
+     "date": "2026-07-27",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 92.32,
+     "exit": 90.926,
+     "shares": 37.979812,
+     "pnl": -52.95
+    },
+    {
+     "symbol": "INTC",
+     "date": "2026-07-27",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 54.543471,
+     "price": 91.67
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-07-27",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 305.21,
+     "exit": 300.6013,
+     "shares": 2.919328,
+     "pnl": -13.45
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-07-27",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 17.146188,
+     "price": 291.61
+    },
+    {
+     "symbol": "STX",
+     "date": "2026-07-27",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 3.199508,
+     "price": 816.99
+    }
+   ],
+   "cumulative_pl": 2258.47
   }
  ]
 }
