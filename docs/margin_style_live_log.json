@@ -126,6 +126,25 @@
       "used_before_run": 0.0,
       "available_before_run": 5000.0,
       "notes": "First real trades for this system - basket-wide selloff deepened through the session (SNDK/INTC/LRCX all past HUGE_DIP threshold, MU/WDC NORMAL_DIP). Deepest-drawdown-first ordering: SNDK(-38.5%) > INTC(-33.9%) > LRCX(-29.6%) > MU(-24.1%) > WDC(-23.0%). LRCX capped-by-concentration-limit was false in the plan but the order still failed at placement on real insufficient buying power once SNDK+INTC consumed most of the k. No circuit breaker triggered (0 stops this run, no prior positions). Elevated-scrutiny status remains: this strategy has minimal live track record beyond backtest validation - watch for divergence from the ~+50-500/month honest-fill expectation."
+    },
+    {
+      "timestamp": "2026-07-27T15:41:59Z",
+      "event": "STATE_RECONCILIATION",
+      "orders": [],
+      "notes": "A prior firing on 2026-07-27 placed a real SNDK stop-sell (2.001409 sh @ avg 1267.7101, fees 0.06) but the session was interrupted before committing it to state and before placing the remaining INTC/MU/WDC stop-sells that same plan called for. Reconciled on the next firing (2026-07-27T~16:xx UTC) using get_equity_orders as source of truth: SNDK removed from open_positions, $2537.21 proceeds recorded in pending_settlement (settle_date 2026-07-28). INTC/MU/WDC share counts matched real broker positions exactly, no correction needed there."
+    },
+    {
+      "timestamp": "2026-07-28T15:46:00Z",
+      "orders": [
+        {"symbol": "INTC", "side": "sell", "shares": 21.169297, "price": 87.8101, "reason": "STOP", "entry": 87.2547},
+        {"symbol": "MU", "side": "sell", "shares": 0.085625, "price": 826.93, "reason": "STOP", "entry": 857.7498},
+        {"symbol": "WDC", "side": "sell", "shares": 0.08565, "price": 451.71, "reason": "STOP", "entry": 472.3899}
+      ],
+      "skipped": [],
+      "allocation": 5000.0,
+      "used_before_run": 1951.10,
+      "available_before_run": 511.69,
+      "notes": "All 3 remaining open positions (INTC/MU/WDC, opened 2026-07-27) hit their -1.51% intraday stop as a broad semis selloff continued into a second session (basket down another 5-10% since 7/27's close on top of the prior day's drop). Circuit breaker triggered (3 stops >= 2 threshold) so no new entries were evaluated for buys this run, consistent with $0 buys even though nominal available cash was >0. This plan had been recomputed identically across several consecutive hourly firings since 2026-07-27 without execution (two review_equity_order calls were denied early on, then several tool calls were interrupted before placement) - user explicitly confirmed via direct question to proceed with all 3 stops on this firing, and they were placed and filled cleanly with no broker alerts. Net result: this system is now flat (no open positions), sitting on $1,968.38 of newly pending settlement (INTC $1,858.88 + MU $70.81 + WDC $38.69, settling 2026-07-29) plus the existing SNDK pending settlement. Elevated-scrutiny status remains in force: two consecutive days of stop-outs on every position opened this system's first live day is a meaningful divergence from the honest-fill backtest's typical-regime expectation and warrants the user's attention before any new capital is redeployed."
     }
   ]
 }
