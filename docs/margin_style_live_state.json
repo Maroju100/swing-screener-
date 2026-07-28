@@ -16,5 +16,20 @@
    "symbol": "WDC"
   }
  ],
- "open_positions": {}
+ "open_positions": {
+  "SNDK": {
+   "shares": 0.480157,
+   "entry": 1107.3642,
+   "peak": 1107.3642,
+   "tranches": 1,
+   "opened": "2026-07-28"
+  },
+  "INTC": {
+   "shares": 4.559546,
+   "entry": 86.635,
+   "peak": 86.635,
+   "tranches": 1,
+   "opened": "2026-07-28"
+  }
+ }
 }
