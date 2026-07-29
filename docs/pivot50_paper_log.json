@@ -144,6 +144,36 @@
     "CSCO": 43,
     "AXP": 14
    }
+  },
+  {
+   "timestamp": "2026-07-29T21:16:31.408121+00:00",
+   "trades": [
+    {
+     "date": "2026-07-28",
+     "symbol": "CAT",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 894.54,
+     "exit": 835.13,
+     "shares": 5,
+     "pnl": -297.04
+    },
+    {
+     "date": "2026-07-28",
+     "symbol": "COST",
+     "side": "BUY",
+     "shares": 5,
+     "price": 966.58
+    }
+   ],
+   "cumulative_pl": -220.14,
+   "open_positions": {
+    "ABBV": 19,
+    "ABT": 49,
+    "CSCO": 43,
+    "AXP": 14,
+    "COST": 5
+   }
   }
  ]
 }
