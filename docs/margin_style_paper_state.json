@@ -1,63 +1,63 @@
 {
- "cash": 3246.94444825972,
+ "cash": 3260.698831699964,
  "positions": {
   "AMD": {
-   "shares": 1.517335,
-   "avg_cost": 494.95,
-   "peak": 494.95,
+   "shares": 3.91102,
+   "avg_cost": 454.62,
+   "peak": 454.62,
    "tranches": 1
   },
   "MU": {
-   "shares": 0.462183,
-   "avg_cost": 900.2,
-   "peak": 900.2,
+   "shares": 2.370954,
+   "avg_cost": 820.53,
+   "peak": 820.53,
    "tranches": 1
   },
   "WDC": {
-   "shares": 0.462917,
-   "avg_cost": 497.92,
-   "peak": 497.92,
+   "shares": 1.442579,
+   "avg_cost": 463.51,
+   "peak": 463.51,
    "tranches": 1
   },
   "SNDK": {
-   "shares": 3.911659,
-   "avg_cost": 1278.23,
-   "peak": 1278.23,
+   "shares": 3.494888,
+   "avg_cost": 1096.1,
+   "peak": 1096.1,
    "tranches": 1
   },
   "TSM": {
-   "shares": 12.528502,
-   "avg_cost": 399.09,
-   "peak": 399.09,
+   "shares": 7.104823,
+   "avg_cost": 392.31,
+   "peak": 392.31,
    "tranches": 1
   },
   "INTC": {
-   "shares": 54.543471,
-   "avg_cost": 91.67,
-   "peak": 91.67,
+   "shares": 57.937428,
+   "avg_cost": 86.3,
+   "peak": 86.3,
    "tranches": 1
   },
   "LRCX": {
-   "shares": 17.146188,
-   "avg_cost": 291.61,
-   "peak": 291.61,
+   "shares": 18.545306,
+   "avg_cost": 269.61,
+   "peak": 269.61,
    "tranches": 1
   },
   "STX": {
-   "shares": 3.199508,
-   "avg_cost": 816.99,
-   "peak": 816.99,
+   "shares": 3.512698,
+   "avg_cost": 747.3,
+   "peak": 747.3,
    "tranches": 1
   }
  },
  "last_processed_date": {
-  "AMD": "2026-07-27",
-  "MU": "2026-07-27",
-  "WDC": "2026-07-27",
-  "SNDK": "2026-07-27",
-  "TSM": "2026-07-27",
-  "INTC": "2026-07-27",
-  "LRCX": "2026-07-27",
-  "STX": "2026-07-27"
+  "AMD": "2026-07-28",
+  "MU": "2026-07-28",
+  "WDC": "2026-07-28",
+  "SNDK": "2026-07-28",
+  "TSM": "2026-07-28",
+  "INTC": "2026-07-28",
+  "LRCX": "2026-07-28",
+  "STX": "2026-07-28"
  }
 }
