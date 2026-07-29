@@ -3540,6 +3540,82 @@
     "VWAP Reclaim (H2)": -85.53,
     "First Pullback After ORB (H2)": -75.67
    }
+  },
+  {
+   "timestamp": "2026-07-29T17:11:53.438079+00:00",
+   "trades": [
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-29",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 19,
+     "price": 429.71
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-29",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 429.71,
+     "exit": 430.45,
+     "shares": 19,
+     "pnl": 14.06
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-29",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 8,
+     "price": 1021.52
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-29",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 1021.52,
+     "exit": 1026.72,
+     "shares": 8,
+     "pnl": 41.6
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-29",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 22,
+     "price": 377.4
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-07-29",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 377.4,
+     "exit": 378.28,
+     "shares": 22,
+     "pnl": 19.36
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -2550.49,
+    "Hybrid Disciplined Momentum Scalping": -559.26,
+    "Gap / High Change Momentum": -163.48,
+    "Turtle Soup Reversal": 578.97,
+    "Momentum Breakout": -234.12,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 59.62,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -354.11,
+    "Oversold Snapback Fade": -350.82,
+    "VWAP Reclaim (H2)": -85.53,
+    "First Pullback After ORB (H2)": -75.67
+   }
   }
  ]
 }
