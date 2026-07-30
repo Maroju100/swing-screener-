@@ -19,13 +19,23 @@
    "amount": 39.89,
    "settle_date": "2026-07-31",
    "symbol": "MU"
+  },
+  {
+   "amount": 708.34,
+   "settle_date": "2026-07-31",
+   "symbol": "SNDK"
+  },
+  {
+   "amount": 32.51,
+   "settle_date": "2026-07-31",
+   "symbol": "MU"
   }
  ],
  "open_positions": {
   "SNDK": {
-   "shares": 0.756536,
+   "shares": 0.19443,
    "entry": 1241.0062,
-   "peak": 1250.4201,
+   "peak": 1260.1481,
    "tranches": 3,
    "opened": "2026-07-28"
   },
@@ -44,9 +54,9 @@
    "opened": "2026-07-30"
   },
   "MU": {
-   "shares": 0.050289,
+   "shares": 0.012924,
    "entry": 853.9487,
-   "peak": 857.4663,
+   "peak": 870.14,
    "tranches": 2,
    "opened": "2026-07-30"
   }
