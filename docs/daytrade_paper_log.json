@@ -4203,6 +4203,120 @@
     "VWAP Reclaim (H2)": -11.64,
     "First Pullback After ORB (H2)": -145.05
    }
+  },
+  {
+   "timestamp": "2026-07-30T20:11:17.560417+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-30",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 14,
+     "price": 530.91
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-07-30",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 530.91,
+     "exit": 533.09,
+     "shares": 14,
+     "pnl": 30.52
+    },
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-07-30",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 15,
+     "price": 530.91
+    },
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-07-30",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 530.91,
+     "exit": 533.09,
+     "shares": 15,
+     "pnl": 32.7
+    },
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-07-30",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 20,
+     "price": 404.12
+    },
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-07-30",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 404.12,
+     "exit": 403.27,
+     "shares": 20,
+     "pnl": -16.9
+    },
+    {
+     "strategy": "Relative Volume Leader Momentum",
+     "date": "2026-07-30",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 20,
+     "price": 404.12
+    },
+    {
+     "strategy": "Relative Volume Leader Momentum",
+     "date": "2026-07-30",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 404.12,
+     "exit": 403.27,
+     "shares": 20,
+     "pnl": -16.9
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-07-30",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 9,
+     "price": 874.6
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-07-30",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 874.6,
+     "exit": 874.92,
+     "shares": 9,
+     "pnl": 2.86
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -1889.18,
+    "Hybrid Disciplined Momentum Scalping": -543.46,
+    "Gap / High Change Momentum": -1015.56,
+    "Turtle Soup Reversal": 387.54,
+    "Momentum Breakout": -435.22,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 59.62,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -183.58,
+    "Oversold Snapback Fade": -292.91,
+    "VWAP Reclaim (H2)": -11.64,
+    "First Pullback After ORB (H2)": -142.2
+   }
   }
  ]
 }
