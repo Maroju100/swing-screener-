@@ -210,6 +210,18 @@
       "used_before_run": 1921.01,
       "available_before_run": 744.09,
       "notes": "Fourth same-day PEAK-sell cycle on SNDK ($1,264.09 vs prior peak $1,260.15) and MU ($873.55 vs prior peak $870.14) as the rally made new highs yet again. No buys: safe_settled_cash still $0.00, available capital ($744.09) fully absorbed by pending settlement (now $2,334.90 pre-run, unchanged batch from earlier runs still settling 2026-07-31; this run's new proceeds add another small pending batch on top). INTC and LRCX had no new peaks (INTC $91.49 < peak $92.7935; LRCX $300.30 < peak $308.15), no action there. No circuit breaker (0 stops). Reconciliation: real broker positions matched state exactly pre-run. SNDK position now down to 0.050 sh (3 tranches, most of its size harvested across 4 peak-sells today), MU down to 0.003 sh (2 tranches) - both positions are now quite small in absolute share terms though still tracked. New pending settlement: SNDK $182.67 + MU $8.38 (settle 2026-07-31). Elevated-scrutiny status remains in force - four same-day PEAK-sell cycles on the same two symbols, with capital fully locked in pending settlement blocking any new entries all afternoon, is a pronounced real-world illustration of the cash-account GFV constraint discussed with the user earlier today; tomorrow's ~$2,344 settlement unlock should restore normal buy capacity."
+    },
+    {
+      "timestamp": "2026-07-30T20:40:00Z",
+      "orders": [],
+      "skipped": [
+        {"symbol": "SNDK", "side": "sell", "reason": "PEAK signal computed ($1,280.40 vs peak $1,264.49) but regular session had already closed (last regular trade 19:59:59 UTC); a market_hours=regular_hours order placed now would only queue for tomorrow's open at an unknown price, not execute at the signal price - skipped rather than take on uncontrolled overnight gap risk"},
+        {"symbol": "MU", "side": "sell", "reason": "same as SNDK - PEAK signal computed ($874.92 vs peak $873.06) but market closed, skipped rather than queue for next open"}
+      ],
+      "allocation": 5000.0,
+      "used_before_run": 1718.67,
+      "available_before_run": 755.38,
+      "notes": "This run fired at 20:40 UTC, just past both the trigger's normal 13:35-20:35 UTC window and the regular session close (20:00 UTC / 4:00pm ET). Two PEAK-sell signals computed cleanly (SNDK, MU) using the last regular-hours trade price, but no orders were placed: queuing a regular_hours market order after the close would fill at tomorrow's open instead of today's signal price, reintroducing exactly the kind of overnight gap risk this strategy's same-day live-quote-proxy convention is meant to avoid. Reconciliation: real broker positions matched state exactly, no correction needed. No circuit breaker (0 stops). safe_settled_cash remains $0.00 (available $755.38 fully offset by $2,525.95 pending settlement, settling 2026-07-31) so no buys would have been sized regardless. Elevated-scrutiny status remains in force. These two PEAK signals will be re-evaluated fresh against tomorrow's opening price on the next run - no state carried over from this skip."
     }
   ]
 }
