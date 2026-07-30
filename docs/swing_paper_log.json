@@ -464,6 +464,50 @@
     "MA Crossover (H)": -590.1,
     "Darvas Box (I)": 0.0
    }
+  },
+  {
+   "timestamp": "2026-07-30T21:06:45.332687+00:00",
+   "trades": [
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-07-29",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 865.46,
+     "exit": 740.7,
+     "shares": 5,
+     "pnl": -623.78
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-07-29",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 402.3,
+     "exit": 374.34,
+     "shares": 11,
+     "pnl": -307.61
+    }
+   ],
+   "equity_snapshot": {
+    "Bollinger Squeeze Breakout": 0.0,
+    "Probe and Pullback": 0.0,
+    "MIDAS Anchored VWAP Bounce": -2978.62,
+    "Perfect Storm (D/W/M alignment)": 0.0,
+    "ConnorsRSI Oversold Bounce": 0.0,
+    "Ichimoku Kumo Breakout": 0.0,
+    "Pivot Point S1 Bounce": -4181.26,
+    "Cup and Handle": 0.0,
+    "High Tight Flagpole": 0.0,
+    "Relative Strength Leader Pullback": -590.1,
+    "Fibonacci 61.8% Retracement Bounce": 0.0,
+    "RSI Bullish Divergence": 0.0,
+    "Bull Flag Breakout": 0.0,
+    "MA Crossover (H)": -590.1,
+    "Darvas Box (I)": 0.0
+   }
   }
  ]
 }
