@@ -189,6 +189,15 @@
       "used_before_run": 2647.88,
       "available_before_run": 758.07,
       "notes": "Third PEAK-sell cycle of the day on SNDK ($1,260.76 vs prior peak $1,250.42) and MU ($872.84 vs prior peak $857.47) as the semis rally kept extending. This time NO buys followed: safe_settled_cash computed to $0 - the capital-allocation cap's 'available' figure ($758.07) was entirely consumed by pending_settlement ($1,594.05 across the day's prior sell batches, all settling 2026-07-31), so even though all 4 symbols still screen as HUGE_DIP off the 22-day high, the GFV-safety rule correctly blocked any new entry sizing this run (existing-position exits are never blocked by this cap, only new entries were skipped). INTC and LRCX had no new peaks this run (INTC $91.98 < peak $92.7935; LRCX $296.40 < peak $308.15), no action on those two. No circuit breaker (0 stops). Reconciliation: real broker positions matched state exactly pre-run. SNDK position now down to 0.194 sh (3 tranches, most of today's gains harvested via repeated peak-sells), MU down to 0.013 sh (2 tranches). New pending settlement: SNDK $708.34 + MU $32.51 (settle 2026-07-31), stacking on top of the day's two earlier batches (also settling 2026-07-31) - by tomorrow this ~$2,335 of pending cash becomes available again for new entries. Elevated-scrutiny status remains in force - three same-day PEAK-sell cycles plus a capital-constrained no-buy run is unusual live behavior; worth confirming tomorrow whether the settled-cash unlock restores normal buy capacity as expected."
+    },
+    {
+      "timestamp": "2026-07-30T18:35:00Z",
+      "orders": [],
+      "skipped": [],
+      "allocation": 5000.0,
+      "used_before_run": 1901.0,
+      "available_before_run": 764.1,
+      "notes": "No-trade run. Rally cooled slightly off its earlier highs: SNDK $1,252.67 (< peak $1,260.15, no PEAK sell; gain vs entry only +0.9%, below the 5% gain-tier), MU $867.73 (< peak $870.14; gain +1.6%), INTC $91.65 (< peak $92.79; gain +0.7%), LRCX $295.82 (< peak $308.15; gain -2.6%, still underwater vs its blended entry) - none hit a new peak or a gain tier. No stops (all well above prior-close-based -1.51% thresholds). safe_settled_cash still $0.00 - available capital ($764.10) fully absorbed by $2,334.90 of pending settlement from today's three earlier sell batches (all settling 2026-07-31), so no new HUGE_DIP entries were sized even though all 4 symbols still screen as deep drawdown buys. Reconciliation: real broker positions matched state exactly, no correction needed. Elevated-scrutiny status remains in force; the ~$2,335 pending batch unlocks tomorrow (2026-07-31), which should restore normal buy capacity for the next session."
     }
   ]
 }
