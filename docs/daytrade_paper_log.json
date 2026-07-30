@@ -4146,6 +4146,63 @@
     "VWAP Reclaim (H2)": -11.64,
     "First Pullback After ORB (H2)": -75.67
    }
+  },
+  {
+   "timestamp": "2026-07-30T19:11:03.559321+00:00",
+   "trades": [
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-07-30",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 9,
+     "price": 871.94
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-07-30",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 871.94,
+     "exit": 866.46,
+     "shares": 9,
+     "pnl": -49.37
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-07-30",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 6,
+     "price": 1259.0
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-07-30",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 1259.0,
+     "exit": 1255.66,
+     "shares": 6,
+     "pnl": -20.01
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -1919.7,
+    "Hybrid Disciplined Momentum Scalping": -559.26,
+    "Gap / High Change Momentum": -1015.56,
+    "Turtle Soup Reversal": 387.54,
+    "Momentum Breakout": -435.22,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 59.62,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -166.68,
+    "Oversold Snapback Fade": -292.91,
+    "VWAP Reclaim (H2)": -11.64,
+    "First Pullback After ORB (H2)": -145.05
+   }
   }
  ]
 }
