@@ -1,54 +1,17 @@
 {
  "pending_settlement": [
   {
-   "amount": 444.29,
-   "settle_date": "2026-07-31",
+   "amount": 61.36,
+   "settle_date": "2026-08-03",
    "symbol": "SNDK"
   },
   {
-   "amount": 314.28,
-   "settle_date": "2026-07-31",
-   "symbol": "INTC"
-  },
-  {
-   "amount": 795.59,
-   "settle_date": "2026-07-31",
-   "symbol": "SNDK"
-  },
-  {
-   "amount": 39.89,
-   "settle_date": "2026-07-31",
-   "symbol": "MU"
-  },
-  {
-   "amount": 708.34,
-   "settle_date": "2026-07-31",
-   "symbol": "SNDK"
-  },
-  {
-   "amount": 32.51,
-   "settle_date": "2026-07-31",
-   "symbol": "MU"
-  },
-  {
-   "amount": 182.67,
-   "settle_date": "2026-07-31",
-   "symbol": "SNDK"
-  },
-  {
-   "amount": 8.38,
-   "settle_date": "2026-07-31",
+   "amount": 2.77,
+   "settle_date": "2026-08-03",
    "symbol": "MU"
   }
  ],
  "open_positions": {
-  "SNDK": {
-   "shares": 0.049969,
-   "entry": 1241.0062,
-   "peak": 1264.4866,
-   "tranches": 3,
-   "opened": "2026-07-28"
-  },
   "INTC": {
    "shares": 4.650933,
    "entry": 91.0308,
@@ -60,13 +23,6 @@
    "shares": 4.1240380000000005,
    "entry": 303.5957,
    "peak": 308.1499,
-   "tranches": 2,
-   "opened": "2026-07-30"
-  },
-  "MU": {
-   "shares": 0.003321,
-   "entry": 853.9487,
-   "peak": 873.0635,
    "tranches": 2,
    "opened": "2026-07-30"
   }
