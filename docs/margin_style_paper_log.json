@@ -878,6 +878,148 @@
     }
    ],
    "cumulative_pl": 1646.79
+  },
+  {
+   "timestamp": "2026-07-31T16:36:39.708661+00:00",
+   "trades": [
+    {
+     "symbol": "AMD",
+     "date": "2026-07-30",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 429.56,
+     "exit": 485.39,
+     "shares": 3.866343,
+     "pnl": 215.86
+    },
+    {
+     "symbol": "AMD",
+     "date": "2026-07-30",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 4.425141,
+     "price": 485.39
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-07-30",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 739.0,
+     "exit": 874.66,
+     "shares": 3.505506,
+     "pnl": 475.56
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-07-30",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 3.235711,
+     "price": 874.66
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-07-30",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 462.667,
+     "exit": 533.04,
+     "shares": 2.512786,
+     "pnl": 176.83
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-07-30",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 3.231527,
+     "price": 533.04
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-07-30",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 1015.89,
+     "exit": 1279.96,
+     "shares": 2.218677,
+     "pnl": 585.89
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-07-30",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 1.99434,
+     "price": 1279.96
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-07-30",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 374.67,
+     "exit": 403.31,
+     "shares": 3.356054,
+     "pnl": 96.12
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-07-30",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 2.473218,
+     "price": 403.31
+    },
+    {
+     "symbol": "INTC",
+     "date": "2026-07-30",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 81.88,
+     "exit": 91.13,
+     "shares": 45.371275,
+     "pnl": 419.68
+    },
+    {
+     "symbol": "INTC",
+     "date": "2026-07-30",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 43.812774,
+     "price": 91.13
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-07-30",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 252.35,
+     "exit": 297.72,
+     "shares": 14.721617,
+     "pnl": 667.92
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-07-30",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 14.384732,
+     "price": 297.72
+    },
+    {
+     "symbol": "STX",
+     "date": "2026-07-30",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 761.1664,
+     "exit": 851.68,
+     "shares": 3.520629,
+     "pnl": 318.66
+    }
+   ],
+   "cumulative_pl": 5612.61
   }
  ]
 }

@@ -1,63 +1,63 @@
 {
- "cash": 1014.1897792753002,
+ "cash": 4479.787118871538,
  "positions": {
   "WDC": {
-   "shares": 3.381946,
-   "avg_cost": 462.6669833334611,
-   "peak": 463.51,
-   "tranches": 2
+   "shares": 4.100687,
+   "avg_cost": 518.1241690348245,
+   "peak": 533.04,
+   "tranches": 3
   },
   "STX": {
-   "shares": 4.738397,
+   "shares": 1.217768,
    "avg_cost": 761.1664331235684,
-   "peak": 764.43,
+   "peak": 851.68,
    "tranches": 2
   },
   "AMD": {
-   "shares": 5.203692,
-   "avg_cost": 429.56,
-   "peak": 429.56,
-   "tranches": 1
+   "shares": 5.76249,
+   "avg_cost": 472.43310173512805,
+   "peak": 485.39,
+   "tranches": 2
   },
   "MU": {
-   "shares": 4.718043,
-   "avg_cost": 739.0,
-   "peak": 739.0,
-   "tranches": 1
+   "shares": 4.4482479999999995,
+   "avg_cost": 837.6807347599636,
+   "peak": 874.66,
+   "tranches": 2
   },
   "SNDK": {
-   "shares": 2.986106,
-   "avg_cost": 1015.89,
-   "peak": 1015.89,
-   "tranches": 1
+   "shares": 2.761769,
+   "avg_cost": 1206.5814222520235,
+   "peak": 1279.96,
+   "tranches": 2
   },
   "TSM": {
-   "shares": 4.516896,
-   "avg_cost": 374.67,
-   "peak": 374.67,
-   "tranches": 1
+   "shares": 3.6340600000000003,
+   "avg_cost": 394.16143425867665,
+   "peak": 403.31,
+   "tranches": 2
   },
   "INTC": {
-   "shares": 61.064973,
-   "avg_cost": 81.88,
-   "peak": 81.88,
-   "tranches": 1
+   "shares": 59.506472,
+   "avg_cost": 88.69048843729766,
+   "peak": 91.13,
+   "tranches": 2
   },
   "LRCX": {
-   "shares": 19.813751,
-   "avg_cost": 252.35,
-   "peak": 252.35,
-   "tranches": 1
+   "shares": 19.476866,
+   "avg_cost": 285.8582361923503,
+   "peak": 297.72,
+   "tranches": 2
   }
  },
  "last_processed_date": {
-  "AMD": "2026-07-29",
-  "MU": "2026-07-29",
-  "WDC": "2026-07-29",
-  "SNDK": "2026-07-29",
-  "TSM": "2026-07-29",
-  "INTC": "2026-07-29",
-  "LRCX": "2026-07-29",
-  "STX": "2026-07-29"
+  "AMD": "2026-07-30",
+  "MU": "2026-07-30",
+  "WDC": "2026-07-30",
+  "SNDK": "2026-07-30",
+  "TSM": "2026-07-30",
+  "INTC": "2026-07-30",
+  "LRCX": "2026-07-30",
+  "STX": "2026-07-30"
  }
 }
