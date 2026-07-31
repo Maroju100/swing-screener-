@@ -234,6 +234,20 @@
       "used_before_run": 1727.20,
       "available_before_run": 746.85,
       "notes": "This exact STOP-exit plan (SNDK and MU both breaching their -1.51% intraday stop off 7/30's close of $1,279.96 and $874.66 respectively) recomputed identically across numerous consecutive firings through the morning and early afternoon as the market whipsawed (SNDK ranged roughly $1,216-$1,269, MU roughly $822-$851, both persistently below their stop thresholds of ~$1,260.63 and ~$861.46). Finally executed cleanly this run with no broker alerts. Both positions had shrunk to very small share counts after repeated peak-sells over the prior two sessions (SNDK 0.049969 sh, MU 0.003321 sh), so the real dollar impact was minor (~SNDK -$0.65, MU -$0.06 vs entry) despite the plan recomputing on many separate firings. Reconciliation: real broker positions matched state exactly pre-run, no correction needed. No new HUGE_DIP/NORMAL_DIP buys sized (circuit breaker triggered, 2 stops this run >= threshold). System is now down to 2 open positions: INTC (4.650933 sh, 3 tranches) and LRCX (4.124038 sh, 2 tranches). New pending settlement: SNDK $61.36 + MU $2.77, settling 2026-08-03 (next business day is Monday, weekend skip). Elevated-scrutiny status remains in force."
+    },
+    {
+      "timestamp": "2026-07-31T20:36:00Z",
+      "orders": [],
+      "skipped": [
+        {"symbol": "LRCX", "side": "sell", "reason": "STOP signal computed ($293.01 vs threshold ~$293.22, prior close $297.72) but regular session had already closed (last regular trade 19:59:59 UTC); skipped rather than queue a regular_hours order that would fill at tomorrow's open instead of today's signal price"},
+        {"symbol": "SNDK", "side": "buy", "reason": "HUGE_DIP signal computed (-43.7% drawdown) but market closed, skipped along with all other buys this run for the same reason"},
+        {"symbol": "INTC", "side": "buy", "reason": "HUGE_DIP signal computed (-34.7% drawdown) but market closed, skipped"},
+        {"symbol": "LRCX", "side": "buy", "reason": "HUGE_DIP signal computed (-31.3% drawdown) but market closed, skipped"}
+      ],
+      "allocation": 5000.0,
+      "used_before_run": 1627.92,
+      "available_before_run": 3307.95,
+      "notes": "Run fired at 20:36 UTC, after the regular session closed at 20:00 UTC (4:00pm ET) - same situation as the 7/30 20:40 UTC run. LRCX (the only remaining pre-existing position besides INTC) crossed its -1.51% stop threshold using the last regular-hours price ($293.01 vs prior close $297.72's threshold of ~$293.22). Consistent with the established rule, no order was placed: a regular_hours market order queued now would fill at tomorrow's open instead of at today's signal price, reintroducing overnight gap risk. Available capital jumped sharply this run ($3,307.95, safe_settled_cash $3,243.82) purely because yesterday's SNDK/MU stop-outs freed up most of the system's capital and only $64.13 remains pending (settling 2026-08-03) - all 3 HUGE_DIP buy candidates (SNDK, INTC, LRCX) that would otherwise have been sized generously were skipped for the same market-closed reason, not a capital constraint. Reconciliation: real broker positions (INTC 4.650933 sh, LRCX 4.124038 sh) matched state exactly, no correction needed. All of these signals (the LRCX stop and the 3 HUGE_DIP buys) will be re-evaluated fresh against Monday's opening price on the next run - no state carried over from this skip. Elevated-scrutiny status remains in force."
     }
   ]
 }
