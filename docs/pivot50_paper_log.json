@@ -216,6 +216,53 @@
     "COST": 5,
     "ABT": 45
    }
+  },
+  {
+   "timestamp": "2026-08-03T21:16:08.142863+00:00",
+   "trades": [
+    {
+     "date": "2026-07-31",
+     "symbol": "ABBV",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 256.92,
+     "exit": 247.72,
+     "shares": 19,
+     "pnl": -174.86
+    },
+    {
+     "date": "2026-07-31",
+     "symbol": "ABT",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 108.0,
+     "exit": 103.45,
+     "shares": 45,
+     "pnl": -204.61
+    },
+    {
+     "date": "2026-07-31",
+     "symbol": "ABT",
+     "side": "BUY",
+     "shares": 46,
+     "price": 105.7
+    },
+    {
+     "date": "2026-07-31",
+     "symbol": "ACN",
+     "side": "BUY",
+     "shares": 29,
+     "price": 165.92
+    }
+   ],
+   "cumulative_pl": -678.5,
+   "open_positions": {
+    "CSCO": 43,
+    "AXP": 14,
+    "COST": 5,
+    "ABT": 46,
+    "ACN": 29
+   }
   }
  ]
 }
