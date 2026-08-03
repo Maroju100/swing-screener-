@@ -1020,6 +1020,106 @@
     }
    ],
    "cumulative_pl": 5612.61
+  },
+  {
+   "timestamp": "2026-08-03T13:41:04.289968+00:00",
+   "trades": [
+    {
+     "symbol": "AMD",
+     "date": "2026-07-31",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 472.4331,
+     "exit": 478.0606,
+     "shares": 5.76249,
+     "pnl": 32.43
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-07-31",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 837.6807,
+     "exit": 861.4526,
+     "shares": 4.4482479999999995,
+     "pnl": 105.74
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-07-31",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 518.1242,
+     "exit": 544.84,
+     "shares": 3.04681,
+     "pnl": 81.4
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-07-31",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1206.5814,
+     "exit": 1260.6326,
+     "shares": 2.761769,
+     "pnl": 149.28
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-07-31",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 4.115802,
+     "price": 1214.83
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-07-31",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 394.1614,
+     "exit": 404.25,
+     "shares": 2.700107,
+     "pnl": 27.24
+    },
+    {
+     "symbol": "INTC",
+     "date": "2026-07-31",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 55.432373,
+     "price": 90.2
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-07-31",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 285.8582,
+     "exit": 293.2244,
+     "shares": 19.476866,
+     "pnl": 143.47
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-07-31",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 17.063682,
+     "price": 293.02
+    },
+    {
+     "symbol": "STX",
+     "date": "2026-07-31",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 761.1664,
+     "exit": 838.8196,
+     "shares": 1.217768,
+     "pnl": 94.56
+    }
+   ],
+   "cumulative_pl": 5351.49
   }
  ]
 }
