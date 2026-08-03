@@ -1,5 +1,21 @@
 {
- "pending_settlement": [],
+ "pending_settlement": [
+  {
+   "amount": 756.25,
+   "settle_date": "2026-08-04",
+   "symbol": "SNDK"
+  },
+  {
+   "amount": 186.82,
+   "settle_date": "2026-08-04",
+   "symbol": "MU"
+  },
+  {
+   "amount": 28.76,
+   "settle_date": "2026-08-04",
+   "symbol": "AMD"
+  }
+ ],
  "open_positions": {
   "INTC": {
    "shares": 15.761859,
@@ -16,23 +32,23 @@
    "opened": "2026-07-30"
   },
   "SNDK": {
-   "shares": 0.795216,
+   "shares": 0.204371,
    "entry": 1263.2799,
-   "peak": 1263.2799,
+   "peak": 1279.95,
    "tranches": 1,
    "opened": "2026-08-03"
   },
   "MU": {
-   "shares": 0.306275,
+   "shares": 0.078713,
    "entry": 819.6641,
-   "peak": 819.6641,
+   "peak": 820.955,
    "tranches": 1,
    "opened": "2026-08-03"
   },
   "AMD": {
-   "shares": 0.080535,
+   "shares": 0.020697,
    "entry": 479.8529,
-   "peak": 479.8529,
+   "peak": 480.69,
    "tranches": 1,
    "opened": "2026-08-03"
   }

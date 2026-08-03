@@ -465,6 +465,46 @@
    "available_capital": 135.3,
    "real_account_buying_power": 8.67,
    "notes": "No orders executed. Earlier in this run, live quotes briefly showed both LRCX and MU breaching the -1.51% intraday stop (2 STOPs -> circuit breaker), but both recovered above their stop lines within ~13 minutes before any order was placed (same whipsaw pattern seen repeatedly this week) - re-pulled fresh quotes and recomputed the plan rather than act on stale data. Fresh plan: no stops, no circuit breaker, 2 small HUGE_DIP buy candidates (SNDK $100.53 / 0.080386 sh, INTC $25.84 / 0.28719 sh) sized against this system's ledger-computed available capital ($135.30). Both flagged EQUITY_NOT_ENOUGH_BP by review_equity_order - real account buying_power is only $8.67 (total_value $4887.13, nearly all of the $5,000 allocation is tied up as mark-to-market in the 5 open positions: INTC, LRCX, SNDK, MU, AMD). Per the hard rule, skipped both rather than resize/override. This is the capital_ledger's known conservative-cap gap made visible in the other direction: the ledger's 'available' figure is allocation-minus-tracked-position-value, not real spendable cash, and can overstate real buying power when positions have appreciated close to the $5,000 cap. Positions reconciled clean against real get_equity_positions (INTC 15.761859, LRCX 7.46654, SNDK 0.795216, MU 0.306275, AMD 0.080535); untracked CGC (2 sh) correctly excluded as not this system's. No state file change, no commit of state needed."
+  },
+  {
+   "timestamp": "2026-08-03T16:46:00Z",
+   "orders": [
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.590845,
+     "price": 1279.95,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "MU",
+     "side": "sell",
+     "shares": 0.227562,
+     "price": 820.955,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "AMD",
+     "side": "sell",
+     "shares": 0.059838,
+     "price": 480.69,
+     "reason": "PEAK"
+    }
+   ],
+   "allocation": 5000.0,
+   "used_capital": 4912.24,
+   "available_capital": 87.76,
+   "skipped": [
+    {
+     "symbol": "SNDK",
+     "side": "buy",
+     "shares": 0.050919,
+     "price": 1280.5701,
+     "reason": "HUGE_DIP",
+     "why": "review_equity_order flagged EQUITY_NOT_ENOUGH_BP (needed ~$56.91 more) - real settled BP hadn't caught up since the 3 PEAK sells this same run haven't settled yet. Skipped per hard rule, not resized/retried."
+    }
+   ],
+   "notes": "SNDK, MU, and AMD each hit a new peak vs their 2026-08-03 entry, triggering 74.3% PEAK-SELL exits on each (all 3 were today's fresh single-tranche dip-buys, now partially trimmed). Remaining shares: SNDK 0.204371 (peak 1279.95), MU 0.078713 (peak 820.955), AMD 0.020697 (peak 480.69). Proceeds ($756.25 SNDK + $186.82 MU + $28.76 AMD = $971.83) now in pending_settlement, settling 2026-08-04. The follow-on SNDK HUGE_DIP re-buy this run was skipped due to insufficient real buying power. Positions reconciled clean against get_equity_positions before acting; untracked CGC (2 sh) excluded."
   }
  ]
 }
