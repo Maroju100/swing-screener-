@@ -505,6 +505,36 @@
     }
    ],
    "notes": "SNDK, MU, and AMD each hit a new peak vs their 2026-08-03 entry, triggering 74.3% PEAK-SELL exits on each (all 3 were today's fresh single-tranche dip-buys, now partially trimmed). Remaining shares: SNDK 0.204371 (peak 1279.95), MU 0.078713 (peak 820.955), AMD 0.020697 (peak 480.69). Proceeds ($756.25 SNDK + $186.82 MU + $28.76 AMD = $971.83) now in pending_settlement, settling 2026-08-04. The follow-on SNDK HUGE_DIP re-buy this run was skipped due to insufficient real buying power. Positions reconciled clean against get_equity_positions before acting; untracked CGC (2 sh) excluded."
+  },
+  {
+   "timestamp": "2026-08-03T18:51:00Z",
+   "orders": [
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.151848,
+     "price": 1294.5,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "MU",
+     "side": "sell",
+     "shares": 0.058484,
+     "price": 825.5,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "AMD",
+     "side": "sell",
+     "shares": 0.015378,
+     "price": 485.24,
+     "reason": "PEAK"
+    }
+   ],
+   "allocation": 5000.0,
+   "used_capital": 3953.24,
+   "available_capital": 74.93,
+   "notes": "Second PEAK-sell round today on the same 3 fresh 2026-08-03 dip-buys: SNDK, MU, and AMD each hit another new high (SNDK 1294.50 vs prior peak 1279.95; MU 825.50 vs 820.955; AMD 485.24 vs 480.69), each trimmed 74.3% of remaining shares again. Remaining: SNDK 0.052523 sh, MU 0.020229 sh, AMD 0.005319 sh - all now quite small after 2 rounds of peak-trims. No buys this run: safe settled cash was $0 (ledger-available $74.93 fully absorbed by $971.83 pending settlement from the prior round, per the engine's own settle_date>today filter - consistent, not the known capital_ledger date-filtering gap). Positions reconciled clean against get_equity_positions; untracked CGC (2 sh) excluded. No stops, no circuit breaker."
   }
  ]
 }
