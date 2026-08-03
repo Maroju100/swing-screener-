@@ -248,6 +248,21 @@
       "used_before_run": 1627.92,
       "available_before_run": 3307.95,
       "notes": "Run fired at 20:36 UTC, after the regular session closed at 20:00 UTC (4:00pm ET) - same situation as the 7/30 20:40 UTC run. LRCX (the only remaining pre-existing position besides INTC) crossed its -1.51% stop threshold using the last regular-hours price ($293.01 vs prior close $297.72's threshold of ~$293.22). Consistent with the established rule, no order was placed: a regular_hours market order queued now would fill at tomorrow's open instead of at today's signal price, reintroducing overnight gap risk. Available capital jumped sharply this run ($3,307.95, safe_settled_cash $3,243.82) purely because yesterday's SNDK/MU stop-outs freed up most of the system's capital and only $64.13 remains pending (settling 2026-08-03) - all 3 HUGE_DIP buy candidates (SNDK, INTC, LRCX) that would otherwise have been sized generously were skipped for the same market-closed reason, not a capital constraint. Reconciliation: real broker positions (INTC 4.650933 sh, LRCX 4.124038 sh) matched state exactly, no correction needed. All of these signals (the LRCX stop and the 3 HUGE_DIP buys) will be re-evaluated fresh against Monday's opening price on the next run - no state carried over from this skip. Elevated-scrutiny status remains in force."
+    },
+    {
+      "timestamp": "2026-08-03T14:37:00Z",
+      "orders": [
+        {"symbol": "SNDK", "side": "buy", "shares": 0.795216, "price": 1263.2799, "reason": "HUGE_DIP"},
+        {"symbol": "INTC", "side": "buy", "shares": 11.110926, "price": 90.00, "reason": "HUGE_DIP"},
+        {"symbol": "LRCX", "side": "buy", "shares": 3.342502, "price": 290.8768, "reason": "HUGE_DIP"},
+        {"symbol": "MU", "side": "buy", "shares": 0.306275, "price": 819.6641, "reason": "HUGE_DIP"},
+        {"symbol": "AMD", "side": "buy", "shares": 0.080535, "price": 479.8529, "reason": "NORMAL_DIP"}
+      ],
+      "skipped": [],
+      "allocation": 5000.0,
+      "used_before_run": 1622.55,
+      "available_before_run": 3313.32,
+      "notes": "First run of the new trading week (Monday 8/3 open). LRCX's Friday stop signal did not repeat - LRCX opened above its new prior-close-based threshold ($291.94 vs ~$288.60), so no stop this run. Instead, all 4 basket symbols still deeply drawn down off their 22-day highs qualified for fresh HUGE_DIP entries (SNDK -46.6%, INTC -35.4%, LRCX -32.4%, MU -28.7%), plus AMD qualified for a NORMAL_DIP (any-size down day, -18.0% drawdown, still under 5 tranches). All 5 orders filled cleanly with no broker alerts, using $64.13 of previously-pending settlement that cleared over the weekend (settle_date 2026-08-03) plus the large cash freed by Friday's SNDK/MU stop-outs - safe_settled_cash was $3,313.32 pre-run, plenty to cover all 5 orders ($1,000+$1,000+$975.80+$250.78+$38.69 = $3,265.27 total). Reconciliation: real broker positions (INTC 4.650933 sh, LRCX 4.124038 sh) matched state exactly pre-run, no correction needed. System now holds 5 positions: INTC (15.761859 sh, 4 tranches), LRCX (7.46654 sh, 3 tranches), SNDK (0.795216 sh, 1 tranche, fresh), MU (0.306275 sh, 1 tranche, fresh), AMD (0.080535 sh, 1 tranche, fresh). No pending settlement remains ($0). Elevated-scrutiny status remains in force - this is the largest single-run capital deployment since going live, worth watching closely against the honest-fill expectation."
     }
   ]
 }
