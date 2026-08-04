@@ -5096,6 +5096,139 @@
     "VWAP Reclaim (H2)": -115.32,
     "First Pullback After ORB (H2)": -225.57
    }
+  },
+  {
+   "timestamp": "2026-08-04T14:19:33.140560+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-03",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 15,
+     "price": 484.39
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-03",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 484.39,
+     "exit": 484.46,
+     "shares": 15,
+     "pnl": 1.05
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-03",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 9,
+     "price": 826.69
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-03",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 826.69,
+     "exit": 829.04,
+     "shares": 9,
+     "pnl": 21.15
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-03",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 18,
+     "price": 406.48
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-03",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 406.48,
+     "exit": 406.19,
+     "shares": 18,
+     "pnl": -5.22
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-08-03",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 17,
+     "price": 484.39
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-08-03",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 484.39,
+     "exit": 484.46,
+     "shares": 17,
+     "pnl": 1.19
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-08-03",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 9,
+     "price": 826.69
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-08-03",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 826.69,
+     "exit": 829.04,
+     "shares": 9,
+     "pnl": 21.15
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-08-03",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 20,
+     "price": 406.48
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-08-03",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 406.48,
+     "exit": 406.19,
+     "shares": 20,
+     "pnl": -5.8
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -2000.82,
+    "Hybrid Disciplined Momentum Scalping": -704.66,
+    "Gap / High Change Momentum": -1015.56,
+    "Turtle Soup Reversal": 666.14,
+    "Momentum Breakout": -435.22,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 59.62,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -256.58,
+    "Oversold Snapback Fade": -148.85,
+    "VWAP Reclaim (H2)": -115.32,
+    "First Pullback After ORB (H2)": -209.03
+   }
   }
  ]
 }
