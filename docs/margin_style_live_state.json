@@ -24,13 +24,18 @@
    "amount": 2.03,
    "settle_date": "2026-08-05",
    "symbol": "AMD"
+  },
+  {
+   "amount": 463.72,
+   "settle_date": "2026-08-05",
+   "symbol": "INTC"
   }
  ],
  "open_positions": {
   "INTC": {
-   "shares": 6.28331,
+   "shares": 1.614811,
    "entry": 92.927,
-   "peak": 97.686,
+   "peak": 99.3299,
    "tranches": 5,
    "opened": "2026-07-28"
   },

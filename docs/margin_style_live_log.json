@@ -623,6 +623,40 @@
    "used_capital": 3864.52,
    "available_capital": 1135.48,
    "notes": "Broad overnight rally (2026-08-04, all 8 universe symbols up 2-8% vs 8/3 close: AMD +5.6%, MU +5.1%, WDC +3.6%, SNDK +7.6%, TSM +2.2%, INTC +6.7%, LRCX +4.9%, STX +3.4%). All 5 existing open positions hit new peaks - PEAK-sold 74.3% each: INTC 11.711061 sh @ 97.4366 (was 4-tranche position from 7/28, still held 6.28331 sh after), LRCX 5.547639 sh @ 311.37 (still held 1.918901 sh), SNDK/MU/AMD small residuals from yesterday's repeated peak-trims. Capital ledger's known settle_date-blind bug flagged again: raw ledger output showed available=$0.00 despite get_accounts confirming unsettled_funds=$0.0000 (all of yesterday's $1,287.16 pending settled overnight, settle_date 2026-08-04 arrived) and get_portfolio confirming real buying_power=$1,295.86. Used the correct allocation-minus-used figure ($5,000 - $3,864.52 = $1,135.48) as real_cash for cmd_plan instead of trusting the buggy ledger script output - cmd_plan's own settle_date>today filter then correctly showed pending_settlement_total=0 for this run, confirming the workaround was right. With real settled cash unlocked, cmd_plan found 3 buy candidates ranked deepest-drawdown-first: SNDK HUGE_DIP ($843.66, still down -36.6% vs its own trailing high despite today's rally), INTC HUGE_DIP ($216.82, INTC's 5th and final tranche - now at MAX_TRANCHES), WDC NORMAL_DIP ($33.45, first-ever entry for this system). All 3 buys and all 5 sells executed clean, no review alerts. New pending_settlement: $1,141.09 INTC + $1,727.37 LRCX + $13.92 SNDK + $3.41 MU + $2.03 AMD = $2,887.82, settling 2026-08-05. Positions reconciled clean against get_equity_positions before acting; untracked CGC (2 sh) excluded."
+  },
+  {
+   "timestamp": "2026-08-04T14:42:00Z",
+   "orders": [
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 4.668499,
+     "price": 99.3299,
+     "reason": "PEAK"
+    }
+   ],
+   "allocation": 5000.0,
+   "used_capital": 2102.79,
+   "available_capital": 9.39,
+   "skipped": [
+    {
+     "symbol": "MU",
+     "side": "sell",
+     "shares": 0.000267,
+     "price": 878.775,
+     "reason": "GAIN20",
+     "why": "review_equity_order flagged EQUITY_SUB_DOLLAR_SHARE_BASED_ORDER (~$0.23 notional) - skipped, not forced."
+    },
+    {
+     "symbol": "AMD",
+     "side": "sell",
+     "shares": 0.001016,
+     "price": 516.98,
+     "reason": "PEAK",
+     "why": "review_equity_order flagged EQUITY_SUB_DOLLAR_SHARE_BASED_ORDER (~$0.52 notional) - skipped, not forced."
+    }
+   ],
+   "notes": "Continued rally: INTC hit another new peak (99.5112 vs prior peak 97.686) and was PEAK-sold 74.3% - still holds 1.614811 sh after. MU crossed the 20% gain tier from its 8/3 entry and AMD hit another new peak, but both trades were now so small (residual shares after 2+ days of repeated peak-trims) that Robinhood's sub-dollar order guard blocked them - skipped per the 'skip and note why if review flags anything' rule rather than forcing through. No buys - settled cash only $9.39 (most of the system's equity is in $2,887.82 pending settlement from yesterday's rally-day trims, settle_date 2026-08-05). METHODOLOGY CORRECTION this run: caught that chaining capital_ledger.py's 'available' output directly into margin_style_live_engine.py plan's real_cash parameter double-subtracts pending settlement, since cmd_plan applies its own date-aware pending subtraction internally. Going forward, pass allocation-minus-used (gross, pre-pending) as real_cash, not the ledger's already-net 'available' figure - this run used 2897.21 (5000-2102.79) correctly, arriving at the same $9.39 safe_settled_cash the ledger showed only because today's pending happens to still be genuinely unsettled (settle_date 8/5 > today 8/4); on a day where ledger pending was already stale/settled this would NOT match, as seen yesterday. Positions reconciled clean; untracked CGC excluded."
   }
  ]
 }
