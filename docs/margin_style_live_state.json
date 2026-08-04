@@ -29,20 +29,30 @@
    "amount": 463.72,
    "settle_date": "2026-08-05",
    "symbol": "INTC"
+  },
+  {
+   "amount": 120.09,
+   "settle_date": "2026-08-05",
+   "symbol": "INTC"
+  },
+  {
+   "amount": 447.3,
+   "settle_date": "2026-08-05",
+   "symbol": "LRCX"
   }
  ],
  "open_positions": {
   "INTC": {
-   "shares": 1.614811,
+   "shares": 0.415006,
    "entry": 92.927,
-   "peak": 99.3299,
+   "peak": 100.09,
    "tranches": 5,
    "opened": "2026-07-28"
   },
   "LRCX": {
-   "shares": 1.918901,
+   "shares": 0.493158,
    "entry": 297.9019,
-   "peak": 311.37,
+   "peak": 313.73,
    "tranches": 3,
    "opened": "2026-07-30"
   },

@@ -657,6 +657,39 @@
     }
    ],
    "notes": "Continued rally: INTC hit another new peak (99.5112 vs prior peak 97.686) and was PEAK-sold 74.3% - still holds 1.614811 sh after. MU crossed the 20% gain tier from its 8/3 entry and AMD hit another new peak, but both trades were now so small (residual shares after 2+ days of repeated peak-trims) that Robinhood's sub-dollar order guard blocked them - skipped per the 'skip and note why if review flags anything' rule rather than forcing through. No buys - settled cash only $9.39 (most of the system's equity is in $2,887.82 pending settlement from yesterday's rally-day trims, settle_date 2026-08-05). METHODOLOGY CORRECTION this run: caught that chaining capital_ledger.py's 'available' output directly into margin_style_live_engine.py plan's real_cash parameter double-subtracts pending settlement, since cmd_plan applies its own date-aware pending subtraction internally. Going forward, pass allocation-minus-used (gross, pre-pending) as real_cash, not the ledger's already-net 'available' figure - this run used 2897.21 (5000-2102.79) correctly, arriving at the same $9.39 safe_settled_cash the ledger showed only because today's pending happens to still be genuinely unsettled (settle_date 8/5 > today 8/4); on a day where ledger pending was already stale/settled this would NOT match, as seen yesterday. Positions reconciled clean; untracked CGC excluded."
+  },
+  {
+   "timestamp": "2026-08-04T16:26:00Z",
+   "orders": [
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 1.199805,
+     "price": 100.09,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "sell",
+     "shares": 1.425743,
+     "price": 313.73,
+     "reason": "PEAK"
+    }
+   ],
+   "allocation": 5000.0,
+   "used_capital": 1671.36,
+   "available_capital": 0.0,
+   "skipped": [
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.454776,
+     "price": 1425.725,
+     "reason": "PEAK",
+     "why": "Order was denied at the tool-execution layer before placement. User then asked to understand the PEAK-sell rationale for SNDK specifically. Held pending explicit user confirmation rather than resold or dropped - not yet re-attempted."
+    }
+   ],
+   "notes": "Continued rally: this was originally a single plan with 6 PEAK sells (INTC, LRCX, SNDK, MU, AMD, WDC) as all 6 open positions hit fresh highs. INTC and LRCX sells executed cleanly before the run was interrupted by a user question about SNDK specifically. This log entry reconciles state for the 2 sells that DID execute (INTC now 0.415006 sh, peak updated to 100.09; LRCX now 0.493158 sh, peak updated to 313.73) - SNDK/MU/AMD/WDC sells from the same original plan were not committed and remain open at their prior peaks, to be re-evaluated fresh next run."
   }
  ]
 }
