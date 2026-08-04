@@ -1,81 +1,73 @@
 {
  "pending_settlement": [
   {
-   "amount": 756.25,
-   "settle_date": "2026-08-04",
+   "amount": 1141.09,
+   "settle_date": "2026-08-05",
+   "symbol": "INTC"
+  },
+  {
+   "amount": 1727.37,
+   "settle_date": "2026-08-05",
+   "symbol": "LRCX"
+  },
+  {
+   "amount": 13.92,
+   "settle_date": "2026-08-05",
    "symbol": "SNDK"
   },
   {
-   "amount": 186.82,
-   "settle_date": "2026-08-04",
+   "amount": 3.41,
+   "settle_date": "2026-08-05",
    "symbol": "MU"
   },
   {
-   "amount": 28.76,
-   "settle_date": "2026-08-04",
+   "amount": 2.03,
+   "settle_date": "2026-08-05",
    "symbol": "AMD"
-  },
-  {
-   "amount": 196.57,
-   "settle_date": "2026-08-04",
-   "symbol": "SNDK"
-  },
-  {
-   "amount": 48.28,
-   "settle_date": "2026-08-04",
-   "symbol": "MU"
-  },
-  {
-   "amount": 7.46,
-   "settle_date": "2026-08-04",
-   "symbol": "AMD"
-  },
-  {
-   "amount": 50.53,
-   "settle_date": "2026-08-04",
-   "symbol": "SNDK"
-  },
-  {
-   "amount": 12.49,
-   "settle_date": "2026-08-04",
-   "symbol": "MU"
   }
  ],
  "open_positions": {
   "INTC": {
-   "shares": 15.761859,
-   "entry": 90.3042,
-   "peak": 92.7935,
-   "tranches": 4,
+   "shares": 6.28331,
+   "entry": 92.927,
+   "peak": 97.686,
+   "tranches": 5,
    "opened": "2026-07-28"
   },
   "LRCX": {
-   "shares": 7.46654,
+   "shares": 1.918901,
    "entry": 297.9019,
-   "peak": 308.1499,
+   "peak": 311.37,
    "tranches": 3,
    "opened": "2026-07-30"
   },
   "SNDK": {
-   "shares": 0.013498,
-   "entry": 1263.2799,
-   "peak": 1294.835,
-   "tranches": 1,
+   "shares": 0.6120810000000001,
+   "entry": 1390.8976,
+   "peak": 1391.625,
+   "tranches": 2,
    "opened": "2026-08-03"
   },
   "MU": {
-   "shares": 0.005199,
+   "shares": 0.001336,
    "entry": 819.6641,
-   "peak": 830.985,
+   "peak": 881.515,
    "tranches": 1,
    "opened": "2026-08-03"
   },
   "AMD": {
-   "shares": 0.005319,
+   "shares": 0.001367,
    "entry": 479.8529,
-   "peak": 485.24,
+   "peak": 514.13,
    "tranches": 1,
    "opened": "2026-08-03"
+  },
+  "WDC": {
+   "shares": 0.061231,
+   "entry": 544.825,
+   "peak": 544.825,
+   "tranches": 1,
+   "opened": "2026-08-04"
   }
  }
 }
