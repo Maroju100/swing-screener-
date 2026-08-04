@@ -5495,6 +5495,63 @@
     "VWAP Reclaim (H2)": -86.42,
     "First Pullback After ORB (H2)": -212.71
    }
+  },
+  {
+   "timestamp": "2026-08-04T19:12:09.561326+00:00",
+   "trades": [
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-08-04",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 15,
+     "price": 527.23
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-08-04",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 527.23,
+     "exit": 528.64,
+     "shares": 15,
+     "pnl": 21.15
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-08-04",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 19,
+     "price": 419.21
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-08-04",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 419.21,
+     "exit": 418.85,
+     "shares": 19,
+     "pnl": -6.82
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -2000.82,
+    "Hybrid Disciplined Momentum Scalping": -720.63,
+    "Gap / High Change Momentum": -1032.82,
+    "Turtle Soup Reversal": 666.14,
+    "Momentum Breakout": -451.2,
+    "Mid-Range Reversion Rule": 0.0,
+    "Opening Range Breakout": 59.62,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -256.58,
+    "Oversold Snapback Fade": -148.85,
+    "VWAP Reclaim (H2)": -86.42,
+    "First Pullback After ORB (H2)": -198.38
+   }
   }
  ]
 }
