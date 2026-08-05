@@ -715,6 +715,63 @@
    "timestamp": "2026-08-04T21:16:00Z",
    "orders": [],
    "notes": "HELD - no orders attempted. Still awaiting user direction on the PEAK-sell question raised earlier today. Positions unchanged, no drift, nothing urgent."
+  },
+  {
+   "timestamp": "2026-08-05T17:17:47Z",
+   "orders": [
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 0.308349,
+     "price": 101.9,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "sell",
+     "shares": 0.493158,
+     "price": 311.53,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.454776,
+     "price": 1413.4291,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "AMD",
+     "side": "sell",
+     "shares": 0.001367,
+     "price": 486.0,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "WDC",
+     "side": "sell",
+     "shares": 0.045495,
+     "price": 547.61,
+     "reason": "PEAK"
+    }
+   ],
+   "skipped": [
+    {
+     "symbol": "MU",
+     "side": "sell",
+     "shares": 0.000993,
+     "reason": "PEAK",
+     "why": "review_equity_order flagged EQUITY_SUB_DOLLAR_SHARE_BASED_ORDER (~$0.91 notional) - skipped per hard rule, not overridden"
+    }
+   ],
+   "allocation": 5000.0,
+   "used_before_run": 1097.25,
+   "available_used_for_sizing": 3902.75,
+   "capital_ledger_note": "capital_ledger.py reported available=0.0 due to the known pending-settlement double-count bug (all pending entries had settle_date=2026-08-05, i.e. today, so they should have been treated as already settled); worked around by passing real_cash = allocation - used = 3902.75 and letting the engine's own date-aware pending filter apply.",
+   "circuit_breaker_triggered": true,
+   "stop_count_this_run": 2,
+   "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly before this run - no drift, no reconciliation needed. CGC position in account is unrelated/out-of-universe, ignored.",
+   "notes": "First run under the new midday-only (17:00 UTC) schedule. 2 STOP-outs (LRCX, AMD - both breached the -1.51% intraday stop vs 8/4 close during a broad pullback) plus 3 PEAK-sells (INTC, SNDK, WDC) trimmed on new highs. Circuit breaker (2+ STOPs) paused new entries this run; no buys placed. Elevated-scrutiny status remains in effect (live since 2026-07-27, still building track record)."
   }
  ]
 }
