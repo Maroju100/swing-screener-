@@ -5606,6 +5606,120 @@
     "VWAP Reclaim (H2)": -86.42,
     "First Pullback After ORB (H2)": -198.38
    }
+  },
+  {
+   "timestamp": "2026-08-05T16:17:52.589230+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-05",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 8,
+     "price": 918.47
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-05",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 918.47,
+     "exit": 919.23,
+     "shares": 8,
+     "pnl": 6.08
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-08-05",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 17,
+     "price": 484.45
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-08-05",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 484.45,
+     "exit": 488.31,
+     "shares": 17,
+     "pnl": 65.54
+    },
+    {
+     "strategy": "Mid-Range Reversion Rule",
+     "date": "2026-08-05",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 15,
+     "price": 551.0
+    },
+    {
+     "strategy": "Mid-Range Reversion Rule",
+     "date": "2026-08-05",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 551.0,
+     "exit": 550.1,
+     "shares": 15,
+     "pnl": -13.57
+    },
+    {
+     "strategy": "Oversold Snapback Fade",
+     "date": "2026-08-05",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 5,
+     "price": 1413.0
+    },
+    {
+     "strategy": "Oversold Snapback Fade",
+     "date": "2026-08-05",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 1413.0,
+     "exit": 1413.0,
+     "shares": 5,
+     "pnl": 0.0
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-08-05",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 5,
+     "price": 1415.78
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-08-05",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 1415.78,
+     "exit": 1413.0,
+     "shares": 5,
+     "pnl": -13.9
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -1994.74,
+    "Hybrid Disciplined Momentum Scalping": -720.63,
+    "Gap / High Change Momentum": -1032.82,
+    "Turtle Soup Reversal": 731.68,
+    "Momentum Breakout": -451.2,
+    "Mid-Range Reversion Rule": -13.57,
+    "Opening Range Breakout": 59.62,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -256.58,
+    "Oversold Snapback Fade": -148.85,
+    "VWAP Reclaim (H2)": -100.32,
+    "First Pullback After ORB (H2)": -198.38
+   }
   }
  ]
 }
