@@ -1216,6 +1216,104 @@
     }
    ],
    "cumulative_pl": 5037.01
+  },
+  {
+   "timestamp": "2026-08-05T13:39:57.801579+00:00",
+   "trades": [
+    {
+     "symbol": "AMD",
+     "date": "2026-08-04",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 484.64,
+     "exit": 518.58,
+     "shares": 6.175909,
+     "pnl": 209.61
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-08-04",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 829.5,
+     "exit": 892.67,
+     "shares": 3.330178,
+     "pnl": 210.37
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-08-04",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 9.114773,
+     "price": 548.56
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-04",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 1288.03,
+     "exit": 1427.62,
+     "shares": 2.884249,
+     "pnl": 402.61
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-04",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 3.502333,
+     "price": 1427.62
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-08-04",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 394.1614,
+     "exit": 417.17,
+     "shares": 0.178339,
+     "pnl": 4.1
+    },
+    {
+     "symbol": "INTC",
+     "date": "2026-08-04",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 91.0,
+     "exit": 100.86,
+     "shares": 40.824176,
+     "pnl": 402.53
+    },
+    {
+     "symbol": "INTC",
+     "date": "2026-08-04",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 49.573666,
+     "price": 100.86
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-08-04",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 294.61,
+     "exit": 317.74,
+     "shares": 12.609891,
+     "pnl": 291.67
+    },
+    {
+     "symbol": "STX",
+     "date": "2026-08-04",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 5.63728,
+     "price": 845.35
+    }
+   ],
+   "cumulative_pl": 7081.09
   }
  ]
 }
