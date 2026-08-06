@@ -685,6 +685,67 @@
     "MA Crossover (H)": -590.1,
     "Darvas Box (I)": 0.0
    }
+  },
+  {
+   "timestamp": "2026-08-06T21:29:40.347406+00:00",
+   "trades": [
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-08-05",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "MANUAL_RESET",
+     "entry": 477.22,
+     "exit": 519.17,
+     "shares": 9,
+     "pnl": 377.55
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-08-05",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "MANUAL_RESET",
+     "entry": 404.25,
+     "exit": 414.0,
+     "shares": 10,
+     "pnl": 97.5
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-08-05",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "MANUAL_RESET",
+     "entry": 1288.03,
+     "exit": 1350.5,
+     "shares": 3,
+     "pnl": 187.41
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-08-05",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "MANUAL_RESET",
+     "entry": 518.58,
+     "exit": 482.05,
+     "shares": 8,
+     "pnl": -292.24
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-08-05",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "MANUAL_RESET",
+     "entry": 892.67,
+     "exit": 893.19,
+     "shares": 4,
+     "pnl": 2.08
+    }
+   ],
+   "note": "Manual reset: closed all 5 carried-over Pivot Point S1 Bounce positions (opened under the old touch=1.01/stop=1.5xATR/target=3.0xATR config) at last known close (2026-08-05), per explicit user request, so the strategy restarts clean under the new touch=1.02/stop=2.0xATR/target=4.0xATR params."
   }
  ]
 }
