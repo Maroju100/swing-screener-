@@ -73,11 +73,12 @@ def atr_series(bars, period=14):
     return out
 
 
-def load_daily(daily_path):
+def load_daily(daily_path, universe=None):
+    universe = universe or SWING_SYMBOLS
     d = json.load(open(daily_path))
     bars_by_sym = {}
     for r in d['data']['results']:
-        if r['symbol'] not in SWING_SYMBOLS:
+        if r['symbol'] not in universe:
             continue
         bars_by_sym[r['symbol']] = [{'date': b['begins_at'][:10], 'open': float(b['open_price']),
                                        'close': float(b['close_price']), 'high': float(b['high_price']),
@@ -100,7 +101,9 @@ def sig_pivot_point_bounce(bars, atr, gi, touch_mult, stop_atr, target_atr):
     return None
 
 
-def backtest_swing_window(bars_by_sym, atr_by_sym, sig_fn, min_hold, window_start, window_end):
+def backtest_swing_window(bars_by_sym, atr_by_sym, sig_fn, min_hold, window_start, window_end, universe=None, maxp=None):
+    universe = universe or SWING_SYMBOLS
+    maxp = maxp or MAXP_SWING
     date_idx = {sym: {b['date']: i for i, b in enumerate(bars_by_sym[sym])} for sym in bars_by_sym}
     dates = sorted(set(dt for sym in bars_by_sym for dt in date_idx[sym] if window_start <= dt <= window_end))
     cash = CAPITAL
@@ -131,9 +134,9 @@ def backtest_swing_window(bars_by_sym, atr_by_sym, sig_fn, min_hold, window_star
             else:
                 pos['last_price'] = bars[gi]['close']
 
-        if len(positions) < MAXP_SWING:
-            for sym in SWING_SYMBOLS:
-                if sym in positions or len(positions) >= MAXP_SWING or sym not in bars_by_sym:
+        if len(positions) < maxp:
+            for sym in universe:
+                if sym in positions or len(positions) >= maxp or sym not in bars_by_sym:
                     continue
                 gi = date_idx[sym].get(dt)
                 if gi is None:
@@ -146,7 +149,7 @@ def backtest_swing_window(bars_by_sym, atr_by_sym, sig_fn, min_hold, window_star
                 pending_total = sum(p[1] for p in pending)
                 posval = sum(p['shares'] * p.get('last_price', p['entry']) for p in positions.values())
                 tv = cash + pending_total + posval
-                shares = (tv / MAXP_SWING) / price
+                shares = (tv / maxp) / price
                 cost = shares * price
                 if shares > 0 and cost <= cash:
                     cash -= cost
@@ -378,12 +381,12 @@ def search_daytrade(name, gen_fn, param_grid, bars_by_sym, DAYIDX, windows, cont
     return results
 
 
-def search_swing(name, gen_fn, param_grid, bars_by_sym, atr_by_sym, windows, min_hold):
+def search_swing(name, gen_fn, param_grid, bars_by_sym, atr_by_sym, windows, min_hold, universe=None, maxp=None):
     results = []
     for params in param_grid:
         p2 = {k: v for k, v in params.items() if k != 'min_hold'}
         sig_fn = lambda sym, gi, _p=p2: gen_fn(bars_by_sym[sym], atr_by_sym[sym], gi, **_p)
-        window_pls = [backtest_swing_window(bars_by_sym, atr_by_sym, sig_fn, params.get('min_hold', min_hold), w[0], w[1]) for w in windows]
+        window_pls = [backtest_swing_window(bars_by_sym, atr_by_sym, sig_fn, params.get('min_hold', min_hold), w[0], w[1], universe=universe, maxp=maxp) for w in windows]
         n_profit = sum(1 for p in window_pls if p > 0)
         total = round(sum(window_pls), 2)
         results.append({'params': params, 'window_pls': window_pls, 'n_profit': n_profit, 'total': total})
@@ -392,8 +395,8 @@ def search_swing(name, gen_fn, param_grid, bars_by_sym, atr_by_sym, windows, min
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print("Usage: python3 walkforward_search.py <daily_hist.json> <thirty_min_1yr_hist.json>")
+    if len(sys.argv) not in (3, 4):
+        print("Usage: python3 walkforward_search.py <daily_hist.json> <thirty_min_1yr_hist.json> [<top50_daily_hist.json>]")
         sys.exit(1)
 
     daily_bars, atr_by_sym = load_daily(sys.argv[1])
@@ -447,3 +450,25 @@ if __name__ == '__main__':
     print("=== Pivot Point S1 Bounce (swing, 5-symbol) - top 5 ===")
     for r in res[:5]:
         print(f"  {r['params']}  windows_profitable={r['n_profit']}/5  total={r['total']:>10,.2f}  per_window={r['window_pls']}")
+    print()
+
+    # --- Pivot Point S1 Bounce (Top-50 S&P universe, pivot50_paper_engine.py) ---
+    if len(sys.argv) == 4:
+        import pivot50_paper_engine as P50
+        daily50_bars, atr50_by_sym = load_daily(sys.argv[3], universe=P50.SYMBOLS)
+        daily50_dates = sorted(set(b['date'] for bars in daily50_bars.values() for b in bars))
+        daily50_windows = make_windows(daily50_dates, 5)
+        print("Top-50 windows:", daily50_windows)
+        grid = [{'touch_mult': tm, 'stop_atr': sa, 'target_atr': ta, 'min_hold': mh}
+                for tm in (1.005, 1.01, 1.02) for sa in (1.0, 1.5, 2.0) for ta in (2.0, 3.0, 4.0) for mh in (1, 2)]
+        res = search_swing('Pivot Point S1 Bounce (Top-50)', sig_pivot_point_bounce, grid, daily50_bars, atr50_by_sym,
+                            daily50_windows, min_hold=2, universe=P50.SYMBOLS, maxp=P50.MAXP)
+        print("=== Pivot Point S1 Bounce (Top-50 S&P universe) - top 5 ===")
+        for r in res[:5]:
+            print(f"  {r['params']}  windows_profitable={r['n_profit']}/5  total={r['total']:>10,.2f}  per_window={r['window_pls']}")
+        # also report the CURRENT baseline config for direct comparison
+        base_params = {'touch_mult': 1.01, 'stop_atr': 1.5, 'target_atr': 3.0, 'min_hold': 2}
+        base_res = search_swing('Pivot Point S1 Bounce (Top-50) baseline', sig_pivot_point_bounce, [base_params], daily50_bars, atr50_by_sym,
+                                 daily50_windows, min_hold=2, universe=P50.SYMBOLS, maxp=P50.MAXP)
+        b = base_res[0]
+        print(f"  BASELINE (current pivot50_paper_engine.py config) {b['params']}  windows_profitable={b['n_profit']}/5  total={b['total']:>10,.2f}  per_window={b['window_pls']}")

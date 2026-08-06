@@ -327,10 +327,12 @@ def make_signals(ctx):
     def sig_pivot_point_bounce(sym, gi):
         # Params updated 2026-08-06 after a 5-window walk-forward search (this 5-symbol
         # basket only - not applied to the separate top-50 S&P variant in
-        # pivot50_paper_engine.py, which hasn't been separately re-validated): touch
-        # 1.01->1.02, stop 1.5x->2.0x ATR, target 3.0x->4.0x ATR. Original config was
-        # 5/5 losing quarters recently (too-tight stop caused excess whipsaw); new
-        # config was profitable in 5/5 walk-forward windows, total +$9,828.73 on $5k.
+        # pivot50_paper_engine.py, which was separately re-validated and left as-is
+        # since its baseline was already 5/5 profitable): touch 1.01->1.02, stop
+        # 1.5x->2.0x ATR, target 3.0x->4.0x ATR. Original config was profitable in 4/5
+        # walk-forward windows (+$6,416.60 total) but had gone slightly negative in the
+        # most recent window (-$62.34, too-tight stop causing whipsaw exits); new config
+        # is profitable in all 5 windows, total +$9,828.73 on $5k (~53% higher).
         bars = bars_by_sym[sym]
         if gi < 3: return None
         y = bars[gi-1]
