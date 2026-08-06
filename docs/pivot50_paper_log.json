@@ -287,6 +287,53 @@
     "ABT": 46,
     "ACN": 29
    }
+  },
+  {
+   "timestamp": "2026-08-06T21:17:56.996209+00:00",
+   "trades": [
+    {
+     "date": "2026-08-05",
+     "symbol": "COST",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 966.58,
+     "exit": 936.48,
+     "shares": 5,
+     "pnl": -150.51
+    },
+    {
+     "date": "2026-08-05",
+     "symbol": "CRM",
+     "side": "BUY",
+     "shares": 25,
+     "price": 192.98
+    },
+    {
+     "date": "2026-08-05",
+     "symbol": "CSCO",
+     "side": "SELL",
+     "reason": "TARGET",
+     "entry": 112.76,
+     "exit": 123.82,
+     "shares": 43,
+     "pnl": 475.55
+    },
+    {
+     "date": "2026-08-05",
+     "symbol": "DHR",
+     "side": "BUY",
+     "shares": 24,
+     "price": 199.66
+    }
+   ],
+   "cumulative_pl": -100.59,
+   "open_positions": {
+    "AXP": 14,
+    "ABT": 46,
+    "ACN": 29,
+    "CRM": 25,
+    "DHR": 24
+   }
   }
  ]
 }
