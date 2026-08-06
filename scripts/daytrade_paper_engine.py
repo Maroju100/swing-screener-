@@ -86,6 +86,9 @@ def sig_gap_momentum(bars_by_sym, IND, DAYIDX, sym, gi):
     return None
 
 def sig_turtle_soup(bars_by_sym, IND, DAYIDX, sym, gi):
+    # Target widened 2026-08-06 after a 5-window walk-forward search (rng*2->rng*3,
+    # lookback/stop unchanged): profitable in all 3 active windows (this signal never
+    # fires in a persistent-uptrend regime, e.g. Aug-Dec 2025), total +$803.25 on $5k.
     bars = bars_by_sym[sym]
     if gi < 25: return None
     for back in range(1, 3):
@@ -94,25 +97,30 @@ def sig_turtle_soup(bars_by_sym, IND, DAYIDX, sym, gi):
         prior_low = min(bars[j]['low'] for j in range(k - 20, k))
         if bars[k]['low'] < prior_low and bars[gi]['close'] > prior_low:
             rng = sum(bars[j]['high'] - bars[j]['low'] for j in range(gi-5, gi+1)) / 6
-            return ((prior_low - bars[k]['low']) / prior_low, rng, rng * 2)
+            return ((prior_low - bars[k]['low']) / prior_low, rng, rng * 3)
     return None
 
 def sig_momentum_breakout(bars_by_sym, IND, DAYIDX, sym, gi):
+    # Breakout lookback 5->8, volume threshold 2.0x->2.5x avg, 2026-08-06 walk-forward
+    # search: profitable in all 3 active windows, total +$1,139.26 on $5k.
     bars = bars_by_sym[sym]
-    if gi < 15: return None
-    prior_high = max(bars[j]['high'] for j in range(gi-5, gi))
+    if gi < 18: return None
+    prior_high = max(bars[j]['high'] for j in range(gi-8, gi))
     vol_avg10 = sum(bars[j]['volume'] for j in range(gi-10, gi)) / 10
     if vol_avg10 <= 0: return None
-    if bars[gi]['close'] > prior_high and bars[gi]['volume'] >= 2.0 * vol_avg10:
+    if bars[gi]['close'] > prior_high and bars[gi]['volume'] >= 2.5 * vol_avg10:
         rng = sum(bars[j]['high'] - bars[j]['low'] for j in range(gi-5, gi+1)) / 6
         return ((bars[gi]['close'] - prior_high) / prior_high, rng, rng * 2)
     return None
 
 def sig_mid_range_reversion(bars_by_sym, IND, DAYIDX, sym, gi):
+    # Check bar 4->5 (later in the morning), stop/target widened from full_rng*(0.5,1)
+    # to full_rng*(0.7,2), 2026-08-06 walk-forward search: profitable in all 3 active
+    # windows, total +$975.09 on $5k.
     bars = bars_by_sym[sym]
     meta = DAYIDX[sym][gi]
     i_in_day = meta['i_in_day']
-    if i_in_day != 4: return None
+    if i_in_day != 5: return None
     day_start = gi - i_in_day
     day_open = bars[day_start]['open']
     rng_high = max(bars[j]['high'] for j in range(day_start, gi))
@@ -123,7 +131,7 @@ def sig_mid_range_reversion(bars_by_sym, IND, DAYIDX, sym, gi):
     below_mid = bars[gi]['close'] <= mid
     uptrend_intact = bars[gi]['close'] > day_open
     if below_mid and uptrend_intact:
-        return ((mid - bars[gi]['close']) / mid + 0.001, full_rng / 2, full_rng)
+        return ((mid - bars[gi]['close']) / mid + 0.001, full_rng * 0.7, full_rng * 2)
     return None
 
 def sig_opening_range_breakout(bars_by_sym, IND, DAYIDX, sym, gi):
@@ -203,6 +211,8 @@ def sig_oversold_snapback(bars_by_sym, IND, DAYIDX, sym, gi):
     return None
 
 def sig_vwap_reclaim(bars_by_sym, IND, DAYIDX, sym, gi):
+    # Target widened 2026-08-06 after a 5-window walk-forward search (rng*2->rng*3,
+    # min-bar/stop unchanged): profitable in all 3 active windows, total +$717.31 on $5k.
     bars = bars_by_sym[sym]
     meta = DAYIDX[sym][gi]
     if meta['i_in_day'] < 3: return None
@@ -221,7 +231,7 @@ def sig_vwap_reclaim(bars_by_sym, IND, DAYIDX, sym, gi):
         span = max(1, min(6, gi - day_start + 1))
         rng = sum(bars[j]['high'] - bars[j]['low'] for j in range(gi - span + 1, gi + 1)) / span
         if rng <= 0: return None
-        return ((bars[gi]['close'] - vwap_now) / vwap_now, rng, rng * 2)
+        return ((bars[gi]['close'] - vwap_now) / vwap_now, rng, rng * 3)
     return None
 
 def sig_first_pullback_after_orb(bars_by_sym, IND, DAYIDX, sym, gi):
