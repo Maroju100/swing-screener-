@@ -489,3 +489,128 @@ if __name__ == '__main__':
                                  daily50_windows, min_hold=2, universe=P50.SYMBOLS, maxp=P50.MAXP)
         b = base_res[0]
         print(f"  BASELINE (current pivot50_paper_engine.py config) {b['params']}  windows_profitable={b['n_profit']}/5  total={b['total']:>10,.2f}  per_window={b['window_pls']}")
+
+
+# ---------------------------------------------------------------------------
+# Margin-Style Winner config (Scaled Dip-Buy/Peak-Sell), 8-symbol universe.
+# Parameterized version of backtest_5k_30d.run_margin_style_backtest, windowed
+# for walk-forward search instead of a single last-N-days cutoff. All non-varied
+# params (HUGE_DIP_DRAWDOWN, LOOKBACK_DAYS, TRANCHE_PCT, HUGE_DIP_PCT, GAIN_TIERS,
+# MAX_TRADE_NOTIONAL, MAX_SYMBOL_ALLOCATION_PCT, MIN_NOTIONAL) default to the
+# actual live "Winner" config constants from margin_style_live_engine.py.
+# ---------------------------------------------------------------------------
+
+def backtest_margin_style_window(bars_by_sym, window_start, window_end, ms_symbols,
+                                   intraday_stop, peak_sell_pct, huge_dip_drawdown=None,
+                                   lookback_days=None, tranche_pct=None, huge_dip_pct=None,
+                                   gain_tiers=None, max_trade_notional=None,
+                                   max_symbol_allocation_pct=None, min_notional=None,
+                                   max_tranches=None):
+    import margin_style_live_engine as MS
+    huge_dip_drawdown = MS.HUGE_DIP_DRAWDOWN if huge_dip_drawdown is None else huge_dip_drawdown
+    lookback_days = MS.LOOKBACK_DAYS if lookback_days is None else lookback_days
+    tranche_pct = MS.TRANCHE_PCT if tranche_pct is None else tranche_pct
+    huge_dip_pct = MS.HUGE_DIP_PCT if huge_dip_pct is None else huge_dip_pct
+    gain_tiers = MS.GAIN_TIERS if gain_tiers is None else gain_tiers
+    max_trade_notional = MS.MAX_TRADE_NOTIONAL if max_trade_notional is None else max_trade_notional
+    max_symbol_allocation_pct = MS.MAX_SYMBOL_ALLOCATION_PCT if max_symbol_allocation_pct is None else max_symbol_allocation_pct
+    min_notional = MS.MIN_NOTIONAL if min_notional is None else min_notional
+    max_tranches = MS.MAX_TRANCHES if max_tranches is None else max_tranches
+
+    date_idx = {sym: {b['date']: i for i, b in enumerate(bars_by_sym[sym])} for sym in bars_by_sym}
+    dates = sorted(set(dt for sym in bars_by_sym for dt in date_idx[sym] if window_start <= dt <= window_end))
+
+    cash = CAPITAL
+    pending = []
+    positions = {}
+
+    def settle(dt_str, amount):
+        pending.append([next_business_day(datetime.strptime(dt_str, '%Y-%m-%d')).strftime('%Y-%m-%d'), amount])
+
+    for dt in dates:
+        released = [p for p in pending if p[0] <= dt]
+        for p in released:
+            cash += p[1]
+        pending = [p for p in pending if p[0] > dt]
+
+        for sym in ms_symbols:
+            if sym not in bars_by_sym:
+                continue
+            gi = date_idx[sym].get(dt)
+            if gi is None or gi < 2:
+                continue
+            bars = bars_by_sym[sym]
+            prev_close = bars[gi - 1]['close']
+            close = bars[gi]['close']
+
+            if sym in positions:
+                p = positions[sym]
+                if bars[gi]['low'] <= prev_close * (1 + intraday_stop):
+                    fill = prev_close * (1 + intraday_stop)
+                    settle(dt, p['shares'] * fill)
+                    del positions[sym]
+                elif close > p['peak']:
+                    sell_shares = round(p['shares'] * peak_sell_pct, 6)
+                    if sell_shares > 0:
+                        settle(dt, sell_shares * close)
+                        p['shares'] -= sell_shares
+                    p['peak'] = close
+                    p['last_price'] = close
+                    if p['shares'] <= 1e-9:
+                        del positions[sym]
+                else:
+                    gain_pct = (close - p['avg_cost']) / p['avg_cost']
+                    for thresh, pct in gain_tiers:
+                        if gain_pct >= thresh:
+                            sell_shares = round(p['shares'] * pct, 6)
+                            if sell_shares > 0:
+                                settle(dt, sell_shares * close)
+                                p['shares'] -= sell_shares
+                                if p['shares'] <= 1e-9:
+                                    del positions[sym]
+                            break
+                    if sym in positions:
+                        positions[sym]['last_price'] = close
+
+            p = positions.get(sym)
+            if p and p.get('tranches', 0) >= max_tranches:
+                continue
+            if gi < lookback_days + 2:
+                continue
+            prev_prev_close = bars[gi - 2]['close']
+            day_return = (prev_close - prev_prev_close) / prev_prev_close
+            lb_start = max(0, gi - 1 - lookback_days)
+            trailing_high = max(bars[j]['close'] for j in range(lb_start, gi - 1))
+            drawdown = (prev_close - trailing_high) / trailing_high
+
+            deploy = None
+            if drawdown <= huge_dip_drawdown:
+                deploy = min(cash * huge_dip_pct, max_trade_notional)
+            elif day_return < 0 and (not p or p.get('tranches', 0) < max_tranches):
+                deploy = min(cash * tranche_pct, max_trade_notional)
+
+            if deploy and deploy >= min_notional and cash > 1.0:
+                posval = sum(positions[s]['shares'] * positions[s].get('last_price', positions[s]['avg_cost']) for s in positions)
+                total_equity = cash + posval
+                current_value = p['shares'] * close if p else 0.0
+                room = max(0.0, max_symbol_allocation_pct * total_equity - current_value)
+                deploy = min(deploy, room)
+                if deploy >= min_notional:
+                    shares = deploy / close
+                    if shares > 0 and deploy <= cash:
+                        cash -= deploy
+                        if p:
+                            new_shares = p['shares'] + shares
+                            p['avg_cost'] = (p['avg_cost'] * p['shares'] + deploy) / new_shares
+                            p['shares'] = new_shares
+                            p['peak'] = max(p['peak'], close)
+                            p['tranches'] = p.get('tranches', 0) + 1
+                            p['last_price'] = close
+                        else:
+                            positions[sym] = {'shares': shares, 'avg_cost': close, 'peak': close,
+                                                'tranches': 1, 'last_price': close}
+
+    pending_total = sum(p[1] for p in pending)
+    posval = sum(pos['shares'] * pos.get('last_price', pos['avg_cost']) for pos in positions.values())
+    equity = cash + pending_total + posval
+    return round(equity - CAPITAL, 2)
