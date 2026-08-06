@@ -167,11 +167,13 @@ def build_context(raw_path):
 def make_signals(ctx):
     bars_by_sym, ATR, CRSI, PIVOT_LOWS, WEEKLY, MONTHLY, ICHI, RSI14, EMA21, PIVOTS_HL, EMA9 = ctx
 
-    # Precomputed 2026-08-06 for revived signals A/C/D (see below) - RSI(3)-smoothed-by-3
-    # for Bressert, EMA13 + MACD-Histogram for Elder Impulse.
+    # Precomputed 2026-08-06 for revived signals A/C/D/G (see below) - RSI(3)-smoothed-
+    # by-3 for Bressert, EMA13 + MACD-Histogram for Elder Impulse, RSI(2) for
+    # Asymmetric Pullback.
     RSI3M3 = {}
     EMA13 = {}
     MACDH = {}
+    RSI2 = {}
     for sym in SYMBOLS:
         if sym not in bars_by_sym: continue
         closes = [b['close'] for b in bars_by_sym[sym]]
@@ -186,6 +188,7 @@ def make_signals(ctx):
         macd = [a - b for a, b in zip(e12, e26)]
         sig9 = ema_series(macd, 9)
         MACDH[sym] = [m - s for m, s in zip(macd, sig9)]
+        RSI2[sym] = rsi_n(closes, 2)
 
     def sig_A_2b_reversal(sym, gi):
         # Revived 2026-08-06 from the disabled 9-Way Combo's Signal A (2B Reversal +
@@ -244,6 +247,62 @@ def make_signals(ctx):
             atr = ATR[sym][gi]
             if not atr: return None
             return (mh[gi] - mh[gi-1] + 0.01, atr * 1.5, atr * 4.0)
+        return None
+
+    def sig_G_asymmetric_pullback(sym, gi, sma_period=20, rsi2_thresh=40):
+        # Revived 2026-08-06 from the disabled 9-Way Combo's Signal G (Asymmetric
+        # Pullback), with walk-forward-optimized stop/target (2.0x/4.0x ATR vs original
+        # 1.75x/3.5x; sma_period and rsi2_thresh unchanged). Baseline was already 5/5
+        # windows profitable (+$6,899.18, the strongest of the 22 signals at original
+        # params); new config keeps 5/5 windows and raises total to +$8,900.59 (+29%).
+        bars = bars_by_sym[sym]
+        if gi < sma_period: return None
+        closes = [bars[j]['close'] for j in range(gi - sma_period + 1, gi + 1)]
+        sma = sum(closes) / sma_period
+        r2 = RSI2[sym][gi]
+        if r2 is None: return None
+        if bars[gi]['close'] > sma and r2 <= rsi2_thresh:
+            atr = ATR[sym][gi]
+            if not atr: return None
+            return (rsi2_thresh - r2, atr * 2.0, atr * 4.0)
+        return None
+
+    def sig_F_donchian(sym, gi, period=10):
+        # Revived 2026-08-06 from the disabled 9-Way Combo's Signal F (Donchian/Turtle
+        # Channel Breakout), with walk-forward-optimized params (period 20->10, stop
+        # 1.75x->2.0x ATR, target 3.5x->5.0x ATR). Baseline was already 5/5 windows
+        # profitable (+$4,403.10); new config keeps 5/5 windows and raises total to
+        # +$7,698.50 (+75%).
+        bars = bars_by_sym[sym]
+        if gi < period + 15: return None
+        prior_high = max(bars[j]['high'] for j in range(gi - period, gi))
+        if bars[gi - 1]['close'] <= prior_high and bars[gi]['close'] > prior_high:
+            atr = ATR[sym][gi]
+            if not atr: return None
+            return ((bars[gi]['close'] - prior_high) / prior_high, atr * 2.0, atr * 5.0)
+        return None
+
+    def sig_B_123_breakout(sym, gi, freshness=15, lookback=30):
+        # Revived 2026-08-06 from the disabled 9-Way Combo's Signal B (Joe Ross 1-2-3
+        # low breakout), with walk-forward-optimized params (lookback 45->30 - freshness
+        # tested at 10/15/20 with identical results, left at 15; stop 1.75x->2.0x ATR,
+        # target 3.5x->5.0x ATR). Baseline was already 5/5 windows profitable
+        # (+$3,289.80); new config keeps 5/5 windows and raises total to +$5,417.49
+        # (+65%).
+        bars = bars_by_sym[sym]
+        if gi < lookback: return None
+        piv = [p for p in PIVOTS_HL[sym] if p[1] < gi]
+        if len(piv) < 3: return None
+        trio = piv[-3:]
+        if not (trio[0][0] == 'L' and trio[1][0] == 'H' and trio[2][0] == 'L'):
+            return None
+        P1, P2, P3 = trio
+        if not (P3[2] > P1[2] and (gi - P3[1]) <= freshness and (gi - P1[1]) <= lookback):
+            return None
+        if bars[gi - 1]['close'] <= P2[2] and bars[gi]['close'] > P2[2]:
+            atr = ATR[sym][gi]
+            if not atr: return None
+            return ((bars[gi]['close'] - P2[2]) / P2[2], atr * 2.0, atr * 5.0)
         return None
 
     def sig_bollinger_squeeze(sym, gi):
@@ -619,19 +678,23 @@ def make_signals(ctx):
     # Leader Pullback backtested negative (-$582, 0/5 windows) and is included here for continued
     # observation, not because it looked promising.
     #
-    # A/C/D revived 2026-08-06: these belonged to the original 9-Way Combo (A+B+C+D), which
-    # went live 2026-07-14 then was disabled entirely 2026-07-24 in the consolidation to
-    # Margin-Style-only - unlike E/F/G, they were never re-added to this paper tracker, leaving
-    # them orphaned (no live or paper record) despite a 5-window walk-forward search showing
-    # real edge at their original params (A: 4/5 windows +$2,675.61; C: 4/5 +$1,758.60; D: 4/5
-    # +$5,862.13). Added here with walk-forward-optimized params per explicit user request - see
-    # each function's own comment above for before/after figures. B (1-2-3 Low Breakout) was
-    # ALSO orphaned the same way and was already 5/5 windows profitable (+$3,289.80) even at its
-    # original params, un-optimized - not added here, pending a separate decision.
+    # A/B/C/D/F/G revived 2026-08-06 (in two batches): all six belonged to the original
+    # 9-Way Combo, which went live in stages from 2026-07-14 and was disabled entirely
+    # 2026-07-24 in the consolidation to Margin-Style-only. They were never re-added to
+    # this paper tracker afterward, leaving them orphaned (no live or paper record)
+    # despite a 5-window walk-forward search showing real edge at their original params
+    # (A: 4/5 windows +$2,675.61; B: 5/5 +$3,289.80; C: 4/5 +$1,758.60; D: 4/5 +$5,862.13;
+    # F: 5/5 +$4,403.10; G: 5/5 +$6,899.18 - already the single strongest signal of the
+    # 22 even before tuning). All six added here with walk-forward-optimized params per
+    # explicit user request - see each function's own comment above for before/after
+    # figures.
     return {
         'A: 2B Reversal + Bollinger Whipsaw': sig_A_2b_reversal,
+        'B: Joe Ross 1-2-3 Low Breakout': sig_B_123_breakout,
         'C: Bressert RSI-3M3 Cycle Buy': sig_C_bressert,
         'D: Elder Impulse Green-Turn': sig_D_elder_impulse,
+        'F: Donchian/Turtle Channel Breakout': sig_F_donchian,
+        'G: Asymmetric Pullback': sig_G_asymmetric_pullback,
         'Bollinger Squeeze Breakout': sig_bollinger_squeeze,
         'Probe and Pullback': sig_probe_pullback,
         'MIDAS Anchored VWAP Bounce': sig_midas,
