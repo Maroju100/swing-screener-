@@ -95,9 +95,10 @@ def bollinger(bars, gi, period=20, mult=2.0):
     return m + mult * s, m - mult * s
 
 
-def build_extra_context(bars_by_sym):
+def build_extra_context(bars_by_sym, universe=None):
+    universe = universe or SWING_SYMBOLS
     SMA20, RSI2, RSI3M3, EMA13, MACDH = {}, {}, {}, {}, {}
-    for sym in SWING_SYMBOLS:
+    for sym in universe:
         if sym not in bars_by_sym:
             continue
         closes = [b['close'] for b in bars_by_sym[sym]]
@@ -259,12 +260,19 @@ def make_reimplemented_signals(bars_by_sym, ATR, PIVOTS_HL, extra):
 # Swing backtest: ONE check per trading day, $5,000 isolated capital, settled cash
 # ---------------------------------------------------------------------------
 
-def run_swing_backtest(daily_path, window_days=30):
-    ctx = SW.build_context(daily_path)
-    bars_by_sym, ATR = ctx[0], ctx[1]
-    PIVOTS_HL = ctx[9]
-    live_signals = SW.make_signals(ctx)
-    extra = build_extra_context(bars_by_sym)
+def run_swing_backtest(daily_path, window_days=30, universe=None):
+    universe = universe or SWING_SYMBOLS
+    orig_sw_symbols = SW.SYMBOLS
+    SW.SYMBOLS = universe  # monkeypatch: swing_paper_engine's own functions (build_context,
+                            # sig_rs_leader_pullback's cross-sectional ranking) read this global
+    try:
+        ctx = SW.build_context(daily_path)
+        bars_by_sym, ATR = ctx[0], ctx[1]
+        PIVOTS_HL = ctx[9]
+        live_signals = SW.make_signals(ctx)
+    finally:
+        SW.SYMBOLS = orig_sw_symbols
+    extra = build_extra_context(bars_by_sym, universe)
     reimplemented = make_reimplemented_signals(bars_by_sym, ATR, PIVOTS_HL, extra)
     signals = {}
     signals.update(reimplemented)  # A,B,C,D,E,F,G first (canonical order)
@@ -308,7 +316,7 @@ def run_swing_backtest(daily_path, window_days=30):
                     del positions[sym]
 
             if len(positions) < MAXP_SWING:
-                for sym in SWING_SYMBOLS:
+                for sym in universe:
                     if sym in positions or len(positions) >= MAXP_SWING:
                         continue
                     gi = date_idx.get(sym, {}).get(dt)
@@ -346,7 +354,10 @@ def run_swing_backtest(daily_path, window_days=30):
 # Day-trading backtest: TWO checks per trading day, $5,000 isolated capital, settled cash
 # ---------------------------------------------------------------------------
 
-def run_daytrade_backtest(thirtymin_path, window_days=30):
+def run_daytrade_backtest(thirtymin_path, window_days=30, check_indices=DT_CHECK_IDX):
+    # check_indices=None means CONTINUOUS: check every 30-min bar (matches how
+    # daytrade_paper_engine.py / daytrade_live_engine.py actually operate). A tuple
+    # (e.g. DT_CHECK_IDX) means only that many fixed checkpoints per day.
     bars_by_sym, IND, DAYIDX = DT.build_indicators(thirtymin_path)
     names = list(DT.STRATEGIES.keys())  # all 12 explored day-trading strategies
     signals = {n: DT.STRATEGIES[n] for n in names}
@@ -378,17 +389,30 @@ def run_daytrade_backtest(thirtymin_path, window_days=30):
                 cash += p[1]
             pending = [p for p in pending if p[0] > date]
 
-            for check_num, day_idx_target in enumerate(DT_CHECK_IDX):
+            # Determine the shared checkpoint positions (by i_in_day) for this date,
+            # common across symbols, so all symbols are evaluated in the same wave at
+            # each checkpoint (preserves cross-symbol MAXP_DT slot-competition order).
+            n_bars_today = max((len(day_bars[s][date]) for s in DT_SYMBOLS if s in day_bars and date in day_bars[s]), default=0)
+            if n_bars_today == 0:
+                continue
+            if check_indices is None:
+                i_in_day_checkpoints = list(range(n_bars_today))  # continuous: every bar
+            else:
+                seen_t = set()
+                i_in_day_checkpoints = []
+                for t in check_indices:
+                    tt = min(t, n_bars_today - 1)
+                    if tt not in seen_t:
+                        i_in_day_checkpoints.append(tt)
+                        seen_t.add(tt)
+
+            for cp_num, i_in_day_target in enumerate(i_in_day_checkpoints):
+                is_final_check = (cp_num == len(i_in_day_checkpoints) - 1)
                 for sym in DT_SYMBOLS:
                     if sym not in day_bars or date not in day_bars[sym]:
                         continue
                     idxs = day_bars[sym][date]
-                    if day_idx_target >= len(idxs):
-                        check_gi = idxs[-1]
-                        is_final_check = True
-                    else:
-                        check_gi = idxs[day_idx_target]
-                        is_final_check = (check_num == len(DT_CHECK_IDX) - 1)
+                    check_gi = idxs[min(i_in_day_target, len(idxs) - 1)]
                     bars = bars_by_sym[sym]
                     day_start = idxs[0]
 
