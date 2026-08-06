@@ -275,7 +275,11 @@ def make_signals(ctx):
             return ((bars[gi]['close'] - prior_high) / prior_high, atr * 1.75, atr * 3.5)
         return None
 
-    def sig_probe_pullback(sym, gi, range_window=10):
+    def sig_probe_pullback(sym, gi, range_window=5):
+        # Params updated 2026-08-06 after a 5-window walk-forward search: range_window
+        # 10->5, hold_band 0.985->0.97, stop/target 1.75x/3.5x->2.5x/4.5x ATR. Baseline
+        # was already 5/5 windows profitable (+$4,347.83); new config keeps 5/5 windows
+        # and raises total to +$8,059.24 (+85%).
         bars = bars_by_sym[sym]
         if gi < range_window + 20: return None
         for probe_back in range(2, 8):
@@ -283,12 +287,12 @@ def make_signals(ctx):
             if p - range_window < 0: continue
             range_high = max(bars[j]['high'] for j in range(p - range_window, p))
             if bars[p]['close'] <= range_high: continue
-            held = all(bars[j]['low'] >= range_high * 0.985 for j in range(p+1, gi))
+            held = all(bars[j]['low'] >= range_high * 0.97 for j in range(p+1, gi))
             resumed = bars[gi]['close'] > bars[gi-1]['close'] and bars[gi]['close'] > range_high
             if held and resumed:
                 atr = ATR[sym][gi]
                 if not atr: return None
-                return ((bars[gi]['close'] - range_high) / range_high, atr * 1.75, atr * 3.5)
+                return ((bars[gi]['close'] - range_high) / range_high, atr * 2.5, atr * 4.5)
         return None
 
     def sig_midas(sym, gi):
@@ -329,6 +333,10 @@ def make_signals(ctx):
         return None
 
     def sig_perfect_storm(sym, gi, daily_period=20, weekly_lookback=8, monthly_lookback=3):
+        # Stop/target updated 2026-08-06 after a 5-window walk-forward search: 1.75x/3.5x
+        # -> 2.0x/5.0x ATR (daily_period tested at 10/20/30, all tied - left at 20).
+        # Baseline was already 5/5 windows profitable (+$3,320.58); new config keeps
+        # 5/5 windows and raises total to +$5,202.95 (+57%).
         bars = bars_by_sym[sym]
         if gi < daily_period + 5: return None
         today_date = bars[gi]['date']
@@ -346,7 +354,7 @@ def make_signals(ctx):
         if weekly_breakout and monthly_up:
             atr = ATR[sym][gi]
             if not atr: return None
-            return ((bars[gi]['close'] - prior_daily_high) / prior_daily_high, atr * 1.75, atr * 3.5)
+            return ((bars[gi]['close'] - prior_daily_high) / prior_daily_high, atr * 2.0, atr * 5.0)
         return None
 
     def sig_connors_rsi(sym, gi, oversold=10):
@@ -573,7 +581,12 @@ def make_signals(ctx):
         return None
 
     def sig_darvas_box(sym, gi):
-        # Same math as live 9-Way Combo Signal I.
+        # Originally same math as the (now-disabled) live 9-Way Combo Signal I. Params
+        # updated 2026-08-06 after a 5-window walk-forward search: near-high threshold
+        # 0.005->0.01, box range cap 0.08->0.12, stop/target 1.75x/3.5x->2.5x/4.5x ATR.
+        # Baseline was already 5/5 windows profitable (+$1,517.24); new config keeps
+        # 5/5 windows and raises total to +$3,940.17 (+160%, the biggest gain of the
+        # 6 "already good" strategies re-checked this round).
         bars = bars_by_sym[sym]
         if gi < 30: return None
         lookback_start = max(0, gi - 252)
@@ -582,7 +595,7 @@ def make_signals(ctx):
         for k_off in range(2, 12):
             k = gi - k_off
             if k < 0: continue
-            if abs(bars[k]['high'] - high_ref) / high_ref <= 0.005:
+            if abs(bars[k]['high'] - high_ref) / high_ref <= 0.01:
                 box_candidates.append(k)
         if not box_candidates: return None
         box_start = min(box_candidates)
@@ -590,11 +603,11 @@ def make_signals(ctx):
         if not span: return None
         box_top = max(b['high'] for b in span)
         box_bottom = min(b['low'] for b in span)
-        if box_top <= 0 or (box_top - box_bottom) / box_top > 0.08: return None
+        if box_top <= 0 or (box_top - box_bottom) / box_top > 0.12: return None
         if bars[gi-1]['close'] <= box_top and bars[gi]['close'] > box_top:
             atr = ATR[sym][gi]
             if not atr: return None
-            return ((bars[gi]['close'] - box_top) / box_top, atr * 1.75, atr * 3.5)
+            return ((bars[gi]['close'] - box_top) / box_top, atr * 2.5, atr * 4.5)
         return None
 
     # Minervini VCP, Donchian, and Asymmetric Pullback graduated to the live 9-Way Combo -
