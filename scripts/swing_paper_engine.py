@@ -325,18 +325,24 @@ def make_signals(ctx):
         return None
 
     def sig_pivot_point_bounce(sym, gi):
+        # Params updated 2026-08-06 after a 5-window walk-forward search (this 5-symbol
+        # basket only - not applied to the separate top-50 S&P variant in
+        # pivot50_paper_engine.py, which hasn't been separately re-validated): touch
+        # 1.01->1.02, stop 1.5x->2.0x ATR, target 3.0x->4.0x ATR. Original config was
+        # 5/5 losing quarters recently (too-tight stop caused excess whipsaw); new
+        # config was profitable in 5/5 walk-forward windows, total +$9,828.73 on $5k.
         bars = bars_by_sym[sym]
         if gi < 3: return None
         y = bars[gi-1]
         P = (y['high'] + y['low'] + y['close']) / 3
         S1 = (P * 2) - y['high']
-        touched = bars[gi-1]['low'] <= S1 * 1.01 or bars[gi]['low'] <= S1 * 1.01
+        touched = bars[gi-1]['low'] <= S1 * 1.02 or bars[gi]['low'] <= S1 * 1.02
         bounced = bars[gi]['close'] > S1 and bars[gi]['close'] > bars[gi-1]['close']
         trend_ok = bars[gi]['close'] > P
         if touched and bounced and trend_ok:
             atr = ATR[sym][gi]
             if not atr: return None
-            return ((bars[gi]['close'] - S1) / S1 + 0.001, atr * 1.5, atr * 3.0)
+            return ((bars[gi]['close'] - S1) / S1 + 0.001, atr * 2.0, atr * 4.0)
         return None
 
     def sig_cup_and_handle(sym, gi):
