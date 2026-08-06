@@ -30,6 +30,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, 'scripts'))
 import swing_paper_engine as SW
 import daytrade_paper_engine as DT
+import margin_style_live_engine as MS
+import pivot50_paper_engine as P50
 
 CAPITAL = 5000.0
 SWING_SYMBOLS = SW.SYMBOLS
@@ -346,9 +348,7 @@ def run_swing_backtest(daily_path, window_days=30):
 
 def run_daytrade_backtest(thirtymin_path, window_days=30):
     bars_by_sym, IND, DAYIDX = DT.build_indicators(thirtymin_path)
-    names = ['Swing Pullback / Anti', 'Hybrid Disciplined Momentum Scalping', 'Gap / High Change Momentum',
-              'Turtle Soup Reversal', 'Momentum Breakout', 'Mid-Range Reversion Rule',
-              'Opening Range Breakout', 'ID/NR4 Volatility Breakout']
+    names = list(DT.STRATEGIES.keys())  # all 12 explored day-trading strategies
     signals = {n: DT.STRATEGIES[n] for n in names}
 
     all_dates = sorted(set(b['date'] for bars in bars_by_sym.values() for b in bars))
@@ -444,12 +444,230 @@ def run_daytrade_backtest(thirtymin_path, window_days=30):
     return results
 
 
+# ---------------------------------------------------------------------------
+# Margin-Style Winner (Scaled Dip-Buy/Scaled Peak-Sell), 8-symbol universe.
+# Reuses the exact "Winner" config constants from margin_style_live_engine.py
+# (MAX_TRADE_NOTIONAL=$1,000 there was calibrated for a $5,000 account - the same
+# scale used here, so no rescaling needed). The live/paper engines don't model
+# settled cash at all (paper) or model it only in the live plan/commit CLI
+# (never wired into a backtest); this adds the same pending_settlement/GFV
+# discipline used elsewhere in this script, checked once per day.
+# ---------------------------------------------------------------------------
+
+def run_margin_style_backtest(daily_path, window_days=30):
+    d = json.load(open(daily_path))
+    bars_by_sym = {}
+    for r in d['data']['results']:
+        if r['symbol'] not in MS.SYMBOLS:
+            continue
+        bars_by_sym[r['symbol']] = [{'date': b['begins_at'][:10], 'high': float(b['high_price']),
+                                       'low': float(b['low_price']), 'close': float(b['close_price'])} for b in r['bars']]
+    date_idx = {sym: {b['date']: i for i, b in enumerate(bars)} for sym, bars in bars_by_sym.items()}
+    dates = sorted(set(b['date'] for bars in bars_by_sym.values() for b in bars))
+    today = dates[-1]
+    cutoff_date = (datetime.strptime(today, '%Y-%m-%d') - timedelta(days=window_days)).strftime('%Y-%m-%d')
+
+    cash = CAPITAL
+    pending = []
+    positions = {}
+    equity_at_cutoff = None
+    equity_final = None
+
+    def settle(dt_str, amount):
+        pending.append([next_business_day(datetime.strptime(dt_str, '%Y-%m-%d')).strftime('%Y-%m-%d'), amount])
+
+    for dt in dates:
+        released = [p for p in pending if p[0] <= dt]
+        for p in released:
+            cash += p[1]
+        pending = [p for p in pending if p[0] > dt]
+
+        for sym in MS.SYMBOLS:
+            if sym not in bars_by_sym:
+                continue
+            gi = date_idx[sym].get(dt)
+            if gi is None or gi < 2:
+                continue
+            bars = bars_by_sym[sym]
+            prev_close = bars[gi - 1]['close']
+            close = bars[gi]['close']
+
+            if sym in positions:
+                p = positions[sym]
+                if bars[gi]['low'] <= prev_close * (1 + MS.INTRADAY_STOP):
+                    fill = prev_close * (1 + MS.INTRADAY_STOP)
+                    settle(dt, p['shares'] * fill)
+                    del positions[sym]
+                elif close > p['peak']:
+                    sell_shares = round(p['shares'] * MS.PEAK_SELL_PCT, 6)
+                    if sell_shares > 0:
+                        settle(dt, sell_shares * close)
+                        p['shares'] -= sell_shares
+                    p['peak'] = close
+                    p['last_price'] = close
+                    if p['shares'] <= 1e-9:
+                        del positions[sym]
+                else:
+                    gain_pct = (close - p['avg_cost']) / p['avg_cost']
+                    for thresh, pct in MS.GAIN_TIERS:
+                        if gain_pct >= thresh:
+                            sell_shares = round(p['shares'] * pct, 6)
+                            if sell_shares > 0:
+                                settle(dt, sell_shares * close)
+                                p['shares'] -= sell_shares
+                                if p['shares'] <= 1e-9:
+                                    del positions[sym]
+                            break
+                    if sym in positions:
+                        positions[sym]['last_price'] = close
+
+            p = positions.get(sym)
+            if p and p.get('tranches', 0) >= MS.MAX_TRANCHES:
+                continue
+            if gi < MS.LOOKBACK_DAYS + 2:
+                continue
+            prev_prev_close = bars[gi - 2]['close']
+            day_return = (prev_close - prev_prev_close) / prev_prev_close
+            lb_start = max(0, gi - 1 - MS.LOOKBACK_DAYS)
+            trailing_high = max(bars[j]['close'] for j in range(lb_start, gi - 1))
+            drawdown = (prev_close - trailing_high) / trailing_high
+
+            deploy = None
+            if drawdown <= MS.HUGE_DIP_DRAWDOWN:
+                deploy = min(cash * MS.HUGE_DIP_PCT, MS.MAX_TRADE_NOTIONAL)
+            elif day_return < 0 and (not p or p.get('tranches', 0) < MS.MAX_TRANCHES):
+                deploy = min(cash * MS.TRANCHE_PCT, MS.MAX_TRADE_NOTIONAL)
+
+            if deploy and deploy >= MS.MIN_NOTIONAL and cash > 1.0:
+                posval = sum(positions[s]['shares'] * positions[s].get('last_price', positions[s]['avg_cost']) for s in positions)
+                total_equity = cash + posval
+                current_value = p['shares'] * close if p else 0.0
+                room = max(0.0, MS.MAX_SYMBOL_ALLOCATION_PCT * total_equity - current_value)
+                deploy = min(deploy, room)
+                if deploy >= MS.MIN_NOTIONAL:
+                    shares = deploy / close
+                    if shares > 0 and deploy <= cash:
+                        cash -= deploy
+                        if p:
+                            new_shares = p['shares'] + shares
+                            p['avg_cost'] = (p['avg_cost'] * p['shares'] + deploy) / new_shares
+                            p['shares'] = new_shares
+                            p['peak'] = max(p['peak'], close)
+                            p['tranches'] = p.get('tranches', 0) + 1
+                            p['last_price'] = close
+                        else:
+                            positions[sym] = {'shares': shares, 'avg_cost': close, 'peak': close,
+                                                'tranches': 1, 'last_price': close}
+
+        pending_total = sum(p[1] for p in pending)
+        posval = sum(pos['shares'] * pos.get('last_price', pos['avg_cost']) for pos in positions.values())
+        equity = cash + pending_total + posval
+        if dt <= cutoff_date:
+            equity_at_cutoff = equity
+        equity_final = equity
+
+    base = equity_at_cutoff if equity_at_cutoff is not None else CAPITAL
+    return {'Margin-Style Winner (8-symbol Scaled Dip-Buy/Peak-Sell)':
+            {'net_pl_30d': round(equity_final - base, 2), 'equity_final': round(equity_final, 2)}}
+
+
+# ---------------------------------------------------------------------------
+# Pivot Point S1 Bounce, Top-50 S&P universe (pivot50_paper_engine.py). That
+# engine models no settled cash at all; this adds the same pending_settlement
+# discipline used everywhere else in this script.
+# ---------------------------------------------------------------------------
+
+def run_pivot50_backtest(daily_path, window_days=30):
+    d = json.load(open(daily_path))
+    bars_by_sym = {}
+    for r in d['data']['results']:
+        if r['symbol'] not in P50.SYMBOLS:
+            continue
+        bars_by_sym[r['symbol']] = [{
+            'date': b['begins_at'][:10],
+            'open': float(b['open_price']), 'close': float(b['close_price']),
+            'high': float(b['high_price']), 'low': float(b['low_price']),
+            'volume': float(b.get('volume', 0) or 0),
+        } for b in r['bars']]
+    atr_by_sym = {s: P50.atr_series(bars_by_sym[s]) for s in bars_by_sym}
+    date_idx = {sym: {b['date']: i for i, b in enumerate(bars)} for sym, bars in bars_by_sym.items()}
+    dates = sorted(set(b['date'] for bars in bars_by_sym.values() for b in bars))
+    today = dates[-1]
+    cutoff_date = (datetime.strptime(today, '%Y-%m-%d') - timedelta(days=window_days)).strftime('%Y-%m-%d')
+
+    cash = CAPITAL
+    pending = []
+    positions = {}
+    equity_at_cutoff = None
+    equity_final = None
+
+    for dt in dates:
+        released = [p for p in pending if p[0] <= dt]
+        for p in released:
+            cash += p[1]
+        pending = [p for p in pending if p[0] > dt]
+
+        for sym in P50.SYMBOLS:
+            if sym not in bars_by_sym:
+                continue
+            gi = date_idx[sym].get(dt)
+            if gi is None:
+                continue
+            bars = bars_by_sym[sym]
+
+            if sym in positions:
+                pos = positions[sym]
+                entry_gi = date_idx[sym].get(pos['entry_date'], gi)
+                held = gi - entry_gi
+                exit_reason = None
+                exit_price = None
+                if bars[gi]['low'] <= pos['stop']:
+                    exit_reason, exit_price = 'STOP', min(pos['stop'], bars[gi]['close'])
+                elif held >= P50.MIN_HOLD_FOR_TARGET and bars[gi]['high'] >= pos['target']:
+                    exit_reason, exit_price = 'TARGET', pos['target']
+                if exit_reason:
+                    proceeds = pos['shares'] * exit_price
+                    pending.append([next_business_day(datetime.strptime(dt, '%Y-%m-%d')).strftime('%Y-%m-%d'), proceeds])
+                    del positions[sym]
+                else:
+                    pos['last_price'] = bars[gi]['close']
+
+            if sym not in positions and len(positions) < P50.MAXP:
+                r = P50.sig_pivot_point_bounce(bars, atr_by_sym[sym], gi)
+                if r is not None:
+                    stop_dist, target_dist = r
+                    price = bars[gi]['close']
+                    pending_total = sum(p[1] for p in pending)
+                    posval = sum(p['shares'] * p.get('last_price', p['entry']) for p in positions.values())
+                    tv = cash + pending_total + posval
+                    shares = (tv / P50.MAXP) / price
+                    cost = shares * price
+                    if shares > 0 and cost <= cash:
+                        cash -= cost
+                        positions[sym] = {'entry': price, 'shares': shares, 'entry_date': dt,
+                                            'stop': price - stop_dist, 'target': price + target_dist,
+                                            'last_price': price}
+
+        pending_total = sum(p[1] for p in pending)
+        posval = sum(p['shares'] * p.get('last_price', p['entry']) for p in positions.values())
+        equity = cash + pending_total + posval
+        if dt <= cutoff_date:
+            equity_at_cutoff = equity
+        equity_final = equity
+
+    base = equity_at_cutoff if equity_at_cutoff is not None else CAPITAL
+    return {'Pivot Point S1 Bounce (Top-50 S&P universe)':
+            {'net_pl_30d': round(equity_final - base, 2), 'equity_final': round(equity_final, 2)}}
+
+
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         print("Usage: python3 backtest_5k_30d.py <daily_hist.json> <thirty_min_hist.json>")
         sys.exit(1)
     swing_results = run_swing_backtest(sys.argv[1])
     dt_results = run_daytrade_backtest(sys.argv[2])
+    margin_results = run_margin_style_backtest(sys.argv[1])
+    pivot50_results = run_pivot50_backtest(sys.argv[1])
 
     print(f"\n=== SWING strategies (daily bars, 1 check/day, $5,000 isolated capital each) ===")
     for name, r in sorted(swing_results.items(), key=lambda x: -x[1]['net_pl_30d']):
@@ -461,7 +679,14 @@ if __name__ == '__main__':
         pct = r['net_pl_30d'] / CAPITAL * 100
         print(f"  {name:42} net_pl_30d={r['net_pl_30d']:>10,.2f}  ({pct:>6.2f}%)  equity={r['equity_final']:>10,.2f}")
 
+    print(f"\n=== OTHER EXPLORED SYSTEMS (own universe, own mechanics, $5,000 isolated capital) ===")
+    for name, r in sorted({**margin_results, **pivot50_results}.items(), key=lambda x: -x[1]['net_pl_30d']):
+        pct = r['net_pl_30d'] / CAPITAL * 100
+        print(f"  {name:48} net_pl_30d={r['net_pl_30d']:>10,.2f}  ({pct:>6.2f}%)  equity={r['equity_final']:>10,.2f}")
+
     combined = {}
     combined.update({k: v['net_pl_30d'] for k, v in swing_results.items()})
     combined.update({k: v['net_pl_30d'] for k, v in dt_results.items()})
+    combined.update({k: v['net_pl_30d'] for k, v in margin_results.items()})
+    combined.update({k: v['net_pl_30d'] for k, v in pivot50_results.items()})
     print(json.dumps(combined))
