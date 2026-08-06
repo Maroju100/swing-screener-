@@ -167,6 +167,85 @@ def build_context(raw_path):
 def make_signals(ctx):
     bars_by_sym, ATR, CRSI, PIVOT_LOWS, WEEKLY, MONTHLY, ICHI, RSI14, EMA21, PIVOTS_HL, EMA9 = ctx
 
+    # Precomputed 2026-08-06 for revived signals A/C/D (see below) - RSI(3)-smoothed-by-3
+    # for Bressert, EMA13 + MACD-Histogram for Elder Impulse.
+    RSI3M3 = {}
+    EMA13 = {}
+    MACDH = {}
+    for sym in SYMBOLS:
+        if sym not in bars_by_sym: continue
+        closes = [b['close'] for b in bars_by_sym[sym]]
+        rsi3 = rsi_n(closes, 3)
+        r3m3 = [None] * len(closes)
+        for i in range(2, len(closes)):
+            if rsi3[i] is not None and rsi3[i-1] is not None and rsi3[i-2] is not None:
+                r3m3[i] = (rsi3[i] + rsi3[i-1] + rsi3[i-2]) / 3
+        RSI3M3[sym] = r3m3
+        EMA13[sym] = ema_series(closes, 13)
+        e12 = ema_series(closes, 12); e26 = ema_series(closes, 26)
+        macd = [a - b for a, b in zip(e12, e26)]
+        sig9 = ema_series(macd, 9)
+        MACDH[sym] = [m - s for m, s in zip(macd, sig9)]
+
+    def sig_A_2b_reversal(sym, gi):
+        # Revived 2026-08-06 from the disabled 9-Way Combo's Signal A (2B Reversal +
+        # Bollinger whipsaw), with walk-forward-optimized params (lookback 10, stop
+        # 2.0x ATR, target 5.0x ATR vs original 1.75x/3.5x): 4/5 windows profitable,
+        # +$3,712.80 over 17mo (vs +$2,675.61 at original params). Still negative in
+        # the most recent window (-$300.6) - not a full fix, a real improvement.
+        bars = bars_by_sym[sym]
+        if gi < 15: return None
+        for back in range(1, 4):
+            k = gi - back
+            if k < 20: continue
+            prior_low = min(bars[j]['low'] for j in range(k-10, k))
+            closes20 = [bars[j]['close'] for j in range(k-19, k+1)]
+            m = statistics.mean(closes20); s = statistics.pstdev(closes20)
+            lower = m - 2*s
+            fakeout = bars[k]['low'] < prior_low or bars[k]['low'] < lower
+            if not fakeout: continue
+            if bars[gi]['close'] > prior_low and bars[gi]['close'] > bars[k]['close'] and bars[gi]['volume'] >= bars[k]['volume']:
+                atr = ATR[sym][gi]
+                if not atr: return None
+                return ((bars[gi]['close'] - prior_low) / prior_low, atr * 2.0, atr * 5.0)
+        return None
+
+    def sig_C_bressert(sym, gi):
+        # Revived 2026-08-06 from the disabled 9-Way Combo's Signal C (Bressert
+        # RSI-3M3 cycle buy), with walk-forward-optimized params (oversold 35, stop
+        # 2.5x ATR, target 4.5x ATR vs original 30/1.75x/3.5x): 4/5 windows profitable,
+        # +$3,381.43 over 17mo (vs +$1,758.60 at original params). Still negative in
+        # the most recent window (-$329.5) - not a full fix, a real improvement.
+        bars = bars_by_sym[sym]
+        if gi < 10: return None
+        r = RSI3M3[sym]
+        for back in range(1, 4):
+            k = gi - back
+            if k < 1 or r[k] is None or r[k-1] is None: continue
+            setup = r[k-1] < 35 and r[k] > r[k-1]
+            if setup and bars[gi]['close'] > bars[k]['high']:
+                atr = ATR[sym][gi]
+                if not atr: return None
+                return ((bars[gi]['close'] - bars[k]['high']) / bars[k]['high'] + 0.001, atr * 2.5, atr * 4.5)
+        return None
+
+    def sig_D_elder_impulse(sym, gi):
+        # Revived 2026-08-06 from the disabled 9-Way Combo's Signal D (Elder Impulse
+        # green-turn), with walk-forward-optimized stop/target (1.5x/4.0x ATR vs
+        # original 1.75x/3.5x): now 5/5 windows profitable, +$7,055.73 over 17mo
+        # (vs 4/5, +$5,862.13 at original params) - a full fix, not just a partial one.
+        bars = bars_by_sym[sym]
+        if gi < 16: return None
+        e13, mh = EMA13[sym], MACDH[sym]
+        if None in (e13[gi], e13[gi-1], e13[gi-2], mh[gi], mh[gi-1], mh[gi-2]): return None
+        green_today = e13[gi] > e13[gi-1] and mh[gi] > mh[gi-1]
+        green_yest = e13[gi-1] > e13[gi-2] and mh[gi-1] > mh[gi-2]
+        if green_today and not green_yest:
+            atr = ATR[sym][gi]
+            if not atr: return None
+            return (mh[gi] - mh[gi-1] + 0.01, atr * 1.5, atr * 4.0)
+        return None
+
     def sig_bollinger_squeeze(sym, gi):
         bars = bars_by_sym[sym]
         if gi < 70: return None
@@ -526,7 +605,20 @@ def make_signals(ctx):
     # retail/YouTube trading content) are paper-only pending further validation; Relative Strength
     # Leader Pullback backtested negative (-$582, 0/5 windows) and is included here for continued
     # observation, not because it looked promising.
+    #
+    # A/C/D revived 2026-08-06: these belonged to the original 9-Way Combo (A+B+C+D), which
+    # went live 2026-07-14 then was disabled entirely 2026-07-24 in the consolidation to
+    # Margin-Style-only - unlike E/F/G, they were never re-added to this paper tracker, leaving
+    # them orphaned (no live or paper record) despite a 5-window walk-forward search showing
+    # real edge at their original params (A: 4/5 windows +$2,675.61; C: 4/5 +$1,758.60; D: 4/5
+    # +$5,862.13). Added here with walk-forward-optimized params per explicit user request - see
+    # each function's own comment above for before/after figures. B (1-2-3 Low Breakout) was
+    # ALSO orphaned the same way and was already 5/5 windows profitable (+$3,289.80) even at its
+    # original params, un-optimized - not added here, pending a separate decision.
     return {
+        'A: 2B Reversal + Bollinger Whipsaw': sig_A_2b_reversal,
+        'C: Bressert RSI-3M3 Cycle Buy': sig_C_bressert,
+        'D: Elder Impulse Green-Turn': sig_D_elder_impulse,
         'Bollinger Squeeze Breakout': sig_bollinger_squeeze,
         'Probe and Pullback': sig_probe_pullback,
         'MIDAS Anchored VWAP Bounce': sig_midas,
