@@ -1314,6 +1314,82 @@
     }
    ],
    "cumulative_pl": 7081.09
+  },
+  {
+   "timestamp": "2026-08-06T14:38:37.817375+00:00",
+   "trades": [
+    {
+     "symbol": "AMD",
+     "date": "2026-08-05",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 484.64,
+     "exit": 510.7494,
+     "shares": 2.136216,
+     "pnl": 55.78
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-08-05",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 829.5,
+     "exit": 893.19,
+     "shares": 0.855856,
+     "pnl": 54.51
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-08-05",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 548.56,
+     "exit": 540.2767,
+     "shares": 9.114773,
+     "pnl": -75.5
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-05",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1396.6727,
+     "exit": 1406.0629,
+     "shares": 4.499981,
+     "pnl": 42.26
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-08-05",
+     "side": "SELL",
+     "reason": "GAIN20",
+     "entry": 394.1614,
+     "exit": 414.0,
+     "shares": 0.012337,
+     "pnl": 0.24
+    },
+    {
+     "symbol": "INTC",
+     "date": "2026-08-05",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 98.6741,
+     "exit": 99.337,
+     "shares": 63.694545000000005,
+     "pnl": 42.23
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-08-05",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 294.61,
+     "exit": 312.9421,
+     "shares": 4.361699,
+     "pnl": 79.96
+    }
+   ],
+   "cumulative_pl": 6730.98
   }
  ]
 }
