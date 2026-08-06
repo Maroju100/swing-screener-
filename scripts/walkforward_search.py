@@ -27,6 +27,7 @@ from datetime import datetime, timedelta
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, 'scripts'))
 import daytrade_paper_engine as DT
+import swing_paper_engine as SWE
 
 CAPITAL = 5000.0
 DT_SYMBOLS = DT.SYMBOLS
@@ -386,6 +387,22 @@ def search_swing(name, gen_fn, param_grid, bars_by_sym, atr_by_sym, windows, min
     for params in param_grid:
         p2 = {k: v for k, v in params.items() if k != 'min_hold'}
         sig_fn = lambda sym, gi, _p=p2: gen_fn(bars_by_sym[sym], atr_by_sym[sym], gi, **_p)
+        window_pls = [backtest_swing_window(bars_by_sym, atr_by_sym, sig_fn, params.get('min_hold', min_hold), w[0], w[1], universe=universe, maxp=maxp) for w in windows]
+        n_profit = sum(1 for p in window_pls if p > 0)
+        total = round(sum(window_pls), 2)
+        results.append({'params': params, 'window_pls': window_pls, 'n_profit': n_profit, 'total': total})
+    results.sort(key=lambda r: (-r['n_profit'], -r['total']))
+    return results
+
+
+def search_swing_general(name, gen_fn, param_grid, bars_by_sym, atr_by_sym, windows, min_hold, universe=None, maxp=None):
+    """Like search_swing, but gen_fn(**params) returns a ready (sym, gi) -> result
+    closure directly (for signals needing more than one symbol's bars+ATR, e.g.
+    cross-sectional ranking, pivot-low lists, weekly/monthly resamples)."""
+    results = []
+    for params in param_grid:
+        p2 = {k: v for k, v in params.items() if k != 'min_hold'}
+        sig_fn = gen_fn(**p2)
         window_pls = [backtest_swing_window(bars_by_sym, atr_by_sym, sig_fn, params.get('min_hold', min_hold), w[0], w[1], universe=universe, maxp=maxp) for w in windows]
         n_profit = sum(1 for p in window_pls if p > 0)
         total = round(sum(window_pls), 2)

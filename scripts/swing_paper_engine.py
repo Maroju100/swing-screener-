@@ -213,6 +213,11 @@ def make_signals(ctx):
         return None
 
     def sig_midas(sym, gi):
+        # Params updated 2026-08-06 after a 5-window walk-forward search (full-history
+        # baseline was 4/5 windows profitable, +$2,572.47, but recently went to -$877.5):
+        # break threshold 0.97->0.95 (more room before the anchor curve is invalidated),
+        # stop 1.75x->2.0x ATR, target 3.5x->4.0x ATR. New config: 4/5 windows,
+        # +$5,168.15 (~2x higher total); recent window improved to -$781.7, not eliminated.
         bars = bars_by_sym[sym]
         pivots = [p for p in PIVOT_LOWS[sym] if p + 5 <= gi and p < gi]
         if not pivots: return None
@@ -225,7 +230,7 @@ def make_signals(ctx):
                 cum_v += bars[j]['volume']
                 if cum_v <= 0: continue
                 curve_j = cum_pv / cum_v
-                if bars[j]['close'] < curve_j * 0.97:
+                if bars[j]['close'] < curve_j * 0.95:
                     broke = True
                     break
             if not broke:
@@ -241,7 +246,7 @@ def make_signals(ctx):
         if touched and bounced:
             atr = ATR[sym][gi]
             if not atr: return None
-            return ((bars[gi]['close'] - curve) / curve + 0.001, atr * 1.75, atr * 3.5)
+            return ((bars[gi]['close'] - curve) / curve + 0.001, atr * 2.0, atr * 4.0)
         return None
 
     def sig_perfect_storm(sym, gi, daily_period=20, weekly_lookback=8, monthly_lookback=3):
