@@ -746,6 +746,89 @@
     }
    ],
    "note": "Manual reset: closed all 5 carried-over Pivot Point S1 Bounce positions (opened under the old touch=1.01/stop=1.5xATR/target=3.0xATR config) at last known close (2026-08-05), per explicit user request, so the strategy restarts clean under the new touch=1.02/stop=2.0xATR/target=4.0xATR params."
+  },
+  {
+   "timestamp": "2026-08-07T20:27:51.076708+00:00",
+   "trades": [
+    {
+     "strategy": "MIDAS Anchored VWAP Bounce",
+     "date": "2026-08-06",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 8,
+     "price": 489.28
+    },
+    {
+     "strategy": "MIDAS Anchored VWAP Bounce",
+     "date": "2026-08-06",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 548.56,
+     "exit": 457.84,
+     "shares": 8,
+     "pnl": -725.74
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-08-06",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 8,
+     "price": 489.28
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-08-06",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 10,
+     "price": 418.2
+    },
+    {
+     "strategy": "Relative Strength Leader Pullback",
+     "date": "2026-08-06",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 548.56,
+     "exit": 457.84,
+     "shares": 8,
+     "pnl": -725.74
+    },
+    {
+     "strategy": "Relative Strength Leader Pullback",
+     "date": "2026-08-06",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 11,
+     "price": 418.2
+    }
+   ],
+   "equity_snapshot": {
+    "A: 2B Reversal + Bollinger Whipsaw": 0.0,
+    "B: Joe Ross 1-2-3 Low Breakout": 0.0,
+    "C: Bressert RSI-3M3 Cycle Buy": 0.0,
+    "D: Elder Impulse Green-Turn": 0.0,
+    "E: Minervini VCP Breakout": 0.0,
+    "F: Donchian/Turtle Channel Breakout": 0.0,
+    "G: Asymmetric Pullback": 0.0,
+    "Bollinger Squeeze Breakout": 0.0,
+    "Probe and Pullback": 0.0,
+    "MIDAS Anchored VWAP Bounce": -2992.01,
+    "Perfect Storm (D/W/M alignment)": 0.0,
+    "ConnorsRSI Oversold Bounce": 0.0,
+    "Ichimoku Kumo Breakout": 0.0,
+    "Pivot Point S1 Bounce": -3672.34,
+    "Cup and Handle": 0.0,
+    "High Tight Flagpole": 0.0,
+    "Relative Strength Leader Pullback": -1315.84,
+    "Fibonacci 61.8% Retracement Bounce": 0.0,
+    "RSI Bullish Divergence": 0.0,
+    "Bull Flag Breakout": 0.0,
+    "MA Crossover (H)": -590.1,
+    "Darvas Box (I)": 0.0
+   }
   }
  ]
 }
