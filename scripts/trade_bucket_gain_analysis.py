@@ -18,6 +18,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, 'scripts'))
 import swing_paper_engine as SWE
 import daytrade_paper_engine as DT
+import margin_style_live_engine as MS
+from walkforward_search import load_daily as ms_load_daily, next_business_day as ms_next_business_day
 
 CAPITAL = 5000.0
 MONTHS = [('2026-03-01', '2026-03-31'), ('2026-04-01', '2026-04-30'), ('2026-05-01', '2026-05-31'),
@@ -178,6 +180,112 @@ def daytrade_trades(bars_by_sym, IND, DAYIDX, sig_fn, window_start, window_end):
     return trades
 
 
+def margin_style_trades(bars_by_sym, window_start, window_end):
+    """Instrumented copy of walkforward_search.backtest_margin_style_window that also
+    logs each BUY (a 'trigger' - HUGE_DIP or NORMAL_DIP) and each SELL (STOP, PEAK, or
+    a GAIN_TIER) with its %% gain vs avg_cost at the time. Uses MS's live current
+    params (stop -1.51%, peak-sell 74.3%, $1,000/trade cap) - the deployed config, not
+    the flagged/overfit search results from earlier."""
+    date_idx = {sym: {b['date']: i for i, b in enumerate(bars_by_sym[sym])} for sym in bars_by_sym}
+    dates = sorted(set(dt for sym in bars_by_sym for dt in date_idx[sym] if window_start <= dt <= window_end))
+    cash = CAPITAL
+    pending = []
+    positions = {}
+    buys = []   # trigger events
+    sells = []  # dicts: pct_gain
+
+    def settle(dt_str, amount):
+        pending.append([ms_next_business_day(datetime.strptime(dt_str, '%Y-%m-%d')).strftime('%Y-%m-%d'), amount])
+
+    for dt in dates:
+        released = [p for p in pending if p[0] <= dt]
+        for p in released:
+            cash += p[1]
+        pending = [p for p in pending if p[0] > dt]
+
+        for sym in MS.SYMBOLS:
+            if sym not in bars_by_sym:
+                continue
+            gi = date_idx[sym].get(dt)
+            if gi is None or gi < 2:
+                continue
+            bars = bars_by_sym[sym]
+            prev_close = bars[gi - 1]['close']
+            close = bars[gi]['close']
+
+            if sym in positions:
+                p = positions[sym]
+                if bars[gi]['low'] <= prev_close * (1 + MS.INTRADAY_STOP):
+                    fill = prev_close * (1 + MS.INTRADAY_STOP)
+                    settle(dt, p['shares'] * fill)
+                    sells.append({'pct_gain': (fill - p['avg_cost']) / p['avg_cost']})
+                    del positions[sym]
+                elif close > p['peak']:
+                    sell_shares = round(p['shares'] * MS.PEAK_SELL_PCT, 6)
+                    if sell_shares > 0:
+                        settle(dt, sell_shares * close)
+                        sells.append({'pct_gain': (close - p['avg_cost']) / p['avg_cost']})
+                        p['shares'] -= sell_shares
+                    p['peak'] = close
+                    p['last_price'] = close
+                    if p['shares'] <= 1e-9:
+                        del positions[sym]
+                else:
+                    gain_pct = (close - p['avg_cost']) / p['avg_cost']
+                    for thresh, pct in MS.GAIN_TIERS:
+                        if gain_pct >= thresh:
+                            sell_shares = round(p['shares'] * pct, 6)
+                            if sell_shares > 0:
+                                settle(dt, sell_shares * close)
+                                sells.append({'pct_gain': gain_pct})
+                                p['shares'] -= sell_shares
+                                if p['shares'] <= 1e-9:
+                                    del positions[sym]
+                            break
+                    if sym in positions:
+                        positions[sym]['last_price'] = close
+
+            p = positions.get(sym)
+            if p and p.get('tranches', 0) >= MS.MAX_TRANCHES:
+                continue
+            if gi < MS.LOOKBACK_DAYS + 2:
+                continue
+            prev_prev_close = bars[gi - 2]['close']
+            day_return = (prev_close - prev_prev_close) / prev_prev_close
+            lb_start = max(0, gi - 1 - MS.LOOKBACK_DAYS)
+            trailing_high = max(bars[j]['close'] for j in range(lb_start, gi - 1))
+            drawdown = (prev_close - trailing_high) / trailing_high
+
+            deploy = None
+            if drawdown <= MS.HUGE_DIP_DRAWDOWN:
+                deploy = min(cash * MS.HUGE_DIP_PCT, MS.MAX_TRADE_NOTIONAL)
+            elif day_return < 0 and (not p or p.get('tranches', 0) < MS.MAX_TRANCHES):
+                deploy = min(cash * MS.TRANCHE_PCT, MS.MAX_TRADE_NOTIONAL)
+
+            if deploy and deploy >= MS.MIN_NOTIONAL and cash > 1.0:
+                posval = sum(positions[s]['shares'] * positions[s].get('last_price', positions[s]['avg_cost']) for s in positions)
+                total_equity = cash + posval
+                current_value = p['shares'] * close if p else 0.0
+                room = max(0.0, MS.MAX_SYMBOL_ALLOCATION_PCT * total_equity - current_value)
+                deploy = min(deploy, room)
+                if deploy >= MS.MIN_NOTIONAL:
+                    shares = deploy / close
+                    if shares > 0 and deploy <= cash:
+                        cash -= deploy
+                        buys.append(dt)
+                        if p:
+                            new_shares = p['shares'] + shares
+                            p['avg_cost'] = (p['avg_cost'] * p['shares'] + deploy) / new_shares
+                            p['shares'] = new_shares
+                            p['peak'] = max(p['peak'], close)
+                            p['tranches'] = p.get('tranches', 0) + 1
+                            p['last_price'] = close
+                        else:
+                            positions[sym] = {'shares': shares, 'avg_cost': close, 'peak': close,
+                                               'tranches': 1, 'last_price': close}
+    return buys, sells
+
+
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         print("Usage: python3 trade_bucket_gain_analysis.py <daily_hist.json> <30min_hist.json>")
@@ -211,3 +319,12 @@ if __name__ == '__main__':
         total_pnl = midday_pnl + rest_pnl
         print(f"  {name:42} closed_trades={n:3}  avg_triggers/mo={n/N_MONTHS:5.2f}  avg_%_gain={avg_pct:+.2f}%  "
               f"midday_trades={len(midday):3}  midday_net_pl={midday_pnl:>9,.2f}  non_midday_net_pl={rest_pnl:>9,.2f}  total={total_pnl:>9,.2f}")
+    print()
+
+    ms_bars_by_sym, _ = ms_load_daily(daily_path, universe=MS.SYMBOLS)
+    print(f"=== MARGIN-STYLE LIVE (current config) - avg triggers/month, avg %% gain per sell, {window_start} to {window_end} ===")
+    buys, sells = margin_style_trades(ms_bars_by_sym, window_start, window_end)
+    n_sells = len(sells)
+    avg_pct = (sum(s['pct_gain'] for s in sells) / n_sells * 100) if n_sells else 0.0
+    print(f"  Margin-Style Live (current)                buy_triggers={len(buys):3}  sell_events={n_sells:3}  "
+          f"avg_triggers/mo={len(buys)/N_MONTHS:5.2f}  avg_%_gain_per_sell={avg_pct:+.2f}%  midday_net_pl=N/A (daily bars, no intraday timing)")
