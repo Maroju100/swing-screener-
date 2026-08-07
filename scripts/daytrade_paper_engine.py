@@ -5,6 +5,23 @@ Usage: python3 scripts/daytrade_paper_engine.py <fresh_30min_historicals.json>
 Reads/writes docs/daytrade_paper_state.json (open paper positions + cash per strategy)
 and appends to docs/daytrade_paper_log.json (trade-by-trade + per-run equity snapshot).
 Places NO real orders — this only maintains simulated positions in JSON.
+
+CHECK-FREQUENCY CHANGE (2026-08-07): new entries are now only evaluated twice per day,
+at the two checkpoint bars ~11:00am ET (i_in_day==3) and ~2:30pm ET (i_in_day==10),
+instead of continuously at every 30-min bar. Existing positions still get their
+stop/target checked on every bar (a resting stop/target isn't something that should
+wait for a checkpoint), but any position still open at or after the 2:30pm checkpoint
+is now force-closed there (EOD_CLOSE moved earlier from the literal session close).
+This followed a 3-window walk-forward validation (2026-01-30 to 2026-08-06, the only
+span with real - non-placeholder - intraday data for this project's universe): 6 of
+12 strategies reached 3/3 windows profitable at twice-daily vs continuous checking's
+weaker window-profitability, e.g. Swing Pullback / Anti +$1,912.18, Mid-Range
+Reversion Rule +$1,310.70, Momentum Breakout +$1,288.18, Turtle Soup Reversal
++$1,248.89, Hybrid Disciplined Momentum Scalping +$899.88, VWAP Reclaim (H2)
++$849.07 - see scripts/validate_noon_twice_walkforward.py for the full breakdown.
+Caveat carried forward: only 3 windows on ~6 months of real data (the real-data
+limit), thinner than the 5-window/17-month standard used to validate every other
+change in this project.
 """
 import json, math, sys, os
 from datetime import datetime, timezone
@@ -16,6 +33,8 @@ SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM"]
 CAPITAL_PER_STRATEGY = 25000.0
 MAXP = 3
 MAXNEW_PER_BAR = 1
+CHECKPOINT_BAR_INDICES = (3, 10)  # ~11:00am ET and ~2:30pm ET - twice-daily entry checks
+FINAL_CHECKPOINT_BAR_INDEX = 10   # position still open at/after this bar gets force-closed
 
 def rsi_series(closes, period=14):
     out = [None] * len(closes)
@@ -382,13 +401,19 @@ def run(raw_path):
             for gi in range(start_gi, len(bars)):
                 bar = bars[gi]
                 meta = DAYIDX[sym][gi]
+                # is_last is only treated as a checkpoint on abbreviated days that never
+                # reach the real bar 10 (e.g. an early-close session) - on a normal full
+                # day it must NOT also fire as a spurious third checkpoint at ~4pm.
+                short_day_fallback = meta['is_last'] and meta['i_in_day'] < FINAL_CHECKPOINT_BAR_INDEX
+                is_checkpoint = meta['i_in_day'] in CHECKPOINT_BAR_INDICES or short_day_fallback
+                is_final_checkpoint = meta['i_in_day'] == FINAL_CHECKPOINT_BAR_INDEX or short_day_fallback
 
                 if sym in positions:
                     pos = positions[sym]
                     exit_reason = None
                     if bar['low'] <= pos['stop']: exit_reason = 'STOP'
                     elif bar['high'] >= pos['target']: exit_reason = 'TARGET'
-                    elif meta['is_last']: exit_reason = 'EOD_CLOSE'
+                    elif is_final_checkpoint: exit_reason = 'EOD_CLOSE'
                     if exit_reason:
                         exit_price = pos['stop'] if exit_reason == 'STOP' else (pos['target'] if exit_reason == 'TARGET' else bar['close'])
                         pnl = pos['shares'] * (exit_price - pos['entry'])
@@ -398,10 +423,15 @@ def run(raw_path):
                         run_trades.append(trade)
                         del positions[sym]
 
-                if sym not in positions and len(positions) < MAXP and not meta['is_last']:
-                    r = sig_fn(bars_by_sym, IND, DAYIDX, sym, gi)
-                    if r is not None:
-                        score, stop_dist, target_dist = r
+                if sym not in positions and len(positions) < MAXP and is_checkpoint and not meta['is_last']:
+                    day_start = gi - meta['i_in_day']
+                    fired = None
+                    for j in range(day_start, gi + 1):
+                        r = sig_fn(bars_by_sym, IND, DAYIDX, sym, j)
+                        if r is not None:
+                            fired = r
+                    if fired is not None:
+                        score, stop_dist, target_dist = fired
                         price = bar['close']
                         tv = cash + sum(positions[s]['shares'] * bars_by_sym[s][min(gi, len(bars_by_sym[s])-1)]['close'] for s in positions)
                         target_notional = tv / MAXP
