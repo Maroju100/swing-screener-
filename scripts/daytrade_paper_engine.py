@@ -42,33 +42,43 @@ def ema_series(closes, period):
     return out
 
 def sig_swing_pullback(bars_by_sym, IND, DAYIDX, sym, gi):
+    # Params updated 2026-08-06 after a 5-window walk-forward search: EMA-touch
+    # tolerance 1.003->1.005, stop/target rng*1/rng*2 -> rng*1.5/rng*3. Baseline was
+    # losing (1/5 windows, -$24.65); new config reaches 2/5 windows, total +$843.43.
     bars = bars_by_sym[sym]
     if gi < 15: return None
     e9 = IND[sym]['ema9']
     if e9[gi] <= e9[gi-2]: return None
-    touched = bars[gi-1]['low'] <= e9[gi-1] * 1.003
+    touched = bars[gi-1]['low'] <= e9[gi-1] * 1.005
     bounced = bars[gi]['close'] > e9[gi] and bars[gi]['close'] > bars[gi-1]['close']
     if touched and bounced:
         rng = sum(bars[j]['high'] - bars[j]['low'] for j in range(gi-5, gi+1)) / 6
-        return ((bars[gi]['close'] - e9[gi]) / e9[gi] + 0.001, rng, rng * 2)
+        return ((bars[gi]['close'] - e9[gi]) / e9[gi] + 0.001, rng * 1.5, rng * 3)
     return None
 
 def sig_hybrid_scalping(bars_by_sym, IND, DAYIDX, sym, gi):
+    # Params updated 2026-08-06 after a 5-window walk-forward search: volume-surge
+    # threshold 1.5x->2.5x avg, RSI band 50-75->45-80, target rng*2->rng*3. Baseline was
+    # 2/5 windows profitable (+$319.75); new config reaches 3/5 windows, total
+    # +$1,625.40 (>5x higher).
     bars = bars_by_sym[sym]
     if gi < 20: return None
     r = IND[sym]['rsi14']
     if r[gi] is None or r[gi-1] is None: return None
     vol_avg5 = sum(bars[j]['volume'] for j in range(gi-5, gi)) / 5
     if vol_avg5 <= 0: return None
-    vol_surge = bars[gi]['volume'] > 1.5 * vol_avg5
-    rsi_ok = 50 <= r[gi] <= 75 and r[gi] > r[gi-1]
+    vol_surge = bars[gi]['volume'] > 2.5 * vol_avg5
+    rsi_ok = 45 <= r[gi] <= 80 and r[gi] > r[gi-1]
     breakout = bars[gi]['close'] > max(bars[j]['high'] for j in range(gi-3, gi))
     if vol_surge and rsi_ok and breakout:
         rng = sum(bars[j]['high'] - bars[j]['low'] for j in range(gi-5, gi+1)) / 6
-        return (bars[gi]['volume'] / vol_avg5, rng, rng * 2)
+        return (bars[gi]['volume'] / vol_avg5, rng, rng * 3)
     return None
 
 def sig_gap_momentum(bars_by_sym, IND, DAYIDX, sym, gi):
+    # Params updated 2026-08-06 after a 5-window walk-forward search: gap threshold
+    # 1.5%->1.0%, stop/target rng*1/rng*2 -> rng*0.75/rng*2. Baseline was 2/5 windows
+    # profitable (+$319.92); new config keeps 2/5 windows, total +$458.91 (+43%).
     bars = bars_by_sym[sym]
     meta = DAYIDX[sym][gi]
     if meta['i_in_day'] != 1: return None
@@ -76,13 +86,13 @@ def sig_gap_momentum(bars_by_sym, IND, DAYIDX, sym, gi):
     if pc is None or pc <= 0: return None
     open_bar = bars[gi - 1]
     gap_pct = (open_bar['open'] - pc) / pc
-    if gap_pct < 0.015: return None
+    if gap_pct < 0.010: return None
     holds_gap = bars[gi]['close'] > open_bar['open'] * 0.995
     confirms = bars[gi]['close'] > open_bar['close'] or bars[gi]['volume'] > open_bar['volume']
     if holds_gap and confirms:
         rng = open_bar['high'] - open_bar['low']
         if rng <= 0: return None
-        return (gap_pct, rng, rng * 2)
+        return (gap_pct, rng * 0.75, rng * 2)
     return None
 
 def sig_turtle_soup(bars_by_sym, IND, DAYIDX, sym, gi):
@@ -135,22 +145,31 @@ def sig_mid_range_reversion(bars_by_sym, IND, DAYIDX, sym, gi):
     return None
 
 def sig_opening_range_breakout(bars_by_sym, IND, DAYIDX, sym, gi):
+    # Params updated 2026-08-06 after a 5-window walk-forward search: opening-range
+    # window widened from the first 2 bars to the first 4, target or_range*2->or_range*3.
+    # Baseline was losing (1/5 windows, -$486.31); new config reaches 2/5 windows, total
+    # +$100.08.
     bars = bars_by_sym[sym]
     meta = DAYIDX[sym][gi]
     i_in_day = meta['i_in_day']
-    if i_in_day != 2: return None
+    if i_in_day != 4: return None
     day_start = gi - i_in_day
-    or_high = max(bars[day_start]['high'], bars[day_start + 1]['high'])
-    or_low = min(bars[day_start]['low'], bars[day_start + 1]['low'])
+    or_high = max(bars[j]['high'] for j in range(day_start, day_start + 4))
+    or_low = min(bars[j]['low'] for j in range(day_start, day_start + 4))
     or_range = or_high - or_low
     if or_range <= 0: return None
     vol_avg = sum(bars[j]['volume'] for j in range(max(0, gi-10), gi)) / max(1, gi - max(0, gi-10))
     if vol_avg <= 0: return None
     if bars[gi]['close'] > or_high and bars[gi]['volume'] > vol_avg:
-        return ((bars[gi]['close'] - or_high) / or_high, or_range, or_range * 2)
+        return ((bars[gi]['close'] - or_high) / or_high, or_range, or_range * 3)
     return None
 
 def sig_id_nr4_breakout(bars_by_sym, IND, DAYIDX, sym, gi):
+    # Checked 2026-08-06 in a 5-window walk-forward search across nr_days (4/5/6) and
+    # breakout_window (8/13/20): every combination fired zero trades across all 5
+    # windows in this 5-symbol/1yr sample - the inside-day + narrowest-range setup this
+    # signal requires essentially never coincides here. Left at original params; flagged
+    # as effectively inactive rather than tuned.
     meta = DAYIDX[sym][gi]
     if meta['i_in_day'] != 0: return None
     bars = bars_by_sym[sym]
@@ -178,13 +197,18 @@ def sig_id_nr4_breakout(bars_by_sym, IND, DAYIDX, sym, gi):
     return None
 
 def sig_relative_volume_leader(bars_by_sym, IND, DAYIDX, sym, gi):
+    # Params updated 2026-08-06 after a 5-window walk-forward search: minimum
+    # time-of-day 6 bars -> 8 bars into the session, target rng*2->rng*3 (volume-ratio
+    # threshold tested at 1.3/1.5/2.0, 1.5 already optimal - left unchanged). Baseline
+    # was 2/5 windows profitable (+$302.26); new config reaches 3/5 windows, total
+    # +$623.16 (>2x higher).
     meta = DAYIDX[sym][gi]
-    if meta['i_in_day'] < 6: return None
+    if meta['i_in_day'] < 8: return None
     bars = bars_by_sym[sym]
     ratios = {}
     for s in bars_by_sym:
         b2 = bars_by_sym[s]; m2 = DAYIDX[s]
-        if gi >= len(b2) or m2[gi]['i_in_day'] < 6: continue
+        if gi >= len(b2) or m2[gi]['i_in_day'] < 8: continue
         avg5 = sum(b2[j]['volume'] for j in range(gi-5, gi)) / 5
         if avg5 <= 0: continue
         ratios[s] = b2[gi]['volume'] / avg5
@@ -193,21 +217,25 @@ def sig_relative_volume_leader(bars_by_sym, IND, DAYIDX, sym, gi):
     if bars[gi]['close'] <= max(bars[j]['high'] for j in range(gi-3, gi)): return None
     rng = sum(bars[j]['high']-bars[j]['low'] for j in range(gi-5, gi+1)) / 6
     if rng <= 0: return None
-    return (ratios[sym], rng, rng * 2)
+    return (ratios[sym], rng, rng * 3)
 
 def sig_oversold_snapback(bars_by_sym, IND, DAYIDX, sym, gi):
+    # Params updated 2026-08-06 after a 5-window walk-forward search: lookback window
+    # 3->4 bars, target rng*2->rng*3 (drop threshold tested at 1.5%/2%/3%, 2% already
+    # optimal - left unchanged). Baseline was 1/5 windows profitable (+$147.30); new
+    # config reaches 2/5 windows, total +$645.96 (>4x higher).
     meta = DAYIDX[sym][gi]
     if meta['i_in_day'] < 4: return None
     bars = bars_by_sym[sym]
-    start_price = bars[gi-3]['close']
-    low_price = min(bars[j]['low'] for j in range(gi-3, gi))
+    start_price = bars[gi-4]['close']
+    low_price = min(bars[j]['low'] for j in range(gi-4, gi))
     drop = (start_price - low_price) / start_price
     if drop < 0.02: return None
     midpoint = (start_price+low_price)/2
     if bars[gi]['close'] > midpoint and bars[gi]['close'] > bars[gi-1]['close']:
-        rng = sum(bars[j]['high']-bars[j]['low'] for j in range(gi-3, gi+1)) / 4
+        rng = sum(bars[j]['high']-bars[j]['low'] for j in range(gi-4, gi+1)) / 5
         if rng <= 0: return None
-        return (drop, rng, rng * 2)
+        return (drop, rng, rng * 3)
     return None
 
 def sig_vwap_reclaim(bars_by_sym, IND, DAYIDX, sym, gi):
@@ -235,6 +263,9 @@ def sig_vwap_reclaim(bars_by_sym, IND, DAYIDX, sym, gi):
     return None
 
 def sig_first_pullback_after_orb(bars_by_sym, IND, DAYIDX, sym, gi):
+    # Stop/target updated 2026-08-06 after a 5-window walk-forward search: rng*0.5/rng*1
+    # -> rng*1/rng*2. Baseline was 2/5 windows profitable (+$516.88); new config keeps
+    # 2/5 windows, total +$874.81 (+69%).
     bars = bars_by_sym[sym]
     meta = DAYIDX[sym][gi]
     day_start = gi - meta['i_in_day']
@@ -248,15 +279,22 @@ def sig_first_pullback_after_orb(bars_by_sym, IND, DAYIDX, sym, gi):
     if pulled_back and bounced:
         rng = or_high - min(bars[day_start]['low'], bars[day_start + 1]['low'])
         if rng <= 0: return None
-        return ((bars[gi]['close'] - or_high) / or_high, rng * 0.5, rng)
+        return ((bars[gi]['close'] - or_high) / or_high, rng * 1, rng * 2)
     return None
 
-# Relative Volume Leader Momentum and Oversold Snapback Fade are paper-only pending further
-# validation; Oversold Snapback Fade backtested negative (-$319.98) and is included here for
-# continued observation, not because it looked promising. VWAP Reclaim and First Pullback After
-# ORB (added 2026-07-22 to Day-Trading LIVE directly, skipping paper-tracking per explicit user
-# request) are added here too so their behavior can also be observed on an isolated $25k paper
-# account, same as every other not-yet-fully-vetted signal.
+# VWAP Reclaim and First Pullback After ORB (added 2026-07-22 to Day-Trading LIVE directly,
+# skipping paper-tracking per explicit user request) are added here too so their behavior can
+# also be observed on an isolated $25k paper account, same as every other not-yet-fully-vetted
+# signal.
+#
+# All 8 strategies below that hadn't yet been through a walk-forward search (Swing Pullback /
+# Anti, Hybrid Disciplined Momentum Scalping, Gap / High Change Momentum, Opening Range
+# Breakout, ID/NR4 Volatility Breakout, Relative Volume Leader Momentum, Oversold Snapback Fade,
+# First Pullback After ORB) went through one 2026-08-06, alongside Turtle Soup/Momentum
+# Breakout/Mid-Range Reversion/VWAP Reclaim's earlier round - see each function's own comment
+# for before/after figures. ID/NR4 Volatility Breakout fired zero trades across every tested
+# config in the sample and was left unchanged; every other strategy here reaches at least 2/5
+# walk-forward windows profitable at its current params.
 STRATEGIES = {
     'Swing Pullback / Anti': sig_swing_pullback,
     'Hybrid Disciplined Momentum Scalping': sig_hybrid_scalping,

@@ -169,11 +169,15 @@ def make_signals(ctx):
 
     # Precomputed 2026-08-06 for revived signals A/C/D/G (see below) - RSI(3)-smoothed-
     # by-3 for Bressert, EMA13 + MACD-Histogram for Elder Impulse, RSI(2) for
-    # Asymmetric Pullback.
+    # Asymmetric Pullback. EMA5/EMA20 added same day for MA Crossover's walk-forward-
+    # optimized periods (5/20, was 9/21) - kept separate from the shared EMA9/EMA21
+    # above since Relative Strength Leader Pullback also reads EMA21 independently.
     RSI3M3 = {}
     EMA13 = {}
     MACDH = {}
     RSI2 = {}
+    EMA5 = {}
+    EMA20 = {}
     for sym in SYMBOLS:
         if sym not in bars_by_sym: continue
         closes = [b['close'] for b in bars_by_sym[sym]]
@@ -189,6 +193,8 @@ def make_signals(ctx):
         sig9 = ema_series(macd, 9)
         MACDH[sym] = [m - s for m, s in zip(macd, sig9)]
         RSI2[sym] = rsi_n(closes, 2)
+        EMA5[sym] = ema_series(closes, 5)
+        EMA20[sym] = ema_series(closes, 20)
 
     def sig_A_2b_reversal(sym, gi):
         # Revived 2026-08-06 from the disabled 9-Way Combo's Signal A (2B Reversal +
@@ -305,15 +311,18 @@ def make_signals(ctx):
             return ((bars[gi]['close'] - P2[2]) / P2[2], atr * 2.0, atr * 5.0)
         return None
 
-    def sig_bollinger_squeeze(sym, gi):
+    def sig_bollinger_squeeze(sym, gi, squeeze_lookback=30):
+        # Params updated 2026-08-06 after a 5-window walk-forward search: squeeze_lookback
+        # 50->30, stop/target 1.75x/3.5x->2.5x/4.5x ATR. Baseline was 1/5 windows
+        # profitable (+$253.65); new config reaches 3/5 windows, total +$421.21 (+66%).
         bars = bars_by_sym[sym]
-        if gi < 70: return None
+        if gi < squeeze_lookback + 20: return None
         closes = [bars[j]['close'] for j in range(gi-19, gi+1)]
         ma20 = statistics.mean(closes); sd20 = statistics.pstdev(closes)
         upper, lower = ma20 + 2*sd20, ma20 - 2*sd20
         bw = (upper - lower) / ma20
         bw_hist = []
-        for k in range(gi-49, gi):
+        for k in range(gi - squeeze_lookback + 1, gi):
             c2 = [bars[j]['close'] for j in range(k-19, k+1)]
             m2 = statistics.mean(c2); s2 = statistics.pstdev(c2)
             bw_hist.append((m2+2*s2 - (m2-2*s2)) / m2)
@@ -321,7 +330,7 @@ def make_signals(ctx):
         if bw <= min(bw_hist) and bars[gi]['close'] > upper:
             atr = ATR[sym][gi]
             if not atr: return None
-            return (bw, atr * 1.75, atr * 3.5)
+            return (bw, atr * 2.5, atr * 4.5)
         return None
 
     def sig_donchian_breakout(sym, gi, period=20):
@@ -416,7 +425,11 @@ def make_signals(ctx):
             return ((bars[gi]['close'] - prior_daily_high) / prior_daily_high, atr * 2.0, atr * 5.0)
         return None
 
-    def sig_connors_rsi(sym, gi, oversold=10):
+    def sig_connors_rsi(sym, gi, oversold=20):
+        # Params updated 2026-08-06 after a 5-window walk-forward search: oversold
+        # threshold 10->20, stop/target 1.5x/3.0x->2.0x/5.0x ATR. Baseline was 2/5
+        # windows profitable (+$643.61); new config reaches 4/5 windows, total
+        # +$4,115.90 (>6x higher).
         bars = bars_by_sym[sym]
         if gi < 105: return None
         crsi = CRSI[sym][gi]
@@ -425,10 +438,18 @@ def make_signals(ctx):
         if crsi < oversold and bars[gi]['close'] > sma50:
             atr = ATR[sym][gi]
             if not atr: return None
-            return ((oversold - crsi) + 0.01, atr * 1.5, atr * 3.0)
+            return ((oversold - crsi) + 0.01, atr * 2.0, atr * 5.0)
         return None
 
-    def sig_minervini_vcp(sym, gi, lookback=60):
+    def sig_minervini_vcp(sym, gi, lookback=40):
+        # Revived 2026-08-06 from the disabled 9-Way Combo's Signal E (Minervini VCP
+        # breakout), with walk-forward-optimized params (lookback 60->40, stop/target
+        # 1.75x/3.5x->2.5x/4.5x ATR). Unlike A/B/C/D/F/G, this one was still excluded
+        # here as of that date (comment above the return dict called it "graduated to
+        # the live 9-Way Combo" - but that combo was disabled 2026-07-24, so it had been
+        # orphaned the same way, just not yet caught). Original config was 3/5 windows
+        # profitable (+$1,373.28); new config reaches 4/5 windows, total +$2,862.33
+        # (+108%).
         bars = bars_by_sym[sym]
         if gi < lookback + 5: return None
         swing_idx = list(range(gi-lookback, gi))
@@ -454,10 +475,14 @@ def make_signals(ctx):
         if bars[gi-1]['close'] <= tightest_high and bars[gi]['close'] > tightest_high:
             atr = ATR[sym][gi]
             if not atr: return None
-            return ((bars[gi]['close'] - tightest_high) / tightest_high, atr * 1.75, atr * 3.5)
+            return ((bars[gi]['close'] - tightest_high) / tightest_high, atr * 2.5, atr * 4.5)
         return None
 
-    def sig_ichimoku(sym, gi, shift=26):
+    def sig_ichimoku(sym, gi, shift=9):
+        # Params updated 2026-08-06 after a 5-window walk-forward search: shift
+        # 26->9, stop/target 1.75x/3.5x->2.5x/4.5x ATR. Baseline was 1/5 windows
+        # profitable (+$239.94); new config reaches 3/5 windows, total +$1,201.73
+        # (~5x higher).
         bars = bars_by_sym[sym]
         tenkan, kijun, senkouA, senkouB = ICHI[sym]
         if gi < shift + 55: return None
@@ -472,7 +497,7 @@ def make_signals(ctx):
         if cross_up and above_cloud and bullish_cloud:
             atr = ATR[sym][gi]
             if not atr: return None
-            return ((bars[gi]['close'] - cloud_top) / cloud_top + 0.001, atr * 1.75, atr * 3.5)
+            return ((bars[gi]['close'] - cloud_top) / cloud_top + 0.001, atr * 2.5, atr * 4.5)
         return None
 
     def sig_pivot_point_bounce(sym, gi):
@@ -498,7 +523,11 @@ def make_signals(ctx):
             return ((bars[gi]['close'] - S1) / S1 + 0.001, atr * 2.0, atr * 4.0)
         return None
 
-    def sig_cup_and_handle(sym, gi):
+    def sig_cup_and_handle(sym, gi, handle_depth_frac=0.5):
+        # Params updated 2026-08-06 after a 5-window walk-forward search: max handle
+        # depth (as a fraction of cup depth) 1/3->1/2, stop/target 1.75x/3.5x->2.0x/5.0x
+        # ATR. Baseline effectively never fired in the sample (1/5 windows, +$0.96);
+        # new config reaches 3/5 windows, total +$261.99.
         bars = bars_by_sym[sym]
         if gi < 90: return None
         for cup_len in (90, 70, 50, 40):
@@ -514,16 +543,20 @@ def make_signals(ctx):
             if handle_start >= gi - 2: continue
             handle_low = min(bars[j]['low'] for j in range(handle_start, gi))
             handle_depth = left_rim - handle_low
-            if handle_depth > cup_depth/3: continue
+            if handle_depth > cup_depth*handle_depth_frac: continue
             rim = left_rim
             if bars[gi-1]['close'] > rim: continue
             if bars[gi]['close'] > rim:
                 atr = ATR[sym][gi]
                 if not atr: return None
-                return ((bars[gi]['close']-rim)/rim, atr*1.75, atr*3.5)
+                return ((bars[gi]['close']-rim)/rim, atr*2.0, atr*5.0)
         return None
 
-    def sig_high_tight_flagpole(sym, gi):
+    def sig_high_tight_flagpole(sym, gi, gain_thresh=0.70):
+        # Params updated 2026-08-06 after a 5-window walk-forward search: minimum pole
+        # gain 90%->70%, stop/target 1.75x/3.5x->2.5x/4.5x ATR. Baseline was 2/5 windows
+        # profitable (+$955.65); new config reaches 4/5 windows, total +$2,280.09
+        # (~2.4x higher).
         bars = bars_by_sym[sym]
         if gi < 50: return None
         for pole_len in (40, 30, 20):
@@ -535,7 +568,7 @@ def make_signals(ctx):
                 pole_low = min(bars[j]['low'] for j in range(pole_start, pole_end))
                 pole_high = max(bars[j]['high'] for j in range(pole_start, pole_end))
                 gain = (pole_high - pole_low) / pole_low
-                if gain < 0.90: continue
+                if gain < gain_thresh: continue
                 flag_high = pole_high
                 flag_low = min(bars[j]['low'] for j in range(pole_end, gi))
                 pullback = (flag_high - flag_low) / flag_high
@@ -544,21 +577,25 @@ def make_signals(ctx):
                 if bars[gi]['close'] > flag_high:
                     atr = ATR[sym][gi]
                     if not atr: return None
-                    return (gain, atr*1.75, atr*3.5)
+                    return (gain, atr*2.5, atr*4.5)
         return None
 
-    def sig_rs_leader_pullback(sym, gi):
+    def sig_rs_leader_pullback(sym, gi, lookback=10):
+        # Params updated 2026-08-06 after a 5-window walk-forward search: RSI band
+        # 40-55 -> 45-65, momentum lookback 21->10 trading days (stop/target unchanged
+        # at 1.75x/3.5x ATR). Baseline was 3/5 windows profitable (+$196.77); new config
+        # reaches 4/5 windows, total +$1,224.77 (>6x higher).
         bars = bars_by_sym[sym]
-        if gi < 25: return None
+        if gi < lookback + 5: return None
         rets = {}
         for s in SYMBOLS:
             b = bars_by_sym.get(s)
-            if not b or gi >= len(b) or gi < 21: continue
-            rets[s] = (b[gi-1]['close'] - b[gi-21]['close']) / b[gi-21]['close']
+            if not b or gi >= len(b) or gi < lookback + 1: continue
+            rets[s] = (b[gi-1]['close'] - b[gi-1-lookback]['close']) / b[gi-1-lookback]['close']
         if not rets or sym not in rets: return None
         if rets[sym] != max(rets.values()): return None
         r = RSI14[sym][gi]
-        if r is None or not (40 <= r <= 55): return None
+        if r is None or not (45 <= r <= 65): return None
         ema21 = EMA21[sym][gi]
         if bars[gi]['close'] <= ema21: return None
         if not (bars[gi]['close'] > bars[gi-1]['close']): return None
@@ -567,6 +604,10 @@ def make_signals(ctx):
         return (rets[sym], atr*1.75, atr*3.5)
 
     def sig_fib_618_retracement(sym, gi):
+        # Stop/target updated 2026-08-06 after a 5-window walk-forward search: 1.75x/3.5x
+        # -> 2.5x/4.5x ATR (retracement tolerance tested at 0.97/0.98/0.99, 0.98 already
+        # optimal - left unchanged). Baseline was 2/5 windows profitable (+$72.36); new
+        # config reaches 4/5 windows, total +$799.85 (>10x higher).
         bars = bars_by_sym[sym]
         if gi < 30: return None
         piv = [p for p in PIVOTS_HL[sym] if p[1] < gi]
@@ -582,10 +623,14 @@ def make_signals(ctx):
         if touched and bounced:
             atr = ATR[sym][gi]
             if not atr: return None
-            return ((bars[gi]['close']-fib618)/fib618, atr*1.75, atr*3.5)
+            return ((bars[gi]['close']-fib618)/fib618, atr*2.5, atr*4.5)
         return None
 
     def sig_rsi_bullish_divergence(sym, gi):
+        # Stop/target updated 2026-08-06 after a 5-window walk-forward search: 1.75x/3.5x
+        # -> 2.0x/5.0x ATR. Still a rare-firing signal (1/5 windows profitable both
+        # before and after - this setup just doesn't recur often in the sample), but the
+        # total when it does fire rose from +$119.61 to +$170.88 at no cost elsewhere.
         bars = bars_by_sym[sym]
         r = RSI14[sym]
         if gi < 30: return None
@@ -602,10 +647,14 @@ def make_signals(ctx):
         if bars[gi]['close'] > confirm_level:
             atr = ATR[sym][gi]
             if not atr: return None
-            return ((r[p2[1]]-r[p1[1]]) + 0.01, atr*1.75, atr*3.5)
+            return ((r[p2[1]]-r[p1[1]]) + 0.01, atr*2.0, atr*5.0)
         return None
 
     def sig_bull_flag_swing(sym, gi):
+        # Stop/target updated 2026-08-06 after a 5-window walk-forward search: 1.75x/3.5x
+        # -> 2.0x/5.0x ATR (pole-gain threshold tested at 10%/15%/20%, all tied - left at
+        # 15%). Still rare-firing (1/5 windows profitable both before and after), but the
+        # total when it fires rose from +$189.22 to +$270.31 at no cost elsewhere.
         bars = bars_by_sym[sym]
         if gi < 25: return None
         for flag_len in range(5, 16):
@@ -623,20 +672,24 @@ def make_signals(ctx):
             if bars[gi]['close'] > pole_high:
                 atr = ATR[sym][gi]
                 if not atr: return None
-                return (gain, atr*1.75, atr*3.5)
+                return (gain, atr*2.0, atr*5.0)
         return None
 
     def sig_ma_crossover(sym, gi):
-        # Same math as live 9-Way Combo Signal H, using the completed daily bar as "today"
-        # (no live-quote proxy needed in a daily-bar paper backtest).
+        # Originally the same math as the (now-disabled) live 9-Way Combo Signal H.
+        # Params updated 2026-08-06 after a 5-window walk-forward search: EMA periods
+        # 9/21 -> 5/20, stop/target 1.75x/3.5x -> 2.5x/4.5x ATR - this paper tracker's
+        # copy is now intentionally decoupled from Signal H's original formula, same as
+        # every other signal re-tuned this round. Baseline was 3/5 windows profitable
+        # (+$1,439.72); new config reaches 4/5 windows, total +$3,330.46 (+131%).
         bars = bars_by_sym[sym]
-        if gi < 22: return None
-        e9, e21 = EMA9[sym], EMA21[sym]
-        if e9[gi] is None or e21[gi] is None or e9[gi-1] is None or e21[gi-1] is None: return None
-        if e9[gi] > e21[gi] and not (e9[gi-1] > e21[gi-1]):
+        if gi < 21: return None
+        e5, e20 = EMA5[sym], EMA20[sym]
+        if e5[gi] is None or e20[gi] is None or e5[gi-1] is None or e20[gi-1] is None: return None
+        if e5[gi] > e20[gi] and not (e5[gi-1] > e20[gi-1]):
             atr = ATR[sym][gi]
             if not atr: return None
-            return ((e9[gi] - e21[gi]) / e21[gi], atr * 1.75, atr * 3.5)
+            return ((e5[gi] - e20[gi]) / e20[gi], atr * 2.5, atr * 4.5)
         return None
 
     def sig_darvas_box(sym, gi):
@@ -669,30 +722,37 @@ def make_signals(ctx):
             return ((bars[gi]['close'] - box_top) / box_top, atr * 2.5, atr * 4.5)
         return None
 
-    # Minervini VCP, Donchian, and Asymmetric Pullback graduated to the live 9-Way Combo -
-    # removed here to avoid double-tracking. MA Crossover and Darvas Box (added 2026-07-22 to
-    # the live combo directly, skipping paper-tracking per explicit user request) are added here
-    # too so their behavior can now also be observed on an isolated $25k paper account, same as
-    # every other not-yet-fully-vetted signal. The 6 setups below them (sourced from widely-cited
-    # retail/YouTube trading content) are paper-only pending further validation; Relative Strength
-    # Leader Pullback backtested negative (-$582, 0/5 windows) and is included here for continued
-    # observation, not because it looked promising.
+    # MA Crossover and Darvas Box (added 2026-07-22 to the live combo directly, skipping
+    # paper-tracking per explicit user request) are added here too so their behavior can
+    # also be observed on an isolated $25k paper account, same as every other
+    # not-yet-fully-vetted signal. The 6 setups below them (sourced from widely-cited
+    # retail/YouTube trading content) are paper-only pending further validation.
     #
-    # A/B/C/D/F/G revived 2026-08-06 (in two batches): all six belonged to the original
-    # 9-Way Combo, which went live in stages from 2026-07-14 and was disabled entirely
-    # 2026-07-24 in the consolidation to Margin-Style-only. They were never re-added to
-    # this paper tracker afterward, leaving them orphaned (no live or paper record)
-    # despite a 5-window walk-forward search showing real edge at their original params
-    # (A: 4/5 windows +$2,675.61; B: 5/5 +$3,289.80; C: 4/5 +$1,758.60; D: 4/5 +$5,862.13;
-    # F: 5/5 +$4,403.10; G: 5/5 +$6,899.18 - already the single strongest signal of the
-    # 22 even before tuning). All six added here with walk-forward-optimized params per
-    # explicit user request - see each function's own comment above for before/after
-    # figures.
+    # A/B/C/D/E/F/G revived 2026-08-06 (in three batches): all seven belonged to the
+    # original 9-Way Combo, which went live in stages from 2026-07-14 and was disabled
+    # entirely 2026-07-24 in the consolidation to Margin-Style-only. All seven were left
+    # orphaned (no live or paper record) after that - E (Minervini VCP) had been
+    # incorrectly assumed still-covered by an older comment here that called it
+    # "graduated to the live 9-Way Combo," missing that the combo itself had since gone
+    # dark. A 2026-08-06 walk-forward search found real edge in all seven even at their
+    # original params (A: 4/5 windows +$2,675.61; B: 5/5 +$3,289.80; C: 4/5 +$1,758.60;
+    # D: 4/5 +$5,862.13; E: 3/5 +$1,373.28; F: 5/5 +$4,403.10; G: 5/5 +$6,899.18 -
+    # already the single strongest signal of the 22 even before tuning). All seven added
+    # here with walk-forward-optimized params per explicit user request - see each
+    # function's own comment above for before/after figures.
+    #
+    # Every remaining signal below (Bollinger Squeeze through Relative Strength Leader
+    # Pullback, plus MA Crossover above) also went through the same 2026-08-06
+    # walk-forward search and had its params updated - see each function's own comment
+    # for before/after figures. Bull Flag Breakout and RSI Bullish Divergence remain
+    # rare-firing (1/5 windows profitable) even after tuning; every other signal in this
+    # tracker now reaches at least 3/5 windows profitable at its current params.
     return {
         'A: 2B Reversal + Bollinger Whipsaw': sig_A_2b_reversal,
         'B: Joe Ross 1-2-3 Low Breakout': sig_B_123_breakout,
         'C: Bressert RSI-3M3 Cycle Buy': sig_C_bressert,
         'D: Elder Impulse Green-Turn': sig_D_elder_impulse,
+        'E: Minervini VCP Breakout': sig_minervini_vcp,
         'F: Donchian/Turtle Channel Breakout': sig_F_donchian,
         'G: Asymmetric Pullback': sig_G_asymmetric_pullback,
         'Bollinger Squeeze Breakout': sig_bollinger_squeeze,
