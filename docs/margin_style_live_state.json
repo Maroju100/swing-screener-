@@ -28,32 +28,11 @@
  ],
  "open_positions": {
   "INTC": {
-   "shares": 0.106657,
-   "entry": 92.927,
+   "shares": 0.085326,
+   "entry": 97.63,
    "peak": 101.9,
    "tranches": 5,
    "opened": "2026-07-28"
-  },
-  "SNDK": {
-   "shares": 0.157305,
-   "entry": 1390.8976,
-   "peak": 1413.4291,
-   "tranches": 2,
-   "opened": "2026-08-03"
-  },
-  "MU": {
-   "shares": 0.001336,
-   "entry": 819.6641,
-   "peak": 881.515,
-   "tranches": 1,
-   "opened": "2026-08-03"
-  },
-  "WDC": {
-   "shares": 0.015736,
-   "entry": 544.825,
-   "peak": 547.61,
-   "tranches": 1,
-   "opened": "2026-08-04"
   }
  }
 }
