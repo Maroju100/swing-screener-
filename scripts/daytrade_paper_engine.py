@@ -401,12 +401,19 @@ def run(raw_path):
             for gi in range(start_gi, len(bars)):
                 bar = bars[gi]
                 meta = DAYIDX[sym][gi]
-                # is_last is only treated as a checkpoint on abbreviated days that never
-                # reach the real bar 10 (e.g. an early-close session) - on a normal full
-                # day it must NOT also fire as a spurious third checkpoint at ~4pm.
-                short_day_fallback = meta['is_last'] and meta['i_in_day'] < FINAL_CHECKPOINT_BAR_INDEX
-                is_checkpoint = meta['i_in_day'] in CHECKPOINT_BAR_INDICES or short_day_fallback
-                is_final_checkpoint = meta['i_in_day'] == FINAL_CHECKPOINT_BAR_INDEX or short_day_fallback
+                # Deliberately NOT falling back to meta['is_last'] here (unlike the
+                # backtest this was validated against, which always sees complete
+                # historical days). In this LIVE incremental engine, "today" is often
+                # only partially fetched while the market is still open - DAYIDX marks
+                # whatever bar happens to be the newest one WE'VE FETCHED as is_last,
+                # which is not the same as the real session close. Trusting that here
+                # caused an early, incorrect same-day EOD_CLOSE the first time this ran
+                # (caught before it was committed). Exact-bar-index matching only means
+                # a genuinely abbreviated real trading day may occasionally miss the
+                # second checkpoint and carry a position an extra day - a rare, safe
+                # trade-off versus misfiring on every single intraday run.
+                is_checkpoint = meta['i_in_day'] in CHECKPOINT_BAR_INDICES
+                is_final_checkpoint = meta['i_in_day'] == FINAL_CHECKPOINT_BAR_INDEX
 
                 if sym in positions:
                     pos = positions[sym]
@@ -423,7 +430,7 @@ def run(raw_path):
                         run_trades.append(trade)
                         del positions[sym]
 
-                if sym not in positions and len(positions) < MAXP and is_checkpoint and not meta['is_last']:
+                if sym not in positions and len(positions) < MAXP and is_checkpoint:
                     day_start = gi - meta['i_in_day']
                     fired = None
                     for j in range(day_start, gi + 1):
