@@ -772,6 +772,48 @@
    "stop_count_this_run": 2,
    "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly before this run - no drift, no reconciliation needed. CGC position in account is unrelated/out-of-universe, ignored.",
    "notes": "First run under the new midday-only (17:00 UTC) schedule. 2 STOP-outs (LRCX, AMD - both breached the -1.51% intraday stop vs 8/4 close during a broad pullback) plus 3 PEAK-sells (INTC, SNDK, WDC) trimmed on new highs. Circuit breaker (2+ STOPs) paused new entries this run; no buys placed. Elevated-scrutiny status remains in effect (live since 2026-07-27, still building track record)."
+  },
+  {
+   "timestamp": "2026-08-07T19:37:11Z",
+   "orders": [
+    {
+     "symbol": "SNDK",
+     "side": "buy",
+     "shares": 0.81105,
+     "price": 1213.8857,
+     "reason": "HUGE_DIP"
+    },
+    {
+     "symbol": "WDC",
+     "side": "buy",
+     "shares": 2.294631,
+     "price": 437.0299,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "buy",
+     "shares": 3.214607,
+     "price": 310.0299,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "MU",
+     "side": "buy",
+     "shares": 1.014445,
+     "price": 873.9399,
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "skipped": [],
+   "allocation": 5000.0,
+   "used_before_run": 8.65,
+   "available_used_for_sizing": 4991.35,
+   "capital_ledger_note": "capital_ledger.py reported available=4137.94/4137.95 due to the known pending-settlement double-count bug (all pending entries had settle_date=2026-08-06, already passed by run time); worked around by passing real_cash = allocation - used and letting the engine's own date-aware pending filter apply. Post-commit pending_settlement is empty.",
+   "circuit_breaker_triggered": false,
+   "stop_count_this_run": 0,
+   "reconciliation": "Run was split across two sessions today. Earlier in the day, get_equity_positions showed only INTC (0.085326 sh, avg cost $97.63) plus an unrelated CGC holding, while docs/margin_style_live_state.json still listed open positions in SNDK/MU/WDC that the broker did not have (SNDK/WDC proceeds appeared in pending_settlement, consistent with prior sells never being cleaned up from state; MU was a stale ~$1 entry matching neither current positions nor pending settlement). Reconciled state to match the broker (removed SNDK/MU/WDC, corrected INTC's shares/entry) in a separate commit (23c0233) before any orders were placed. This run's plan (SNDK/WDC/LRCX/MU buys) was computed and reviewed with the user before execution; all 4 orders filled cleanly with no broker alerts.",
+   "elevated_scrutiny_note": "Still within the track-record caveat window (live since 2026-07-27, minimal history) - results to date remain within reasonable range of honest-fill backtest expectations (~+$150-400/month on the $5k), no divergence flag warranted this run."
   }
  ]
 }
