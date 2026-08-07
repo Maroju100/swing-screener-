@@ -6524,6 +6524,36 @@
     "VWAP Reclaim (H2)": -145.47,
     "First Pullback After ORB (H2)": -319.16
    }
+  },
+  {
+   "timestamp": "2026-08-07T20:15:54.069484+00:00",
+   "trades": [
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-08-07",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1230.35,
+     "exit": 1217.12,
+     "shares": 6,
+     "pnl": -79.34
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -2056.02,
+    "Hybrid Disciplined Momentum Scalping": -720.63,
+    "Gap / High Change Momentum": -1032.82,
+    "Turtle Soup Reversal": 734.32,
+    "Momentum Breakout": -451.2,
+    "Mid-Range Reversion Rule": -13.57,
+    "Opening Range Breakout": 107.43,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -256.58,
+    "Oversold Snapback Fade": -182.51,
+    "VWAP Reclaim (H2)": -193.86,
+    "First Pullback After ORB (H2)": -319.16
+   }
   }
  ]
 }
