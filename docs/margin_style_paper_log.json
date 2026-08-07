@@ -1390,6 +1390,90 @@
     }
    ],
    "cumulative_pl": 6730.98
+  },
+  {
+   "timestamp": "2026-08-07T17:22:24.312618+00:00",
+   "trades": [
+    {
+     "symbol": "AMD",
+     "date": "2026-08-06",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 10.219097,
+     "price": 489.28
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-08-06",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 829.5,
+     "exit": 879.7028,
+     "shares": 0.2960360000000002,
+     "pnl": 14.86
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-08-06",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 11.073707,
+     "price": 451.52
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-06",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 3.972731,
+     "price": 1258.58
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-08-06",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 394.1614,
+     "exit": 418.2,
+     "shares": 0.036667,
+     "pnl": 0.88
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-08-06",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 11.956002,
+     "price": 418.2
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-08-06",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 10.209947,
+     "price": 305.77
+    },
+    {
+     "symbol": "STX",
+     "date": "2026-08-06",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 845.35,
+     "exit": 825.0113,
+     "shares": 5.63728,
+     "pnl": -114.65
+    },
+    {
+     "symbol": "STX",
+     "date": "2026-08-06",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 4.459577,
+     "price": 852.95
+    }
+   ],
+   "cumulative_pl": 6655.89
   }
  ]
 }
