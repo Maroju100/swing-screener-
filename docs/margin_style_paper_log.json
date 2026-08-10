@@ -1474,6 +1474,112 @@
     }
    ],
    "cumulative_pl": 6655.89
+  },
+  {
+   "timestamp": "2026-08-10T17:21:36.716611+00:00",
+   "trades": [
+    {
+     "symbol": "AMD",
+     "date": "2026-08-07",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 489.28,
+     "exit": 481.8919,
+     "shares": 10.219097,
+     "pnl": -75.5
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-08-07",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 4.90403,
+     "price": 877.57
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-08-07",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 451.52,
+     "exit": 444.702,
+     "shares": 11.073707,
+     "pnl": -75.5
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-08-07",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 10.546944,
+     "price": 434.3
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-07",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1258.58,
+     "exit": 1239.5754,
+     "shares": 3.972731,
+     "pnl": -75.5
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-07",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 4.124698,
+     "price": 1212.21
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-08-07",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 418.1745,
+     "exit": 420.04,
+     "shares": 8.892733,
+     "pnl": 16.59
+    },
+    {
+     "symbol": "INTC",
+     "date": "2026-08-07",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 41.02204,
+     "price": 101.65
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-08-07",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 305.77,
+     "exit": 311.35,
+     "shares": 7.585991,
+     "pnl": 42.33
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-08-07",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 10.803038,
+     "price": 311.35
+    },
+    {
+     "symbol": "STX",
+     "date": "2026-08-07",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 852.95,
+     "exit": 840.0705,
+     "shares": 4.459577,
+     "pnl": -57.44
+    }
+   ],
+   "cumulative_pl": 6450.95
   }
  ]
 }
