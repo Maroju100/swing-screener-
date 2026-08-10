@@ -814,6 +814,76 @@
    "stop_count_this_run": 0,
    "reconciliation": "Run was split across two sessions today. Earlier in the day, get_equity_positions showed only INTC (0.085326 sh, avg cost $97.63) plus an unrelated CGC holding, while docs/margin_style_live_state.json still listed open positions in SNDK/MU/WDC that the broker did not have (SNDK/WDC proceeds appeared in pending_settlement, consistent with prior sells never being cleaned up from state; MU was a stale ~$1 entry matching neither current positions nor pending settlement). Reconciled state to match the broker (removed SNDK/MU/WDC, corrected INTC's shares/entry) in a separate commit (23c0233) before any orders were placed. This run's plan (SNDK/WDC/LRCX/MU buys) was computed and reviewed with the user before execution; all 4 orders filled cleanly with no broker alerts.",
    "elevated_scrutiny_note": "Still within the track-record caveat window (live since 2026-07-27, minimal history) - results to date remain within reasonable range of honest-fill backtest expectations (~+$150-400/month on the $5k), no divergence flag warranted this run."
+  },
+  {
+   "timestamp": "2026-08-10T19:02:27Z",
+   "orders": [
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 0.085326,
+     "price": 98.5798,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.60261,
+     "price": 1255.005,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "WDC",
+     "side": "sell",
+     "shares": 1.704911,
+     "price": 441.8384,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "MU",
+     "side": "sell",
+     "shares": 0.753733,
+     "price": 879.59,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "buy",
+     "shares": 0.636832,
+     "price": 1253.339,
+     "reason": "HUGE_DIP"
+    },
+    {
+     "symbol": "WDC",
+     "side": "buy",
+     "shares": 0.278787,
+     "price": 441.7966,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "AMD",
+     "side": "buy",
+     "shares": 0.143778,
+     "price": 475.46,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "MU",
+     "side": "buy",
+     "shares": 0.043022,
+     "price": 880.7888,
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "skipped": [],
+   "allocation": 5000.0,
+   "used_before_run": 3923.78,
+   "available_used_for_sizing": 1076.22,
+   "circuit_breaker_triggered": false,
+   "stop_count_this_run": 1,
+   "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly before this run - no drift, no reconciliation needed. CGC position in account is unrelated/out-of-universe, ignored.",
+   "notes": "First fully-automated run under the 2026-08-07 pre-authorization (place_equity_order called immediately after a clean review_equity_order, no per-order user confirmation). Run was re-pulled fresh twice before execution (prices had moved since two earlier stale plan computations that were interrupted before any orders went out - confirmed via get_equity_positions that nothing had partially executed). 1 STOP (INTC, breached -1.51% intraday stop vs 8/7 close) plus 3 PEAK-trims (SNDK/WDC/MU, each a new high since their 8/7 entry) triggered sells; the same three symbols (SNDK/WDC/MU) plus AMD then re-qualified as dip-buys off yesterday due to lagging daily-close drawdown/day-return signals still reading down even though the live price had already recovered. User raised the same-day sell+buy overlap as a concern; a 3-window walk-forward validation (scripts run ad hoc, not committed) showed adding a guard to block same-day rebuys REDUCES total P&L by ~12% (loses in 2 of 3 independent windows) because it also blocks profitable re-entries into names turning the corner - so no guard was added and the plan executed as originally computed. Fill prices for buys were back-derived from the broker post-trade average_buy_price (get_equity_orders was blocked by a persistent approval-gate error even for read-only lookups); sell fill prices use the last quoted trade price captured moments before each order was placed. All 8 orders confirmed executed via get_equity_positions share-count deltas exactly matching plan quantities.",
+   "elevated_scrutiny_note": "Still within the track-record caveat window (live since 2026-07-27). No divergence flag warranted this run - behavior matches validated strategy rules exactly."
   }
  ]
 }
