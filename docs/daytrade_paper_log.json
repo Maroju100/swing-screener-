@@ -6554,6 +6554,69 @@
     "VWAP Reclaim (H2)": -193.86,
     "First Pullback After ORB (H2)": -319.16
    }
+  },
+  {
+   "timestamp": "2026-08-10T14:23:52.769290+00:00",
+   "trades": [
+    {
+     "strategy": "Oversold Snapback Fade",
+     "date": "2026-08-10",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 873.83,
+     "exit": 856.82,
+     "shares": 9,
+     "pnl": -153.06
+    },
+    {
+     "strategy": "Oversold Snapback Fade",
+     "date": "2026-08-10",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1230.35,
+     "exit": 1208.5,
+     "shares": 6,
+     "pnl": -131.06
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-08-10",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 873.83,
+     "exit": 866.87,
+     "shares": 9,
+     "pnl": -62.59
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-08-10",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 434.14,
+     "exit": 428.63,
+     "shares": 19,
+     "pnl": -104.7
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -2042.36,
+    "Hybrid Disciplined Momentum Scalping": -720.63,
+    "Gap / High Change Momentum": -1032.82,
+    "Turtle Soup Reversal": 734.32,
+    "Momentum Breakout": -451.2,
+    "Mid-Range Reversion Rule": -13.57,
+    "Opening Range Breakout": 107.43,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -256.58,
+    "Oversold Snapback Fade": -521.37,
+    "VWAP Reclaim (H2)": -392.12,
+    "First Pullback After ORB (H2)": -319.16
+   }
   }
  ]
 }
