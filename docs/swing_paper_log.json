@@ -857,6 +857,43 @@
     "MA Crossover (H)": -590.1,
     "Darvas Box (I)": 0.0
    }
+  },
+  {
+   "timestamp": "2026-08-10T21:11:20.599105+00:00",
+   "trades": [
+    {
+     "strategy": "MA Crossover (H)",
+     "date": "2026-08-07",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 11,
+     "price": 420.04
+    }
+   ],
+   "equity_snapshot": {
+    "A: 2B Reversal + Bollinger Whipsaw": 0.0,
+    "B: Joe Ross 1-2-3 Low Breakout": 0.0,
+    "C: Bressert RSI-3M3 Cycle Buy": 0.0,
+    "D: Elder Impulse Green-Turn": 0.0,
+    "E: Minervini VCP Breakout": 0.0,
+    "F: Donchian/Turtle Channel Breakout": 0.0,
+    "G: Asymmetric Pullback": 0.0,
+    "Bollinger Squeeze Breakout": 0.0,
+    "Probe and Pullback": 0.0,
+    "MIDAS Anchored VWAP Bounce": -3058.87,
+    "Perfect Storm (D/W/M alignment)": 0.0,
+    "ConnorsRSI Oversold Bounce": 0.0,
+    "Ichimoku Kumo Breakout": 0.0,
+    "Pivot Point S1 Bounce": -3701.3,
+    "Cup and Handle": 0.0,
+    "High Tight Flagpole": 0.0,
+    "Relative Strength Leader Pullback": -1295.6,
+    "Fibonacci 61.8% Retracement Bounce": 0.0,
+    "RSI Bullish Divergence": 0.0,
+    "Bull Flag Breakout": 0.0,
+    "MA Crossover (H)": -590.1,
+    "Darvas Box (I)": 0.0
+   }
   }
  ]
 }
