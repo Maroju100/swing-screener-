@@ -6617,6 +6617,24 @@
     "VWAP Reclaim (H2)": -392.12,
     "First Pullback After ORB (H2)": -319.16
    }
+  },
+  {
+   "timestamp": "2026-08-10T15:18:35.452336+00:00",
+   "trades": [],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -2017.5,
+    "Hybrid Disciplined Momentum Scalping": -720.63,
+    "Gap / High Change Momentum": -1032.82,
+    "Turtle Soup Reversal": 734.32,
+    "Momentum Breakout": -451.2,
+    "Mid-Range Reversion Rule": -13.57,
+    "Opening Range Breakout": 107.43,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -256.58,
+    "Oversold Snapback Fade": -528.99,
+    "VWAP Reclaim (H2)": -392.12,
+    "First Pullback After ORB (H2)": -319.16
+   }
   }
  ]
 }
