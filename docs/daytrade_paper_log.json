@@ -6958,6 +6958,102 @@
     "VWAP Reclaim (H2)": -392.12,
     "First Pullback After ORB (H2)": -319.16
    }
+  },
+  {
+   "timestamp": "2026-08-10T20:14:53.083978+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-10",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 880.22,
+     "exit": 872.24,
+     "shares": 8,
+     "pnl": -63.82
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-10",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 422.26,
+     "exit": 420.07,
+     "shares": 18,
+     "pnl": -39.37
+    },
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-08-10",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 422.26,
+     "exit": 420.26,
+     "shares": 19,
+     "pnl": -37.98
+    },
+    {
+     "strategy": "Momentum Breakout",
+     "date": "2026-08-10",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 422.26,
+     "exit": 419.7,
+     "shares": 19,
+     "pnl": -48.61
+    },
+    {
+     "strategy": "Oversold Snapback Fade",
+     "date": "2026-08-10",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 880.22,
+     "exit": 862.93,
+     "shares": 9,
+     "pnl": -155.62
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-08-10",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 475.66,
+     "exit": 470.35,
+     "shares": 17,
+     "pnl": -90.3
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-08-10",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 880.22,
+     "exit": 862.93,
+     "shares": 9,
+     "pnl": -155.62
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -2139.64,
+    "Hybrid Disciplined Momentum Scalping": -796.3,
+    "Gap / High Change Momentum": -1032.82,
+    "Turtle Soup Reversal": 734.32,
+    "Momentum Breakout": -548.11,
+    "Mid-Range Reversion Rule": -13.57,
+    "Opening Range Breakout": 107.43,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -256.58,
+    "Oversold Snapback Fade": -828.01,
+    "VWAP Reclaim (H2)": -714.9,
+    "First Pullback After ORB (H2)": -390.79
+   }
   }
  ]
 }
