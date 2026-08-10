@@ -6702,6 +6702,47 @@
     "VWAP Reclaim (H2)": -392.12,
     "First Pullback After ORB (H2)": -319.16
    }
+  },
+  {
+   "timestamp": "2026-08-10T17:22:08.699482+00:00",
+   "trades": [
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-08-10",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 423.32,
+     "exit": 421.32,
+     "shares": 19,
+     "pnl": -37.98
+    },
+    {
+     "strategy": "Momentum Breakout",
+     "date": "2026-08-10",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 423.32,
+     "exit": 420.76,
+     "shares": 19,
+     "pnl": -48.61
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -1975.3,
+    "Hybrid Disciplined Momentum Scalping": -672.66,
+    "Gap / High Change Momentum": -1032.82,
+    "Turtle Soup Reversal": 734.32,
+    "Momentum Breakout": -413.85,
+    "Mid-Range Reversion Rule": -13.57,
+    "Opening Range Breakout": 107.43,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -256.58,
+    "Oversold Snapback Fade": -537.26,
+    "VWAP Reclaim (H2)": -392.12,
+    "First Pullback After ORB (H2)": -319.16
+   }
   }
  ]
 }
