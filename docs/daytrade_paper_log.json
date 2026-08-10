@@ -6635,6 +6635,73 @@
     "VWAP Reclaim (H2)": -392.12,
     "First Pullback After ORB (H2)": -319.16
    }
+  },
+  {
+   "timestamp": "2026-08-10T16:15:43.300586+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-10",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 8,
+     "price": 872.5
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-10",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 17,
+     "price": 443.2
+    },
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-08-10",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 6,
+     "price": 1238.64
+    },
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-08-10",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 19,
+     "price": 423.32
+    },
+    {
+     "strategy": "Momentum Breakout",
+     "date": "2026-08-10",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 6,
+     "price": 1238.64
+    },
+    {
+     "strategy": "Momentum Breakout",
+     "date": "2026-08-10",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 19,
+     "price": 423.32
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -1927.28,
+    "Hybrid Disciplined Momentum Scalping": -657.17,
+    "Gap / High Change Momentum": -1032.82,
+    "Turtle Soup Reversal": 734.32,
+    "Momentum Breakout": -387.73,
+    "Mid-Range Reversion Rule": -13.57,
+    "Opening Range Breakout": 107.43,
+    "ID/NR4 Volatility Breakout": 0.0,
+    "Relative Volume Leader Momentum": -256.58,
+    "Oversold Snapback Fade": -486.35,
+    "VWAP Reclaim (H2)": -392.12,
+    "First Pullback After ORB (H2)": -319.16
+   }
   }
  ]
 }
