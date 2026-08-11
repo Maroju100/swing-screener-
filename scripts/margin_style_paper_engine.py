@@ -34,13 +34,19 @@ single shared cash pool) instead of per-symbol independent catch-up:
     today's close - and netting a stop-loss against an unrelated dip-buy
     would defeat the point of cutting the position).
 
-Uses DAILY bars (same convention the strategy was backtested and optimized
-on) - no live-quote proxy; the completed daily bar's close stands in for
-"today" throughout, since this is a paper backtest run once/day after close,
-identical in spirit to swing_paper_engine.py. This differs from the live
-engine only in WHEN "today's price" is observed (real close here vs. a live
-noon quote there) - the settlement/concentration/circuit-breaker/netting
-mechanics are now otherwise identical.
+Uses DAILY bars. As of 2026-08-11 the trigger that runs this script also
+closes the last remaining gap with the live engine: it fetches a live noon
+quote for each symbol and appends one synthetic "today" bar (open=high=low=
+close=that quote) after the real historicals before calling this script -
+this file itself needs no special handling for that, since it already treats
+every new date generically (it only ever reads high/low/close off whatever
+bar it's given, real or synthetic, exactly like swing_paper_engine.py's own
+noon-proxy convention). The result: this tracker and the live engine now
+observe "today's price" the same way, at the same time of day, with the same
+approximation (a single live quote standing in for the day's full range) -
+the only structural difference left is that this script commits its own
+paper trades immediately, with no review_equity_order/place_equity_order step,
+since there is no real broker to reconcile against.
 
 State reset 2026-08-11 alongside this rewrite: the previous accumulated P&L
 was computed under the old, more permissive (no-settlement) mechanics and is
