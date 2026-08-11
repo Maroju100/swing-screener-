@@ -132,6 +132,17 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
     safe_cash = max(0.0, real_cash - pending_total)
 
     sells = []
+    # PEAK/GAIN sells are deferred here rather than appended straight to `sells`, so they
+    # can be NETTED against a same-day buy candidate for the same symbol below (added
+    # 2026-08-11 per explicit user request + backtest validation: a 6-month true-
+    # compounding backtest showed netting improves this strategy's return, +179.97% ->
+    # +202.22%, while cutting same-day-same-symbol trade count 1180 -> 888). Netting only
+    # applies to PEAK/GAIN, never STOP: STOP's fill price is prev_close*(1+INTRADAY_STOP),
+    # not this run's live quote, so a same-day STOP + buy don't even share a price the way
+    # PEAK/GAIN and a same-day buy do (both use `live_price`) - and netting a stop-loss
+    # against an unrelated dip-buy would defeat the point of cutting the position.
+    pending_peak_gain = {}
+    peak_updates = {}
     for sym, pos in list(state['open_positions'].items()):
         if sym not in bars_by_sym or sym not in quotes:
             continue
@@ -148,8 +159,9 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
         if live_price > pos['peak']:
             sell_shares = round(pos['shares'] * PEAK_SELL_PCT, 6)
             if sell_shares > 0:
-                sells.append({'symbol': sym, 'shares': sell_shares, 'price': round(live_price, 4),
-                              'reason': 'PEAK', 'entry': pos['entry']})
+                pending_peak_gain[sym] = {'shares': sell_shares, 'reason': 'PEAK',
+                                           'price': round(live_price, 4), 'entry': pos['entry']}
+            peak_updates[sym] = live_price  # ratchets regardless of whether netting cancels the sell
             continue
 
         gain_pct = (live_price - pos['entry']) / pos['entry']
@@ -157,8 +169,8 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
             if gain_pct >= thresh:
                 sell_shares = round(pos['shares'] * pct, 6)
                 if sell_shares > 0:
-                    sells.append({'symbol': sym, 'shares': sell_shares, 'price': round(live_price, 4),
-                                  'reason': f'GAIN{int(pct*100)}', 'entry': pos['entry']})
+                    pending_peak_gain[sym] = {'shares': sell_shares, 'reason': f'GAIN{int(pct*100)}',
+                                               'price': round(live_price, 4), 'entry': pos['entry']}
                 break
 
     stop_count = sum(1 for s in sells if s['reason'] == 'STOP')
@@ -202,6 +214,7 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
     candidates.sort(key=lambda c: c['drawdown'])
 
     buys = []
+    netted_symbols = set()
     for c in candidates:
         sym = c['symbol']
         if safe_cash <= 1.0:
@@ -221,6 +234,31 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
         shares = round(capped / live_price, 6)
         if shares <= 0:
             continue
+
+        pending_sell = pending_peak_gain.get(sym)
+        if pending_sell:
+            # NETTING: same symbol, same day, same live_price (verified: PEAK/GAIN and
+            # this buy candidate both price off `live_price`) - trade only the difference
+            # instead of a full sell followed by a full buy.
+            netted_symbols.add(sym)
+            net_shares = round(shares - pending_sell['shares'], 6)
+            if net_shares > 1e-6:
+                actual_deploy = net_shares * live_price
+                buys.append({'symbol': sym, 'shares': net_shares, 'price': round(live_price, 4),
+                             'notional': round(actual_deploy, 2),
+                             'reason': f"{c['reason']}-NET(vs {pending_sell['reason']})",
+                             'drawdown': round(c['drawdown'], 4), 'day_return': round(c['day_return'], 4),
+                             'capped_by_trade_notional_limit': deploy < uncapped_deploy,
+                             'capped_by_concentration_limit': capped < deploy})
+                safe_cash -= actual_deploy
+            elif net_shares < -1e-6:
+                sells.append({'symbol': sym, 'shares': round(abs(net_shares), 6), 'price': round(live_price, 4),
+                              'reason': f"{pending_sell['reason']}-NET(vs {c['reason']})",
+                              'entry': pending_sell['entry']})
+            # net_shares == 0: no order at all for this symbol; peak_updates (below) still
+            # ratchets it since PEAK was true even though nothing traded.
+            continue
+
         actual_deploy = shares * live_price
         buys.append({'symbol': sym, 'shares': shares, 'price': round(live_price, 4),
                      'notional': round(actual_deploy, 2), 'reason': c['reason'],
@@ -229,12 +267,30 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
                      'capped_by_concentration_limit': capped < deploy})
         safe_cash -= actual_deploy  # subsequent symbols this run see reduced remaining cash
 
+    # Any PEAK/GAIN sell that never found a same-day buy candidate to net against
+    # executes in full, exactly as before netting existed.
+    for sym, pending_sell in pending_peak_gain.items():
+        if sym not in netted_symbols:
+            sells.append({'symbol': sym, 'shares': pending_sell['shares'], 'price': pending_sell['price'],
+                          'reason': pending_sell['reason'], 'entry': pending_sell['entry']})
+
+    # peak_updates is only needed for the rare net-exactly-zero case: a PEAK triggered but
+    # netting canceled out to no trade at all, so neither the sell-commit path nor the
+    # buy-commit path (both of which already ratchet peak themselves) will touch this
+    # symbol's state - without this, its peak would stay stale and PEAK could wrongly
+    # re-fire off the old, lower peak next run.
+    sold_symbols = {s['symbol'] for s in sells}
+    bought_symbols = {b['symbol'] for b in buys}
+    peak_updates = {sym: round(p, 4) for sym, p in peak_updates.items()
+                    if sym not in sold_symbols and sym not in bought_symbols}
+
     print(json.dumps({'real_cash': real_cash, 'pending_settlement_total': round(pending_total, 2),
                       'safe_settled_cash': round(max(0.0, real_cash - pending_total), 2),
                       'total_equity': round(total_equity, 2),
                       'circuit_breaker_triggered': circuit_breaker_triggered,
                       'stop_count_this_run': stop_count,
-                      'open_positions': state['open_positions'], 'sells': sells, 'buys': buys}, indent=1))
+                      'open_positions': state['open_positions'], 'sells': sells, 'buys': buys,
+                      'peak_updates': peak_updates}, indent=1))
 
 
 def cmd_commit(actions_path):
@@ -278,8 +334,20 @@ def cmd_commit(actions_path):
                                             'peak': b['price'], 'tranches': 1,
                                             'opened': today.isoformat()}
 
+    # NETTING edge case (added 2026-08-11): a same-day PEAK/GAIN sell and a same-day buy
+    # candidate can net to exactly zero shares - no order fires, but the position still hit
+    # a new high this run, so its peak still needs to ratchet up or PEAK could keep
+    # re-triggering off a stale, lower peak next run. The sell- and buy-commit blocks above
+    # already ratchet peak themselves whenever an order actually fires; this only covers
+    # the case where neither fired.
+    for sym, new_peak in actions.get('peak_updates', {}).items():
+        pos = state['open_positions'].get(sym)
+        if pos and new_peak > pos['peak']:
+            pos['peak'] = new_peak
+
     save_state(state)
-    print(f"Committed {len(actions.get('sells', []))} sell(s), {len(actions.get('buys', []))} buy(s). "
+    print(f"Committed {len(actions.get('sells', []))} sell(s), {len(actions.get('buys', []))} buy(s), "
+          f"{len(actions.get('peak_updates', {}))} peak-only update(s). "
           f"Open positions now: {list(state['open_positions'].keys())}")
 
 
