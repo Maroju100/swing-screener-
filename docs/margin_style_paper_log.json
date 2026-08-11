@@ -1,5 +1,5 @@
 {
- "capital": 25000.0,
+ "capital": 5000.0,
  "symbols": [
   "AMD",
   "MU",
@@ -11,6 +11,61 @@
   "STX"
  ],
  "strategy": "Scaled Dip-Buy / Scaled Peak-Sell (Winner config)",
- "note": "PAPER TRADING ONLY - no real orders placed. Reset 2026-08-11: rewrote the engine for full parity with margin_style_live_engine.py (GFV-safe T+1 settlement, 50% concentration cap, 2+-stop circuit breaker, deepest-drawdown-first buy ordering, same-day same-symbol netting) - the prior accumulated P&L was computed under looser, non-representative mechanics (no settlement delay at all) and is not comparable to results going forward. This strategy is otherwise LIVE on real money (scripts/margin_style_live_engine.py); this paper track is a separate, non-connected comparison only.",
- "runs": []
+ "note": "PAPER TRADING ONLY - no real orders placed. Reset 2026-08-11: capital reduced from $25,000 to $5,000 and MAX_TRADE_NOTIONAL reduced from $5,000 to $1,000 - this tracker is now the exact same dollar size as the real-money Margin-Style Live system (not a 5x-scaled mirror of it), matching the 36-strategy compounding-ledger backtest basis too. Prior accumulated P&L was computed at the $25k scale and is not comparable going forward. This strategy is otherwise LIVE on real money (scripts/margin_style_live_engine.py); this paper track is a separate, non-connected comparison only.",
+ "runs": [
+  {
+   "timestamp": "2026-08-11T08:28:28.514515+00:00",
+   "trades": [
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-06",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 0.794546,
+     "price": 1258.58
+    },
+    {
+     "symbol": "AMD",
+     "date": "2026-08-06",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 2.043819,
+     "price": 489.28
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-08-06",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 3.270432,
+     "price": 305.77
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-08-06",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 1.975549,
+     "price": 451.52
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-08-06",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 1.181655,
+     "price": 418.2
+    },
+    {
+     "symbol": "STX",
+     "date": "2026-08-06",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 0.320967,
+     "price": 852.95
+    }
+   ],
+   "cumulative_pl": -0.0
+  }
+ ]
 }

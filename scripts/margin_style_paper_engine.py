@@ -65,11 +65,14 @@ from datetime import datetime, timezone, timedelta
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE_PATH = os.path.join(ROOT, 'docs', 'margin_style_paper_state.json')
 LOG_PATH = os.path.join(ROOT, 'docs', 'margin_style_paper_log.json')
-# 2026-07-25: expanded to match the live system's 8-name universe so the $25k
-# paper mirror stays a valid side-by-side comparison. New symbols initialize
-# fresh in state (incremental tracking is per-symbol).
+# 2026-07-25: expanded to match the live system's 8-name universe so the paper
+# mirror stays a valid side-by-side comparison. New symbols initialize fresh in
+# state (incremental tracking is per-symbol).
 SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM", "INTC", "LRCX", "STX"]
-CAPITAL = 25000.0
+CAPITAL = 5000.0  # 2026-08-11: reduced from $25k to match the live engine's actual $5k
+                  # allocation and the 36-strategy compounding-ledger backtest's basis -
+                  # this paper tracker is now the same dollar size as the real account,
+                  # not a scaled-up mirror of it.
 
 # "Winner" config (joint random-search + walk-forward validated, 2026-07-22)
 HUGE_DIP_DRAWDOWN = -0.255
@@ -82,10 +85,11 @@ PEAK_SELL_PCT = 0.743
 GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]
 MIN_NOTIONAL = 25.0
 
-# 2026-07-27: mirrors the live engine's MAX_TRADE_NOTIONAL, scaled by the same 5x
-# capital ratio ($1,000 on live's $5,000 = 20% of allocation; $5,000 here on this
-# tracker's $25,000 preserves that same 20% ratio) so the two stay comparable.
-MAX_TRADE_NOTIONAL = 5000.0
+# 2026-08-11: now that CAPITAL matches the live engine's $5,000 allocation exactly
+# (previously this tracker ran at $25k, 5x live, so this was scaled to $5,000 to
+# preserve the same 20%-of-allocation ratio), this cap is set to the live engine's
+# actual $1,000 - same dollar cap, not just the same ratio.
+MAX_TRADE_NOTIONAL = 1000.0
 
 # Added 2026-08-11 for parity with the live engine's same-named safeguards.
 MAX_SYMBOL_ALLOCATION_PCT = 0.50

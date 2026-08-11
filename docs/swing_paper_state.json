@@ -1,6 +1,6 @@
 {
  "A: 2B Reversal + Bollinger Whipsaw": {
-  "cash": 25000.0,
+  "cash": 5000.0,
   "positions": {},
   "last_processed_date": {
    "AMD": "2026-08-07",
@@ -11,7 +11,7 @@
   }
  },
  "B: Joe Ross 1-2-3 Low Breakout": {
-  "cash": 25000.0,
+  "cash": 5000.0,
   "positions": {},
   "last_processed_date": {
    "AMD": "2026-08-07",
@@ -22,7 +22,7 @@
   }
  },
  "C: Bressert RSI-3M3 Cycle Buy": {
-  "cash": 25000.0,
+  "cash": 5000.0,
   "positions": {},
   "last_processed_date": {
    "AMD": "2026-08-07",
@@ -33,7 +33,7 @@
   }
  },
  "D: Elder Impulse Green-Turn": {
-  "cash": 25000.0,
+  "cash": 5000.0,
   "positions": {},
   "last_processed_date": {
    "AMD": "2026-08-07",
@@ -44,7 +44,7 @@
   }
  },
  "F: Donchian/Turtle Channel Breakout": {
-  "cash": 25000.0,
+  "cash": 5000.0,
   "positions": {},
   "last_processed_date": {
    "AMD": "2026-08-07",
@@ -55,7 +55,7 @@
   }
  },
  "G: Asymmetric Pullback": {
-  "cash": 25000.0,
+  "cash": 5000.0,
   "positions": {},
   "last_processed_date": {
    "AMD": "2026-08-07",
@@ -66,7 +66,7 @@
   }
  },
  "Probe and Pullback": {
-  "cash": 25000.0,
+  "cash": 5000.0,
   "positions": {},
   "last_processed_date": {
    "AMD": "2026-08-07",
@@ -77,7 +77,7 @@
   }
  },
  "Perfect Storm (D/W/M alignment)": {
-  "cash": 25000.0,
+  "cash": 5000.0,
   "positions": {},
   "last_processed_date": {
    "AMD": "2026-08-07",
@@ -88,7 +88,7 @@
   }
  },
  "ConnorsRSI Oversold Bounce": {
-  "cash": 25000.0,
+  "cash": 5000.0,
   "positions": {},
   "last_processed_date": {
    "AMD": "2026-08-07",
@@ -99,18 +99,18 @@
   }
  },
  "Pivot Point S1 Bounce": {
-  "cash": 15507.0,
+  "cash": 3185.04,
   "positions": {
    "AMD": {
     "entry": 489.28,
-    "shares": 10,
+    "shares": 2,
     "entry_gi": 286,
     "stop": 410.3847332897833,
     "target": 647.0705334204333
    },
    "TSM": {
     "entry": 418.2,
-    "shares": 11,
+    "shares": 2,
     "entry_gi": 286,
     "stop": 383.16074717255884,
     "target": 488.27850565488234
@@ -125,7 +125,7 @@
   }
  },
  "High Tight Flagpole": {
-  "cash": 25000.0,
+  "cash": 5000.0,
   "positions": {},
   "last_processed_date": {
    "AMD": "2026-08-07",
@@ -136,7 +136,7 @@
   }
  },
  "Darvas Box (I)": {
-  "cash": 25000.0,
+  "cash": 5000.0,
   "positions": {},
   "last_processed_date": {
    "AMD": "2026-08-07",

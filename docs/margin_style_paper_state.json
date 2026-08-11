@@ -1,6 +1,52 @@
 {
- "cash": 25000.0,
- "positions": {},
- "last_processed_date": {},
+ "cash": 340.062928,
+ "positions": {
+  "SNDK": {
+   "shares": 0.794546,
+   "avg_cost": 1258.58,
+   "peak": 1258.58,
+   "tranches": 1
+  },
+  "AMD": {
+   "shares": 2.043819,
+   "avg_cost": 489.28,
+   "peak": 489.28,
+   "tranches": 1
+  },
+  "LRCX": {
+   "shares": 3.270432,
+   "avg_cost": 305.77,
+   "peak": 305.77,
+   "tranches": 1
+  },
+  "WDC": {
+   "shares": 1.975549,
+   "avg_cost": 451.52,
+   "peak": 451.52,
+   "tranches": 1
+  },
+  "TSM": {
+   "shares": 1.181655,
+   "avg_cost": 418.2,
+   "peak": 418.2,
+   "tranches": 1
+  },
+  "STX": {
+   "shares": 0.320967,
+   "avg_cost": 852.95,
+   "peak": 852.95,
+   "tranches": 1
+  }
+ },
+ "last_processed_date": {
+  "AMD": "2026-08-06",
+  "MU": "2026-08-06",
+  "WDC": "2026-08-06",
+  "SNDK": "2026-08-06",
+  "TSM": "2026-08-06",
+  "INTC": "2026-08-06",
+  "LRCX": "2026-08-06",
+  "STX": "2026-08-06"
+ },
  "pending_settlement": []
 }
