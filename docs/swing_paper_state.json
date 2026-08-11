@@ -1,215 +1,4 @@
 {
- "Bollinger Squeeze Breakout": {
-  "cash": 25000.0,
-  "positions": {},
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "Probe and Pullback": {
-  "cash": 25000.0,
-  "positions": {},
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "MIDAS Anchored VWAP Bounce": {
-  "cash": 13686.403932080073,
-  "positions": {
-   "MU": {
-    "entry": 865.46,
-    "shares": 5,
-    "entry_gi": 283,
-    "stop": 719.9112224961599,
-    "target": 1156.5575550076803
-   },
-   "AMD": {
-    "entry": 489.28,
-    "shares": 8,
-    "entry_gi": 296,
-    "stop": 410.3847332918351,
-    "target": 647.0705334163297
-   }
-  },
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "Perfect Storm (D/W/M alignment)": {
-  "cash": 25000.0,
-  "positions": {},
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "ConnorsRSI Oversold Bounce": {
-  "cash": 25000.0,
-  "positions": {},
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "Ichimoku Kumo Breakout": {
-  "cash": 25000.0,
-  "positions": {},
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "Pivot Point S1 Bounce": {
-  "cash": 13231.41766030722,
-  "positions": {
-   "AMD": {
-    "entry": 489.28,
-    "shares": 8,
-    "entry_gi": 296,
-    "stop": 410.3847332918351,
-    "target": 647.0705334163297
-   },
-   "TSM": {
-    "entry": 418.2,
-    "shares": 10,
-    "entry_gi": 296,
-    "stop": 383.1607471727491,
-    "target": 488.2785056545018
-   }
-  },
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "Cup and Handle": {
-  "cash": 25000.0,
-  "positions": {},
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "High Tight Flagpole": {
-  "cash": 25000.0,
-  "positions": {},
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "Relative Strength Leader Pullback": {
-  "cash": 19083.964626081637,
-  "positions": {
-   "TSM": {
-    "entry": 418.2,
-    "shares": 11,
-    "entry_gi": 296,
-    "stop": 387.54065377615547,
-    "target": 479.5186924476891
-   }
-  },
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "Fibonacci 61.8% Retracement Bounce": {
-  "cash": 25000.0,
-  "positions": {},
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "RSI Bullish Divergence": {
-  "cash": 25000.0,
-  "positions": {},
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "Bull Flag Breakout": {
-  "cash": 25000.0,
-  "positions": {},
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "MA Crossover (H)": {
-  "cash": 19789.464554389306,
-  "positions": {
-   "TSM": {
-    "entry": 420.04,
-    "shares": 11,
-    "entry_gi": 287,
-    "stop": 377.2819386824344,
-    "target": 497.00451037161815
-   }
-  },
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
- "Darvas Box (I)": {
-  "cash": 25000.0,
-  "positions": {},
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
  "A: 2B Reversal + Bollinger Whipsaw": {
   "cash": 25000.0,
   "positions": {},
@@ -254,17 +43,6 @@
    "TSM": "2026-08-07"
   }
  },
- "E: Minervini VCP Breakout": {
-  "cash": 25000.0,
-  "positions": {},
-  "last_processed_date": {
-   "AMD": "2026-08-07",
-   "MU": "2026-08-07",
-   "WDC": "2026-08-07",
-   "SNDK": "2026-08-07",
-   "TSM": "2026-08-07"
-  }
- },
  "F: Donchian/Turtle Channel Breakout": {
   "cash": 25000.0,
   "positions": {},
@@ -277,6 +55,87 @@
   }
  },
  "G: Asymmetric Pullback": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-08-07",
+   "MU": "2026-08-07",
+   "WDC": "2026-08-07",
+   "SNDK": "2026-08-07",
+   "TSM": "2026-08-07"
+  }
+ },
+ "Probe and Pullback": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-08-07",
+   "MU": "2026-08-07",
+   "WDC": "2026-08-07",
+   "SNDK": "2026-08-07",
+   "TSM": "2026-08-07"
+  }
+ },
+ "Perfect Storm (D/W/M alignment)": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-08-07",
+   "MU": "2026-08-07",
+   "WDC": "2026-08-07",
+   "SNDK": "2026-08-07",
+   "TSM": "2026-08-07"
+  }
+ },
+ "ConnorsRSI Oversold Bounce": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-08-07",
+   "MU": "2026-08-07",
+   "WDC": "2026-08-07",
+   "SNDK": "2026-08-07",
+   "TSM": "2026-08-07"
+  }
+ },
+ "Pivot Point S1 Bounce": {
+  "cash": 15507.0,
+  "positions": {
+   "AMD": {
+    "entry": 489.28,
+    "shares": 10,
+    "entry_gi": 286,
+    "stop": 410.3847332897833,
+    "target": 647.0705334204333
+   },
+   "TSM": {
+    "entry": 418.2,
+    "shares": 11,
+    "entry_gi": 286,
+    "stop": 383.16074717255884,
+    "target": 488.27850565488234
+   }
+  },
+  "last_processed_date": {
+   "AMD": "2026-08-07",
+   "MU": "2026-08-07",
+   "WDC": "2026-08-07",
+   "SNDK": "2026-08-07",
+   "TSM": "2026-08-07"
+  }
+ },
+ "High Tight Flagpole": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_date": {
+   "AMD": "2026-08-07",
+   "MU": "2026-08-07",
+   "WDC": "2026-08-07",
+   "SNDK": "2026-08-07",
+   "TSM": "2026-08-07"
+  }
+ },
+ "Darvas Box (I)": {
   "cash": 25000.0,
   "positions": {},
   "last_processed_date": {

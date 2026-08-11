@@ -747,28 +747,28 @@ def make_signals(ctx):
     # for before/after figures. Bull Flag Breakout and RSI Bullish Divergence remain
     # rare-firing (1/5 windows profitable) even after tuning; every other signal in this
     # tracker now reaches at least 3/5 windows profitable at its current params.
+    #
+    # PRUNED 2026-08-10: reset to only the strategies clearing >10% net P&L in a true
+    # compounding 6-month backtest (Feb-Jul 2026, $5k start, GFV-safe, noon-checkpoint
+    # methodology) across all 36 swing/day-trading/Margin-Style/Pivot50 setups explored
+    # to date, per explicit user request. Removed: E: Minervini VCP Breakout (-3.42%),
+    # Bollinger Squeeze Breakout (-5.59%), MIDAS Anchored VWAP Bounce (-2.82%), Ichimoku
+    # Kumo Breakout (+5.63%), Cup and Handle (+0.82%), Relative Strength Leader Pullback
+    # (-0.41%), Fibonacci 61.8% Retracement Bounce (-14.32%), RSI Bullish Divergence
+    # (+0.86%), Bull Flag Breakout (+3.41%), MA Crossover (H) (-2.07%). Their functions
+    # are left defined above (unused) rather than deleted, in case of future revival.
     return {
         'A: 2B Reversal + Bollinger Whipsaw': sig_A_2b_reversal,
         'B: Joe Ross 1-2-3 Low Breakout': sig_B_123_breakout,
         'C: Bressert RSI-3M3 Cycle Buy': sig_C_bressert,
         'D: Elder Impulse Green-Turn': sig_D_elder_impulse,
-        'E: Minervini VCP Breakout': sig_minervini_vcp,
         'F: Donchian/Turtle Channel Breakout': sig_F_donchian,
         'G: Asymmetric Pullback': sig_G_asymmetric_pullback,
-        'Bollinger Squeeze Breakout': sig_bollinger_squeeze,
         'Probe and Pullback': sig_probe_pullback,
-        'MIDAS Anchored VWAP Bounce': sig_midas,
         'Perfect Storm (D/W/M alignment)': sig_perfect_storm,
         'ConnorsRSI Oversold Bounce': sig_connors_rsi,
-        'Ichimoku Kumo Breakout': sig_ichimoku,
         'Pivot Point S1 Bounce': sig_pivot_point_bounce,
-        'Cup and Handle': sig_cup_and_handle,
         'High Tight Flagpole': sig_high_tight_flagpole,
-        'Relative Strength Leader Pullback': sig_rs_leader_pullback,
-        'Fibonacci 61.8% Retracement Bounce': sig_fib_618_retracement,
-        'RSI Bullish Divergence': sig_rsi_bullish_divergence,
-        'Bull Flag Breakout': sig_bull_flag_swing,
-        'MA Crossover (H)': sig_ma_crossover,
         'Darvas Box (I)': sig_darvas_box,
     }
 

@@ -314,17 +314,20 @@ def sig_first_pullback_after_orb(bars_by_sym, IND, DAYIDX, sym, gi):
 # for before/after figures. ID/NR4 Volatility Breakout fired zero trades across every tested
 # config in the sample and was left unchanged; every other strategy here reaches at least 2/5
 # walk-forward windows profitable at its current params.
+#
+# PRUNED 2026-08-10: reset to only the strategies clearing >10% net P&L in a true compounding
+# 6-month backtest (Feb-Jul 2026, $5k start, GFV-safe) across all 36 swing/day-trading/
+# Margin-Style/Pivot50 setups explored to date, per explicit user request. Removed: Gap / High
+# Change Momentum (+5.61%), Opening Range Breakout (+5.32%), ID/NR4 Volatility Breakout
+# (0.00%, never fires), Relative Volume Leader Momentum (-0.81%), Oversold Snapback Fade
+# (+7.06%). Their functions are left defined above (unused) rather than deleted, in case of
+# future revival.
 STRATEGIES = {
     'Swing Pullback / Anti': sig_swing_pullback,
     'Hybrid Disciplined Momentum Scalping': sig_hybrid_scalping,
-    'Gap / High Change Momentum': sig_gap_momentum,
     'Turtle Soup Reversal': sig_turtle_soup,
     'Momentum Breakout': sig_momentum_breakout,
     'Mid-Range Reversion Rule': sig_mid_range_reversion,
-    'Opening Range Breakout': sig_opening_range_breakout,
-    'ID/NR4 Volatility Breakout': sig_id_nr4_breakout,
-    'Relative Volume Leader Momentum': sig_relative_volume_leader,
-    'Oversold Snapback Fade': sig_oversold_snapback,
     'VWAP Reclaim (H2)': sig_vwap_reclaim,
     'First Pullback After ORB (H2)': sig_first_pullback_after_orb,
 }

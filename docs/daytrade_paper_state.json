@@ -1,103 +1,5 @@
 {
  "Swing Pullback / Anti": {
-  "cash": 15410.450200000016,
-  "positions": {
-   "WDC": {
-    "entry": 441.7648,
-    "shares": 17,
-    "stop": 435.15415,
-    "target": 454.98609999999996
-   }
-  },
-  "last_processed_dt": {
-   "AMD": "2026-08-10T19:30:00Z",
-   "MU": "2026-08-10T19:30:00Z",
-   "WDC": "2026-08-10T19:30:00Z",
-   "SNDK": "2026-08-10T19:30:00Z",
-   "TSM": "2026-08-10T19:30:00Z"
-  }
- },
- "Hybrid Disciplined Momentum Scalping": {
-  "cash": 16771.564716666668,
-  "positions": {
-   "SNDK": {
-    "entry": 1251.5,
-    "shares": 6,
-    "stop": 1232.3858500000001,
-    "target": 1308.8424499999999
-   }
-  },
-  "last_processed_dt": {
-   "AMD": "2026-08-10T19:30:00Z",
-   "MU": "2026-08-10T19:30:00Z",
-   "WDC": "2026-08-10T19:30:00Z",
-   "SNDK": "2026-08-10T19:30:00Z",
-   "TSM": "2026-08-10T19:30:00Z"
-  }
- },
- "Gap / High Change Momentum": {
-  "cash": 23967.1838,
-  "positions": {},
-  "last_processed_dt": {
-   "AMD": "2026-08-10T19:30:00Z",
-   "MU": "2026-08-10T19:30:00Z",
-   "WDC": "2026-08-10T19:30:00Z",
-   "SNDK": "2026-08-10T19:30:00Z",
-   "TSM": "2026-08-10T19:30:00Z"
-  }
- },
- "Turtle Soup Reversal": {
-  "cash": 25734.322616666665,
-  "positions": {},
-  "last_processed_dt": {
-   "AMD": "2026-08-10T19:30:00Z",
-   "MU": "2026-08-10T19:30:00Z",
-   "WDC": "2026-08-10T19:30:00Z",
-   "SNDK": "2026-08-10T19:30:00Z",
-   "TSM": "2026-08-10T19:30:00Z"
-  }
- },
- "Momentum Breakout": {
-  "cash": 17019.7488,
-  "positions": {
-   "SNDK": {
-    "entry": 1251.5,
-    "shares": 6,
-    "stop": 1232.3858500000001,
-    "target": 1289.7283
-   }
-  },
-  "last_processed_dt": {
-   "AMD": "2026-08-10T19:30:00Z",
-   "MU": "2026-08-10T19:30:00Z",
-   "WDC": "2026-08-10T19:30:00Z",
-   "SNDK": "2026-08-10T19:30:00Z",
-   "TSM": "2026-08-10T19:30:00Z"
-  }
- },
- "Mid-Range Reversion Rule": {
-  "cash": 24986.425000000003,
-  "positions": {},
-  "last_processed_dt": {
-   "AMD": "2026-08-10T19:30:00Z",
-   "MU": "2026-08-10T19:30:00Z",
-   "WDC": "2026-08-10T19:30:00Z",
-   "SNDK": "2026-08-10T19:30:00Z",
-   "TSM": "2026-08-10T19:30:00Z"
-  }
- },
- "Opening Range Breakout": {
-  "cash": 25107.4303,
-  "positions": {},
-  "last_processed_dt": {
-   "AMD": "2026-08-10T19:30:00Z",
-   "MU": "2026-08-10T19:30:00Z",
-   "WDC": "2026-08-10T19:30:00Z",
-   "SNDK": "2026-08-10T19:30:00Z",
-   "TSM": "2026-08-10T19:30:00Z"
-  }
- },
- "ID/NR4 Volatility Breakout": {
   "cash": 25000.0,
   "positions": {},
   "last_processed_dt": {
@@ -108,8 +10,8 @@
    "TSM": "2026-08-10T19:30:00Z"
   }
  },
- "Relative Volume Leader Momentum": {
-  "cash": 24743.418416666664,
+ "Hybrid Disciplined Momentum Scalping": {
+  "cash": 25000.0,
   "positions": {},
   "last_processed_dt": {
    "AMD": "2026-08-10T19:30:00Z",
@@ -119,22 +21,31 @@
    "TSM": "2026-08-10T19:30:00Z"
   }
  },
- "Oversold Snapback Fade": {
-  "cash": 8851.707900000005,
-  "positions": {
-   "WDC": {
-    "entry": 441.7648,
-    "shares": 18,
-    "stop": 431.59022,
-    "target": 472.28853999999995
-   },
-   "SNDK": {
-    "entry": 1251.5,
-    "shares": 6,
-    "stop": 1218.92988,
-    "target": 1349.21036
-   }
-  },
+ "Turtle Soup Reversal": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_dt": {
+   "AMD": "2026-08-10T19:30:00Z",
+   "MU": "2026-08-10T19:30:00Z",
+   "WDC": "2026-08-10T19:30:00Z",
+   "SNDK": "2026-08-10T19:30:00Z",
+   "TSM": "2026-08-10T19:30:00Z"
+  }
+ },
+ "Momentum Breakout": {
+  "cash": 25000.0,
+  "positions": {},
+  "last_processed_dt": {
+   "AMD": "2026-08-10T19:30:00Z",
+   "MU": "2026-08-10T19:30:00Z",
+   "WDC": "2026-08-10T19:30:00Z",
+   "SNDK": "2026-08-10T19:30:00Z",
+   "TSM": "2026-08-10T19:30:00Z"
+  }
+ },
+ "Mid-Range Reversion Rule": {
+  "cash": 25000.0,
+  "positions": {},
   "last_processed_dt": {
    "AMD": "2026-08-10T19:30:00Z",
    "MU": "2026-08-10T19:30:00Z",
@@ -144,15 +55,8 @@
   }
  },
  "VWAP Reclaim (H2)": {
-  "cash": 16852.962783333325,
-  "positions": {
-   "SNDK": {
-    "entry": 1251.5,
-    "shares": 6,
-    "stop": 1218.92988,
-    "target": 1349.21036
-   }
-  },
+  "cash": 25000.0,
+  "positions": {},
   "last_processed_dt": {
    "AMD": "2026-08-10T19:30:00Z",
    "MU": "2026-08-10T19:30:00Z",
@@ -162,15 +66,8 @@
   }
  },
  "First Pullback After ORB (H2)": {
-  "cash": 16657.896800000006,
-  "positions": {
-   "TSM": {
-    "entry": 422.26,
-    "shares": 19,
-    "stop": 415.545,
-    "target": 435.68999999999994
-   }
-  },
+  "cash": 25000.0,
+  "positions": {},
   "last_processed_dt": {
    "AMD": "2026-08-10T19:30:00Z",
    "MU": "2026-08-10T19:30:00Z",
