@@ -66,6 +66,122 @@
     }
    ],
    "cumulative_pl": -0.0
+  },
+  {
+   "timestamp": "2026-08-11T17:05:32.147347+00:00",
+   "trades": [
+    {
+     "symbol": "AMD",
+     "date": "2026-08-07",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 489.28,
+     "exit": 481.8919,
+     "shares": 2.043819,
+     "pnl": -15.1
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-08-07",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 451.52,
+     "exit": 444.702,
+     "shares": 1.975549,
+     "pnl": -13.47
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-07",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 1258.58,
+     "exit": 1239.5754,
+     "shares": 0.794546,
+     "pnl": -15.1
+    },
+    {
+     "symbol": "STX",
+     "date": "2026-08-07",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 852.95,
+     "exit": 840.0705,
+     "shares": 0.320967,
+     "pnl": -4.13
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-08-07",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 418.2,
+     "exit": 420.04,
+     "shares": 0.87797,
+     "pnl": 1.62
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-08-07",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 305.77,
+     "exit": 311.35,
+     "shares": 2.429931,
+     "pnl": 13.56
+    },
+    {
+     "symbol": "LRCX",
+     "date": "2026-08-10",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 305.77,
+     "exit": 306.6486,
+     "shares": 0.8405010000000002,
+     "pnl": 0.74
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-10",
+     "side": "BUY",
+     "reason": "HUGE_DIP",
+     "shares": 0.807807,
+     "price": 1237.92
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-08-10",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 2.281334,
+     "price": 438.34
+    },
+    {
+     "symbol": "AMD",
+     "date": "2026-08-10",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 2.129653,
+     "price": 469.56
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-08-10",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 0.820186,
+     "price": 861.0
+    },
+    {
+     "symbol": "STX",
+     "date": "2026-08-10",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 0.488425,
+     "price": 800.99
+    }
+   ],
+   "cumulative_pl": -31.81
   }
  ]
 }
