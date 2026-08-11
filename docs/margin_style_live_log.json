@@ -884,6 +884,84 @@
    "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly before this run - no drift, no reconciliation needed. CGC position in account is unrelated/out-of-universe, ignored.",
    "notes": "First fully-automated run under the 2026-08-07 pre-authorization (place_equity_order called immediately after a clean review_equity_order, no per-order user confirmation). Run was re-pulled fresh twice before execution (prices had moved since two earlier stale plan computations that were interrupted before any orders went out - confirmed via get_equity_positions that nothing had partially executed). 1 STOP (INTC, breached -1.51% intraday stop vs 8/7 close) plus 3 PEAK-trims (SNDK/WDC/MU, each a new high since their 8/7 entry) triggered sells; the same three symbols (SNDK/WDC/MU) plus AMD then re-qualified as dip-buys off yesterday due to lagging daily-close drawdown/day-return signals still reading down even though the live price had already recovered. User raised the same-day sell+buy overlap as a concern; a 3-window walk-forward validation (scripts run ad hoc, not committed) showed adding a guard to block same-day rebuys REDUCES total P&L by ~12% (loses in 2 of 3 independent windows) because it also blocks profitable re-entries into names turning the corner - so no guard was added and the plan executed as originally computed. Fill prices for buys were back-derived from the broker post-trade average_buy_price (get_equity_orders was blocked by a persistent approval-gate error even for read-only lookups); sell fill prices use the last quoted trade price captured moments before each order was placed. All 8 orders confirmed executed via get_equity_positions share-count deltas exactly matching plan quantities.",
    "elevated_scrutiny_note": "Still within the track-record caveat window (live since 2026-07-27). No divergence flag warranted this run - behavior matches validated strategy rules exactly."
+  },
+  {
+   "timestamp": "2026-08-11T17:19:52Z",
+   "orders": [
+    {
+     "symbol": "LRCX",
+     "side": "sell",
+     "shares": 1.499571,
+     "price": 309.975,
+     "reason": "PEAK-NET(vs NORMAL_DIP)"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "buy",
+     "shares": 0.162846,
+     "price": 1266.2058,
+     "reason": "HUGE_DIP-NET(vs PEAK)"
+    },
+    {
+     "symbol": "AMD",
+     "side": "buy",
+     "shares": 1.931392,
+     "price": 465.833,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "INTC",
+     "side": "buy",
+     "shares": 5.104223,
+     "price": 97.4,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "MU",
+     "side": "buy",
+     "shares": 0.325541,
+     "price": 851.9651,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "STX",
+     "side": "buy",
+     "shares": 0.187226,
+     "price": 819.01,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "TSM",
+     "side": "buy",
+     "shares": 0.201319,
+     "price": 421.17,
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "skipped": [],
+   "allocation": 5000.0,
+   "used_before_run": 2774.99,
+   "available_used_for_sizing": 2225.01,
+   "capital_ledger_note": "capital_ledger.py reported available=44.04 due to the known pending-settlement double-count bug (all 4 pending entries had settle_date=2026-08-11, i.e. today, so they should have been treated as already settled); worked around by passing real_cash = allocation - used = 2225.01 and letting the engine own date-aware pending filter do the correct subtraction (confirmed pending_settlement_total=0 in the plan output).",
+   "circuit_breaker_triggered": false,
+   "stop_count_this_run": 0,
+   "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly before this run - no drift, no reconciliation needed. CGC position in account is unrelated/out-of-universe, ignored.",
+   "netted_trades": [
+    {
+     "symbol": "LRCX",
+     "net_side": "sell",
+     "net_shares": 1.499571,
+     "replaced": "a full PEAK sell (74.3% of shares) + a full NORMAL_DIP buy, both at the same live quote (~310.94)"
+    },
+    {
+     "symbol": "SNDK",
+     "net_side": "buy",
+     "net_shares": 0.162846,
+     "replaced": "a full PEAK sell (74.3% of shares) + a full HUGE_DIP buy, both at the same live quote (~1264.41)"
+    }
+   ],
+   "notes": "First fully-automated run with same-day netting live for two symbols (LRCX net-sell, SNDK net-buy). 5 additional plain NORMAL_DIP buys (AMD, INTC, MU, STX, TSM) opened/added on broad weakness. No STOPs, circuit breaker not triggered. get_equity_orders remains blocked by a persistent approval-gate error even for read-only lookups, so buy fill prices for blended (multi-tranche) positions were back-derived from the broker post-trade average_buy_price; single-tranche new positions (INTC, STX, TSM) and the LRCX sell used the review-time quote directly. Note: LRCX peak stayed at its pre-run level (310.0299) rather than ratcheting to the ~310.94 quote that triggered the PEAK condition during planning, because the review-time execution price (309.975) had drifted slightly below the plan-time quote by the time the sell was recorded - a minor, self-correcting imprecision from real-time price movement between planning and execution, not a logic bug.",
+   "elevated_scrutiny_note": "Still within the track-record caveat window (live since 2026-07-27). Netting is now live for real trades for the first time this run - results should be watched closely against the backtest expectation over the next several runs."
   }
  ]
 }
