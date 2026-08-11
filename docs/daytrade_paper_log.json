@@ -30,6 +30,19 @@
     "VWAP Reclaim (H2)": 0.0,
     "First Pullback After ORB (H2)": 0.0
    }
+  },
+  {
+   "timestamp": "2026-08-11T08:17:34.485354+00:00",
+   "trades": [],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": 0.0,
+    "Hybrid Disciplined Momentum Scalping": 0.0,
+    "Turtle Soup Reversal": 0.0,
+    "Momentum Breakout": 0.0,
+    "Mid-Range Reversion Rule": 0.0,
+    "VWAP Reclaim (H2)": 0.0,
+    "First Pullback After ORB (H2)": 0.0
+   }
   }
  ]
 }
