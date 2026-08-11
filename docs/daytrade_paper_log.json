@@ -76,6 +76,112 @@
     "VWAP Reclaim (H2)": 0.0,
     "First Pullback After ORB (H2)": 0.0
    }
+  },
+  {
+   "timestamp": "2026-08-11T19:36:44.849068+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-11",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 443.55,
+     "exit": 437.23,
+     "shares": 3,
+     "pnl": -18.97
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-11",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 3,
+     "price": 437.23
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-11",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 1276.17,
+     "exit": 1270.0,
+     "shares": 1,
+     "pnl": -6.18
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-11",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 1,
+     "price": 1270.0
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-11",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 422.71,
+     "exit": 420.43,
+     "shares": 3,
+     "pnl": -6.87
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-11",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 3,
+     "price": 420.43
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-08-11",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "EOD_CLOSE",
+     "entry": 858.1,
+     "exit": 856.94,
+     "shares": 1,
+     "pnl": -1.16
+    },
+    {
+     "strategy": "Turtle Soup Reversal",
+     "date": "2026-08-11",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 1,
+     "price": 856.94
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-08-11",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 3,
+     "price": 472.79
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-08-11",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 3,
+     "price": 437.23
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": -14.57,
+    "Hybrid Disciplined Momentum Scalping": 0.0,
+    "Turtle Soup Reversal": 6.09,
+    "Momentum Breakout": 0.0,
+    "Mid-Range Reversion Rule": 0.0,
+    "VWAP Reclaim (H2)": 10.4,
+    "First Pullback After ORB (H2)": 0.0
+   }
   }
  ]
 }
