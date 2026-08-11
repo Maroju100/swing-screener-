@@ -57,6 +57,33 @@
     "High Tight Flagpole": 0.0,
     "Darvas Box (I)": 0.0
    }
+  },
+  {
+   "timestamp": "2026-08-11T17:06:25.476096+00:00",
+   "trades": [
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-08-10",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 2,
+     "price": 438.34
+    }
+   ],
+   "equity_snapshot": {
+    "A: 2B Reversal + Bollinger Whipsaw": 0.0,
+    "B: Joe Ross 1-2-3 Low Breakout": 0.0,
+    "C: Bressert RSI-3M3 Cycle Buy": 0.0,
+    "D: Elder Impulse Green-Turn": 0.0,
+    "F: Donchian/Turtle Channel Breakout": 0.0,
+    "G: Asymmetric Pullback": 0.0,
+    "Probe and Pullback": 0.0,
+    "Perfect Storm (D/W/M alignment)": 0.0,
+    "ConnorsRSI Oversold Bounce": 0.0,
+    "Pivot Point S1 Bounce": -38.01,
+    "High Tight Flagpole": 0.0,
+    "Darvas Box (I)": 0.0
+   }
   }
  ]
 }
