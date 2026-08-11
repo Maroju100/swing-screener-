@@ -1,5 +1,6 @@
 {
  "cash": 25000.0,
  "positions": {},
- "last_processed_date": {}
+ "last_processed_date": {},
+ "pending_settlement": []
 }

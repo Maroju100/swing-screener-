@@ -11,6 +11,6 @@
   "STX"
  ],
  "strategy": "Scaled Dip-Buy / Scaled Peak-Sell (Winner config)",
- "note": "PAPER TRADING ONLY - no real orders placed. Reset 2026-08-10 (confirmed a >10% net P&L survivor, +179.97% in the true-compounding 6-month backtest). This strategy is otherwise LIVE on real money (scripts/margin_style_live_engine.py); this paper track is a separate, non-connected comparison only.",
+ "note": "PAPER TRADING ONLY - no real orders placed. Reset 2026-08-11: rewrote the engine for full parity with margin_style_live_engine.py (GFV-safe T+1 settlement, 50% concentration cap, 2+-stop circuit breaker, deepest-drawdown-first buy ordering, same-day same-symbol netting) - the prior accumulated P&L was computed under looser, non-representative mechanics (no settlement delay at all) and is not comparable to results going forward. This strategy is otherwise LIVE on real money (scripts/margin_style_live_engine.py); this paper track is a separate, non-connected comparison only.",
  "runs": []
 }

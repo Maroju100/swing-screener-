@@ -6,10 +6,46 @@ engine exists so it can ALSO be observed on an isolated $25k paper account,
 same as every other not-yet-fully-vetted signal, purely for comparison against
 its real-money performance - it does not feed into or affect the live engine.
 
+REWRITTEN 2026-08-11 for full parity with margin_style_live_engine.py's actual
+mechanics, after the user asked why this paper tracker didn't model the same
+constraints as the real system. Previously this engine processed each symbol's
+entire catch-up range independently (symbol-by-symbol, not date-synchronized)
+and let a same-day sell's proceeds fund that same day's buy immediately - i.e.
+it had NO settlement delay at all, unlike the real cash account. That made its
+numbers systematically more optimistic than what the live account could
+actually achieve, and it was also missing three other live safeguards
+(concentration cap, circuit breaker, deepest-drawdown-first buy ordering).
+This rewrite adds all four, restructuring the loop to be date-synchronized
+across all 8 symbols (required for settlement to work at all, since it's a
+single shared cash pool) instead of per-symbol independent catch-up:
+  - GFV-SAFE T+1 SETTLEMENT: sell proceeds go into pending_settlement and are
+    not usable for a buy until the next business day, exactly like the live
+    engine's real cash-account constraint.
+  - CONCENTRATION CAP: no symbol may hold more than 50% of system equity.
+  - CIRCUIT BREAKER: 2+ STOP exits in one day pauses new entries that day.
+  - DEEPEST-DRAWDOWN-FIRST: when multiple buy candidates compete for the same
+    day's limited settled cash, the deepest drawdown gets first claim.
+  - SAME-DAY SAME-SYMBOL NETTING (added 2026-08-11, matching the live engine):
+    when a PEAK/GAIN sell and a same-day buy fire for the same symbol, only
+    the net share difference trades - both legs price off the same day's
+    close, so this changes nothing about the final position, just avoids
+    needlessly parking cash in a same-day round trip. STOP is never netted
+    (different price basis - the stop fill is off the prior close, not
+    today's close - and netting a stop-loss against an unrelated dip-buy
+    would defeat the point of cutting the position).
+
 Uses DAILY bars (same convention the strategy was backtested and optimized
 on) - no live-quote proxy; the completed daily bar's close stands in for
 "today" throughout, since this is a paper backtest run once/day after close,
-identical in spirit to swing_paper_engine.py.
+identical in spirit to swing_paper_engine.py. This differs from the live
+engine only in WHEN "today's price" is observed (real close here vs. a live
+noon quote there) - the settlement/concentration/circuit-breaker/netting
+mechanics are now otherwise identical.
+
+State reset 2026-08-11 alongside this rewrite: the previous accumulated P&L
+was computed under the old, more permissive (no-settlement) mechanics and is
+not comparable to results going forward, so docs/margin_style_paper_state.json
+and docs/margin_style_paper_log.json were reset to a fresh $25,000.
 
 Usage: python3 scripts/margin_style_paper_engine.py <fresh_daily_historicals.json>
 
@@ -18,7 +54,7 @@ account - one strategy, not per-strategy like the other paper trackers) and
 appends to docs/margin_style_paper_log.json. Places NO real orders.
 """
 import json, sys, os
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE_PATH = os.path.join(ROOT, 'docs', 'margin_style_paper_state.json')
@@ -38,11 +74,23 @@ HUGE_DIP_PCT = 0.743
 INTRADAY_STOP = -0.0151
 PEAK_SELL_PCT = 0.743
 GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]
+MIN_NOTIONAL = 25.0
 
 # 2026-07-27: mirrors the live engine's MAX_TRADE_NOTIONAL, scaled by the same 5x
 # capital ratio ($1,000 on live's $5,000 = 20% of allocation; $5,000 here on this
 # tracker's $25,000 preserves that same 20% ratio) so the two stay comparable.
 MAX_TRADE_NOTIONAL = 5000.0
+
+# Added 2026-08-11 for parity with the live engine's same-named safeguards.
+MAX_SYMBOL_ALLOCATION_PCT = 0.50
+CIRCUIT_BREAKER_STOP_COUNT = 2
+
+
+def next_business_day(d):
+    d2 = d + timedelta(days=1)
+    while d2.weekday() >= 5:
+        d2 += timedelta(days=1)
+    return d2
 
 
 def build_context(raw_path):
@@ -57,8 +105,10 @@ def build_context(raw_path):
 
 def load_state():
     if os.path.exists(STATE_PATH):
-        return json.load(open(STATE_PATH))
-    return {'cash': CAPITAL, 'positions': {}, 'last_processed_date': {}}
+        state = json.load(open(STATE_PATH))
+        state.setdefault('pending_settlement', [])
+        return state
+    return {'cash': CAPITAL, 'positions': {}, 'last_processed_date': {}, 'pending_settlement': []}
 
 
 def load_log():
@@ -66,7 +116,9 @@ def load_log():
         return json.load(open(LOG_PATH))
     return {'capital': CAPITAL, 'symbols': SYMBOLS,
             'strategy': 'Scaled Dip-Buy / Scaled Peak-Sell (Winner config)',
-            'note': 'PAPER TRADING ONLY - no real orders placed. Daily bars. '
+            'note': 'PAPER TRADING ONLY - no real orders placed. Daily bars, GFV-safe T+1 settlement, '
+                     'full parity with margin_style_live_engine.py\'s safeguards (concentration cap, '
+                     'circuit breaker, deepest-drawdown-first, same-day netting) since 2026-08-11. '
                      'This strategy is otherwise LIVE on real money (scripts/margin_style_live_engine.py); '
                      'this paper track is a separate, non-connected comparison only.',
             'runs': []}
@@ -82,106 +134,217 @@ def run(raw_path):
     cash = state['cash']
     positions = state['positions']
     last_processed = state['last_processed_date']
+    pending = state['pending_settlement']
 
-    # Determine the common set of new global indices to process, per symbol independently
-    # (mirrors swing_paper_engine.py's per-symbol incremental catch-up).
+    # Determine each symbol's new-date range (same incremental catch-up rule as
+    # before: first run only evaluates the newest 1-2 bars, never backfills
+    # fake history), then union into one globally-sorted date sequence so
+    # settlement and the shared cash pool advance correctly across symbols.
+    date_idx = {}
+    new_dates_by_sym = {}
     for sym in SYMBOLS:
         if sym not in bars_by_sym:
             continue
         bars = bars_by_sym[sym]
+        date_idx[sym] = {b['date']: i for i, b in enumerate(bars)}
         last_dt = last_processed.get(sym)
         if last_dt is None:
-            start_gi = max(2, len(bars) - 2)  # first run: only evaluate the newest bar, don't backfill fake history
+            start_gi = max(2, len(bars) - 2)
         else:
             start_gi = next((i for i, b in enumerate(bars) if b['date'] > last_dt), len(bars))
         start_gi = max(start_gi, 2)
+        new_dates_by_sym[sym] = set(bars[gi]['date'] for gi in range(start_gi, len(bars)))
 
-        for gi in range(start_gi, len(bars)):
-            bar = bars[gi]
+    all_new_dates = sorted(set(dt for dts in new_dates_by_sym.values() for dt in dts))
+
+    for dt in all_new_dates:
+        released = [p for p in pending if p['settle_date'] <= dt]
+        for p in released:
+            cash += p['amount']
+        pending = [p for p in pending if p['settle_date'] > dt]
+
+        active_syms = [sym for sym in SYMBOLS if sym in new_dates_by_sym and dt in new_dates_by_sym[sym]]
+
+        # Pass 1: STOP checks only - highest priority, never netted (see module
+        # docstring: the stop's fill price is off the PRIOR close, not today's
+        # close, so it isn't even the same trade as a same-day buy).
+        stop_count = 0
+        for sym in active_syms:
+            gi = date_idx[sym][dt]
+            if gi < 1:
+                continue
+            bars = bars_by_sym[sym]
             prev_close = bars[gi - 1]['close']
-            close = bar['close']
-
-            # SELL side (priority: intraday stop > new peak > gain tiers)
-            if sym in positions:
-                p = positions[sym]
-                if bar['low'] <= prev_close * (1 + INTRADAY_STOP):
-                    fill = prev_close * (1 + INTRADAY_STOP)
-                    pnl = p['shares'] * (fill - p['avg_cost'])
-                    cash += p['shares'] * fill
-                    run_trades.append({'symbol': sym, 'date': bar['date'], 'side': 'SELL', 'reason': 'STOP',
-                                        'entry': round(p['avg_cost'], 4), 'exit': round(fill, 4),
-                                        'shares': p['shares'], 'pnl': round(pnl, 2)})
-                    del positions[sym]
-                elif close > p['peak']:
-                    sell_shares = round(p['shares'] * PEAK_SELL_PCT, 6)
-                    if sell_shares > 0:
-                        pnl = sell_shares * (close - p['avg_cost'])
-                        cash += sell_shares * close
-                        run_trades.append({'symbol': sym, 'date': bar['date'], 'side': 'SELL', 'reason': 'PEAK',
-                                            'entry': round(p['avg_cost'], 4), 'exit': round(close, 4),
-                                            'shares': sell_shares, 'pnl': round(pnl, 2)})
-                        p['shares'] -= sell_shares
-                    p['peak'] = close
-                    if p['shares'] <= 1e-9:
-                        del positions[sym]
-                else:
-                    gain_pct = (close - p['avg_cost']) / p['avg_cost']
-                    for thresh, pct in GAIN_TIERS:
-                        if gain_pct >= thresh:
-                            sell_shares = round(p['shares'] * pct, 6)
-                            if sell_shares > 0:
-                                pnl = sell_shares * (close - p['avg_cost'])
-                                cash += sell_shares * close
-                                run_trades.append({'symbol': sym, 'date': bar['date'], 'side': 'SELL',
-                                                    'reason': f'GAIN{int(pct*100)}', 'entry': round(p['avg_cost'], 4),
-                                                    'exit': round(close, 4), 'shares': sell_shares, 'pnl': round(pnl, 2)})
-                                p['shares'] -= sell_shares
-                                if p['shares'] <= 1e-9:
-                                    del positions[sym]
-                            break
-
-            # BUY side (uses the day-1/day-2-ago return+drawdown, executed at today's close -
-            # same convention as the original backtest, since there is no live-quote proxy here).
+            bar = bars[gi]
             p = positions.get(sym)
-            if p and p.get('tranches', 0) >= MAX_TRANCHES:
+            if not p:
                 continue
-            if gi < LOOKBACK_DAYS + 2:
-                continue
-            prev_prev_close = bars[gi - 2]['close']
-            day_return = (prev_close - prev_prev_close) / prev_prev_close
-            lb_start = max(0, gi - 1 - LOOKBACK_DAYS)
-            trailing_high = max(bars[j]['close'] for j in range(lb_start, gi - 1))
-            drawdown = (prev_close - trailing_high) / trailing_high
+            if bar['low'] <= prev_close * (1 + INTRADAY_STOP):
+                fill = prev_close * (1 + INTRADAY_STOP)
+                pnl = p['shares'] * (fill - p['avg_cost'])
+                settle_date = next_business_day(datetime.strptime(dt, '%Y-%m-%d')).strftime('%Y-%m-%d')
+                pending.append({'amount': round(p['shares'] * fill, 2), 'settle_date': settle_date, 'symbol': sym})
+                run_trades.append({'symbol': sym, 'date': dt, 'side': 'SELL', 'reason': 'STOP',
+                                    'entry': round(p['avg_cost'], 4), 'exit': round(fill, 4),
+                                    'shares': p['shares'], 'pnl': round(pnl, 2)})
+                del positions[sym]
+                stop_count += 1
 
-            deploy = None
-            if drawdown <= HUGE_DIP_DRAWDOWN:
-                deploy = min(cash * HUGE_DIP_PCT, MAX_TRADE_NOTIONAL)
-            elif day_return < 0 and (not p or p.get('tranches', 0) < MAX_TRANCHES):
-                deploy = min(cash * TRANCHE_PCT, MAX_TRADE_NOTIONAL)
-            if deploy and deploy >= 25.0 and cash > 1.0:
-                shares = round(deploy / close, 6)
-                if shares > 0:
+        circuit_breaker_triggered = stop_count >= CIRCUIT_BREAKER_STOP_COUNT
+
+        # Pass 2: defer PEAK/GAIN sells (don't execute yet - may net against a
+        # same-day buy candidate below, since both price off today's close).
+        pending_sells = {}
+        for sym in active_syms:
+            p = positions.get(sym)
+            if not p:
+                continue
+            gi = date_idx[sym][dt]
+            close = bars_by_sym[sym][gi]['close']
+            if close > p['peak']:
+                sell_shares = round(p['shares'] * PEAK_SELL_PCT, 6)
+                if sell_shares > 0:
+                    pending_sells[sym] = (sell_shares, 'PEAK', close)
+                p['peak'] = close  # ratchets regardless of netting outcome
+            else:
+                gain_pct = (close - p['avg_cost']) / p['avg_cost']
+                for thresh, pct in GAIN_TIERS:
+                    if gain_pct >= thresh:
+                        sell_shares = round(p['shares'] * pct, 6)
+                        if sell_shares > 0:
+                            pending_sells[sym] = (sell_shares, f'GAIN{int(pct*100)}', close)
+                        break
+
+        # Pass 3: buy candidates, deepest-drawdown-first, sized against
+        # already-settled cash only (today's pending sells are NOT usable yet -
+        # GFV-safe), then netted against any pending PEAK/GAIN sell for the
+        # same symbol.
+        def mark_price(sym):
+            if sym in date_idx and dt in date_idx[sym]:
+                return bars_by_sym[sym][date_idx[sym][dt]]['close']
+            return bars_by_sym[sym][-1]['close']
+
+        total_equity = cash + sum(p['shares'] * mark_price(sym)
+                                   for sym, p in positions.items() if sym in bars_by_sym)
+
+        candidates = []
+        if not circuit_breaker_triggered:
+            for sym in active_syms:
+                gi = date_idx[sym][dt]
+                bars = bars_by_sym[sym]
+                if gi < LOOKBACK_DAYS + 2:
+                    continue
+                p = positions.get(sym)
+                if p and p.get('tranches', 0) >= MAX_TRANCHES:
+                    continue
+                prev_close = bars[gi - 1]['close']
+                prev_prev_close = bars[gi - 2]['close']
+                day_return = (prev_close - prev_prev_close) / prev_prev_close
+                lb_start = max(0, gi - 1 - LOOKBACK_DAYS)
+                trailing_high = max(bars[j]['close'] for j in range(lb_start, gi - 1))
+                drawdown = (prev_close - trailing_high) / trailing_high
+                reason = None
+                if drawdown <= HUGE_DIP_DRAWDOWN:
+                    reason = 'HUGE_DIP'
+                elif day_return < 0 and (not p or p.get('tranches', 0) < MAX_TRANCHES):
+                    reason = 'NORMAL_DIP'
+                if reason:
+                    candidates.append({'symbol': sym, 'drawdown': drawdown, 'reason': reason})
+        candidates.sort(key=lambda c: c['drawdown'])
+
+        netted_symbols = set()
+        for c in candidates:
+            sym = c['symbol']
+            if cash <= 1.0:
+                break
+            gi = date_idx[sym][dt]
+            close = bars_by_sym[sym][gi]['close']
+            pct = HUGE_DIP_PCT if c['reason'] == 'HUGE_DIP' else TRANCHE_PCT
+            deploy = min(cash * pct, MAX_TRADE_NOTIONAL)
+
+            p = positions.get(sym)
+            current_value = p['shares'] * close if p else 0.0
+            room = max(0.0, MAX_SYMBOL_ALLOCATION_PCT * total_equity - current_value)
+            capped = min(deploy, room)
+            if capped < MIN_NOTIONAL:
+                continue
+            shares = round(capped / close, 6)
+            if shares <= 0:
+                continue
+
+            pend = pending_sells.get(sym)
+            if pend:
+                netted_symbols.add(sym)
+                sell_shares, sell_reason, sell_price = pend
+                net = round(shares - sell_shares, 6)
+                if net > 1e-6:
+                    cash -= net * close
                     if p:
-                        new_shares = p['shares'] + shares
-                        p['avg_cost'] = (p['avg_cost'] * p['shares'] + deploy) / new_shares
+                        new_shares = p['shares'] + net
+                        p['avg_cost'] = (p['avg_cost'] * p['shares'] + net * close) / new_shares
                         p['shares'] = new_shares
-                        p['peak'] = max(p['peak'], close)
                         p['tranches'] = p.get('tranches', 0) + 1
                     else:
-                        positions[sym] = {'shares': shares, 'avg_cost': close, 'peak': close, 'tranches': 1}
-                    cash -= deploy
-                    run_trades.append({'symbol': sym, 'date': bar['date'], 'side': 'BUY',
-                                        'reason': 'HUGE_DIP' if drawdown <= HUGE_DIP_DRAWDOWN else 'NORMAL_DIP',
-                                        'shares': shares, 'price': round(close, 4)})
+                        positions[sym] = {'shares': net, 'avg_cost': close, 'peak': close, 'tranches': 1}
+                    run_trades.append({'symbol': sym, 'date': dt, 'side': 'BUY',
+                                        'reason': f'{c["reason"]}-NET(vs {sell_reason})',
+                                        'shares': net, 'price': round(close, 4)})
+                elif net < -1e-6:
+                    sell_net = abs(net)
+                    pnl = sell_net * (close - p['avg_cost'])
+                    settle_date = next_business_day(datetime.strptime(dt, '%Y-%m-%d')).strftime('%Y-%m-%d')
+                    pending.append({'amount': round(sell_net * close, 2), 'settle_date': settle_date, 'symbol': sym})
+                    run_trades.append({'symbol': sym, 'date': dt, 'side': 'SELL',
+                                        'reason': f'{sell_reason}-NET(vs {c["reason"]})',
+                                        'entry': round(p['avg_cost'], 4), 'exit': round(close, 4),
+                                        'shares': sell_net, 'pnl': round(pnl, 2)})
+                    p['shares'] -= sell_net
+                    if p['shares'] <= 1e-9:
+                        del positions[sym]
+                # net == 0: no order; peak already ratcheted above.
+                continue
 
-            last_processed[sym] = bar['date']
+            cash -= capped
+            if p:
+                new_shares = p['shares'] + shares
+                p['avg_cost'] = (p['avg_cost'] * p['shares'] + capped) / new_shares
+                p['shares'] = new_shares
+                p['peak'] = max(p['peak'], close)
+                p['tranches'] = p.get('tranches', 0) + 1
+            else:
+                positions[sym] = {'shares': shares, 'avg_cost': close, 'peak': close, 'tranches': 1}
+            run_trades.append({'symbol': sym, 'date': dt, 'side': 'BUY', 'reason': c['reason'],
+                                'shares': shares, 'price': round(close, 4)})
+
+        # Any PEAK/GAIN sell that never found a same-day buy candidate to net
+        # against executes in full, exactly as before netting existed.
+        for sym, (sell_shares, sell_reason, sell_price) in pending_sells.items():
+            if sym in netted_symbols:
+                continue
+            p = positions.get(sym)
+            if not p:
+                continue
+            pnl = sell_shares * (sell_price - p['avg_cost'])
+            settle_date = next_business_day(datetime.strptime(dt, '%Y-%m-%d')).strftime('%Y-%m-%d')
+            pending.append({'amount': round(sell_shares * sell_price, 2), 'settle_date': settle_date, 'symbol': sym})
+            run_trades.append({'symbol': sym, 'date': dt, 'side': 'SELL', 'reason': sell_reason,
+                                'entry': round(p['avg_cost'], 4), 'exit': round(sell_price, 4),
+                                'shares': sell_shares, 'pnl': round(pnl, 2)})
+            p['shares'] -= sell_shares
+            if p['shares'] <= 1e-9:
+                del positions[sym]
+
+        for sym in active_syms:
+            last_processed[sym] = dt
 
     state['cash'] = cash
     state['positions'] = positions
     state['last_processed_date'] = last_processed
+    state['pending_settlement'] = pending
 
+    pending_total = sum(p['amount'] for p in pending)
     hv = sum(p['shares'] * bars_by_sym[sym][-1]['close'] for sym, p in positions.items() if sym in bars_by_sym)
-    cum_pl = round(cash + hv - CAPITAL, 2)
+    cum_pl = round(cash + pending_total + hv - CAPITAL, 2)
 
     log['runs'].append({'timestamp': now, 'trades': run_trades, 'cumulative_pl': cum_pl})
     json.dump(state, open(STATE_PATH, 'w'), indent=1)
@@ -191,6 +354,7 @@ def run(raw_path):
     for t in run_trades:
         print(f"  {t}")
     print(f"\nCumulative paper P&L (Scaled Dip-Buy/Scaled Peak-Sell, Winner config): {cum_pl:,.2f}")
+    print(f"Cash: {cash:,.2f}  Pending settlement: {pending_total:,.2f}  Open positions: {list(positions.keys())}")
 
 
 if __name__ == '__main__':
