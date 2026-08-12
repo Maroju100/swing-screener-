@@ -962,6 +962,90 @@
    ],
    "notes": "First fully-automated run with same-day netting live for two symbols (LRCX net-sell, SNDK net-buy). 5 additional plain NORMAL_DIP buys (AMD, INTC, MU, STX, TSM) opened/added on broad weakness. No STOPs, circuit breaker not triggered. get_equity_orders remains blocked by a persistent approval-gate error even for read-only lookups, so buy fill prices for blended (multi-tranche) positions were back-derived from the broker post-trade average_buy_price; single-tranche new positions (INTC, STX, TSM) and the LRCX sell used the review-time quote directly. Note: LRCX peak stayed at its pre-run level (310.0299) rather than ratcheting to the ~310.94 quote that triggered the PEAK condition during planning, because the review-time execution price (309.975) had drifted slightly below the plan-time quote by the time the sell was recorded - a minor, self-correcting imprecision from real-time price movement between planning and execution, not a logic bug.",
    "elevated_scrutiny_note": "Still within the track-record caveat window (live since 2026-07-27). Netting is now live for real trades for the first time this run - results should be watched closely against the backtest expectation over the next several runs."
+  },
+  {
+   "timestamp": "2026-08-12T17:35:22Z",
+   "orders": [
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.592704,
+     "price": 1373.5,
+     "reason": "PEAK-NET(vs HUGE_DIP)"
+    },
+    {
+     "symbol": "WDC",
+     "side": "sell",
+     "shares": 0.364123,
+     "price": 458.04,
+     "reason": "PEAK-NET(vs NORMAL_DIP)"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "sell",
+     "shares": 1.274272,
+     "price": 328.78,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "MU",
+     "side": "sell",
+     "shares": 0.467551,
+     "price": 929.66,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "AMD",
+     "side": "sell",
+     "shares": 1.541851,
+     "price": 486.95,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 3.792438,
+     "price": 101.72,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "STX",
+     "side": "sell",
+     "shares": 0.139109,
+     "price": 877.55,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "TSM",
+     "side": "sell",
+     "shares": 0.14958,
+     "price": 429.5,
+     "reason": "PEAK"
+    }
+   ],
+   "skipped": [],
+   "allocation": 5000.0,
+   "used_before_run": 4711.15,
+   "available_used_for_sizing": 288.85,
+   "capital_ledger_note": "capital_ledger.py reported available=0.0 due to the known pending-settlement double-count bug (the one pending entry, LRCX $464.83, had settle_date=2026-08-12, i.e. today, so it should have been treated as already settled); worked around by passing real_cash = allocation - used = 288.85 and letting the engine own date-aware pending filter do the correct subtraction (confirmed pending_settlement_total=0 in the plan output). No new buys fired this run since only $288.85 was available and every dip-buy candidate netted against a larger same-day PEAK sell.",
+   "circuit_breaker_triggered": false,
+   "stop_count_this_run": 0,
+   "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly before this run - no drift, no reconciliation needed. CGC position in account is unrelated/out-of-universe, ignored. Run was executed in two passes (plan generated once, then re-run with refreshed quotes ~25 minutes later after other trigger work interleaved, before any orders were placed) to avoid executing on stale prices.",
+   "netted_trades": [
+    {
+     "symbol": "SNDK",
+     "net_side": "sell",
+     "net_shares": 0.592704,
+     "replaced": "a full PEAK sell (74.3% of shares) + a full HUGE_DIP buy, both at the same live quote (~1373.99) - buy leg was smaller given only $288.85 settled cash available, netting to a sell"
+    },
+    {
+     "symbol": "WDC",
+     "net_side": "sell",
+     "net_shares": 0.364123,
+     "replaced": "a full PEAK sell (74.3% of shares) + a full NORMAL_DIP buy, both at the same live quote (~458.29) - buy leg was smaller given limited settled cash, netting to a sell"
+    }
+   ],
+   "note": "get_equity_orders (used in prior runs to confirm exact fill prices) returned \"MCP tool call requires approval\" this run after 2 attempts; fill prices in this log entry are the review-time bid quotes (standard estimate for a market sell), not confirmed executions. Position quantities were verified post-fill via get_equity_positions and matched the plan exactly for all 8 symbols, confirming full fills."
   }
  ]
 }
