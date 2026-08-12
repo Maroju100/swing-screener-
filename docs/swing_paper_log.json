@@ -84,6 +84,57 @@
     "High Tight Flagpole": 0.0,
     "Darvas Box (I)": 0.0
    }
+  },
+  {
+   "timestamp": "2026-08-12T17:29:28.709758+00:00",
+   "trades": [
+    {
+     "strategy": "C: Bressert RSI-3M3 Cycle Buy",
+     "date": "2026-08-12",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 2,
+     "price": 456.09
+    },
+    {
+     "strategy": "D: Elder Impulse Green-Turn",
+     "date": "2026-08-12",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 1,
+     "price": 923.48
+    },
+    {
+     "strategy": "F: Donchian/Turtle Channel Breakout",
+     "date": "2026-08-12",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 2,
+     "price": 428.68
+    },
+    {
+     "strategy": "Pivot Point S1 Bounce",
+     "date": "2026-08-12",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 1,
+     "price": 923.48
+    }
+   ],
+   "equity_snapshot": {
+    "A: 2B Reversal + Bollinger Whipsaw": 0.0,
+    "B: Joe Ross 1-2-3 Low Breakout": 0.0,
+    "C: Bressert RSI-3M3 Cycle Buy": 0.0,
+    "D: Elder Impulse Green-Turn": 0.0,
+    "F: Donchian/Turtle Channel Breakout": 0.0,
+    "G: Asymmetric Pullback": 0.0,
+    "Probe and Pullback": 0.0,
+    "Perfect Storm (D/W/M alignment)": 0.0,
+    "ConnorsRSI Oversold Bounce": 0.0,
+    "Pivot Point S1 Bounce": 52.33,
+    "High Tight Flagpole": 0.0,
+    "Darvas Box (I)": 0.0
+   }
   }
  ]
 }
