@@ -182,6 +182,118 @@
     }
    ],
    "cumulative_pl": -31.81
+  },
+  {
+   "timestamp": "2026-08-12T17:28:20.142427+00:00",
+   "trades": [
+    {
+     "symbol": "MU",
+     "date": "2026-08-11",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 861.0,
+     "exit": 847.9989,
+     "shares": 0.820186,
+     "pnl": -10.66
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-08-11",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 438.34,
+     "exit": 431.7211,
+     "shares": 2.281334,
+     "pnl": -15.1
+    },
+    {
+     "symbol": "AMD",
+     "date": "2026-08-11",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 469.56,
+     "exit": 474.32,
+     "shares": 1.582332,
+     "pnl": 7.53
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-11",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 1237.92,
+     "exit": 1271.05,
+     "shares": 0.600201,
+     "pnl": 19.88
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-08-11",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 418.2,
+     "exit": 422.06,
+     "shares": 0.225638,
+     "pnl": 0.87
+    },
+    {
+     "symbol": "STX",
+     "date": "2026-08-11",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 800.99,
+     "exit": 820.52,
+     "shares": 0.3629,
+     "pnl": 7.09
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-12",
+     "side": "BUY",
+     "reason": "HUGE_DIP-NET(vs PEAK)",
+     "shares": 0.576866,
+     "price": 1367.77
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-08-12",
+     "side": "BUY",
+     "reason": "NORMAL_DIP",
+     "shares": 2.19255,
+     "price": 456.09
+    },
+    {
+     "symbol": "AMD",
+     "date": "2026-08-12",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 469.56,
+     "exit": 487.215,
+     "shares": 0.40666,
+     "pnl": 7.18
+    },
+    {
+     "symbol": "TSM",
+     "date": "2026-08-12",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 418.2,
+     "exit": 428.68,
+     "shares": 0.057989,
+     "pnl": 0.61
+    },
+    {
+     "symbol": "STX",
+     "date": "2026-08-12",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 800.99,
+     "exit": 882.2548,
+     "shares": 0.093265,
+     "pnl": 7.58
+    }
+   ],
+   "cumulative_pl": 25.36
   }
  ]
 }
