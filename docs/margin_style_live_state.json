@@ -1,65 +1,100 @@
 {
  "pending_settlement": [
   {
-   "amount": 464.83,
-   "settle_date": "2026-08-12",
+   "amount": 814.08,
+   "settle_date": "2026-08-13",
+   "symbol": "SNDK"
+  },
+  {
+   "amount": 166.78,
+   "settle_date": "2026-08-13",
+   "symbol": "WDC"
+  },
+  {
+   "amount": 418.96,
+   "settle_date": "2026-08-13",
    "symbol": "LRCX"
+  },
+  {
+   "amount": 434.66,
+   "settle_date": "2026-08-13",
+   "symbol": "MU"
+  },
+  {
+   "amount": 750.8,
+   "settle_date": "2026-08-13",
+   "symbol": "AMD"
+  },
+  {
+   "amount": 385.77,
+   "settle_date": "2026-08-13",
+   "symbol": "INTC"
+  },
+  {
+   "amount": 122.08,
+   "settle_date": "2026-08-13",
+   "symbol": "STX"
+  },
+  {
+   "amount": 64.24,
+   "settle_date": "2026-08-13",
+   "symbol": "TSM"
   }
  ],
  "open_positions": {
   "SNDK": {
-   "shares": 1.0081179999999998,
+   "shares": 0.415414,
    "entry": 1247.26,
-   "peak": 1266.2058,
+   "peak": 1373.5,
    "tranches": 3,
    "opened": "2026-08-07"
   },
   "WDC": {
-   "shares": 0.868507,
+   "shares": 0.504384,
    "entry": 438.56,
-   "peak": 441.8384,
+   "peak": 458.04,
    "tranches": 2,
    "opened": "2026-08-07"
   },
   "LRCX": {
-   "shares": 1.715036,
+   "shares": 0.440764,
    "entry": 310.0299,
-   "peak": 310.0299,
+   "peak": 328.78,
    "tranches": 1,
    "opened": "2026-08-07"
   },
   "MU": {
-   "shares": 0.629275,
+   "shares": 0.161724,
    "entry": 863.04,
-   "peak": 880.7888,
+   "peak": 929.66,
    "tranches": 3,
    "opened": "2026-08-07"
   },
   "AMD": {
-   "shares": 2.07517,
+   "shares": 0.533319,
    "entry": 466.5,
-   "peak": 475.46,
+   "peak": 486.95,
    "tranches": 2,
    "opened": "2026-08-10"
   },
   "INTC": {
-   "shares": 5.104223,
+   "shares": 1.311785,
    "entry": 97.4,
-   "peak": 97.4,
+   "peak": 101.72,
    "tranches": 1,
    "opened": "2026-08-11"
   },
   "STX": {
-   "shares": 0.187226,
+   "shares": 0.048117,
    "entry": 819.01,
-   "peak": 819.01,
+   "peak": 877.55,
    "tranches": 1,
    "opened": "2026-08-11"
   },
   "TSM": {
-   "shares": 0.201319,
+   "shares": 0.051739,
    "entry": 421.17,
-   "peak": 421.17,
+   "peak": 429.5,
    "tranches": 1,
    "opened": "2026-08-11"
   }
