@@ -1046,6 +1046,77 @@
     }
    ],
    "note": "get_equity_orders (used in prior runs to confirm exact fill prices) returned \"MCP tool call requires approval\" this run after 2 attempts; fill prices in this log entry are the review-time bid quotes (standard estimate for a market sell), not confirmed executions. Position quantities were verified post-fill via get_equity_positions and matched the plan exactly for all 8 symbols, confirming full fills."
+  },
+  {
+   "timestamp": "2026-08-13T17:13:45Z",
+   "orders": [
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.308653,
+     "price": 1565.15,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "WDC",
+     "side": "sell",
+     "shares": 0.374757,
+     "price": 492.77,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "sell",
+     "shares": 0.327488,
+     "price": 343.56,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "MU",
+     "side": "sell",
+     "shares": 0.120161,
+     "price": 971.68,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "AMD",
+     "side": "sell",
+     "shares": 0.396256,
+     "price": 494.39,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 0.974656,
+     "price": 105.46,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "STX",
+     "side": "sell",
+     "shares": 0.035751,
+     "price": 920.77,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "TSM",
+     "side": "sell",
+     "shares": 0.038442,
+     "price": 434.22,
+     "reason": "PEAK"
+    }
+   ],
+   "skipped": [],
+   "allocation": 5000.0,
+   "used_before_run": 1676.32,
+   "available_used_for_sizing": 3323.68,
+   "capital_ledger_note": "capital_ledger.py reported available=166.31 due to the known pending-settlement double-count bug (all 8 pending entries had settle_date=2026-08-13, i.e. today, so they should have been treated as already settled). Worked around by passing real_cash = allocation - used = 3323.68 and letting the engine's own date-aware pending filter do the correct subtraction (confirmed pending_settlement_total=0 in the plan output).",
+   "circuit_breaker_triggered": false,
+   "stop_count_this_run": 0,
+   "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly before this run (all 8 tracked symbols) - no drift, no reconciliation needed. CGC position in account is unrelated/out-of-universe, ignored.",
+   "netted_trades": [],
+   "note": "Broad rally across the entire 8-symbol universe - every open position hit a new high this run, triggering 8 PEAK sells (74.3% trim each), no dip-buy candidates fired so no netting occurred. get_equity_orders returned \"MCP tool call requires approval\" when attempting to confirm exact fill prices; fill prices in this log entry are the review-time bid quotes (standard estimate for a market sell), not confirmed executions. Position quantities were verified post-fill via get_equity_positions and matched the plan exactly for all 8 symbols, confirming full fills."
   }
  ]
 }
