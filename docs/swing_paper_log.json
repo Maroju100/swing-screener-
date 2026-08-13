@@ -135,6 +135,49 @@
     "High Tight Flagpole": 0.0,
     "Darvas Box (I)": 0.0
    }
+  },
+  {
+   "timestamp": "2026-08-13T17:23:46.519700+00:00",
+   "trades": [
+    {
+     "strategy": "D: Elder Impulse Green-Turn",
+     "date": "2026-08-13",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 2,
+     "price": 493.01
+    },
+    {
+     "strategy": "D: Elder Impulse Green-Turn",
+     "date": "2026-08-13",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 2,
+     "price": 491.24
+    },
+    {
+     "strategy": "F: Donchian/Turtle Channel Breakout",
+     "date": "2026-08-13",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 1,
+     "price": 968.78
+    }
+   ],
+   "equity_snapshot": {
+    "A: 2B Reversal + Bollinger Whipsaw": 0.0,
+    "B: Joe Ross 1-2-3 Low Breakout": 0.0,
+    "C: Bressert RSI-3M3 Cycle Buy": 70.29,
+    "D: Elder Impulse Green-Turn": 45.3,
+    "F: Donchian/Turtle Channel Breakout": 9.8,
+    "G: Asymmetric Pullback": 0.0,
+    "Probe and Pullback": 0.0,
+    "Perfect Storm (D/W/M alignment)": 0.0,
+    "ConnorsRSI Oversold Bounce": 0.0,
+    "Pivot Point S1 Bounce": 189.32,
+    "High Tight Flagpole": 0.0,
+    "Darvas Box (I)": 0.0
+   }
   }
  ]
 }
