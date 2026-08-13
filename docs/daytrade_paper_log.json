@@ -543,6 +543,232 @@
     "VWAP Reclaim (H2)": 48.83,
     "First Pullback After ORB (H2)": 0.0
    }
+  },
+  {
+   "timestamp": "2026-08-13T15:38:56.784145+00:00",
+   "trades": [
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-13",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "TARGET",
+     "entry": 456.03,
+     "exit": 470.59,
+     "shares": 3,
+     "pnl": 43.68
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-13",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 3,
+     "price": 500.52
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-13",
+     "symbol": "SNDK",
+     "side": "SELL",
+     "reason": "TARGET",
+     "entry": 1345.13,
+     "exit": 1406.42,
+     "shares": 1,
+     "pnl": 61.29
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-13",
+     "symbol": "SNDK",
+     "side": "BUY",
+     "shares": 1,
+     "price": 1576.18
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-12",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 431.25,
+     "exit": 429.15,
+     "shares": 3,
+     "pnl": -6.3
+    },
+    {
+     "strategy": "Swing Pullback / Anti",
+     "date": "2026-08-13",
+     "symbol": "TSM",
+     "side": "BUY",
+     "shares": 3,
+     "price": 432.5
+    },
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-08-12",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 485.61,
+     "exit": 481.76,
+     "shares": 3,
+     "pnl": -11.53
+    },
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-08-13",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 3,
+     "price": 496.1
+    },
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-08-12",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 923.09,
+     "exit": 912.89,
+     "shares": 1,
+     "pnl": -10.2
+    },
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-08-13",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 1,
+     "price": 973.69
+    },
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-08-13",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "TARGET",
+     "entry": 456.03,
+     "exit": 473.8,
+     "shares": 3,
+     "pnl": 53.31
+    },
+    {
+     "strategy": "Hybrid Disciplined Momentum Scalping",
+     "date": "2026-08-13",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 3,
+     "price": 500.52
+    },
+    {
+     "strategy": "Momentum Breakout",
+     "date": "2026-08-12",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 485.61,
+     "exit": 481.76,
+     "shares": 3,
+     "pnl": -11.53
+    },
+    {
+     "strategy": "Momentum Breakout",
+     "date": "2026-08-13",
+     "symbol": "AMD",
+     "side": "BUY",
+     "shares": 3,
+     "price": 496.1
+    },
+    {
+     "strategy": "Momentum Breakout",
+     "date": "2026-08-12",
+     "symbol": "MU",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 923.09,
+     "exit": 912.89,
+     "shares": 1,
+     "pnl": -10.2
+    },
+    {
+     "strategy": "Momentum Breakout",
+     "date": "2026-08-13",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 1,
+     "price": 973.69
+    },
+    {
+     "strategy": "Momentum Breakout",
+     "date": "2026-08-13",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "TARGET",
+     "entry": 456.03,
+     "exit": 467.88,
+     "shares": 3,
+     "pnl": 35.54
+    },
+    {
+     "strategy": "Momentum Breakout",
+     "date": "2026-08-13",
+     "symbol": "WDC",
+     "side": "BUY",
+     "shares": 3,
+     "price": 500.52
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-08-12",
+     "symbol": "AMD",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 485.61,
+     "exit": 482.96,
+     "shares": 3,
+     "pnl": -7.94
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-08-13",
+     "symbol": "WDC",
+     "side": "SELL",
+     "reason": "TARGET",
+     "entry": 456.03,
+     "exit": 470.59,
+     "shares": 3,
+     "pnl": 43.68
+    },
+    {
+     "strategy": "VWAP Reclaim (H2)",
+     "date": "2026-08-12",
+     "symbol": "TSM",
+     "side": "SELL",
+     "reason": "STOP",
+     "entry": 431.25,
+     "exit": 429.83,
+     "shares": 3,
+     "pnl": -4.23
+    },
+    {
+     "strategy": "First Pullback After ORB (H2)",
+     "date": "2026-08-13",
+     "symbol": "MU",
+     "side": "BUY",
+     "shares": 1,
+     "price": 973.69
+    }
+   ],
+   "equity_snapshot": {
+    "Swing Pullback / Anti": 121.71,
+    "Hybrid Disciplined Momentum Scalping": 11.05,
+    "Turtle Soup Reversal": 39.61,
+    "Momentum Breakout": -6.72,
+    "Mid-Range Reversion Rule": 0.0,
+    "VWAP Reclaim (H2)": 90.29,
+    "First Pullback After ORB (H2)": 0.0
+   }
   }
  ]
 }
