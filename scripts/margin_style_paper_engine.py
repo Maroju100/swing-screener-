@@ -89,7 +89,13 @@ MIN_NOTIONAL = 25.0
 # (previously this tracker ran at $25k, 5x live, so this was scaled to $5,000 to
 # preserve the same 20%-of-allocation ratio), this cap is set to the live engine's
 # actual $1,000 - same dollar cap, not just the same ratio.
-MAX_TRADE_NOTIONAL = 1000.0
+#
+# Changed 2026-08-14 for parity with the live engine's same-dated change: a fixed
+# dollar cap doesn't scale as capital grows, and train/test walk-forward validation
+# at $5k/$10k/$15k/$20k starting capital all converged on ~35-40% of capital as the
+# out-of-sample-optimal cap at every tier. Now a % of this tracker's own current
+# total equity, recomputed each run, same as the live engine.
+MAX_TRADE_NOTIONAL_PCT = 0.375
 
 # Added 2026-08-11 for parity with the live engine's same-named safeguards.
 MAX_SYMBOL_ALLOCATION_PCT = 0.50
@@ -237,6 +243,10 @@ def run(raw_path):
         total_equity = cash + sum(p['shares'] * mark_price(sym)
                                    for sym, p in positions.items() if sym in bars_by_sym)
 
+        # Per-trade cap recomputed each run as a % of current total_equity - see
+        # MAX_TRADE_NOTIONAL_PCT above, kept in parity with the live engine.
+        max_trade_notional = MAX_TRADE_NOTIONAL_PCT * total_equity
+
         candidates = []
         if not circuit_breaker_triggered:
             for sym in active_syms:
@@ -270,7 +280,7 @@ def run(raw_path):
             gi = date_idx[sym][dt]
             close = bars_by_sym[sym][gi]['close']
             pct = HUGE_DIP_PCT if c['reason'] == 'HUGE_DIP' else TRANCHE_PCT
-            deploy = min(cash * pct, MAX_TRADE_NOTIONAL)
+            deploy = min(cash * pct, max_trade_notional)
 
             p = positions.get(sym)
             current_value = p['shares'] * close if p else 0.0
