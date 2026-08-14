@@ -85,6 +85,30 @@
     }
    ],
    "equity_snapshot": 5005.69
+  },
+  {
+   "timestamp": "2026-08-14T16:48:44.232092+00:00",
+   "trades": [
+    {
+     "symbol": "MU",
+     "date": "2026-08-14",
+     "side": "SELL",
+     "reason": "RSI-ROLLOVER",
+     "shares": 0.102144,
+     "price": 963.8,
+     "pnl": -1.55
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-08-14",
+     "side": "SELL",
+     "reason": "RSI-ROLLOVER",
+     "shares": 0.010214,
+     "price": 964.78,
+     "pnl": -0.15
+    }
+   ],
+   "equity_snapshot": 5006.11
   }
  ]
 }
