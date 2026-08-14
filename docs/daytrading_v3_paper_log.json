@@ -1,0 +1,17 @@
+{
+ "capital": 5000.0,
+ "symbols": [
+  "WDC",
+  "MU",
+  "SNDK"
+ ],
+ "setup": "Opening Momentum Scale-In v3 (tightened)",
+ "note": "PAPER TRADING ONLY - no real orders placed.",
+ "runs": [
+  {
+   "timestamp": "2026-08-14T06:46:33.383494+00:00",
+   "trades": [],
+   "equity_snapshot": 5000.0
+  }
+ ]
+}
