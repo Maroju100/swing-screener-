@@ -1117,6 +1117,70 @@
    "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly before this run (all 8 tracked symbols) - no drift, no reconciliation needed. CGC position in account is unrelated/out-of-universe, ignored.",
    "netted_trades": [],
    "note": "Broad rally across the entire 8-symbol universe - every open position hit a new high this run, triggering 8 PEAK sells (74.3% trim each), no dip-buy candidates fired so no netting occurred. get_equity_orders returned \"MCP tool call requires approval\" when attempting to confirm exact fill prices; fill prices in this log entry are the review-time bid quotes (standard estimate for a market sell), not confirmed executions. Position quantities were verified post-fill via get_equity_positions and matched the plan exactly for all 8 symbols, confirming full fills."
+  },
+  {
+   "timestamp": "2026-08-14T17:13:25Z",
+   "orders": [
+    {
+     "symbol": "LRCX",
+     "side": "sell",
+     "shares": 0.113276,
+     "price": 328.22,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.079323,
+     "price": 1630.5301,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "WDC",
+     "side": "sell",
+     "shares": 0.096313,
+     "price": 496.0401,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "MU",
+     "side": "sell",
+     "shares": 0.020782,
+     "price": 964.2219,
+     "reason": "GAIN50"
+    },
+    {
+     "symbol": "AMD",
+     "side": "sell",
+     "shares": 0.101838,
+     "price": 503.1001,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 0.067426,
+     "price": 102.9001,
+     "reason": "GAIN20"
+    },
+    {
+     "symbol": "STX",
+     "side": "sell",
+     "shares": 0.009188,
+     "price": 966.6745,
+     "reason": "PEAK"
+    }
+   ],
+   "skipped": [],
+   "allocation": 5000.0,
+   "used_before_run": 436.99,
+   "available_used_for_sizing": 4563.01,
+   "capital_ledger_note": "capital_ledger.py reported available=3317.67 due to the known pending-settlement double-count bug (all 8 pending entries had settle_date=2026-08-14, i.e. today, so they should have been treated as already settled). Worked around by passing real_cash = allocation - used = 4563.01 and letting the engine's own date-aware pending filter do the correct subtraction (confirmed pending_settlement_total=0 in the plan output).",
+   "circuit_breaker_triggered": false,
+   "stop_count_this_run": 1,
+   "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly before this run (all 8 tracked symbols) - no drift, no reconciliation needed. CGC position in account is unrelated/out-of-universe, ignored.",
+   "netted_trades": [],
+   "note": "LRCX stopped out (-1.51% breach vs prior close); the other 6 open positions all hit new highs (PEAK, 5x) or gain tiers (MU GAIN50, INTC GAIN20) on today's broad rally. No dip-buy candidates - every universe symbol was up, not down, so no HUGE_DIP/NORMAL_DIP fired. No netting (buys list was empty)."
   }
  ]
 }
