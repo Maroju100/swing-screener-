@@ -350,6 +350,52 @@
     }
    ],
    "cumulative_pl": 251.2
+  },
+  {
+   "timestamp": "2026-08-14T17:05:08.074480+00:00",
+   "trades": [
+    {
+     "symbol": "AMD",
+     "date": "2026-08-14",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 469.56,
+     "exit": 500.9,
+     "shares": 0.026859,
+     "pnl": 0.84
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-08-14",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 456.09,
+     "exit": 495.35,
+     "shares": 0.418669,
+     "pnl": 16.44
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-14",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 1333.4059,
+     "exit": 1619.98,
+     "shares": 0.149795,
+     "pnl": 42.93
+    },
+    {
+     "symbol": "STX",
+     "date": "2026-08-14",
+     "side": "SELL",
+     "reason": "PEAK",
+     "entry": 800.99,
+     "exit": 960.34,
+     "shares": 0.00616,
+     "pnl": 0.98
+    }
+   ],
+   "cumulative_pl": 267.26
   }
  ]
 }
