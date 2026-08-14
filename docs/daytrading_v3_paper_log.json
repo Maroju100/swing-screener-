@@ -114,6 +114,21 @@
    "timestamp": "2026-08-14T17:35:53.893857+00:00",
    "trades": [],
    "equity_snapshot": 5006.13
+  },
+  {
+   "timestamp": "2026-08-14T18:35:53.617646+00:00",
+   "trades": [
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-14",
+     "side": "SELL",
+     "reason": "RSI-ROLLOVER",
+     "shares": 0.009155,
+     "price": 1633.33,
+     "pnl": -0.05
+    }
+   ],
+   "equity_snapshot": 5006.16
   }
  ]
 }
