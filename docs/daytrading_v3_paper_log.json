@@ -109,6 +109,11 @@
     }
    ],
    "equity_snapshot": 5006.11
+  },
+  {
+   "timestamp": "2026-08-14T17:35:53.893857+00:00",
+   "trades": [],
+   "equity_snapshot": 5006.13
   }
  ]
 }
