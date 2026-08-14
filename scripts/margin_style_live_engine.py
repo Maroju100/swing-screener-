@@ -92,7 +92,22 @@ CIRCUIT_BREAKER_STOP_COUNT = 2    # if this many STOP exits fire in the same run
 # $5k): uncapped totals +$15,647 (6/6 quarters, worst +$502); capped at $1,000 totals
 # +$10,110 (5/6, worst -$74) - a real cost in expected return, accepted deliberately in
 # exchange for more concurrent positions and faster access to settled cash.
-MAX_TRADE_NOTIONAL = 1000.0
+#
+# Changed 2026-08-14 from a fixed $1,000 to a % of this system's own current total
+# equity: a flat dollar cap was tuned for the account's $5k starting size (20% of
+# capital) and increasingly strangles returns as capital grows, since it stays fixed
+# while the account doesn't. Train/test walk-forward validation (both split
+# directions, true-compounding 6-month backtest, real 8-symbol data) at $5k/$10k/
+# $15k/$20k starting capital all converged on the same out-of-sample-optimal range:
+# ~35% (train May-Jul -> test Feb-Apr) to ~40% (train Feb-Apr -> test May-Jul) of
+# capital, at every tier - not just the $5k-specific 20% this cap started at. Using
+# the midpoint of that confirmed range. Down-market stress test (2026-06-22 to
+# 2026-07-29, real -40.9% basket decline): at $5k the old fixed $1,000 cap actually
+# preserved capital slightly better (+35.73% vs +26-28% for the larger validated
+# cap) - the one place the bigger cap gives something up. At $10k+ the larger cap
+# won the crash test too (fixed $1,000 is too small a bite to matter defensively
+# once capital scales past ~$5k).
+MAX_TRADE_NOTIONAL_PCT = 0.375
 
 
 def next_business_day(d):
@@ -183,6 +198,11 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
     total_equity = safe_cash + sum(pos['shares'] * quotes.get(sym, 0.0)
                                     for sym, pos in state['open_positions'].items() if sym in quotes)
 
+    # Per-trade cap recomputed each run as a % of current total_equity (see
+    # MAX_TRADE_NOTIONAL_PCT above) - grows/shrinks with the account instead of
+    # staying pinned to a stale flat dollar figure.
+    max_trade_notional = MAX_TRADE_NOTIONAL_PCT * total_equity
+
     candidates = []
     if not circuit_breaker_triggered:
         for sym in SYMBOLS:
@@ -222,7 +242,7 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
         live_price = quotes[sym]
         pct = HUGE_DIP_PCT if c['reason'] == 'HUGE_DIP' else TRANCHE_PCT
         uncapped_deploy = safe_cash * pct
-        deploy = min(uncapped_deploy, MAX_TRADE_NOTIONAL)
+        deploy = min(uncapped_deploy, max_trade_notional)
 
         pos = state['open_positions'].get(sym)
         current_value = pos['shares'] * live_price if pos else 0.0
