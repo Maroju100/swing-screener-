@@ -91,11 +91,19 @@ MIN_NOTIONAL = 25.0
 # actual $1,000 - same dollar cap, not just the same ratio.
 #
 # Changed 2026-08-14 for parity with the live engine's same-dated change: a fixed
-# dollar cap doesn't scale as capital grows, and train/test walk-forward validation
-# at $5k/$10k/$15k/$20k starting capital all converged on ~35-40% of capital as the
-# out-of-sample-optimal cap at every tier. Now a % of this tracker's own current
+# dollar cap doesn't scale as capital grows. Now a % of this tracker's own current
 # total equity, recomputed each run, same as the live engine.
-MAX_TRADE_NOTIONAL_PCT = 0.375
+#
+# Corrected 2026-08-14 (same day, later, again for parity): the initial 37.5%
+# figure was found using a backtest that modeled STOP fills incorrectly (checked
+# a bar's low instead of the single live quote the real engine actually uses, and
+# filled at the idealized threshold price instead of that quote) - see
+# margin_style_live_engine.py's own comment for the full account. Under a
+# corrected, honest-fill backtest, 37.5% was the worst of every option tested.
+# 25% was never the worst on any tested window - the deliberate middle ground
+# between a safer, lower-return fixed $1,000 and a higher-return, more
+# crash-exposed fixed $1,875.
+MAX_TRADE_NOTIONAL_PCT = 0.25
 
 # Added 2026-08-11 for parity with the live engine's same-named safeguards.
 MAX_SYMBOL_ALLOCATION_PCT = 0.50

@@ -94,20 +94,36 @@ CIRCUIT_BREAKER_STOP_COUNT = 2    # if this many STOP exits fire in the same run
 # exchange for more concurrent positions and faster access to settled cash.
 #
 # Changed 2026-08-14 from a fixed $1,000 to a % of this system's own current total
-# equity: a flat dollar cap was tuned for the account's $5k starting size (20% of
-# capital) and increasingly strangles returns as capital grows, since it stays fixed
-# while the account doesn't. Train/test walk-forward validation (both split
-# directions, true-compounding 6-month backtest, real 8-symbol data) at $5k/$10k/
-# $15k/$20k starting capital all converged on the same out-of-sample-optimal range:
-# ~35% (train May-Jul -> test Feb-Apr) to ~40% (train Feb-Apr -> test May-Jul) of
-# capital, at every tier - not just the $5k-specific 20% this cap started at. Using
-# the midpoint of that confirmed range. Down-market stress test (2026-06-22 to
-# 2026-07-29, real -40.9% basket decline): at $5k the old fixed $1,000 cap actually
-# preserved capital slightly better (+35.73% vs +26-28% for the larger validated
-# cap) - the one place the bigger cap gives something up. At $10k+ the larger cap
-# won the crash test too (fixed $1,000 is too small a bite to matter defensively
-# once capital scales past ~$5k).
-MAX_TRADE_NOTIONAL_PCT = 0.375
+# equity (originally set to 0.375 = 37.5%): a flat dollar cap was tuned for the
+# account's $5k starting size (20% of capital) and increasingly strangles returns
+# as capital grows, since it stays fixed while the account doesn't. The initial
+# 37.5% figure was validated via train/test walk-forward at $5k/$10k/$15k/$20k
+# starting capital - BUT that validation used a backtest that checked the STOP
+# trigger against a 30-min bar's LOW and filled at the theoretical threshold price,
+# not what the real live engine (this file) actually does: check a single
+# point-in-time quote and fill at THAT quote. For these volatile names, that's a
+# large difference - stocks routinely gap well past the -1.51% stop threshold
+# between once-daily checks, so the real fill is often much worse than the
+# idealized threshold price the old backtest assumed. That flaw systematically
+# favored BIGGER caps (bigger positions look fine when every stop is assumed to
+# exit cleanly at the threshold; only honest fills expose that a bigger position
+# means a bigger realized loss on a real gap-through).
+#
+# Corrected 2026-08-14 (same day, later): re-validated with the STOP mechanism
+# fixed to match live's actual behavior (single quote check + fill at that quote).
+# Under honest fills, 37.5% was the WORST of every option tested - worse than both
+# the original flat $1,000 and multiple other dynamic %s, on nearly every metric
+# (full 6-month aggregate, both train/test halves, and the one real down-market
+# stress period in the data, 2026-06-22 to 2026-07-29, real -40.9% basket decline).
+# A fresh dynamic-% sweep under the corrected mechanism found 25% is never the
+# worst on any tested window (unlike 37.5%, which was worst on 3 of 4) and stays
+# reasonably close to the best option in each case without betting hard on one
+# market regime - the safer choice among the validated alternatives (a fixed,
+# non-growing $1,875 has higher expected return but meaningfully worse crash
+# behavior; a fixed $1,000 has the best crash behavior but leaves more return on
+# the table in calm/trending conditions). Chose 25% as the deliberate middle
+# ground rather than optimizing hard for either extreme.
+MAX_TRADE_NOTIONAL_PCT = 0.25
 
 
 def next_business_day(d):
