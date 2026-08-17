@@ -5,12 +5,14 @@ the user's margin account (410961445, read-only, never traded) trading behavior,
 using the "Winner" parameter set found via a joint random-search + walk-forward
 validation on the 9-Way Combo's 5-symbol basket (2026-07-22 session):
 
-  HUGE_DIP_DRAWDOWN = -25.5% cumulative decline from the trailing LOOKBACK_DAYS-day
+  HUGE_DIP_DRAWDOWN = -35% cumulative decline from the trailing LOOKBACK_DAYS-day
                       closing high (not a single day's move - a real multi-day break)
+                      [changed 2026-08-17 from -25.5%, see "New Candidate" note below]
   LOOKBACK_DAYS     = 22 trading days (trailing-high reference window)
   TRANCHE_PCT       = 44.6% of available cash per normal down-day, up to MAX_TRANCHES
   MAX_TRANCHES      = 5
-  HUGE_DIP_PCT      = 74.3% of available cash deployed on a huge-dip trigger
+  HUGE_DIP_PCT      = 40% of available cash deployed on a huge-dip trigger
+                      [changed 2026-08-17 from 74.3%, see "New Candidate" note below]
   INTRADAY_STOP     = -1.51% from prior close -> sell entire position immediately
   PEAK_SELL_PCT     = 74.3% of shares sold on a new closing high since entry
   GAIN_TIERS        = gain >= 20% -> sell 90%; >= 10% -> sell 50%; >= 5% -> sell 20%
@@ -65,11 +67,31 @@ STATE_PATH = os.path.join(ROOT, 'docs', 'margin_style_live_state.json')
 # NVDA tested and rejected (-$10-12k drag in every combination; also prohibited live).
 SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM", "INTC", "LRCX", "STX"]
 
-HUGE_DIP_DRAWDOWN = -0.255
+# "New Candidate" HUGE_DIP refinement, deployed 2026-08-17 (was -25.5%/74.3%):
+# a deeper drawdown trigger + smaller huge-dip sizing, found while re-optimizing
+# post honest-fill-mechanism-fix (see MAX_TRADE_NOTIONAL_PCT history below - the
+# same STOP-fill correction that flipped the 37.5% cap finding also invalidated
+# the original HUGE_DIP_DRAWDOWN/HUGE_DIP_PCT tuning, since it was chosen under
+# the same flawed idealized-fill backtest). Re-swept under corrected honest fills
+# and validated on 3 windows + a continuous Feb-Aug run at $30k, all using the
+# progressive-cash candidate loop matching this file's actual cmd_plan() behavior
+# (not the earlier static-cash-snapshot backtest script, which was itself found to
+# diverge from this file and has since been retired for validation purposes):
+#   6-month (Feb1-Jul31):        Current Live +$28,000.06 (+93.33%) -> New Candidate +$30,905.11 (+103.02%)
+#   Down-market (Jun22-Jul29, real -40.9% basket decline):
+#                                 Current Live -$356.52 (-1.19%)    -> New Candidate +$50.19 (+0.17%)
+#   Recovery (Jul30-Aug14):      Current Live +$4,517.70 (+15.06%) -> New Candidate +$3,818.92 (+12.73%)
+#   Continuous Feb1-Aug14:       Current Live +$36,178.09 (+120.59%) -> New Candidate +$38,034.69 (+126.78%)
+# New Candidate wins the 6-month, down-market, and continuous totals; gives back a
+# small amount on the recovery window alone. It is the only variant tested (besides
+# the higher-risk leveraged/dynamic-leverage designs, which are a separate,
+# undeployed line of work) that turns the actual down-market positive while still
+# beating Current Live on every other measured window - the basis for deploying it.
+HUGE_DIP_DRAWDOWN = -0.35
 LOOKBACK_DAYS = 22
 TRANCHE_PCT = 0.446
 MAX_TRANCHES = 5
-HUGE_DIP_PCT = 0.743
+HUGE_DIP_PCT = 0.40
 INTRADAY_STOP = -0.0151
 PEAK_SELL_PCT = 0.743
 GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]

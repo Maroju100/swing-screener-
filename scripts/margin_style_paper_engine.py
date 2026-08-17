@@ -75,11 +75,16 @@ CAPITAL = 5000.0  # 2026-08-11: reduced from $25k to match the live engine's act
                   # not a scaled-up mirror of it.
 
 # "Winner" config (joint random-search + walk-forward validated, 2026-07-22)
-HUGE_DIP_DRAWDOWN = -0.255
+# HUGE_DIP_DRAWDOWN/HUGE_DIP_PCT updated 2026-08-17 to match margin_style_live_engine.py's
+# "New Candidate" deployment (was -25.5%/74.3%) - see that file for the full validation
+# writeup (3 windows + a continuous Feb1-Aug14 run at $30k, all under the corrected
+# progressive-cash candidate loop). Kept in exact parity so this paper tracker stays a
+# valid side-by-side comparison against the live account.
+HUGE_DIP_DRAWDOWN = -0.35
 LOOKBACK_DAYS = 22
 TRANCHE_PCT = 0.446
 MAX_TRANCHES = 5
-HUGE_DIP_PCT = 0.743
+HUGE_DIP_PCT = 0.40
 INTRADAY_STOP = -0.0151
 PEAK_SELL_PCT = 0.743
 GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]
