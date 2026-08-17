@@ -1181,6 +1181,91 @@
    "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly before this run (all 8 tracked symbols) - no drift, no reconciliation needed. CGC position in account is unrelated/out-of-universe, ignored.",
    "netted_trades": [],
    "note": "LRCX stopped out (-1.51% breach vs prior close); the other 6 open positions all hit new highs (PEAK, 5x) or gain tiers (MU GAIN50, INTC GAIN20) on today's broad rally. No dip-buy candidates - every universe symbol was up, not down, so no HUGE_DIP/NORMAL_DIP fired. No netting (buys list was empty)."
+  },
+  {
+   "timestamp": "2026-08-17T23:20:41Z",
+   "event": "RUN",
+   "note": "Midday plan built ~17:12 UTC during regular hours (safe_settled_cash=4856.49). MU PEAK sell placed 17:30 UTC and filled at 020.02 during regular hours. Real-time gap opened before the remaining 6 orders could be placed (session resumed after market close ~23:03 UTC). User chose to review each order individually, then approved placing all 7; the 6 remaining orders (WDC/AMD/SNDK/STX sells, INTC/LRCX/TSM buys) were submitted as regular_hours market orders after the close and are QUEUED to fill at tomorrow's regular-session open rather than at the after-hours quotes reviewed. Only the MU sell (actually filled) was committed to state this run; the other 6 remain uncommitted pending confirmed fills tomorrow morning - reconcile against real broker positions before next run or via a manual morning check.",
+   "allocation": 5000.0,
+   "used_before": 143.51,
+   "available_used_for_plan": 4856.49,
+   "orders_placed": [
+    {
+     "symbol": "MU",
+     "side": "sell",
+     "shares": 0.01544,
+     "state": "filled",
+     "avg_price": 1020.02,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "WDC",
+     "side": "sell",
+     "shares": 0.024752,
+     "state": "queued_for_open",
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "AMD",
+     "side": "sell",
+     "shares": 0.026172,
+     "state": "queued_for_open",
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.020386,
+     "state": "queued_for_open",
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "STX",
+     "side": "sell",
+     "shares": 0.002361,
+     "state": "queued_for_open",
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "INTC",
+     "side": "buy",
+     "shares": 11.901481,
+     "state": "queued_for_open",
+     "reason": "NORMAL_DIP-NET(vs GAIN20)"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "buy",
+     "shares": 3.645163,
+     "state": "queued_for_open",
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "TSM",
+     "side": "buy",
+     "shares": 2.437835,
+     "state": "queued_for_open",
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "order_ids": {
+    "MU": "6a834532-9ad3-4c8e-976d-28efe2341a2c",
+    "WDC": "6a839714-8dcd-4560-98f9-37fd73b7650b",
+    "AMD": "6a839719-8fcf-4139-b4c2-d63537162636",
+    "SNDK": "6a83971d-51af-43ba-9104-08e9eaf6a991",
+    "STX": "6a839723-13d2-46f3-a21b-23413ba2401e",
+    "INTC": "6a839732-5c99-4001-aed6-9c9a851665d4",
+    "LRCX": "6a839740-50e9-4fb1-a338-cfedb30ebc2d",
+    "TSM": "6a839749-67dd-4e11-a403-4a25e5f1f0d6"
+   },
+   "reconciliation": "None needed at run start - real positions matched state exactly (7/8 universe symbols held, all matching tracked shares).",
+   "netted_trades": [
+    {
+     "symbol": "INTC",
+     "net_reason": "NORMAL_DIP-NET(vs GAIN20)",
+     "replaced": "a standalone NORMAL_DIP buy and a standalone GAIN-tier sell, netted per SAME-DAY SAME-SYMBOL NETTING"
+    }
+   ]
   }
  ]
 }
