@@ -218,6 +218,46 @@
     }
    ],
    "equity_snapshot": 5011.39
+  },
+  {
+   "timestamp": "2026-08-17T14:38:22.438824+00:00",
+   "trades": [
+    {
+     "symbol": "MU",
+     "date": "2026-08-17",
+     "side": "SELL",
+     "reason": "RSI-ROLLOVER",
+     "shares": 0.491492,
+     "price": 1020.75,
+     "pnl": 1.69
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-17",
+     "side": "BUY",
+     "reason": "ADD",
+     "shares": 0.311211,
+     "price": 1785.1414
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-17",
+     "side": "SELL",
+     "reason": "RSI-ROLLOVER",
+     "shares": 0.365177,
+     "price": 1776.51,
+     "pnl": -1.26
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-17",
+     "side": "BUY",
+     "reason": "ADD",
+     "shares": 0.310641,
+     "price": 1788.415
+    }
+   ],
+   "equity_snapshot": 5013.54
   }
  ]
 }
