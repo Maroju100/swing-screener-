@@ -258,6 +258,124 @@
     }
    ],
    "equity_snapshot": 5013.54
+  },
+  {
+   "timestamp": "2026-08-17T15:37:12.745602+00:00",
+   "trades": [
+    {
+     "symbol": "WDC",
+     "date": "2026-08-17",
+     "side": "BUY",
+     "reason": "ENTRY",
+     "shares": 1.021918,
+     "price": 543.64
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-08-17",
+     "side": "SELL",
+     "reason": "RSI-ROLLOVER",
+     "shares": 0.919726,
+     "price": 545.6775,
+     "pnl": 1.87
+    },
+    {
+     "symbol": "WDC",
+     "date": "2026-08-17",
+     "side": "SELL",
+     "reason": "RSI-ROLLOVER",
+     "shares": 0.091973,
+     "price": 546.98,
+     "pnl": 0.31
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-08-17",
+     "side": "SELL",
+     "reason": "RSI-ROLLOVER",
+     "shares": 0.049149,
+     "price": 1020.835,
+     "pnl": 0.17
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-08-17",
+     "side": "BUY",
+     "reason": "ADD",
+     "shares": 0.540708,
+     "price": 1027.46
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-08-17",
+     "side": "SELL",
+     "reason": "RSI-ROLLOVER",
+     "shares": 0.491552,
+     "price": 1026.49,
+     "pnl": -0.43
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-08-17",
+     "side": "BUY",
+     "reason": "ADD",
+     "shares": 0.537345,
+     "price": 1033.89
+    },
+    {
+     "symbol": "MU",
+     "date": "2026-08-17",
+     "side": "SELL",
+     "reason": "RSI-ROLLOVER",
+     "shares": 0.532766,
+     "price": 1032.4782,
+     "pnl": -0.43
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-17",
+     "side": "SELL",
+     "reason": "RSI-ROLLOVER",
+     "shares": 0.316095,
+     "price": 1787.88,
+     "pnl": 0.14
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-17",
+     "side": "BUY",
+     "reason": "ADD",
+     "shares": 0.307689,
+     "price": 1805.576
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-17",
+     "side": "SELL",
+     "reason": "MACD-FLIP",
+     "shares": 0.308529,
+     "price": 1808.72,
+     "pnl": 1.54
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-17",
+     "side": "BUY",
+     "reason": "ADD",
+     "shares": 0.304898,
+     "price": 1822.1
+    },
+    {
+     "symbol": "SNDK",
+     "date": "2026-08-17",
+     "side": "SELL",
+     "reason": "MACD-FLIP",
+     "shares": 0.305262,
+     "price": 1821.64,
+     "pnl": 0.43
+    }
+   ],
+   "equity_snapshot": 5014.89
   }
  ]
 }

@@ -1,32 +1,43 @@
 {
- "cash": 4328.540279170296,
+ "cash": 4887.018669024071,
  "positions": {
   "MU": {
-   "shares": 0.054610252091845723,
-   "cost": 55.5555555555556,
+   "shares": 0.05919618103583579,
+   "cost": 61.16666666666663,
    "tranches": 0,
-   "entry_peak_rsi": 59.44704329099629,
-   "since_entry_high": 1020.75,
-   "last_tranche_price": 1020.75,
-   "last_action_dt": "2026-08-17T14:35:00Z"
+   "entry_peak_rsi": 62.26384947630749,
+   "since_entry_high": 1034.775,
+   "last_tranche_price": 1032.4782,
+   "last_action_dt": "2026-08-17T15:12:00Z"
   },
   "SNDK": {
-   "shares": 0.35121654233910066,
-   "cost": 627.7777777777777,
-   "tranches": 1,
-   "entry_peak_rsi": 67.90670781317124,
-   "since_entry_high": 1794.95,
-   "last_tranche_price": 1788.415,
-   "last_action_dt": "2026-08-17T14:31:00Z"
+   "shares": 0.033917954708378606,
+   "cost": 61.73888888888882,
+   "tranches": 0,
+   "entry_peak_rsi": 65.23504234875509,
+   "since_entry_high": 1821.64,
+   "last_tranche_price": 1821.64,
+   "last_action_dt": "2026-08-17T15:08:00Z"
+  },
+  "WDC": {
+   "shares": 0.010219180993958424,
+   "cost": 5.55555555555555,
+   "tranches": 0,
+   "entry_peak_rsi": 59.47861352512869,
+   "since_entry_high": 546.98,
+   "last_tranche_price": 546.98,
+   "last_action_dt": "2026-08-17T15:08:00Z"
   }
  },
  "last_processed_dt": {
-  "WDC": "2026-08-17T14:35:00Z",
-  "MU": "2026-08-17T14:35:00Z",
-  "SNDK": "2026-08-17T14:35:00Z"
+  "WDC": "2026-08-17T15:36:00Z",
+  "MU": "2026-08-17T15:36:00Z",
+  "SNDK": "2026-08-17T15:36:00Z"
  },
  "entry_cycles": {
-  "WDC": {},
+  "WDC": {
+   "2026-08-17": 1
+  },
   "MU": {
    "2026-08-14": 1,
    "2026-08-17": 1
