@@ -90,6 +90,12 @@ PEAK_SELL_PCT = 0.743
 GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]
 MIN_NOTIONAL = 25.0
 
+# NORMAL_DIP_THRESHOLD updated 2026-08-18 to match margin_style_live_engine.py's
+# deployment (was 0.0, "any down day") - see that file for the full grid-search
+# writeup (0.4% found optimal, wins 3 of 4 validation windows). Kept in exact
+# parity so this paper tracker stays a valid side-by-side comparison against live.
+NORMAL_DIP_THRESHOLD = 0.004
+
 # 2026-08-11: now that CAPITAL matches the live engine's $5,000 allocation exactly
 # (previously this tracker ran at $25k, 5x live, so this was scaled to $5,000 to
 # preserve the same 20%-of-allocation ratio), this cap is set to the live engine's
@@ -279,7 +285,7 @@ def run(raw_path):
                 reason = None
                 if drawdown <= HUGE_DIP_DRAWDOWN:
                     reason = 'HUGE_DIP'
-                elif day_return < 0 and (not p or p.get('tranches', 0) < MAX_TRANCHES):
+                elif day_return <= -NORMAL_DIP_THRESHOLD and (not p or p.get('tranches', 0) < MAX_TRANCHES):
                     reason = 'NORMAL_DIP'
                 if reason:
                     candidates.append({'symbol': sym, 'drawdown': drawdown, 'reason': reason})

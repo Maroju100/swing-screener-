@@ -9,7 +9,9 @@ validation on the 9-Way Combo's 5-symbol basket (2026-07-22 session):
                       closing high (not a single day's move - a real multi-day break)
                       [changed 2026-08-17 from -25.5%, see "New Candidate" note below]
   LOOKBACK_DAYS     = 22 trading days (trailing-high reference window)
-  TRANCHE_PCT       = 44.6% of available cash per normal down-day, up to MAX_TRANCHES
+  TRANCHE_PCT       = 44.6% of available cash per normal down-day (requires >= 0.4%
+                      decline vs 2 days prior) [0.4% min added 2026-08-18, was "any
+                      down day"; see NORMAL_DIP_THRESHOLD note below], up to MAX_TRANCHES
   MAX_TRANCHES      = 5
   HUGE_DIP_PCT      = 40% of available cash deployed on a huge-dip trigger
                       [changed 2026-08-17 from 74.3%, see "New Candidate" note below]
@@ -96,6 +98,27 @@ INTRADAY_STOP = -0.0151
 PEAK_SELL_PCT = 0.743
 GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]
 MIN_NOTIONAL = 25.0
+
+# NORMAL_DIP single-day-decline threshold, deployed 2026-08-18 (was 0.0, i.e. "any
+# down day, any size"). An elaborate grid search (coarse 0%-15%, then a fine sweep
+# 0.1%-0.9%) over the day_return cutoff found a genuine plateau around 0.3%-0.6%,
+# peaking at 0.4%, using the corrected progressive-cash-decrement engine (matching
+# this file's actual candidate loop) with the New Candidate HUGE_DIP params above
+# held fixed. Requiring a small minimum decline filters out noise-level "down
+# 0.01%" days without giving up the trade volume the strategy's compounding
+# depends on - unlike much larger thresholds (tested up to 15%), which win the
+# Down-market window in isolation but collapse total trade count and overall
+# return everywhere else. Results at $5,000 start, GFV-safe, 8-symbol universe:
+#   6-month (Feb1-Jul31):        0.0% +102.7% (1,160 buys) -> 0.4% +120.4% (1,105 buys)
+#   Down-market (Jun22-Jul29):   0.0%   +0.3% (255 buys)   -> 0.4%   +8.1% (236 buys)
+#   Jul30-Aug14:                 0.0%  +12.7% (99 buys)    -> 0.4%  +11.8% (95 buys)
+#   Continuous Feb1-Aug14:       0.0% +126.4% (1,250 buys) -> 0.4% +144.7% (1,193 buys)
+# 0.4% wins 3 of 4 windows (including fixing the previously razor-thin Down-market
+# result) and gives back a small amount only on the shortest window. A same-day
+# TOTAL deployment cap (limiting all buys combined per day, not just per-symbol)
+# was also tested as a follow-up idea and REJECTED - it hurt every window at every
+# cap level tried, including Down-market itself, so it was not adopted.
+NORMAL_DIP_THRESHOLD = 0.004
 
 # Added 2026-07-24 after a code review surfaced three gaps versus the backtest:
 MAX_SYMBOL_ALLOCATION_PCT = 0.50  # no single symbol may hold more than 50% of this
@@ -261,7 +284,7 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
 
             if drawdown <= HUGE_DIP_DRAWDOWN:
                 reason = 'HUGE_DIP'
-            elif day_return < 0 and (not pos or pos.get('tranches', 0) < MAX_TRANCHES):
+            elif day_return <= -NORMAL_DIP_THRESHOLD and (not pos or pos.get('tranches', 0) < MAX_TRANCHES):
                 reason = 'NORMAL_DIP'
             else:
                 continue
