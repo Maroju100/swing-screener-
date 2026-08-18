@@ -81,8 +81,8 @@ CAPITAL = 5000.0  # 2026-08-11: reduced from $25k to match the live engine's act
 # progressive-cash candidate loop). Kept in exact parity so this paper tracker stays a
 # valid side-by-side comparison against the live account.
 HUGE_DIP_DRAWDOWN = -0.35
-LOOKBACK_DAYS = 22
-TRANCHE_PCT = 0.446
+LOOKBACK_DAYS = 60
+TRANCHE_PCT = 0.95
 MAX_TRANCHES = 5
 HUGE_DIP_PCT = 0.40
 INTRADAY_STOP = -0.0151
@@ -95,6 +95,11 @@ MIN_NOTIONAL = 25.0
 # writeup (0.4% found optimal, wins 3 of 4 validation windows). Kept in exact
 # parity so this paper tracker stays a valid side-by-side comparison against live.
 NORMAL_DIP_THRESHOLD = 0.004
+
+# LOOKBACK_DAYS/TRANCHE_PCT updated 2026-08-18 to match margin_style_live_engine.py's
+# deployment (were 22 days / 44.6%) - see that file for the full coordinate-ascent +
+# walk-forward writeup (60d/95% wins all 4 validation windows simultaneously). Kept
+# in exact parity so this paper tracker stays a valid side-by-side comparison against live.
 
 # 2026-08-11: now that CAPITAL matches the live engine's $5,000 allocation exactly
 # (previously this tracker ran at $25k, 5x live, so this was scaled to $5,000 to

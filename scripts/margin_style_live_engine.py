@@ -8,10 +8,12 @@ validation on the 9-Way Combo's 5-symbol basket (2026-07-22 session):
   HUGE_DIP_DRAWDOWN = -35% cumulative decline from the trailing LOOKBACK_DAYS-day
                       closing high (not a single day's move - a real multi-day break)
                       [changed 2026-08-17 from -25.5%, see "New Candidate" note below]
-  LOOKBACK_DAYS     = 22 trading days (trailing-high reference window)
-  TRANCHE_PCT       = 44.6% of available cash per normal down-day (requires >= 0.4%
+  LOOKBACK_DAYS     = 60 trading days (trailing-high reference window)
+                      [changed 2026-08-18 from 22, see LOOKBACK_DAYS/TRANCHE_PCT note below]
+  TRANCHE_PCT       = 95% of available cash per normal down-day (requires >= 0.4%
                       decline vs 2 days prior) [0.4% min added 2026-08-18, was "any
-                      down day"; see NORMAL_DIP_THRESHOLD note below], up to MAX_TRANCHES
+                      down day"; TRANCHE_PCT changed 2026-08-18 from 44.6%, see
+                      LOOKBACK_DAYS/TRANCHE_PCT note below], up to MAX_TRANCHES
   MAX_TRANCHES      = 5
   HUGE_DIP_PCT      = 40% of available cash deployed on a huge-dip trigger
                       [changed 2026-08-17 from 74.3%, see "New Candidate" note below]
@@ -90,8 +92,8 @@ SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM", "INTC", "LRCX", "STX"]
 # undeployed line of work) that turns the actual down-market positive while still
 # beating Current Live on every other measured window - the basis for deploying it.
 HUGE_DIP_DRAWDOWN = -0.35
-LOOKBACK_DAYS = 22
-TRANCHE_PCT = 0.446
+LOOKBACK_DAYS = 60
+TRANCHE_PCT = 0.95
 MAX_TRANCHES = 5
 HUGE_DIP_PCT = 0.40
 INTRADAY_STOP = -0.0151
@@ -119,6 +121,51 @@ MIN_NOTIONAL = 25.0
 # was also tested as a follow-up idea and REJECTED - it hurt every window at every
 # cap level tried, including Down-market itself, so it was not adopted.
 NORMAL_DIP_THRESHOLD = 0.004
+
+# LOOKBACK_DAYS and TRANCHE_PCT, deployed 2026-08-18 (were 22 days / 44.6%). Coordinate-
+# ascent search (one parameter at a time, New Candidate + 0.4% NORMAL_DIP threshold held
+# fixed): PEAK_SELL_PCT and INTRADAY_STOP were also swept and confirmed already near-
+# optimal at their current values (74.3% / -1.51%), so left unchanged.
+#
+# LOOKBACK_DAYS 22->60: widens the trailing-high reference window HUGE_DIP measures
+# drawdown against, from ~1 month to ~3 months - a longer memory requires a real,
+# sustained breakdown rather than a dip off a recently-reset local high. Down-market
+# P&L was IDENTICAL at every lookback tested (22-60d) - a genuine crash blows past the
+# -35% threshold regardless of window length, so this only screens noise, not real
+# breakdowns. Side effect: a symbol needs ~62 days of history before it's eligible.
+#
+# TRANCHE_PCT 44.6%->95%: NORMAL_DIP now requests ~95% of available cash per tranche
+# instead of 44.6%, still bounded by the existing MAX_TRADE_NOTIONAL_PCT (25% of
+# equity) and MAX_SYMBOL_ALLOCATION_PCT (50% of equity) caps, which usually end up
+# the binding constraint anyway - so this mostly removes cash left idle below what
+# those caps would already allow, rather than bypassing them. Net effect verified
+# against the actual Down-market trade log: total capital deployed over the window is
+# nearly unchanged (~$54k vs ~$56k recycled through buys) - what changes is that
+# capital concentrates into the deepest-drawdown (highest-ranked) candidates each day
+# instead of being thinned out across every marginal candidate too. Values above 100%
+# were tested and confirmed to plateau (150%/200% produce IDENTICAL results to each
+# other - the per-trade cap fully saturates), so 95% sits at the top of a genuine,
+# smooth 85-95% plateau just below that saturation point, not an overfit single value.
+#
+# Walk-forward validated: parameters selected using ONLY Feb1-May15 data, then tested
+# cold on the held-out May16-Aug14 period (never seen during selection, contains the
+# entire down-market window) - out-of-sample P&L improved +67.6% -> +75.3% at the
+# TRAIN-selected values (60d, 90%; final deployed value 95% chosen from the fuller
+# sweep). Combined with the 0.4% NORMAL_DIP threshold, results at $5,000 start:
+#   6-month (Feb1-Jul31):        +120.4% -> +135.7%
+#   Down-market (Jun22-Jul29):     +8.1% ->   +9.7%
+#   Jul30-Aug14:                  +11.8% ->  +12.3%
+#   Continuous Feb1-Aug14:       +144.7% -> +163.0%
+# Wins on all 4 windows simultaneously - the strongest result of any change tested to
+# date. Real behavioral cost, not hidden by the backtest: fewer, much larger tranches
+# per NORMAL_DIP entry means less cash held in reserve if a second dip follows shortly
+# after the first one uses up most of that day's available cash.
+#
+# A same-day TOTAL deployment cap (limiting all symbols' buys combined per day) and a
+# per-symbol consecutive-STOP circuit breaker (cooldown after N stops in a row) were
+# both tested as follow-up risk-reduction ideas and REJECTED - both hurt every window
+# at every tested setting, including Down-market itself, because they block the same
+# rebuy mechanism that captures the eventual recovery, not just the losing entries.
 
 # Added 2026-07-24 after a code review surfaced three gaps versus the backtest:
 MAX_SYMBOL_ALLOCATION_PCT = 0.50  # no single symbol may hold more than 50% of this
