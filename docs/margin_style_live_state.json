@@ -1,60 +1,65 @@
 {
  "pending_settlement": [
   {
-   "amount": 15.75,
-   "settle_date": "2026-08-18",
+   "amount": 12.3,
+   "settle_date": "2026-08-19",
+   "symbol": "WDC"
+  },
+  {
+   "amount": 12.79,
+   "settle_date": "2026-08-19",
+   "symbol": "AMD"
+  },
+  {
+   "amount": 34.23,
+   "settle_date": "2026-08-19",
+   "symbol": "SNDK"
+  },
+  {
+   "amount": 2.21,
+   "settle_date": "2026-08-19",
+   "symbol": "STX"
+  },
+  {
+   "amount": 11.42,
+   "settle_date": "2026-08-19",
+   "symbol": "SNDK"
+  },
+  {
+   "amount": 4.28,
+   "settle_date": "2026-08-19",
+   "symbol": "WDC"
+  },
+  {
+   "amount": 5.0,
+   "settle_date": "2026-08-19",
    "symbol": "MU"
+  },
+  {
+   "amount": 4.34,
+   "settle_date": "2026-08-19",
+   "symbol": "AMD"
+  },
+  {
+   "amount": 1168.44,
+   "settle_date": "2026-08-19",
+   "symbol": "INTC"
+  },
+  {
+   "amount": 0.75,
+   "settle_date": "2026-08-19",
+   "symbol": "STX"
+  },
+  {
+   "amount": 1011.78,
+   "settle_date": "2026-08-19",
+   "symbol": "TSM"
+  },
+  {
+   "amount": 1175.06,
+   "settle_date": "2026-08-19",
+   "symbol": "LRCX"
   }
  ],
- "open_positions": {
-  "SNDK": {
-   "shares": 0.027438,
-   "entry": 1247.26,
-   "peak": 1630.5301,
-   "tranches": 3,
-   "opened": "2026-08-07"
-  },
-  "WDC": {
-   "shares": 0.033314,
-   "entry": 438.56,
-   "peak": 496.0401,
-   "tranches": 2,
-   "opened": "2026-08-07"
-  },
-  "MU": {
-   "shares": 0.005341,
-   "entry": 863.04,
-   "peak": 1020.02,
-   "tranches": 3,
-   "opened": "2026-08-07"
-  },
-  "AMD": {
-   "shares": 0.035225,
-   "entry": 466.5,
-   "peak": 503.1001,
-   "tranches": 2,
-   "opened": "2026-08-10"
-  },
-  "INTC": {
-   "shares": 0.269703,
-   "entry": 97.4,
-   "peak": 105.46,
-   "tranches": 1,
-   "opened": "2026-08-11"
-  },
-  "STX": {
-   "shares": 0.003178,
-   "entry": 819.01,
-   "peak": 966.6745,
-   "tranches": 1,
-   "opened": "2026-08-11"
-  },
-  "TSM": {
-   "shares": 0.013297,
-   "entry": 421.17,
-   "peak": 434.22,
-   "tranches": 1,
-   "opened": "2026-08-11"
-  }
- }
+ "open_positions": {}
 }

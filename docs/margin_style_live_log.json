@@ -1266,6 +1266,127 @@
      "replaced": "a standalone NORMAL_DIP buy and a standalone GAIN-tier sell, netted per SAME-DAY SAME-SYMBOL NETTING"
     }
    ]
+  },
+  {
+   "timestamp": "2026-08-18T17:12:34Z",
+   "event": "RUN",
+   "note": "Reconciliation: 6 orders queued from the prior run (2026-08-17T23:20:41Z, placed after regular hours closed) filled at today's 13:30:01Z open (WDC/AMD/SNDK/STX sells @ PEAK reason, INTC/LRCX/TSM buys @ NORMAL_DIP), committed to state using real fill prices before proceeding with this run's own plan. Broad market selloff today (WDC/SNDK/MU/AMD/TSM/INTC/LRCX/STX all down 4-9% vs yesterday's close by midday) triggered INTRADAY_STOP on ALL 8 open positions simultaneously (stop_count_this_run=8, well past the 2-stop circuit breaker) - full liquidation, all sells, zero buys this run since the circuit breaker paused new entries. This is the LOOKBACK_DAYS=60/TRANCHE_PCT=95% + NORMAL_DIP 0.4% config deployed yesterday (2026-08-18 commits 1a604f3, 3f2660e) - first live run under the new parameters, and it hit the circuit-breaker path immediately due to a genuine broad-based crash day, not a config issue.",
+   "allocation": 5000.0,
+   "used_before_run": 3382.98,
+   "available_used_for_plan": 1617.02,
+   "circuit_breaker_triggered": true,
+   "stop_count_this_run": 8,
+   "orders_placed": [
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.007052,
+     "avg_price": 1619.0542,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "WDC",
+     "side": "sell",
+     "shares": 0.008562,
+     "avg_price": 500.0001,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "MU",
+     "side": "sell",
+     "shares": 0.005341,
+     "avg_price": 936.1601,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "AMD",
+     "side": "sell",
+     "shares": 0.009053,
+     "avg_price": 478.9322,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 12.171184,
+     "avg_price": 96.0005,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "STX",
+     "side": "sell",
+     "shares": 0.000817,
+     "avg_price": 913.8301,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "TSM",
+     "side": "sell",
+     "shares": 2.451132,
+     "avg_price": 412.7801,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "sell",
+     "shares": 3.645163,
+     "avg_price": 322.3601,
+     "reason": "STOP"
+    }
+   ],
+   "reconciliation_fills_committed_first": [
+    {
+     "symbol": "WDC",
+     "side": "sell",
+     "shares": 0.024752,
+     "avg_price": 496.82,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "AMD",
+     "side": "sell",
+     "shares": 0.026172,
+     "avg_price": 488.69,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.020386,
+     "avg_price": 1679.2176,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "STX",
+     "side": "sell",
+     "shares": 0.002361,
+     "avg_price": 934.99,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "INTC",
+     "side": "buy",
+     "shares": 11.901481,
+     "avg_price": 99.31,
+     "reason": "NORMAL_DIP-NET(vs GAIN20)"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "buy",
+     "shares": 3.645163,
+     "avg_price": 324.31,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "TSM",
+     "side": "buy",
+     "shares": 2.437835,
+     "avg_price": 416.84,
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "open_positions_after": {},
+   "netted_trades": []
   }
  ]
 }
