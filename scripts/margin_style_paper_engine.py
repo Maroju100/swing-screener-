@@ -82,7 +82,7 @@ CAPITAL = 5000.0  # 2026-08-11: reduced from $25k to match the live engine's act
 # valid side-by-side comparison against the live account.
 HUGE_DIP_DRAWDOWN = -0.35
 LOOKBACK_DAYS = 60
-TRANCHE_PCT = 0.95
+TRANCHE_SCHEDULE = [0.95, 0.55, 0.35, 0.20, 0.10]  # see margin_style_live_engine.py
 MAX_TRANCHES = 5
 HUGE_DIP_PCT = 0.40
 INTRADAY_STOP = -0.0151
@@ -95,6 +95,11 @@ MIN_NOTIONAL = 25.0
 # writeup (0.4% found optimal, wins 3 of 4 validation windows). Kept in exact
 # parity so this paper tracker stays a valid side-by-side comparison against live.
 NORMAL_DIP_THRESHOLD = 0.004
+
+# TRANCHE_PCT (flat 95%) -> TRANCHE_SCHEDULE [0.95, 0.55, 0.35, 0.20, 0.10] updated
+# 2026-08-19 to match margin_style_live_engine.py's deployment - see that file for the
+# full validation writeup (indexed by tranches already held per symbol; first entry
+# stays at 95%, only repeat entries taper). Kept in exact parity.
 
 # LOOKBACK_DAYS/TRANCHE_PCT updated 2026-08-18 to match margin_style_live_engine.py's
 # deployment (were 22 days / 44.6%) - see that file for the full coordinate-ascent +
@@ -303,10 +308,14 @@ def run(raw_path):
                 break
             gi = date_idx[sym][dt]
             close = bars_by_sym[sym][gi]['close']
-            pct = HUGE_DIP_PCT if c['reason'] == 'HUGE_DIP' else TRANCHE_PCT
+            p = positions.get(sym)
+            if c['reason'] == 'HUGE_DIP':
+                pct = HUGE_DIP_PCT
+            else:
+                tranches_held = p.get('tranches', 0) if p else 0
+                pct = TRANCHE_SCHEDULE[min(tranches_held, len(TRANCHE_SCHEDULE) - 1)]
             deploy = min(cash * pct, max_trade_notional)
 
-            p = positions.get(sym)
             current_value = p['shares'] * close if p else 0.0
             room = max(0.0, MAX_SYMBOL_ALLOCATION_PCT * total_equity - current_value)
             capped = min(deploy, room)

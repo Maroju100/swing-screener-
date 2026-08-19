@@ -10,10 +10,14 @@ validation on the 9-Way Combo's 5-symbol basket (2026-07-22 session):
                       [changed 2026-08-17 from -25.5%, see "New Candidate" note below]
   LOOKBACK_DAYS     = 60 trading days (trailing-high reference window)
                       [changed 2026-08-18 from 22, see LOOKBACK_DAYS/TRANCHE_PCT note below]
-  TRANCHE_PCT       = 95% of available cash per normal down-day (requires >= 0.4%
-                      decline vs 2 days prior) [0.4% min added 2026-08-18, was "any
-                      down day"; TRANCHE_PCT changed 2026-08-18 from 44.6%, see
-                      LOOKBACK_DAYS/TRANCHE_PCT note below], up to MAX_TRANCHES
+  TRANCHE_SCHEDULE  = [95%, 55%, 35%, 20%, 10%] of available cash per normal down-day
+                      (requires >= 0.4% decline vs 2 days prior), indexed by tranches
+                      already held in that symbol - full 95% on the first entry into a
+                      name, tapering on repeat entries into one that keeps falling
+                      [changed 2026-08-19 from flat 95%, see TRANCHE_SCHEDULE note below;
+                      0.4% min added 2026-08-18, was "any down day"; flat 95% itself was
+                      changed 2026-08-18 from flat 44.6%, see LOOKBACK_DAYS/TRANCHE_PCT
+                      note below], up to MAX_TRANCHES
   MAX_TRANCHES      = 5
   HUGE_DIP_PCT      = 40% of available cash deployed on a huge-dip trigger
                       [changed 2026-08-17 from 74.3%, see "New Candidate" note below]
@@ -93,7 +97,7 @@ SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM", "INTC", "LRCX", "STX"]
 # beating Current Live on every other measured window - the basis for deploying it.
 HUGE_DIP_DRAWDOWN = -0.35
 LOOKBACK_DAYS = 60
-TRANCHE_PCT = 0.95
+TRANCHE_SCHEDULE = [0.95, 0.55, 0.35, 0.20, 0.10]  # see progressive-tranche note below
 MAX_TRANCHES = 5
 HUGE_DIP_PCT = 0.40
 INTRADAY_STOP = -0.0151
@@ -166,6 +170,30 @@ NORMAL_DIP_THRESHOLD = 0.004
 # both tested as follow-up risk-reduction ideas and REJECTED - both hurt every window
 # at every tested setting, including Down-market itself, because they block the same
 # rebuy mechanism that captures the eventual recovery, not just the losing entries.
+#
+# TRANCHE_PCT (flat 95%) -> TRANCHE_SCHEDULE [0.95, 0.55, 0.35, 0.20, 0.10], deployed
+# 2026-08-19. Indexed by how many tranches are already held in that symbol (0 = first
+# NORMAL_DIP entry into a name, 1 = second, etc.; HUGE_DIP always uses HUGE_DIP_PCT
+# regardless of this schedule). The first tranche into any name stays at full 95%
+# conviction; only REPEAT entries into a name that has already been bought once and
+# kept falling get progressively smaller. Tested against flat 95% and against shrinking
+# the first tranche too (both directions: 80/50/30/20/10 and a fully reversed
+# 10/20/35/55/95) using the real progressive-cash-decrement engine, $5,000 start,
+# Down-market window (Jun22-Jul29, real -40.9% basket decline):
+#   Flat 95% (previous):              +$209  (+4.2%),  139 trades
+#   95/55/35/20/10 (deployed):        +$230  (+4.6%),  144 trades  <- best of all tested
+#   80/50/30/20/10 (shrinks 1st too): +$210  (+4.2%),  162 trades  <- no better than flat
+#   10/20/35/55/95 (reversed):        -$105  (-2.1%),  221 trades  <- net LOSS, rejected
+# Shrinking the first bet does not help (it shrinks winners along with losers, since the
+# strategy can't tell in advance which dip reverses and which keeps falling); the edge
+# comes entirely from tapering repeat tranches into names that have already shown they
+# didn't bottom on the first try. Real-money verification: cross-matched this account's
+# actual Robinhood realized P&L (get_pnl_trade_history) against this engine's own trade
+# log for the 75 confidently-attributable closed trades since go-live (2026-07-27 to
+# 2026-08-18) - net +$763.08 (58 wins +$797.69, 17 STOP losses only -$34.61), and every
+# single real entry day so far had 3+ symbols triggering simultaneously (no isolated-dip
+# control group exists yet in the live history - this basket has moved as a correlated
+# group the entire time live).
 
 # Added 2026-07-24 after a code review surfaced three gaps versus the backtest:
 MAX_SYMBOL_ALLOCATION_PCT = 0.50  # no single symbol may hold more than 50% of this
@@ -348,11 +376,15 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
         if safe_cash <= 1.0:
             break
         live_price = quotes[sym]
-        pct = HUGE_DIP_PCT if c['reason'] == 'HUGE_DIP' else TRANCHE_PCT
+        pos = state['open_positions'].get(sym)
+        if c['reason'] == 'HUGE_DIP':
+            pct = HUGE_DIP_PCT
+        else:
+            tranches_held = pos.get('tranches', 0) if pos else 0
+            pct = TRANCHE_SCHEDULE[min(tranches_held, len(TRANCHE_SCHEDULE) - 1)]
         uncapped_deploy = safe_cash * pct
         deploy = min(uncapped_deploy, max_trade_notional)
 
-        pos = state['open_positions'].get(sym)
         current_value = pos['shares'] * live_price if pos else 0.0
         room = max(0.0, MAX_SYMBOL_ALLOCATION_PCT * total_equity - current_value)
         capped = min(deploy, room)
