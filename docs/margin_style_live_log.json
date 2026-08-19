@@ -1387,6 +1387,55 @@
    ],
    "open_positions_after": {},
    "netted_trades": []
+  },
+  {
+   "timestamp": "2026-08-19T17:26:10Z",
+   "event": "RUN",
+   "note": "Second broad-selloff day in a row (all 8 universe symbols down again today after yesterday full liquidation). No open positions at run start (matched real broker positions, no reconciliation needed). 5 NORMAL_DIP buys fired on the deepest-drawdown-ranked candidates: WDC/INTC/SNDK/LRCX all near or above the 25%-equity per-trade cap (,250), MU capped by MIN sizing after the others consumed most available cash. No STOP/PEAK/GAIN sells (no open positions at run start), no circuit breaker.",
+   "allocation": 5000.0,
+   "used_before_run": 0.0,
+   "available_used_for_plan": 5000.0,
+   "circuit_breaker_triggered": false,
+   "stop_count_this_run": 0,
+   "orders_placed": [
+    {
+     "symbol": "WDC",
+     "side": "buy",
+     "shares": 2.634879,
+     "avg_price": 468.2299,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "INTC",
+     "side": "buy",
+     "shares": 13.361839,
+     "avg_price": 93.1873,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "buy",
+     "shares": 0.788318,
+     "avg_price": 1565.7699,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "buy",
+     "shares": 3.841612,
+     "avg_price": 308.2403,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "MU",
+     "side": "buy",
+     "shares": 0.063382,
+     "avg_price": 928.4999,
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "reconciliation": "None needed - real positions matched state exactly (both empty) at run start.",
+   "netted_trades": []
   }
  ]
 }

@@ -1,65 +1,40 @@
 {
- "pending_settlement": [
-  {
-   "amount": 12.3,
-   "settle_date": "2026-08-19",
-   "symbol": "WDC"
+ "pending_settlement": [],
+ "open_positions": {
+  "WDC": {
+   "shares": 2.634879,
+   "entry": 468.2299,
+   "peak": 468.2299,
+   "tranches": 1,
+   "opened": "2026-08-19"
   },
-  {
-   "amount": 12.79,
-   "settle_date": "2026-08-19",
-   "symbol": "AMD"
+  "INTC": {
+   "shares": 13.361839,
+   "entry": 93.1873,
+   "peak": 93.1873,
+   "tranches": 1,
+   "opened": "2026-08-19"
   },
-  {
-   "amount": 34.23,
-   "settle_date": "2026-08-19",
-   "symbol": "SNDK"
+  "SNDK": {
+   "shares": 0.788318,
+   "entry": 1565.7699,
+   "peak": 1565.7699,
+   "tranches": 1,
+   "opened": "2026-08-19"
   },
-  {
-   "amount": 2.21,
-   "settle_date": "2026-08-19",
-   "symbol": "STX"
+  "LRCX": {
+   "shares": 3.841612,
+   "entry": 308.2403,
+   "peak": 308.2403,
+   "tranches": 1,
+   "opened": "2026-08-19"
   },
-  {
-   "amount": 11.42,
-   "settle_date": "2026-08-19",
-   "symbol": "SNDK"
-  },
-  {
-   "amount": 4.28,
-   "settle_date": "2026-08-19",
-   "symbol": "WDC"
-  },
-  {
-   "amount": 5.0,
-   "settle_date": "2026-08-19",
-   "symbol": "MU"
-  },
-  {
-   "amount": 4.34,
-   "settle_date": "2026-08-19",
-   "symbol": "AMD"
-  },
-  {
-   "amount": 1168.44,
-   "settle_date": "2026-08-19",
-   "symbol": "INTC"
-  },
-  {
-   "amount": 0.75,
-   "settle_date": "2026-08-19",
-   "symbol": "STX"
-  },
-  {
-   "amount": 1011.78,
-   "settle_date": "2026-08-19",
-   "symbol": "TSM"
-  },
-  {
-   "amount": 1175.06,
-   "settle_date": "2026-08-19",
-   "symbol": "LRCX"
+  "MU": {
+   "shares": 0.063382,
+   "entry": 928.4999,
+   "peak": 928.4999,
+   "tranches": 1,
+   "opened": "2026-08-19"
   }
- ],
- "open_positions": {}
+ }
 }
