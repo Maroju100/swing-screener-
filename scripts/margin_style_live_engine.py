@@ -19,6 +19,13 @@ validation on the 9-Way Combo's 5-symbol basket (2026-07-22 session):
                       changed 2026-08-18 from flat 44.6%, see LOOKBACK_DAYS/TRANCHE_PCT
                       note below], up to MAX_TRANCHES
   MAX_TRANCHES      = 5
+  TRADE_CAP_SCHEDULE = [25%, 25%, 15%, 10%, 5%] of total equity - a hard ceiling on
+                      any single NORMAL_DIP trade's dollar size, indexed the same way
+                      as TRANCHE_SCHEDULE. 1st/2nd tranche keep the flat 25% ceiling;
+                      3rd/4th/5th repeat entries into a name that's kept falling get a
+                      tighter ceiling on top of TRANCHE_SCHEDULE's own cash-% taper.
+                      HUGE_DIP always uses the flat MAX_TRADE_NOTIONAL_PCT (25%)
+                      instead. [added 2026-08-20, see TRADE_CAP_SCHEDULE note below]
   HUGE_DIP_PCT      = 40% of available cash deployed on a huge-dip trigger
                       [changed 2026-08-17 from 74.3%, see "New Candidate" note below]
   INTRADAY_STOP     = -1.51% from prior close -> sell entire position immediately
@@ -245,6 +252,29 @@ CIRCUIT_BREAKER_STOP_COUNT = 2    # if this many STOP exits fire in the same run
 # ground rather than optimizing hard for either extreme.
 MAX_TRADE_NOTIONAL_PCT = 0.25
 
+# TRADE_CAP_SCHEDULE, deployed 2026-08-20. HUGE_DIP always uses the flat
+# MAX_TRADE_NOTIONAL_PCT above. For NORMAL_DIP, the per-trade notional ceiling
+# itself now also tapers by tranches already held in that symbol - a second,
+# independent squeeze layered on top of TRANCHE_SCHEDULE's cash-request-%
+# taper. The 1st and 2nd tranche keep the existing flat 25% ceiling unchanged
+# (tested reducing these too - hurt every window, confirms the first two bets
+# shouldn't be touched); only the 3rd/4th/5th repeat entry into a name that's
+# kept falling gets a tighter ceiling. Grid-searched over first-tranche-cap
+# (20/25/30%) and taper depth/shape - 25% held for tranches 1-2 was uniquely
+# necessary (dropping it to 20% cost ~6pp on the walk-forward test); among
+# 25%-anchored variants, delaying the taper to the 3rd tranche (matching where
+# TRANCHE_SCHEDULE's own cash-% taper has already reduced typical trade size)
+# beat starting the taper at the 2nd tranche. Real progressive-cash-decrement
+# engine, $5,000 start, wins or ties EVERY window tested, including both
+# halves of the walk-forward split:
+#   6-month (Feb1-Jul31):        flat 25% +140.5% -> tapered +143.3%
+#   Down-market (Jun22-Jul29):   flat 25%   +4.6% -> tapered   +5.5%
+#   Jul30-Aug19:                 flat 25%  +17.4% -> tapered  +17.4% (tie)
+#   Continuous (Feb1-Aug19):     flat 25% +152.1% -> tapered +155.1%
+#   Walk-forward TRAIN:          flat 25%  +61.6% -> tapered  +62.1%
+#   Walk-forward TEST (cold):    flat 25%  +56.0% -> tapered  +57.3%
+TRADE_CAP_SCHEDULE = [0.25, 0.25, 0.15, 0.10, 0.05]
+
 
 def next_business_day(d):
     d2 = d + timedelta(days=1)
@@ -335,9 +365,8 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
                                     for sym, pos in state['open_positions'].items() if sym in quotes)
 
     # Per-trade cap recomputed each run as a % of current total_equity (see
-    # MAX_TRADE_NOTIONAL_PCT above) - grows/shrinks with the account instead of
-    # staying pinned to a stale flat dollar figure.
-    max_trade_notional = MAX_TRADE_NOTIONAL_PCT * total_equity
+    # MAX_TRADE_NOTIONAL_PCT/TRADE_CAP_SCHEDULE above) - grows/shrinks with the
+    # account instead of staying pinned to a stale flat dollar figure.
 
     candidates = []
     if not circuit_breaker_triggered:
@@ -377,13 +406,15 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
             break
         live_price = quotes[sym]
         pos = state['open_positions'].get(sym)
+        tranches_held = pos.get('tranches', 0) if pos else 0
         if c['reason'] == 'HUGE_DIP':
             pct = HUGE_DIP_PCT
+            trade_cap_pct = MAX_TRADE_NOTIONAL_PCT
         else:
-            tranches_held = pos.get('tranches', 0) if pos else 0
             pct = TRANCHE_SCHEDULE[min(tranches_held, len(TRANCHE_SCHEDULE) - 1)]
+            trade_cap_pct = TRADE_CAP_SCHEDULE[min(tranches_held, len(TRADE_CAP_SCHEDULE) - 1)]
         uncapped_deploy = safe_cash * pct
-        deploy = min(uncapped_deploy, max_trade_notional)
+        deploy = min(uncapped_deploy, trade_cap_pct * total_equity)
 
         current_value = pos['shares'] * live_price if pos else 0.0
         room = max(0.0, MAX_SYMBOL_ALLOCATION_PCT * total_equity - current_value)

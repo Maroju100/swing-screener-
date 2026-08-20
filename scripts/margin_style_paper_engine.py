@@ -126,6 +126,12 @@ NORMAL_DIP_THRESHOLD = 0.004
 # crash-exposed fixed $1,875.
 MAX_TRADE_NOTIONAL_PCT = 0.25
 
+# TRADE_CAP_SCHEDULE, added 2026-08-20 for parity with margin_style_live_engine.py -
+# see that file for the full validation writeup. HUGE_DIP always uses the flat
+# MAX_TRADE_NOTIONAL_PCT above; NORMAL_DIP's per-trade notional ceiling tapers by
+# tranches already held (1st/2nd tranche unchanged at 25%, 3rd/4th/5th tighter).
+TRADE_CAP_SCHEDULE = [0.25, 0.25, 0.15, 0.10, 0.05]
+
 # Added 2026-08-11 for parity with the live engine's same-named safeguards.
 MAX_SYMBOL_ALLOCATION_PCT = 0.50
 CIRCUIT_BREAKER_STOP_COUNT = 2
@@ -273,8 +279,8 @@ def run(raw_path):
                                    for sym, p in positions.items() if sym in bars_by_sym)
 
         # Per-trade cap recomputed each run as a % of current total_equity - see
-        # MAX_TRADE_NOTIONAL_PCT above, kept in parity with the live engine.
-        max_trade_notional = MAX_TRADE_NOTIONAL_PCT * total_equity
+        # MAX_TRADE_NOTIONAL_PCT/TRADE_CAP_SCHEDULE above, kept in parity with the
+        # live engine.
 
         candidates = []
         if not circuit_breaker_triggered:
@@ -309,12 +315,14 @@ def run(raw_path):
             gi = date_idx[sym][dt]
             close = bars_by_sym[sym][gi]['close']
             p = positions.get(sym)
+            tranches_held = p.get('tranches', 0) if p else 0
             if c['reason'] == 'HUGE_DIP':
                 pct = HUGE_DIP_PCT
+                trade_cap_pct = MAX_TRADE_NOTIONAL_PCT
             else:
-                tranches_held = p.get('tranches', 0) if p else 0
                 pct = TRANCHE_SCHEDULE[min(tranches_held, len(TRANCHE_SCHEDULE) - 1)]
-            deploy = min(cash * pct, max_trade_notional)
+                trade_cap_pct = TRADE_CAP_SCHEDULE[min(tranches_held, len(TRADE_CAP_SCHEDULE) - 1)]
+            deploy = min(cash * pct, trade_cap_pct * total_equity)
 
             current_value = p['shares'] * close if p else 0.0
             room = max(0.0, MAX_SYMBOL_ALLOCATION_PCT * total_equity - current_value)
