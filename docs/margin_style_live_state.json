@@ -1,10 +1,26 @@
 {
- "pending_settlement": [],
+ "pending_settlement": [
+  {
+   "amount": 920.87,
+   "settle_date": "2026-08-21",
+   "symbol": "WDC"
+  },
+  {
+   "amount": 929.77,
+   "settle_date": "2026-08-21",
+   "symbol": "SNDK"
+  },
+  {
+   "amount": 44.94,
+   "settle_date": "2026-08-21",
+   "symbol": "MU"
+  }
+ ],
  "open_positions": {
   "WDC": {
-   "shares": 2.634879,
+   "shares": 0.677164,
    "entry": 468.2299,
-   "peak": 468.2299,
+   "peak": 470.38,
    "tranches": 1,
    "opened": "2026-08-19"
   },
@@ -16,9 +32,9 @@
    "opened": "2026-08-19"
   },
   "SNDK": {
-   "shares": 0.788318,
+   "shares": 0.202598,
    "entry": 1565.7699,
-   "peak": 1565.7699,
+   "peak": 1587.3997,
    "tranches": 1,
    "opened": "2026-08-19"
   },
@@ -30,11 +46,18 @@
    "opened": "2026-08-19"
   },
   "MU": {
-   "shares": 0.063382,
+   "shares": 0.016289,
    "entry": 928.4999,
-   "peak": 928.4999,
+   "peak": 954.2501,
    "tranches": 1,
    "opened": "2026-08-19"
+  },
+  "STX": {
+   "shares": 0.039868,
+   "entry": 855.49,
+   "peak": 855.49,
+   "tranches": 1,
+   "opened": "2026-08-20"
   }
  }
 }
