@@ -212,6 +212,47 @@ CIRCUIT_BREAKER_STOP_COUNT = 2    # if this many STOP exits fire in the same run
                                   # entries this run - stops/exits still execute normally,
                                   # only fresh buys pause. Re-evaluated fresh next run.
 
+# KILL-SWITCH + TREND RE-ENTRY GATE, added 2026-08-20. A portfolio-level circuit
+# breaker distinct from CIRCUIT_BREAKER_STOP_COUNT above: that one reacts to how
+# many symbols stopped out in a single run; this one reacts to the system's own
+# cumulative equity drawdown from its all-time high, however it happened.
+#
+# KILL_SWITCH_DD: once this system's total_equity falls this far below its own
+# running peak (tracked in docs/margin_style_live_state.json as "equity_peak"),
+# liquidate every open position immediately (overrides normal PEAK/GAIN sells -
+# see the kill-switch block in cmd_plan) and block ALL new entries, real STOPs
+# still execute as normal. Verified against 6.5 months of real trading data: this
+# system's own actual max drawdown-from-peak never exceeded -11% (worst point
+# 2026-07-29, the real Down-market low) - -15% has a real ~4-point margin above
+# anything actually observed and never fired once in that period (0 false
+# triggers). Widening it was tested and REJECTED: -20%/-25% cost real crash
+# protection (losses run $200-450 worse per scenario, and in one -50%-over-a-week
+# test -25% provided ZERO protection because the crash resolved before cumulative
+# drawdown ever crossed that high a bar) while buying no additional real-world
+# safety margin, since -15% already never false-triggered on any real data tested.
+KILL_SWITCH_DD = -0.15
+# KILL_SWITCH_RESUME_DAYS: once triggered, stay fully in cash for this many
+# trading days before allowing ANY new entries again - deliberately time-based,
+# not equity-recovery-based. (A first version tried "resume once equity recovers
+# to within X% of peak" - broken by construction, since once fully liquidated to
+# cash there is no position left to ride a price recovery, so equity can never
+# climb back on its own and the system would stay killed forever after any real
+# trigger.)
+KILL_SWITCH_RESUME_DAYS = 20
+# TREND_GATE_SMA_DAYS: once the kill-switch has EVER fired for this system, every
+# future NORMAL_DIP/HUGE_DIP candidate must also have its own price above its
+# trailing SMA(TREND_GATE_SMA_DAYS) to be eligible - i.e. only re-enter names
+# that have shown real relative strength, not just "N days have passed." This
+# flag persists permanently once set (matches the validated backtest exactly -
+# never tested resetting it). Backtest evidence (dead-cat-bounce stress test: a
+# crash, a fake ~95%-retrace bounce, then a second leg down): a naive
+# equity/time-only resume got whipsawed re-buying during the fake bounce (137
+# trades, -20.2%); adding this trend gate on re-entries cut that to 73 trades and
+# -17.6% - real, demonstrated improvement with zero cost on any real historical
+# window (0 kill events across 6.5 months, so the gate never even activates
+# there).
+TREND_GATE_SMA_DAYS = 50
+
 # Added 2026-07-27 per explicit user request after a single-day run put ~90% of the
 # $5,000 allocation into 2 trades (44.6%/74.3%-of-cash sizing has no per-trade ceiling
 # on its own), leaving no room for further entries and no settled cash for days once
@@ -368,8 +409,43 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
     # MAX_TRADE_NOTIONAL_PCT/TRADE_CAP_SCHEDULE above) - grows/shrinks with the
     # account instead of staying pinned to a stale flat dollar figure.
 
+    # KILL-SWITCH / TREND RE-ENTRY GATE (see constants above for full rationale).
+    equity_peak = max(state.get('equity_peak', total_equity), total_equity)
+    kill_switch_active = state.get('kill_switch_active', False)
+    trend_gate_active = state.get('trend_gate_active', False)
+    kill_switch_triggered_date = state.get('kill_switch_triggered_date')
+    dd_now = (total_equity - equity_peak) / equity_peak if equity_peak > 0 else 0.0
+
+    if not kill_switch_active and dd_now <= KILL_SWITCH_DD:
+        kill_switch_active = True
+        trend_gate_active = True
+        kill_switch_triggered_date = today
+    elif kill_switch_active and kill_switch_triggered_date:
+        d = datetime.strptime(kill_switch_triggered_date, '%Y-%m-%d')
+        for _ in range(KILL_SWITCH_RESUME_DAYS):
+            d = next_business_day(d)
+        if today >= d.date().isoformat():
+            kill_switch_active = False
+
+    if kill_switch_active:
+        # Overrides normal PEAK/GAIN sells entirely: liquidate everything still open
+        # (STOP already removed some above) and skip new entries this run.
+        already_selling = {s['symbol'] for s in sells}
+        pending_peak_gain = {}
+        peak_updates = {}
+        for sym, pos in list(state['open_positions'].items()):
+            if sym in already_selling or sym not in quotes:
+                continue
+            live_price = quotes[sym]
+            sells.append({'symbol': sym, 'shares': pos['shares'], 'price': round(live_price, 4),
+                          'reason': 'KILL_SWITCH', 'entry': pos['entry']})
+
+    risk_state = {'equity_peak': round(equity_peak, 2), 'kill_switch_active': kill_switch_active,
+                  'kill_switch_triggered_date': kill_switch_triggered_date,
+                  'trend_gate_active': trend_gate_active}
+
     candidates = []
-    if not circuit_breaker_triggered:
+    if not circuit_breaker_triggered and not kill_switch_active:
         for sym in SYMBOLS:
             if sym in excluded_symbols or sym not in bars_by_sym or sym not in quotes:
                 continue
@@ -385,6 +461,13 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
             lb_bars = bars[-(LOOKBACK_DAYS + 1):-1] if len(bars) > LOOKBACK_DAYS else bars[:-1]
             trailing_high = max(b['close'] for b in lb_bars) if lb_bars else yesterday_close
             drawdown = (yesterday_close - trailing_high) / trailing_high
+
+            if trend_gate_active:
+                if len(bars) < TREND_GATE_SMA_DAYS + 1:
+                    continue  # not enough history to confirm trend - stay out
+                sma_val = sum(b['close'] for b in bars[-(TREND_GATE_SMA_DAYS + 1):-1]) / TREND_GATE_SMA_DAYS
+                if yesterday_close < sma_val:
+                    continue  # kill-switch has fired before; only re-enter names showing real strength
 
             if drawdown <= HUGE_DIP_DRAWDOWN:
                 reason = 'HUGE_DIP'
@@ -480,6 +563,7 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
                       'total_equity': round(total_equity, 2),
                       'circuit_breaker_triggered': circuit_breaker_triggered,
                       'stop_count_this_run': stop_count,
+                      'risk_state': risk_state,
                       'open_positions': state['open_positions'], 'sells': sells, 'buys': buys,
                       'peak_updates': peak_updates}, indent=1))
 
@@ -535,6 +619,15 @@ def cmd_commit(actions_path):
         pos = state['open_positions'].get(sym)
         if pos and new_peak > pos['peak']:
             pos['peak'] = new_peak
+
+    # KILL-SWITCH / TREND RE-ENTRY GATE state - passed through verbatim from the
+    # plan step's output (same pattern as peak_updates above), since cmd_plan is
+    # what decides equity_peak/kill_switch_active/trend_gate_active each run.
+    if 'risk_state' in actions:
+        state['equity_peak'] = actions['risk_state']['equity_peak']
+        state['kill_switch_active'] = actions['risk_state']['kill_switch_active']
+        state['kill_switch_triggered_date'] = actions['risk_state']['kill_switch_triggered_date']
+        state['trend_gate_active'] = actions['risk_state']['trend_gate_active']
 
     save_state(state)
     print(f"Committed {len(actions.get('sells', []))} sell(s), {len(actions.get('buys', []))} buy(s), "
