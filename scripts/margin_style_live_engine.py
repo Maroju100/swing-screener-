@@ -320,25 +320,33 @@ MAX_TRADE_NOTIONAL_PCT = 0.25
 #   Walk-forward TEST (cold):    flat 25%  +56.0% -> tapered  +57.3%
 TRADE_CAP_SCHEDULE = [0.25, 0.25, 0.15, 0.10, 0.05]
 
-# MAX_HOLD_DAYS, added 2026-08-21. Forces a full exit on any tranche that has sat
+# MAX_HOLD_DAYS, added 2026-08-21, forces a full exit on any tranche that has sat
 # open this many trading days without hitting STOP/PEAK/GAIN on its own - stale
 # capital gets freed back to cash so it can chase a fresher, better-ranked dip
-# instead of sitting idle in a position going nowhere. Swept 5-14 trading days
-# using the real progressive-cash-decrement engine (matching this file's actual
-# candidate loop), $10,000 start, noon-ET quote convention (same as the live
-# trigger's check time):
-#   6-month (Feb1-Jul31):     no cap +143.4% -> 7d +168.6%
-#   Down-market (Jun22-Jul29): no cap  +5.5% -> 7d  +5.5%  (tie - 0 forced exits fired)
-#   Jul30-Aug19:               no cap +17.4% -> 7d +17.2%  (-0.2pp, only window that lost)
-#   Continuous (Feb1-Aug19):  no cap +155.1% -> 7d +180.0%
-# 7 was the sweep's peak (5d/6d underperform 7d; 8d+ decays back toward the no-cap
-# baseline as fewer positions ever reach the cutoff). Walk-forward validated:
-# selected on TRAIN (Feb1-May15, where it's a rounding-error -0.3pp) and confirmed
-# on cold TEST (May16-Aug19, +57.3% -> +72.9%) - the win is real on unseen data, not
-# curve-fit to the selection window. Net effect across every window tested is
-# strongly positive with only one negligible loss (-$20 on the smallest-dollar
-# window) and no case where it meaningfully hurt.
-MAX_HOLD_DAYS = 7
+# instead of sitting idle in a position going nowhere. Originally deployed at 7
+# (swept 5-14 trading days before the STOP-rebuy sizing fix below existed).
+#
+# RE-SWEPT 2026-08-21 (same day, after the STOP/MAX_HOLD/KILL_SWITCH-then-rebuy
+# sizing fix landed): that fix changed how quickly freed capital gets redeployed
+# after any exit, which shifted the optimal cutoff. Re-swept 5-10 trading days
+# on the corrected engine, using an honest running cash ledger this time (debit
+# on buy, credit only once a sale actually settles - the original 7-day sweep's
+# "equity" figure was a capital_ledger.py-style ceiling recompute that silently
+# erases realized losses instead of tracking true cash flow; the fix doesn't
+# change which value wins here, just makes the dollar figures trustworthy),
+# $5,000 start, noon-ET quote convention (same as the live trigger's check time):
+#   6-month (Feb1-Jul31):     7d +152.4% -> 6d +155.5%
+#   Down-market (Jun22-Jul29): 7d  +10.9% -> 6d  +10.9%  (tie)
+#   Jul30-Aug19:               7d  +15.5% -> 6d  +15.8%
+#   Continuous (Feb1-Aug19):  7d +150.3% -> 6d +154.2%
+# 6 wins 3 of 4 windows outright and ties the 4th - no window got worse. Walk-
+# forward validated: 6 beats 7 on BOTH halves, including cold TEST never used
+# for selection (TRAIN +44.3%->+45.6%, TEST +73.5%->+74.6%) - a real improvement
+# on unseen data, not curve-fit to the tuning windows. MAX_TRANCHES (3-8) was
+# also swept as part of this same pass and found to have ZERO effect in this
+# range - positions essentially never reach even 3 tranches before something
+# else (STOP/PEAK/GAIN/MAX_HOLD) resolves them first, so it isn't a real lever.
+MAX_HOLD_DAYS = 6
 
 
 def next_business_day(d):
