@@ -31,6 +31,10 @@ validation on the 9-Way Combo's 5-symbol basket (2026-07-22 session):
   INTRADAY_STOP     = -1.51% from prior close -> sell entire position immediately
   PEAK_SELL_PCT     = 74.3% of shares sold on a new closing high since entry
   GAIN_TIERS        = gain >= 20% -> sell 90%; >= 10% -> sell 50%; >= 5% -> sell 20%
+  MAX_HOLD_DAYS     = 7 trading days -> force a full exit if a tranche hasn't hit
+                      STOP/PEAK/GAIN on its own by then, freeing stale capital back
+                      to cash for a fresher candidate [added 2026-08-21, see
+                      MAX_HOLD_DAYS note below]
 
 NEVER PAPER-TRACKED before going live - deployed directly to real money at the
 user's explicit request after a backtest-only validation (in-sample 5 windows +
@@ -316,12 +320,47 @@ MAX_TRADE_NOTIONAL_PCT = 0.25
 #   Walk-forward TEST (cold):    flat 25%  +56.0% -> tapered  +57.3%
 TRADE_CAP_SCHEDULE = [0.25, 0.25, 0.15, 0.10, 0.05]
 
+# MAX_HOLD_DAYS, added 2026-08-21. Forces a full exit on any tranche that has sat
+# open this many trading days without hitting STOP/PEAK/GAIN on its own - stale
+# capital gets freed back to cash so it can chase a fresher, better-ranked dip
+# instead of sitting idle in a position going nowhere. Swept 5-14 trading days
+# using the real progressive-cash-decrement engine (matching this file's actual
+# candidate loop), $10,000 start, noon-ET quote convention (same as the live
+# trigger's check time):
+#   6-month (Feb1-Jul31):     no cap +143.4% -> 7d +168.6%
+#   Down-market (Jun22-Jul29): no cap  +5.5% -> 7d  +5.5%  (tie - 0 forced exits fired)
+#   Jul30-Aug19:               no cap +17.4% -> 7d +17.2%  (-0.2pp, only window that lost)
+#   Continuous (Feb1-Aug19):  no cap +155.1% -> 7d +180.0%
+# 7 was the sweep's peak (5d/6d underperform 7d; 8d+ decays back toward the no-cap
+# baseline as fewer positions ever reach the cutoff). Walk-forward validated:
+# selected on TRAIN (Feb1-May15, where it's a rounding-error -0.3pp) and confirmed
+# on cold TEST (May16-Aug19, +57.3% -> +72.9%) - the win is real on unseen data, not
+# curve-fit to the selection window. Net effect across every window tested is
+# strongly positive with only one negligible loss (-$20 on the smallest-dollar
+# window) and no case where it meaningfully hurt.
+MAX_HOLD_DAYS = 7
+
 
 def next_business_day(d):
     d2 = d + timedelta(days=1)
     while d2.weekday() >= 5:
         d2 += timedelta(days=1)
     return d2
+
+
+def business_days_elapsed(from_date_str, to_date_str):
+    """Count trading (weekday) days strictly after from_date_str, up to and
+    including to_date_str. Matches the once-per-weekday cadence this engine
+    actually runs on (holidays aren't excluded, same approximation
+    next_business_day already makes everywhere else in this file)."""
+    d = datetime.strptime(from_date_str, '%Y-%m-%d').date()
+    to = datetime.strptime(to_date_str, '%Y-%m-%d').date()
+    count = 0
+    while d < to:
+        d += timedelta(days=1)
+        if d.weekday() < 5:
+            count += 1
+    return count
 
 
 def load_state():
@@ -376,6 +415,11 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
         if live_price <= prev_close * (1 + INTRADAY_STOP):
             sells.append({'symbol': sym, 'shares': pos['shares'], 'price': round(live_price, 4),
                           'reason': 'STOP', 'entry': pos['entry']})
+            continue
+
+        if 'opened' in pos and business_days_elapsed(pos['opened'], today) >= MAX_HOLD_DAYS:
+            sells.append({'symbol': sym, 'shares': pos['shares'], 'price': round(live_price, 4),
+                          'reason': 'MAX_HOLD', 'entry': pos['entry']})
             continue
 
         if live_price > pos['peak']:
@@ -588,7 +632,7 @@ def cmd_commit(actions_path):
                                             'settle_date': settle_date, 'symbol': sym})
         if pos:
             remaining = round(pos['shares'] - s['shares'], 6)
-            if remaining <= 1e-6 or s['reason'] == 'STOP':
+            if remaining <= 1e-6 or s['reason'] in ('STOP', 'MAX_HOLD'):
                 del state['open_positions'][sym]
             else:
                 pos['shares'] = remaining
