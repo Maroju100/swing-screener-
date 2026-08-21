@@ -1,11 +1,11 @@
 {
-  "total_allocated": 5000.00,
+  "total_allocated": 10000.00,
   "allocations": {
     "swing": 0.00,
     "daytrade": 0.00,
-    "margin_style": 5000.00
+    "margin_style": 10000.00
   },
   "created_at": "2026-07-22T21:00:00Z",
-  "updated_at": "2026-07-24T18:31:00Z",
-  "notes": "RESET 2026-07-24: per explicit user request, live trading is now consolidated to Margin-Style only after multi-frequency backtesting showed it as the sole system with consistent (3/5 window) profitability at every check frequency, while 9-Way Combo and Day-Trading LIVE showed only 1-2/5 window consistency. The 9-Way Combo LIVE trigger (trig_01AZXmLrvMg4B1Gka5kreqcR) and Day-Trading LIVE trigger (trig_01GY1mk2Eo68gMX5YdS34zGW) were disabled the same day. All 5 of 9-Way Combo's real positions (AMD/MU/WDC/SNDK/TSM) were liquidated to free their capital (realized ~-$181.68); Day-Trading LIVE held no positions. Margin-Style Live now sizes against the full $5,000. Both paper trackers (9-Way/swing paper, day-trading paper) keep running unaffected so either system can be re-evaluated and brought back live later. Original equal 3-way split notes (2026-07-22) superseded by this entry."
+  "updated_at": "2026-08-21T21:45:00Z",
+  "notes": "RESET 2026-07-24: per explicit user request, live trading is now consolidated to Margin-Style only after multi-frequency backtesting showed it as the sole system with consistent (3/5 window) profitability at every check frequency, while 9-Way Combo and Day-Trading LIVE showed only 1-2/5 window consistency. The 9-Way Combo LIVE trigger (trig_01AZXmLrvMg4B1Gka5kreqcR) and Day-Trading LIVE trigger (trig_01GY1mk2Eo68gMX5YdS34zGW) were disabled the same day. All 5 of 9-Way Combo's real positions (AMD/MU/WDC/SNDK/TSM) were liquidated to free their capital (realized ~-$181.68); Day-Trading LIVE held no positions. Margin-Style Live now sizes against the full $5,000. Both paper trackers (9-Way/swing paper, day-trading paper) keep running unaffected so either system can be re-evaluated and brought back live later. Original equal 3-way split notes (2026-07-22) superseded by this entry.\n\nUPDATED 2026-08-21: per explicit user request, a real $5,000 deposit into the Agentic-2 account (912291820) is added to Margin-Style Live's allocation, 5,000.00 -> 10,000.00. Confirmed via get_portfolio: real account cash jumped to $8,447.25 (from ~$2,497 before this run), consistent with a genuine new deposit landing, not just today's trading activity. No other system's allocation changes (still $0, both paused). This does not itself change any strategy parameter (TRANCHE_SCHEDULE, TRADE_CAP_SCHEDULE, MAX_HOLD_DAYS, kill-switch threshold, etc.) - all per-trade and per-symbol caps are already expressed as a % of current total_equity, so they scale automatically with the larger capital base without needing a fresh backtest at this size specifically; the underlying % parameters remain the ones validated at $5k/$10k/$15k/$20k during the 2026-08-14 MAX_TRADE_NOTIONAL_PCT walk-forward."
 }
