@@ -488,12 +488,26 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
                   'kill_switch_triggered_date': kill_switch_triggered_date,
                   'trend_gate_active': trend_gate_active}
 
+    # STOP/MAX_HOLD/KILL_SWITCH fully close a position - unlike PEAK/GAIN, which only
+    # trim it - but state['open_positions'] itself isn't mutated until cmd_commit runs
+    # after this plan step. Without this, a symbol that both fully exits AND re-qualifies
+    # as a fresh buy candidate in the SAME run would get sized/gated off its stale,
+    # about-to-be-deleted tranche count (e.g. a same-day STOP-then-rebuy priced as a
+    # tapered 2nd+ tranche instead of a fresh 1st tranche) - a real divergence from the
+    # validated backtest, which deletes the position from its in-memory state immediately
+    # on a full exit. Fixed 2026-08-21 after being caught live (INTC STOP'd then re-bought
+    # same run, undersized at 55% instead of 95% of cash - conservative, not dangerous, but
+    # not what the backtest validated). Treating these symbols as having no position for
+    # tranche eligibility/sizing purposes below matches what state will actually contain
+    # once cmd_commit runs.
+    full_exit_symbols = {s['symbol'] for s in sells if s['reason'] in ('STOP', 'MAX_HOLD', 'KILL_SWITCH')}
+
     candidates = []
     if not circuit_breaker_triggered and not kill_switch_active:
         for sym in SYMBOLS:
             if sym in excluded_symbols or sym not in bars_by_sym or sym not in quotes:
                 continue
-            pos = state['open_positions'].get(sym)
+            pos = None if sym in full_exit_symbols else state['open_positions'].get(sym)
             if pos and pos.get('tranches', 0) >= MAX_TRANCHES:
                 continue
             bars = bars_by_sym[sym]
@@ -532,7 +546,7 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
         if safe_cash <= 1.0:
             break
         live_price = quotes[sym]
-        pos = state['open_positions'].get(sym)
+        pos = None if sym in full_exit_symbols else state['open_positions'].get(sym)
         tranches_held = pos.get('tranches', 0) if pos else 0
         if c['reason'] == 'HUGE_DIP':
             pct = HUGE_DIP_PCT
