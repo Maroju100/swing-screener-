@@ -1479,6 +1479,70 @@
    "reconciliation": "Real broker positions (get_equity_positions) matched docs/margin_style_live_state.json exactly before this run - no correction needed.",
    "netted_trades": [],
    "notes": "Real cash was $635.47 but allocation-cap available was only $35.85 (allocation $5,000 - mark-to-market of held positions $4,964.15) - used the smaller allocation ceiling for sizing per the capital-allocation rule. TRANCHE_SCHEDULE/TRADE_CAP_SCHEDULE both active (deployed 2026-08-19/20)."
+  },
+  {
+   "timestamp": "2026-08-21T19:10:10Z",
+   "event": "RUN",
+   "note": "Scaled Dip-Buy/Scaled Peak-Sell, midday check (CDT ~2:10pm, ran a bit late). INTC hit INTRADAY STOP (full exit at $90.28, prior close $92.13) then re-qualified as a fresh NORMAL_DIP candidate same run and was re-bought at $90.41 (7.0 shares) - real re-entry, tagged tranches=1/opened=2026-08-21 in state, confirming its old position record was fully cleared before commit. 3 PEAK trims (SNDK/LRCX/MU) and 1 HUGE_DIP buy (WDC, -37.14% trailing drawdown) also fired. No circuit breaker (only 1 STOP, below the 2-STOP threshold). Kill-switch/trend-gate: not active, equity_peak=$5000.00 (unchanged, no new all-time high this run since STOP+PEAK sells and buys roughly netted). MAX_HOLD_DAYS=7 exit (deployed today) did not fire for any position - oldest open position was only 2 trading days old.",
+   "allocation": 5000.0,
+   "used_before_run": 3088.72,
+   "real_cash_used_for_plan": 1911.28,
+   "note_on_available_calc": "capital_ledger.py available ($15.70) was NOT used directly - per the known KNOWN BUG workaround in the trigger prompt (it sums ALL pending_settlement regardless of settle_date), real_cash was computed as allocation-used=$1911.28 instead, letting the engine own date-aware pending filter do the correct subtraction (all 3 pending entries had settle_date=2026-08-21=today, so none were still actually pending).",
+   "circuit_breaker_triggered": false,
+   "stop_count_this_run": 1,
+   "orders_placed": [
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 13.361839,
+     "price": 90.2827,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.15053,
+     "price": 1600.1768,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "sell",
+     "shares": 2.854318,
+     "price": 313.321,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "MU",
+     "side": "sell",
+     "shares": 0.012103,
+     "price": 966.7401,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "WDC",
+     "side": "buy",
+     "shares": 1.648881,
+     "price": 466.97,
+     "reason": "HUGE_DIP"
+    },
+    {
+     "symbol": "INTC",
+     "side": "buy",
+     "shares": 6.999861,
+     "price": 90.4099,
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "skipped_orders": [],
+   "netted_trades": [],
+   "risk_state": {
+    "equity_peak": 5000.0,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false
+   },
+   "flagged_for_followup": "Observed engine/backtest sizing divergence: when a symbol both STOPs out and re-qualifies as a fresh buy candidate in the SAME run (as INTC did today), cmd_plan sizes the new entry using the OLD position 'tranches' count (since state['open_positions'] is not mutated until cmd_commit), so today's INTC re-entry got priced as a 2nd tranche (55% of cash, $630.72) instead of a fresh 1st-tranche entry (95%, which validated backtests assume for a same-day STOP-then-rebuy). The validated backtest scripts delete the position from their in-memory dict immediately on STOP, so they do NOT reproduce this behavior - this is a real, previously undocumented divergence between live and backtest, though it errs conservative (smaller buy, not larger/riskier). Not fixed live today; flagging for the user to decide whether to correct it."
   }
  ]
 }
