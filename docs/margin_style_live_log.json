@@ -1543,6 +1543,66 @@
     "trend_gate_active": false
    },
    "flagged_for_followup": "Observed engine/backtest sizing divergence: when a symbol both STOPs out and re-qualifies as a fresh buy candidate in the SAME run (as INTC did today), cmd_plan sizes the new entry using the OLD position 'tranches' count (since state['open_positions'] is not mutated until cmd_commit), so today's INTC re-entry got priced as a 2nd tranche (55% of cash, $630.72) instead of a fresh 1st-tranche entry (95%, which validated backtests assume for a same-day STOP-then-rebuy). The validated backtest scripts delete the position from their in-memory dict immediately on STOP, so they do NOT reproduce this behavior - this is a real, previously undocumented divergence between live and backtest, though it errs conservative (smaller buy, not larger/riskier). Not fixed live today; flagging for the user to decide whether to correct it."
+  },
+  {
+   "timestamp": "2026-08-24T17:12:47Z",
+   "event": "RUN",
+   "note": "Scaled Dip-Buy/Scaled Peak-Sell, midday check (CDT ~12:12pm). Sharp basket-wide semis selloff today (all 8 universe names down 2.6%-9.0% vs Friday's close) triggered INTRADAY STOP on ALL 6 open positions (WDC, SNDK, LRCX, MU, STX, INTC) - full liquidation of every position this run. 6 STOPs >= 2-STOP threshold, so the per-run circuit breaker paused all new entries this run (0 buys, even though HUGE_DIP/NORMAL_DIP conditions were not separately evaluated for buys given the pause). Positions reconciled cleanly against real broker holdings before selling (CGC correctly excluded - not in universe/state, not ours). Kill-switch: equity_peak updated 5000.00 -> 10492.06 (new all-time high recorded from pre-liquidation total_equity, since account grew via the $5k deposit + gains before today's stop-outs); kill_switch_active remained false (today's move was a stop-out from a peak, not a >=15% drawdown from that peak). Trigger fired later than its 17:00 UTC schedule (~17:07 UTC) - bound persistent-session queued behind an active chat conversation at the scheduled time; noted as an operational timing observation, not a strategy issue.",
+   "real_cash_used_for_plan": 8447.25,
+   "circuit_breaker_triggered": true,
+   "stop_count_this_run": 6,
+   "orders_placed": [
+    {
+     "symbol": "WDC",
+     "side": "sell",
+     "shares": 2.326045,
+     "price": 436.3647,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.052068,
+     "price": 1494.0422,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "sell",
+     "shares": 0.987294,
+     "price": 306.0766,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "MU",
+     "side": "sell",
+     "shares": 0.004186,
+     "price": 916.9521,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "STX",
+     "side": "sell",
+     "shares": 0.039868,
+     "price": 796.7898,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 6.999861,
+     "price": 87.6601,
+     "reason": "STOP"
+    }
+   ],
+   "skipped_orders": [],
+   "netted_trades": [],
+   "risk_state": {
+    "equity_peak": 10492.06,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false
+   }
   }
  ]
 }
