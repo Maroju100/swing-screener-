@@ -1603,6 +1603,59 @@
     "kill_switch_triggered_date": null,
     "trend_gate_active": false
    }
+  },
+  {
+   "timestamp": "2026-08-25T17:13:20Z",
+   "event": "RUN",
+   "note": "Scaled Dip-Buy/Scaled Peak-Sell, midday check (CDT ~12:13pm). All 6 positions from yesterday's basket-wide stop-out had fully settled; started this run 100% cash ($10,491.41). Today's basket bounced back (all 8 up vs Friday-equivalent close), but 5 names remained deep in trailing-60-day drawdown (WDC -41.66%, INTC -38.09%, SNDK -36.05% => HUGE_DIP; LRCX -28.42%, STX -27.37% => NORMAL_DIP) - all 5 fired as fresh 1st-tranche entries, ranked deepest-drawdown-first, each capped at 25% of equity per trade ($2,622.85) except SNDK/STX whose smaller HUGE_DIP/NORMAL_DIP-implied notional came in under that cap. No STOPs, no circuit breaker, no kill-switch activity - equity_peak unchanged at 10492.06 since we're still marginally below it in cash-only starting position.",
+   "real_cash_used_for_plan": 10491.41,
+   "circuit_breaker_triggered": false,
+   "stop_count_this_run": 0,
+   "orders_placed": [
+    {
+     "symbol": "WDC",
+     "side": "buy",
+     "shares": 5.936742,
+     "price": 442.2999,
+     "reason": "HUGE_DIP"
+    },
+    {
+     "symbol": "INTC",
+     "side": "buy",
+     "shares": 29.798776,
+     "price": 87.7994,
+     "reason": "HUGE_DIP"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "buy",
+     "shares": 1.418496,
+     "price": 1481.9999,
+     "reason": "HUGE_DIP"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "buy",
+     "shares": 8.407923,
+     "price": 311.7399,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "STX",
+     "side": "buy",
+     "shares": 0.613427,
+     "price": 815.8499,
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "skipped_orders": [],
+   "netted_trades": [],
+   "risk_state": {
+    "equity_peak": 10492.06,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false
+   }
   }
  ]
 }
