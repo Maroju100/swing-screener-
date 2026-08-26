@@ -1656,6 +1656,50 @@
     "kill_switch_triggered_date": null,
     "trend_gate_active": false
    }
+  },
+  {
+   "timestamp": "2026-08-26T17:42:51Z",
+   "real_cash_used_for_sizing": 25.52,
+   "orders": [
+    {
+     "symbol": "WDC",
+     "side": "sell",
+     "shares": 4.410999,
+     "price": 467.4001,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 1.053943,
+     "price": 1509.2601,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "sell",
+     "shares": 6.247087,
+     "price": 313.5101,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "STX",
+     "side": "sell",
+     "shares": 0.455776,
+     "price": 841.7235,
+     "reason": "PEAK"
+    }
+   ],
+   "skipped_orders": [],
+   "netted_trades": [],
+   "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly for all 5 tracked positions (WDC/INTC/SNDK/LRCX/STX); CGC (2.0 sh, untracked) correctly excluded as belonging to another holder.",
+   "risk_state": {
+    "equity_peak": 10648.76,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false
+   },
+   "notes": "New live-quote high on all 4 non-INTC positions triggered 74.3% PEAK trims (WDC, SNDK, LRCX, STX) - all filled cleanly, no alerts. INTC held flat (no new high vs its 87.7994 peak). Real cash was only $25.52 this run, so no new-entry buys were sized regardless of dip signals. Elevated-scrutiny status still applies (live since 2026-07-27, limited live track record) - no divergence from backtest expectations observed this run."
   }
  ]
 }
