@@ -1700,6 +1700,52 @@
     "trend_gate_active": false
    },
    "notes": "New live-quote high on all 4 non-INTC positions triggered 74.3% PEAK trims (WDC, SNDK, LRCX, STX) - all filled cleanly, no alerts. INTC held flat (no new high vs its 87.7994 peak). Real cash was only $25.52 this run, so no new-entry buys were sized regardless of dip signals. Elevated-scrutiny status still applies (live since 2026-07-27, limited live track record) - no divergence from backtest expectations observed this run."
+  },
+  {
+   "timestamp": "2026-08-27T17:10:59Z",
+   "real_cash_used_for_sizing": 6019.91,
+   "orders": [
+    {
+     "symbol": "WDC",
+     "side": "sell",
+     "shares": 1.525743,
+     "price": 449.3250,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "STX",
+     "side": "sell",
+     "shares": 0.157651,
+     "price": 830.7845,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 22.140491,
+     "price": 90.9406,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "sell",
+     "shares": 1.605501,
+     "price": 316.2970,
+     "reason": "PEAK"
+    }
+   ],
+   "skipped_orders": [
+    {"reason": "2+ STOP exits (WDC, STX) fired this run, tripping the per-run circuit breaker - all new-entry buys paused for this run only, regardless of real_cash ($6,019.91 was available and unencumbered)."}
+   ],
+   "netted_trades": [],
+   "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly for all 5 tracked positions (WDC/INTC/SNDK/LRCX/STX) pre-trade; CGC (2.0 sh, untracked) correctly excluded as belonging to another holder.",
+   "risk_state": {
+    "equity_peak": 10775.18,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false
+   },
+   "notes": "First STOP exits since the strategy went live: WDC (prior close $468.88, stop threshold $461.96, live $449.33-$451.14 range) and STX (prior close $846.37, stop threshold $833.79, live ~$830.78-$833.01) both breached the -1.51% intraday-stop threshold vs prior close and were fully liquidated - both positions had been opened just 2 trading days earlier (2026-08-25) and never recovered before this check. Separately, INTC and LRCX hit new live-quote highs and took their normal 74.3% PEAK trims. 2 STOP exits in one run tripped the 2+ STOP circuit breaker, pausing all new-entry buys for this run only - so the $6,019.91 in cash (freshly settled from yesterday's PEAK trims) sat unused this run despite being fully available. Elevated-scrutiny status still applies (live since 2026-07-27, limited live track record) - a same-run cluster of STOP-outs on both of this week's newest entries is worth watching for a pattern over the next few runs, though it is expected, validated behavior per the strategy rules, not a bug."
   }
  ]
 }
