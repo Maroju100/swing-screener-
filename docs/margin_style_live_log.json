@@ -1666,28 +1666,32 @@
      "side": "sell",
      "shares": 4.410999,
      "price": 467.4001,
-     "reason": "PEAK"
+     "reason": "PEAK",
+     "entry": 442.2999
     },
     {
      "symbol": "SNDK",
      "side": "sell",
      "shares": 1.053943,
      "price": 1509.2601,
-     "reason": "PEAK"
+     "reason": "PEAK",
+     "entry": 1481.9999
     },
     {
      "symbol": "LRCX",
      "side": "sell",
      "shares": 6.247087,
      "price": 313.5101,
-     "reason": "PEAK"
+     "reason": "PEAK",
+     "entry": 311.7399
     },
     {
      "symbol": "STX",
      "side": "sell",
      "shares": 0.455776,
      "price": 841.7235,
-     "reason": "PEAK"
+     "reason": "PEAK",
+     "entry": 815.8499
     }
    ],
    "skipped_orders": [],
@@ -1710,28 +1714,32 @@
      "side": "sell",
      "shares": 1.525743,
      "price": 449.3250,
-     "reason": "STOP"
+     "reason": "STOP",
+     "entry": 442.2999
     },
     {
      "symbol": "STX",
      "side": "sell",
      "shares": 0.157651,
      "price": 830.7845,
-     "reason": "STOP"
+     "reason": "STOP",
+     "entry": 815.8499
     },
     {
      "symbol": "INTC",
      "side": "sell",
      "shares": 22.140491,
      "price": 90.9406,
-     "reason": "PEAK"
+     "reason": "PEAK",
+     "entry": 87.7994
     },
     {
      "symbol": "LRCX",
      "side": "sell",
      "shares": 1.605501,
      "price": 316.2970,
-     "reason": "PEAK"
+     "reason": "PEAK",
+     "entry": 311.7399
     }
    ],
    "skipped_orders": [
