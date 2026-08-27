@@ -23,25 +23,32 @@
  ],
  "open_positions": {
   "INTC": {
-   "shares": 7.658285,
-   "entry": 87.7994,
-   "peak": 90.9406,
-   "tranches": 1,
+   "shares": 28.375460999999998,
+   "entry": 90.231,
+   "peak": 91.1299,
+   "tranches": 2,
    "opened": "2026-08-25"
   },
   "SNDK": {
-   "shares": 0.364553,
-   "entry": 1481.9999,
+   "shares": 1.035569,
+   "entry": 1477.1639,
    "peak": 1509.2601,
-   "tranches": 1,
+   "tranches": 2,
    "opened": "2026-08-25"
   },
   "LRCX": {
-   "shares": 0.555335,
-   "entry": 311.7399,
+   "shares": 3.142131,
+   "entry": 315.1773,
    "peak": 316.297,
-   "tranches": 1,
+   "tranches": 2,
    "opened": "2026-08-25"
+  },
+  "WDC": {
+   "shares": 3.67924,
+   "entry": 449.2599,
+   "peak": 449.2599,
+   "tranches": 1,
+   "opened": "2026-08-27"
   }
  },
  "equity_peak": 10775.18,
