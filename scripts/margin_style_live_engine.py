@@ -450,11 +450,17 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
     stop_count = sum(1 for s in sells if s['reason'] == 'STOP')
     circuit_breaker_triggered = stop_count >= CIRCUIT_BREAKER_STOP_COUNT
 
-    # Total equity this system controls right now, for the concentration cap below.
-    # (Available cash + mark-to-market of its own open positions - does not include
-    # pending_settlement, which is temporarily locked but still "its" money; a minor
-    # underestimate that only makes the cap slightly more conservative, never less.)
-    total_equity = safe_cash + sum(pos['shares'] * quotes.get(sym, 0.0)
+    # Total equity this system controls right now - feeds both the concentration
+    # cap below AND the kill-switch drawdown check further down. Must include
+    # pending_settlement: that cash is temporarily locked but still fully "its"
+    # money (same shares just moved from position to receivable), so excluding
+    # it understates equity by the full proceeds of any recent sell. That's a
+    # correctness bug, not just conservatism - checking this same-day, right
+    # after a large STOP/PEAK sell settles into pending, previously made
+    # total_equity look like it had crashed (e.g. -31% in one real case) when
+    # nothing had actually been lost, which could wrongly arm the kill-switch
+    # off a phantom drawdown. Now matches get_portfolio's real total_value.
+    total_equity = safe_cash + pending_total + sum(pos['shares'] * quotes.get(sym, 0.0)
                                     for sym, pos in state['open_positions'].items() if sym in quotes)
 
     # Per-trade cap recomputed each run as a % of current total_equity (see
