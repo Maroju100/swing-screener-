@@ -1746,6 +1746,53 @@
     "trend_gate_active": false
    },
    "notes": "First STOP exits since the strategy went live: WDC (prior close $468.88, stop threshold $461.96, live $449.33-$451.14 range) and STX (prior close $846.37, stop threshold $833.79, live ~$830.78-$833.01) both breached the -1.51% intraday-stop threshold vs prior close and were fully liquidated - both positions had been opened just 2 trading days earlier (2026-08-25) and never recovered before this check. Separately, INTC and LRCX hit new live-quote highs and took their normal 74.3% PEAK trims. 2 STOP exits in one run tripped the 2+ STOP circuit breaker, pausing all new-entry buys for this run only - so the $6,019.91 in cash (freshly settled from yesterday's PEAK trims) sat unused this run despite being fully available. Elevated-scrutiny status still applies (live since 2026-07-27, limited live track record) - a same-run cluster of STOP-outs on both of this week's newest entries is worth watching for a pattern over the next few runs, though it is expected, validated behavior per the strategy rules, not a bug."
+  },
+  {
+   "timestamp": "2026-08-27T17:27:21Z",
+   "event": "MANUAL_RETRIGGER_AFTER_BUGFIX",
+   "real_cash_used_for_sizing": 9357.68,
+   "orders": [
+    {
+     "symbol": "INTC",
+     "side": "buy",
+     "shares": 20.717176,
+     "price": 91.1299,
+     "reason": "HUGE_DIP-NET(vs PEAK)"
+    },
+    {
+     "symbol": "WDC",
+     "side": "buy",
+     "shares": 3.67924,
+     "price": 449.2599,
+     "reason": "HUGE_DIP"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "buy",
+     "shares": 0.671016,
+     "price": 1474.5365,
+     "reason": "HUGE_DIP"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "buy",
+     "shares": 2.586796,
+     "price": 315.9153,
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "skipped_orders": [],
+   "netted_trades": [
+    {"symbol": "INTC", "net_reason": "HUGE_DIP-NET(vs PEAK)", "note": "A same-symbol PEAK sell and HUGE_DIP buy both priced off this run's live quote netted into a single buy order."}
+   ],
+   "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly for all 3 tracked positions (INTC/SNDK/LRCX) pre-trade; CGC (2.0 sh, untracked) correctly excluded as belonging to another holder.",
+   "risk_state": {
+    "equity_peak": 10775.18,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false
+   },
+   "notes": "Manual off-schedule re-run at the account owner's explicit request, immediately after fixing the total_equity bug from the prior entry (commit 859057e - total_equity now includes pending_settlement). With equity computed correctly ($10,770.19 vs $10,775.18 peak, essentially flat), the kill-switch/circuit-breaker false positive from the buggy pre-fix check did not recur (stop_count_this_run: 0 - SNDK's live price had moved back just above its stop threshold by this point). Four genuine HUGE_DIP/NORMAL_DIP buy signals fired that had been masked by the bug: WDC re-entered fresh (1st tranche) after this morning's STOP-out, having closed 37.17% below its 60-day high; INTC added a 2nd tranche (net against its still-open PEAK-eligible state) at -37.39% from its 60-day high; SNDK added a 2nd tranche at -35.79%; LRCX added a 2nd tranche via NORMAL_DIP (-0.57% day-over-day, tranche-indexed sizing). All 4 candidates shared one capped cash pool, ranked deepest-drawdown-first (INTC first, LRCX last), consistent with the engine's design. Elevated-scrutiny status still applies (live since 2026-07-27, limited live track record) - this was the first time the newly-fixed total_equity formula was exercised for real; monitor the next few scheduled runs to confirm equity_peak and kill-switch behavior stay sane going forward."
   }
  ]
 }
