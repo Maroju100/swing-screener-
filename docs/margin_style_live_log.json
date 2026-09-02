@@ -1963,6 +1963,78 @@
     "trend_gate_active": false
    },
    "notes": "LRCX breached the -1.51% intraday stop (prior close $301.49, threshold $296.94, live ~$290.17-$290.26) and was fully liquidated (STOP) - only 1 STOP fired this run, below the 2-STOP circuit-breaker threshold, so all other orders proceeded. SNDK and WDC both hit new highs since entry, triggering PEAK-SELL of 74.3% of shares each; WDC's PEAK sell netted against a same-run fresh HUGE_DIP buy candidate (WDC itself down >=35% from its own 60-day high despite the new local high vs. its own recent entry - both legs priced off the same live quote, so only the net share difference traded). Fresh buys: INTC HUGE_DIP (drawdown -36.49% from 60-day high, added a 2nd tranche to the existing 1-tranche position) and TSM NORMAL_DIP (fresh 1st tranche, new position in this symbol). Real cash was very limited this run ($426.46 total, all settled - no pending funds carried in), so both buys were sized small and consumed nearly all of it ($170.58 + $243.08 = $413.66). Kill-switch/trend-gate both remain inactive; equity ($10,791.94) is at a new all-time peak for this system (previous peak $10,775.18). Elevated-scrutiny status still applies (live since 2026-07-27, limited live track record) - flag if live results diverge meaningfully from backtest expectations."
+  },
+  {
+   "timestamp": "2026-09-02T17:12:20Z",
+   "real_cash_used_for_sizing": 6169.96,
+   "orders": [
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.515103,
+     "price": 1538.892,
+     "reason": "MAX_HOLD"
+    },
+    {
+     "symbol": "STX",
+     "side": "sell",
+     "shares": 0.127705,
+     "price": 799.8844,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 5.130794,
+     "price": 89.9306,
+     "reason": "PEAK-NET(vs HUGE_DIP)"
+    },
+    {
+     "symbol": "WDC",
+     "side": "buy",
+     "shares": 5.562657,
+     "price": 443.9999,
+     "reason": "HUGE_DIP"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "buy",
+     "shares": 1.752766,
+     "price": 1539.2399,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "buy",
+     "shares": 3.327865,
+     "price": 287.7672,
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "skipped_orders": [
+    {
+     "symbol": "STX",
+     "side": "buy",
+     "shares": 0.059964,
+     "reason": "NORMAL_DIP",
+     "why": "place_equity_order failed with 'Not enough buying power' - the 3 prior buys (WDC $2,468.98, SNDK $2,698.90, LRCX $957.68) consumed more of the day's settled cash than the plan step estimated, leaving insufficient real buying power for this small ($47.92 planned) trailing buy. Per the hard rule, skipped as-is - not resized or retried."
+    }
+   ],
+   "netted_trades": [
+    {
+     "symbol": "INTC",
+     "net_reason": "PEAK-NET(vs HUGE_DIP)",
+     "note": "INTC hit a new high since entry (live $90.20-$90.24 vs prior peak $89.7799), triggering a PEAK sell of 74.3% of the 29.000725 sh held (~21.55 sh), while INTC also re-qualified this run as a fresh HUGE_DIP buy candidate off the same live quote; the two legs netted to a single sell of 5.130794 sh, no separate buy order."
+    }
+   ],
+   "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly pre-trade for all 5 tracked positions (SNDK 0.515103, WDC 1.919065, TSM 0.585359, INTC 29.000725, STX 0.127705 sh). CGC (2.0 sh, untracked) correctly excluded as belonging to another holder. LRCX had no open position (fully sold previously, only pending settlement carried) - no discrepancy. No reconciliation adjustments needed.",
+   "risk_state": {
+    "equity_peak": 10791.94,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false
+   },
+   "notes": "SNDK hit MAX_HOLD (opened 2026-08-25, >=6 trading days open with no STOP/PEAK/GAIN exit of its own) and was fully liquidated, then immediately re-entered fresh as a 1st-tranche NORMAL_DIP buy off the same run's dip signal (MAX_HOLD sells are never netted against a same-day buy, so both orders placed independently, as expected). STX breached the -1.51% intraday stop (prior close $816.64, threshold ~$804.31, live ~$799.19-$800.59) and was fully liquidated (STOP); STX also re-qualified as a fresh NORMAL_DIP candidate, but that follow-on buy failed on insufficient buying power (see skipped_orders) and was correctly left unplaced rather than resized. INTC hit a new high (PEAK) that netted against a fresh same-run HUGE_DIP re-qualification, trading only the net share difference. WDC added a fresh HUGE_DIP tranche (drawdown -39.64% from its 60-day high, the deepest of the run) sized at exactly 40% of safe settled cash. LRCX opened a brand-new 1st-tranche NORMAL_DIP position (day return -3.74%, drawdown -33.03%, not deep enough for HUGE_DIP). Only 1 STOP fired this run (STX), below the 2-STOP circuit-breaker threshold, so no entries were paused for that reason. Kill-switch/trend-gate both remain inactive; equity ~$10,772.29 stayed below the all-time peak of $10,791.94 (last set 2026-09-01), so no new peak this run. Elevated-scrutiny status still applies (live since 2026-07-27, limited live track record) - flag if live results diverge meaningfully from backtest expectations, and note netting only prevented 1 of 6 orders this run (INTC) since STOP/MAX_HOLD legs are never netted by design."
   }
  ]
 }
