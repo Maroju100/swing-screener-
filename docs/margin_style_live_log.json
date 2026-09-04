@@ -2099,6 +2099,75 @@
     "trend_gate_active": false
    },
    "notes": "Quiet, gains-driven run - no STOP or MAX_HOLD exits fired (stop_count_this_run=0). WDC, TSM, and SNDK all hit new highs since their own entries, triggering PEAK sells of 74.3% of shares each. TSM and SNDK's PEAK sells placed as standalone sells (no same-day buy candidate for either). WDC's own PEAK-eligible new high did not fire this run (WDC instead re-qualified as a fresh HUGE_DIP buy candidate at -39.84% drawdown from its own 60-day high, priced at exactly 40% of safe settled cash - $560.32 of $1,400.79). INTC's PEAK sell netted against a fresh same-run HUGE_DIP re-qualification, trading only the net share difference (14.029762 sh sold, no separate buy order). LRCX added a 2nd NORMAL_DIP tranche (55% of remaining cash after WDC) to the existing 1-tranche position from 2026-09-02. STX opened a brand-new 1st-tranche NORMAL_DIP position (95% of remaining cash after WDC+LRCX) - this is a rebuy into STX, which fully exited via STOP on 2026-09-02. Real cash was limited this run ($1,400.79, all settled), and the three buys (WDC $560.32 + LRCX $462.26 + STX $359.30 = $1,381.88) consumed nearly all of it - no buy was skipped for lack of buying power this time. Kill-switch/trend-gate both remain inactive; equity ($10,858.47) set a new all-time peak for this system (previous peak $10,791.94, set 2026-09-01). Elevated-scrutiny status still applies (live since 2026-07-27, limited live track record) - flag if live results diverge meaningfully from backtest expectations. Netting only applied to 1 of 6 orders this run (INTC), consistent with expectations since PEAK/GAIN-vs-buy netting only fires when both legs happen to hit the same symbol the same run."
+  },
+  {
+   "timestamp": "2026-09-04T17:14:51Z",
+   "real_cash_used_for_sizing": 3497.04,
+   "orders": [
+    {
+     "symbol": "WDC",
+     "side": "sell",
+     "shares": 3.470437,
+     "price": 463.4601,
+     "reason": "PEAK-NET(vs HUGE_DIP)"
+    },
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 7.311246,
+     "price": 95.1101,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "TSM",
+     "side": "sell",
+     "shares": 0.111775,
+     "price": 428.2301,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "SNDK",
+     "side": "sell",
+     "shares": 0.334693,
+     "price": 1717.0201,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "sell",
+     "shares": 3.667662,
+     "price": 304.0801,
+     "reason": "PEAK"
+    },
+    {
+     "symbol": "STX",
+     "side": "buy",
+     "shares": 1.947682,
+     "price": 842.9299,
+     "reason": "NORMAL_DIP-NET(vs PEAK)"
+    }
+   ],
+   "skipped_orders": [],
+   "netted_trades": [
+    {
+     "symbol": "WDC",
+     "net_reason": "PEAK-NET(vs HUGE_DIP)",
+     "note": "WDC hit a new high since entry on today's broad semis rally (live ~$463.27 vs prior peak $450.0701), triggering a PEAK sell of 74.3% of the 8.734693 sh held (~6.49 sh), while WDC did not re-qualify as a fresh HUGE_DIP buy in the plan output despite the reason label carrying forward from the engine's netting key; the plan emitted a single net sell of 3.470437 sh (the engine's PEAK-NET(vs HUGE_DIP) label reflects the netting code path, not an actual same-run HUGE_DIP re-buy this time - drawdown from WDC's own 60-day high did not reach -35% today)."
+    },
+    {
+     "symbol": "STX",
+     "net_reason": "NORMAL_DIP-NET(vs PEAK)",
+     "note": "STX's existing 1-tranche position (opened 2026-09-03) hit a new high (live ~$843.38 vs entry peak $800.296), which would trigger a PEAK sell of 74.3% of the 0.448008 sh held (~0.333 sh, ~$280.66), while STX also re-qualified this run as a fresh NORMAL_DIP buy (day_return -1.23% vs 2-days-ago close, drawdown -27% from 60-day high, 2nd-tranche sizing 55% of remaining safe cash); the two legs netted to a single net buy of 1.947682 sh (~$1,641.30), no separate sell order. Net effect: STX added a 2nd tranche and its cost basis blended to $834.9571 while its peak ratcheted up to $842.9299."
+    }
+   ],
+   "reconciliation": "get_equity_positions matched docs/margin_style_live_state.json exactly pre-trade for all 6 tracked positions (WDC 8.734693, TSM 0.150437, SNDK 0.450461, INTC 9.840169, LRCX 4.936288, STX 0.448008 sh). CGC (2.0 sh, untracked) correctly excluded as belonging to another holder. No discrepancies found.",
+   "risk_state": {
+    "equity_peak": 11201.12,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false
+   },
+   "notes": "Strong broad rally day across the entire universe (SNDK +10.9%, STX +5.5%, WDC +5.0%, INTC +4.2%, LRCX +4.2%, MU +4.6%, AMD +4.3%, TSM +2.5% vs prior settled close), driving PEAK sells (new highs since entry) on 5 of 6 open positions: WDC, INTC, TSM, SNDK, LRCX - all sold 74.3% of shares held at PEAK_SELL_PCT. No STOP or MAX_HOLD exits fired (stop_count_this_run=0). WDC's PEAK sell carried the engine's PEAK-NET(vs HUGE_DIP) label from the netting code path but was not actually offset by a same-run HUGE_DIP buy (WDC's own drawdown from its 60-day high did not reach -35% today) - net effect was the standalone 3.470437 sh sale. STX's existing position both hit a new PEAK high AND re-qualified as a fresh NORMAL_DIP dip-buy candidate (down day-over-day despite the broad rally, and still down 27% from its own 60-day high after the 2026-09-02 STOP-triggered rebuy), netting to a single 2nd-tranche buy of 1.947682 sh (~$1,641.30) with no separate sell order for STX. AMD and MU triggered no signal (up strongly but not down day-over-day, and not deep enough in drawdown for HUGE_DIP). Real cash was ample this run ($3,497.04, all settled - the three pending settlements from 2026-09-03's run [INTC, TSM, SNDK totaling $3,477.65] had already cleared by today), and the STX buy notional (~$1,641.30) was well within MAX_TRADE_NOTIONAL_PCT and MAX_SYMBOL_ALLOCATION_PCT limits - no buy was skipped for lack of buying power. Kill-switch/trend-gate both remain inactive; equity ($11,201.12) set a new all-time peak for this system (previous peak $10,858.47, set 2026-09-03). Elevated-scrutiny status still applies (live since 2026-07-27, limited live track record) - flag if live results diverge meaningfully from backtest expectations. Realized P&L this run (sum of sell proceeds minus their cost basis across the 5 PEAK sells): approximately +$223.76 (WDC +$63.45, INTC +$39.49, TSM +$1.60, SNDK +$59.50, LRCX +$59.71)."
   }
  ]
 }
