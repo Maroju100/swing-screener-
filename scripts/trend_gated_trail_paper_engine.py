@@ -35,19 +35,28 @@ evenly across the 4 symbols):
     since this setup is meant to hold through the full session, not scalp
     intraday bursts) is force-closed.
 
-VALIDATION HISTORY (see conversation record, 2026-09-05): derived directly
-from a real, documented flaw in an existing basket-level Efficiency Ratio
-gauge (unsigned - can't distinguish up-trending from down-trending mornings).
-Backtested on SNDK across three distinct regimes (a +9.7%-net uptrend window,
-Jul6-Aug3, a net-declining window, and a flat/choppy sideways sub-window),
-each split in half - the signed-ER>=0 gate beat the ungated version in ALL
-SIX halves. Also independently tested on WDC (net -16% over the same window,
-gate flips a -$1,703 loss into +$1,104), MU (+17% net, gate beats even
-buy-and-hold), and TSM (near-flat/choppy, gate cuts a loss roughly in half) -
-12 of 12 split-half checks favored the gate. This is the only setup explored
-in this project's day-trading research to pass every out-of-sample check it
-was given, rather than failing at least one (as every grid-searched variant,
-"v4", and the unsigned ER gate all did).
+VALIDATION HISTORY - CORRECTED 2026-09-05, NOT VALIDATED: motivated by a
+real, documented flaw in an existing basket-level Efficiency Ratio gauge
+(unsigned - can't distinguish up-trending from down-trending mornings), but
+the original "12/12 split-half checks favored the gate" claim (and the
+"MU beats even buy-and-hold" / "WDC flips a loss into a gain" framing) was
+WRONG. It came from a backtest script that entered gated trades at the
+day's OPENING price - a look-ahead error, since the gate itself can't be
+confirmed until GATE_WINDOW_MIN minutes after the open, by which point the
+achievable entry price has already moved. Re-run with the actual,
+achievable entry price (this script's real mechanic: buy at the close of
+the bar where the gate first confirms, not the day's open), the same
+12 checks come out 5/12 in the gate's favor - worse than a coin flip. A
+follow-up grid search over window/trail/threshold, trained ONLY on SNDK's
+Jul6-Aug3 window and evaluated out-of-sample on the rest, didn't do better
+either (6/10) - and the win/loss pattern was 100% explained by which half
+of the calendar each check fell in (every symbol's 1st half won, almost
+every 2nd half lost), meaning it's tracking shared cross-symbol market
+regime timing, not a genuine per-day directional signal.
+CONCLUSION: no validated edge has been found for this gate, at the
+original threshold or any of the searched variants. This script is kept
+running for live paper observation only, not as a proven strategy - do not
+describe its output as validated performance.
 
 HARD RULE: this is a paper tracker. Never call review_equity_order or
 place_equity_order for anything this script does.

@@ -111,7 +111,21 @@ user** instead of proceeding.
   rolling trailing window — a rolling window silently breaks VWAP
   day-anchoring past 4 hours).
 
-## Strategy 3: Trend-Gated Trail (TGT) day-trading
+## Strategy 3: Trend-Gated Trail (TGT) day-trading — NOT VALIDATED
+
+**Correction (2026-09-05): the "12/12 split-half" validation claim below was
+wrong** — it came from a backtest with a look-ahead bug (gated trades were
+entered at the day's opening price, which isn't achievable since the gate
+itself can't be confirmed until `GATE_WINDOW_MIN` minutes into the session).
+Re-run with the real, achievable entry price, the same 12 checks come out
+5/12 — worse than a coin flip. A follow-up grid search (window/trail/
+threshold, trained only on SNDK's Jul6-Aug3 window, tested out-of-sample on
+the rest) didn't do better (6/10), and its win/loss pattern was 100%
+explained by which half of the calendar each check fell in — i.e. shared
+cross-symbol market-regime timing, not a real per-day signal. **No
+validated edge has been found for this gate.** It is kept running for live
+paper observation only; do not describe its output as a proven strategy,
+and do not wire it toward real money.
 
 - **Script**: `scripts/trend_gated_trail_paper_engine.py` — incremental
   paper-trading engine, same run/state/log conventions as the v3 paper
@@ -141,27 +155,25 @@ user** instead of proceeding.
     open stays open).
   - **EOD close**: force-close any open position at/after `EOD_HHMM`
     (19:55 UTC).
-- **Validation history**: derived directly from a real, documented flaw
-  in the v3 dashboard's basket-level Efficiency Ratio gauge (unsigned —
-  only 42% accurate predicting a day's direction, worse than a coin
-  flip, because it can't distinguish a cleanly-up morning from a
-  cleanly-down one). The signed-ER≥0 gate was the only setup explored in
-  this project's day-trading research to pass **every** out-of-sample
-  check given: 12/12 independent split-half checks (SNDK across an
-  uptrend, a downtrend, and a sideways regime; WDC, MU, TSM each over the
-  same window) favored the gate over the ungated baseline — see the
-  script's docstring for the full per-symbol numbers.
+- **Validation history**: motivated by a real, documented flaw in the v3
+  dashboard's basket-level Efficiency Ratio gauge (unsigned — only 42%
+  accurate predicting a day's direction, worse than a coin flip, because
+  it can't distinguish a cleanly-up morning from a cleanly-down one) —
+  that flaw is real and unrelated to the correction above. But see the
+  **NOT VALIDATED** correction at the top of this section: the gate built
+  on top of that observation has not been shown to add any real edge over
+  trading the same trailing-stop mechanism ungated. See the script's
+  docstring for the full corrected numbers.
 - **Dashboard**: surfaced on `semis_momentum.html`
   (`https://claude.ai/code/artifact/9f8fcbfa-a426-41cf-a016-a407133b855a`)
-  as the primary **"Live trading signal — Trend-Gated Trail (TGT)"**
-  card, plus a Signed Efficiency Ratio table in the Efficiency Ratio
-  card. The dashboard's TGT card is a live illustrative JS replay of the
-  same rules against whatever window is fetched (resets on every
-  render, like the v3 signal card) — it is **not** the persisted paper
-  ledger; that lives only in the state/log files above, updated by
-  running the Python script. The older v3 (tightened) card is kept as
-  "Legacy signal" for reference/comparison, superseded by TGT for the
-  symbols TGT covers.
+  as an **experimental, not-yet-validated** card (labeled as such), plus a
+  Signed Efficiency Ratio table in the Efficiency Ratio card. The
+  dashboard's TGT card is a live illustrative JS replay of the same rules
+  against whatever window is fetched (resets on every render, like the v3
+  signal card) — it is **not** the persisted paper ledger; that lives
+  only in the state/log files above, updated by running the Python
+  script. The v3 (tightened) card remains the dashboard's primary live
+  signal — it was never shown to be superseded by TGT.
 - Not yet run on a recurring schedule — run
   `scripts/trend_gated_trail_paper_engine.py` manually (with fresh
   1-minute historicals for `SNDK, WDC, MU, TSM`) to advance the paper
