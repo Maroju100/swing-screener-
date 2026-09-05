@@ -111,6 +111,62 @@ user** instead of proceeding.
   rolling trailing window — a rolling window silently breaks VWAP
   day-anchoring past 4 hours).
 
+## Strategy 3: Trend-Gated Trail (TGT) day-trading
+
+- **Script**: `scripts/trend_gated_trail_paper_engine.py` — incremental
+  paper-trading engine, same run/state/log conventions as the v3 paper
+  engine. **Paper only — never call `review_equity_order` or
+  `place_equity_order` for anything this script does.**
+- **State**: `docs/trend_gated_trail_paper_state.json` (open position,
+  cash, per-symbol `last_processed_dt`, per-symbol/day gate results).
+- **Log**: `docs/trend_gated_trail_paper_log.json` (append-only per-run
+  record of trade events + equity snapshot).
+- **Universe**: `SNDK, WDC, MU, TSM` — $5,000 paper capital split evenly
+  ($1,250/symbol). Do not add/remove symbols without being asked.
+- **Rules** (long-only, one position per symbol, no scale-in tranches):
+  - **Morning gate**, decided once per symbol per day as soon as
+    `GATE_WINDOW_MIN` (30) minutes of bars exist since that day's open:
+    compute the **Signed Efficiency Ratio** — `(last_close - first_close)
+    / sum(|bar-to-bar close changes|)` over that window (signed net move,
+    not `abs()`, unlike the older basket-level Efficiency Ratio gauge on
+    the v3 dashboard). If `signed_ER >= GATE_THRESHOLD` (0.0), the day is
+    "open" for entry; otherwise skip the symbol for the rest of that day.
+  - **Entry**: once the gate passes, buy immediately with the symbol's
+    full capital slice — no tranches.
+  - **Trailing stop**: sell the entire position if price falls
+    `TRAIL_PCT` (3%) below the highest price seen since entry/re-entry.
+  - **Re-entry**: after a stop-out, wait for price to close back above
+    the day-anchored VWAP, then re-buy the full slice — no blind
+    immediate re-buy, and no re-check of the morning gate (a day that's
+    open stays open).
+  - **EOD close**: force-close any open position at/after `EOD_HHMM`
+    (19:55 UTC).
+- **Validation history**: derived directly from a real, documented flaw
+  in the v3 dashboard's basket-level Efficiency Ratio gauge (unsigned —
+  only 42% accurate predicting a day's direction, worse than a coin
+  flip, because it can't distinguish a cleanly-up morning from a
+  cleanly-down one). The signed-ER≥0 gate was the only setup explored in
+  this project's day-trading research to pass **every** out-of-sample
+  check given: 12/12 independent split-half checks (SNDK across an
+  uptrend, a downtrend, and a sideways regime; WDC, MU, TSM each over the
+  same window) favored the gate over the ungated baseline — see the
+  script's docstring for the full per-symbol numbers.
+- **Dashboard**: surfaced on `semis_momentum.html`
+  (`https://claude.ai/code/artifact/9f8fcbfa-a426-41cf-a016-a407133b855a`)
+  as the primary **"Live trading signal — Trend-Gated Trail (TGT)"**
+  card, plus a Signed Efficiency Ratio table in the Efficiency Ratio
+  card. The dashboard's TGT card is a live illustrative JS replay of the
+  same rules against whatever window is fetched (resets on every
+  render, like the v3 signal card) — it is **not** the persisted paper
+  ledger; that lives only in the state/log files above, updated by
+  running the Python script. The older v3 (tightened) card is kept as
+  "Legacy signal" for reference/comparison, superseded by TGT for the
+  symbols TGT covers.
+- Not yet run on a recurring schedule — run
+  `scripts/trend_gated_trail_paper_engine.py` manually (with fresh
+  1-minute historicals for `SNDK, WDC, MU, TSM`) to advance the paper
+  ledger; ask before wiring it to a daily trigger like Strategy 1.
+
 ## Conventions used across this repo's dashboards/backtests
 
 - **Dashboard testing before publish**: extract the `<script
