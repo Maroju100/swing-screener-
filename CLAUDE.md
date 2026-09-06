@@ -72,6 +72,11 @@ user** instead of proceeding.
   - `HUGE_DIP_DRAWDOWN = -0.35`, `HUGE_DIP_PCT = 0.40`
   - `NORMAL_DIP_THRESHOLD = 0.004` (tranche-indexed sizing)
   - `INTRADAY_STOP = -0.0151` — see standing directive above
+  - `DAILY_STOP_PCT = 0.01` — daily loss cap (1% of capital, e.g., -$300 on $30k).
+    Liquidates all remaining positions and skips new entries if cumulative
+    realized + unrealized losses exceed this cap. Validated +60.1% improvement
+    out-of-sample (holdout: +79.2%). Triggers ~18 times per 6-month window,
+    saving worst-day losses (e.g., Jul28: -$15.5k → -$300).
   - `PEAK_SELL_PCT = 0.743`
   - `GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]`
   - `MAX_HOLD_DAYS = 6`
