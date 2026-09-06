@@ -90,12 +90,20 @@ user** instead of proceeding.
   snapshot at publish time — **republish after each real trading run** to
   keep them current.
 
-## Strategy 2: v3 (tightened) day-trading
+## Strategy 2: v3 (tightened & baseline) day-trading
 
 - Explored via `semis_momentum.html` dashboard
   (`https://claude.ai/code/artifact/9f8fcbfa-a426-41cf-a016-a407133b855a`)
   and backtest scripts in the scratchpad — this is a research/paper
   context, not live-money, unless stated otherwise.
+- **Live paper signals**: The dashboard now displays live trade signals for
+  both v3 Tightened (grid-optimized) and v3 Baseline (pre-optimization
+  production version) side-by-side, allowing direct comparison of the two
+  variants. Both run $30,000 simulated capital across all 8 semis (AMD, MU,
+  WDC, SNDK, TSM, INTC, LRCX, STX). The baseline version uses less-aggressive
+  parameters (0.6% add-gate vs 0.3%, 2-min cooldown vs 1-min, 65/90%
+  exhaustion/trim vs 70/70%) and historically shows more consistency on
+  mixed-sentiment trading days.
 - A conservative Efficiency-Ratio trading-day gate (Kaufman's ER: net move
   / sum of bar-to-bar absolute moves) was validated as a real, moderate
   improvement (similar/better P&L with materially fewer trading days) —
