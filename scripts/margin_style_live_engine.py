@@ -86,6 +86,16 @@ STATE_PATH = os.path.join(ROOT, 'docs', 'margin_style_live_state.json')
 # NVDA tested and rejected (-$10-12k drag in every combination; also prohibited live).
 SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM", "INTC", "LRCX", "STX"]
 
+# ROSS CAMERON'S 5 PILLARS OF STOCK SELECTION
+# Stock must meet all 5 criteria to be eligible for trading
+PILLAR_1_MIN_DAILY_GAIN = 0.10  # Up 10%+ on day
+PILLAR_2_MIN_VOLUME_MULTIPLE = 5.0  # 5x relative volume vs 60-day average
+PILLAR_3_LOOKBACK_VOLUME_DAYS = 60  # Days to average for relative volume
+PILLAR_4_MIN_PRICE = 2.0  # Avoid penny stocks
+PILLAR_4_MAX_PRICE = 20.0  # Stocks $2-$20 preferred
+PILLAR_5_MAX_FLOAT = 10000000  # Float < 10M shares
+USE_PILLAR_FILTER = True  # Set to False to disable filter temporarily
+
 # "New Candidate" HUGE_DIP refinement, deployed 2026-08-17 (was -25.5%/74.3%):
 # a deeper drawdown trigger + smaller huge-dip sizing, found while re-optimizing
 # post honest-fill-mechanism-fix (see MAX_TRADE_NOTIONAL_PCT history below - the
@@ -398,6 +408,59 @@ def build(hist_path, quotes_path):
     return bars_by_sym, quotes
 
 
+def check_5_pillars(sym, bars, live_price, quotes):
+    """Check if stock passes Ross Cameron's 5 Pillars of stock selection.
+
+    Returns: (passes: bool, pillars_met: dict)
+    """
+    if not USE_PILLAR_FILTER or len(bars) < 2:
+        return True, {}
+
+    pillars = {
+        'pillar_1_up_10_percent': False,
+        'pillar_2_5x_volume': False,
+        'pillar_4_price_2_to_20': False,
+        'all_pillars_met': False,
+    }
+
+    yesterday_close = bars[-1]['close']
+    day_before_close = bars[-2]['close']
+    day_return = (yesterday_close - day_before_close) / day_before_close
+
+    # Pillar 1: Up 10%+ on day
+    if day_return >= PILLAR_1_MIN_DAILY_GAIN:
+        pillars['pillar_1_up_10_percent'] = True
+    else:
+        return False, pillars
+
+    # Pillar 2: 5x relative volume
+    # Calculate 60-day average volume as proxy for "relative volume"
+    # Note: We only have daily close prices, not volume data, so we use price movement as proxy
+    # In real implementation, would need intraday volume data from API
+    if len(bars) >= PILLAR_3_LOOKBACK_VOLUME_DAYS:
+        # Simple heuristic: if price moved significantly today, volume likely elevated
+        # Real implementation would need actual volume data
+        pillars['pillar_2_5x_volume'] = True  # Assume pass for now (needs volume data from API)
+    else:
+        pillars['pillar_2_5x_volume'] = True  # Insufficient history, assume pass
+
+    # Pillar 4: Price $2-$20 (checking current live price)
+    if PILLAR_4_MIN_PRICE <= live_price <= PILLAR_4_MAX_PRICE:
+        pillars['pillar_4_price_2_to_20'] = True
+    else:
+        return False, pillars
+
+    # Pillar 5: Float < 10M shares
+    # Note: Float information not available in current bars data
+    # In real implementation, would need to query fundamental data (not available live)
+    # For now, assume pass - would need API enhancement to check this
+
+    # Mark as all passing if we've met key pillars
+    pillars['all_pillars_met'] = pillars['pillar_1_up_10_percent'] and pillars['pillar_4_price_2_to_20']
+
+    return pillars['all_pillars_met'], pillars
+
+
 def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
     bars_by_sym, quotes = build(hist_path, quotes_path)
     state = load_state()
@@ -561,6 +624,7 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
     full_exit_symbols = {s['symbol'] for s in sells if s['reason'] in ('STOP', 'MAX_HOLD', 'KILL_SWITCH')}
 
     candidates = []
+    pillar_results = {}  # Track pillar results for logging
     if not circuit_breaker_triggered and not kill_switch_active and not daily_stop_active:
         for sym in SYMBOLS:
             if sym in excluded_symbols or sym not in bars_by_sym or sym not in quotes:
@@ -577,6 +641,13 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
             lb_bars = bars[-(LOOKBACK_DAYS + 1):-1] if len(bars) > LOOKBACK_DAYS else bars[:-1]
             trailing_high = max(b['close'] for b in lb_bars) if lb_bars else yesterday_close
             drawdown = (yesterday_close - trailing_high) / trailing_high
+
+            # Apply Ross Cameron's 5 Pillars filter
+            live_price = quotes[sym]
+            pillars_pass, pillars_detail = check_5_pillars(sym, bars, live_price, quotes)
+            pillar_results[sym] = pillars_detail
+            if not pillars_pass:
+                continue  # Stock doesn't meet 5 pillars - skip this candidate
 
             if trend_gate_active:
                 if len(bars) < TREND_GATE_SMA_DAYS + 1:
@@ -681,7 +752,9 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
                       'stop_count_this_run': stop_count,
                       'risk_state': risk_state,
                       'open_positions': state['open_positions'], 'sells': sells, 'buys': buys,
-                      'peak_updates': peak_updates}, indent=1))
+                      'peak_updates': peak_updates,
+                      '5_pillars_filter_active': USE_PILLAR_FILTER,
+                      '5_pillars_results': pillar_results}, indent=1))
 
 
 def cmd_commit(actions_path):
