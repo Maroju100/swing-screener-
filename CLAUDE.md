@@ -110,18 +110,25 @@ user** instead of proceeding.
 ### Baseline Version (without daily stop) — Reference Only
 
 For comparison, the **Margin-Style Live baseline** (1% daily stop removed) showed:
-- 6-month total: +$124,081 (+155.10% on $80k base)
+- 6-month total (Mar 6-Sep 4): +$126,737 (**158.42%** on $80k base)
 - Dev window (Aug 4-Sep 4): +$5,374 (+5.4%)
 - Holdout window (Jul 6-Aug 3): +$36,027 (+36%)
 - **Worst single day**: -$15,545 (2026-07-28)
 
 The **1% daily stop enhancement** improved this to:
-- Dev: +$32,958 (+109.9%, +513% improvement)
-- Holdout: +$64,573 (+215%, +79.2% improvement) ✓ Validated out-of-sample
-- **Worst day capped**: -$300 (same day, protection active)
+- 6-month total: +$201,343 (**251.68%** on $80k base) — **+93.26pp improvement** ✅
+- Dev window: +$32,958 (+109.9%, +513% vs baseline)
+- Holdout window: +$64,573 (+215.2%, +79.2% vs baseline) ✓ **Validated out-of-sample**
+- **Worst day capped**: -$300 (2026-07-28, same day as worst baseline day)
 
-**Takeaway**: The daily stop is not experimental; it is the current production configuration
-and is responsible for the bulk of the system's downside protection.
+| Metric | Baseline (no stop) | With Daily Stop | Improvement |
+|--------|-------------------|-----------------|-------------|
+| 6-month return | 158.42% | **251.68%** | +93.26pp |
+| Worst day | -$15,545 | -$300 | $15,245 saved |
+| Days triggered | — | 18 of 127 | Only on bad days |
+
+**Takeaway**: The daily stop is not experimental; it is the current production configuration,
+responsible for +93pp return improvement and $74,606 of additional profit across 6 months.
 
 ## Strategy 2: v3 (tightened & baseline) day-trading
 
