@@ -1,0 +1,297 @@
+{
+  "meta": {
+    "source": "Ross Cameron YouTube transcripts (7 training videos)",
+    "extracted_from": [
+      "How To Start Day Trading in 2026 (full training)",
+      "The Ultimate Day Trading Guide (Full Training Chapters 1 - 10)",
+      "How to BUY THE DIP the RIGHT WAY",
+      "Master the Bull Flag Trading Pattern TODAY (Step-by-Step Guide)",
+      "How to Day Trade: The Plain Truth by Ross Cameron (Full Audiobook)",
+      "My Bear Market 🐻 Day Trading Strategy",
+      "How to Scalp Trade (with ZERO experience)"
+    ],
+    "date_extracted": "2026-09-07",
+    "note": "Setups parametrized based on transcript analysis; some parameters (gap %, stops) are author-recommended ranges converted to specific thresholds for backtesting"
+  },
+  "setups": [
+    {
+      "setup_id": 1,
+      "name": "DIP + VWAP Bounce Entry",
+      "description": "Buy pullback/dip near VWAP support, enter on bounce above VWAP with volume confirmation",
+      "category": "swing_entry",
+      "entry_conditions": {
+        "price_vs_vwap": {
+          "rule": "price must be within 1-2% below VWAP to identify dip",
+          "threshold_pct": 0.02,
+          "requirement": "price < VWAP * (1 - threshold_pct)"
+        },
+        "vwap_bounce": {
+          "rule": "enter on close above VWAP with volume > 50k shares",
+          "volume_min": 50000,
+          "requirement": "price > VWAP and volume > volume_min"
+        },
+        "momentum": {
+          "rule": "RSI(14) should be recovering from oversold (not < 30 after bounce)",
+          "rsi_min": 35,
+          "requirement": "RSI > rsi_min"
+        },
+        "time_window": {
+          "rule": "trade within first 2 hours of market open",
+          "start_min": 930,
+          "end_min": 1130,
+          "requirement": "entry between 09:30-11:30 UTC"
+        }
+      },
+      "exit_conditions": {
+        "profit_target_1": {
+          "rule": "first target at 5% gain, take 50% of position",
+          "gain_pct": 0.05,
+          "exit_size": 0.5
+        },
+        "profit_target_2": {
+          "rule": "second target at 10% gain, take 30% more",
+          "gain_pct": 0.10,
+          "exit_size": 0.3
+        },
+        "trail_remaining": {
+          "rule": "trail remaining 20% with 5% stop",
+          "trail_pct": 0.05,
+          "exit_size": 0.2
+        },
+        "stop_loss": {
+          "rule": "hard stop at 2% below entry or break of VWAP",
+          "stop_pct": 0.02,
+          "requirement": "exit if price < entry * (1 - stop_pct)"
+        },
+        "time_exit": {
+          "rule": "close at end of day (16:00 UTC) if no profit target hit",
+          "eod_time": 1600
+        }
+      },
+      "position_sizing": {
+        "capital_alloc_pct": 0.25,
+        "tranche": "single entry (no scale-in)",
+        "max_positions": 3
+      },
+      "symbols": "all 8 (AMD, MU, WDC, SNDK, TSM, INTC, LRCX, STX)",
+      "validation_status": "not_validated",
+      "confidence": "moderate",
+      "source_quotes": [
+        "Buy the dip near VWAP support",
+        "Enter on bounce with volume confirmation",
+        "Take profits at 5%, 10%, trail the rest"
+      ]
+    },
+    {
+      "setup_id": 2,
+      "name": "Bull Flag Breakout Entry",
+      "description": "Identify bull flag pattern (consolidation after strong move), enter on breakout above resistance with volume",
+      "category": "pattern_breakout",
+      "entry_conditions": {
+        "prior_move": {
+          "rule": "stock must have made 10%+ move in prior 5 days",
+          "move_pct": 0.10,
+          "lookback_days": 5,
+          "requirement": "5-day return > move_pct"
+        },
+        "flag_pattern": {
+          "rule": "consolidation in flag: range between 5-8% over 2-3 days",
+          "range_min_pct": 0.05,
+          "range_max_pct": 0.08,
+          "days": 3,
+          "requirement": "current_range within specified bounds"
+        },
+        "breakout_entry": {
+          "rule": "enter on close above flag high (previous resistance)",
+          "volume_min": 50000,
+          "volume_confirmation": "volume > 50k shares",
+          "requirement": "price closes above flag_high and volume > 50k"
+        },
+        "time_window": {
+          "rule": "entry between 09:30-14:00 UTC (early-to-mid day)",
+          "start_min": 930,
+          "end_min": 1400,
+          "requirement": "entry between 09:30-14:00 UTC"
+        }
+      },
+      "exit_conditions": {
+        "profit_target_1": {
+          "rule": "first target at 8% gain, take 60% of position",
+          "gain_pct": 0.08,
+          "exit_size": 0.60
+        },
+        "profit_target_2": {
+          "rule": "second target at 15% gain, take remaining 40%",
+          "gain_pct": 0.15,
+          "exit_size": 0.40
+        },
+        "stop_loss": {
+          "rule": "hard stop at 3% below flag low (invalidates pattern)",
+          "stop_pct": 0.03,
+          "requirement": "exit if price < flag_low * (1 - stop_pct)"
+        },
+        "time_exit": {
+          "rule": "close at end of day if no target hit",
+          "eod_time": 1600
+        }
+      },
+      "position_sizing": {
+        "capital_alloc_pct": 0.30,
+        "tranche": "single entry (no scale-in)",
+        "max_positions": 2
+      },
+      "symbols": "all 8 (AMD, MU, WDC, SNDK, TSM, INTC, LRCX, STX)",
+      "validation_status": "not_validated",
+      "confidence": "moderate",
+      "source_quotes": [
+        "Bull flag after 10%+ move and consolidation",
+        "Breakout on volume with 3% stop",
+        "Target 8-15% gain with profit-taking tiers"
+      ]
+    },
+    {
+      "setup_id": 3,
+      "name": "Scalp + Quick Momentum Entry",
+      "description": "Fast 2-5 minute scalp trades on intrabar momentum, tight stops, quick profit-taking",
+      "category": "scalp_entry",
+      "entry_conditions": {
+        "volume_spike": {
+          "rule": "volume must spike 3x average (sudden buying interest)",
+          "volume_multiplier": 3.0,
+          "lookback_bars": 20,
+          "requirement": "current_vol > avg_vol * volume_multiplier"
+        },
+        "momentum_confirm": {
+          "rule": "RSI > 60 on 5-min chart, MACD bars turning up",
+          "rsi_min": 60,
+          "requirement": "RSI(14) > rsi_min"
+        },
+        "entry_trigger": {
+          "rule": "enter on close above previous 2-bar high with volume",
+          "lookback_bars": 2,
+          "requirement": "price > high of prior 2 bars and volume spike confirmed"
+        },
+        "time_window": {
+          "rule": "only trade 09:30-12:00 UTC (high liquidity window)",
+          "start_min": 930,
+          "end_min": 1200,
+          "requirement": "entry between 09:30-12:00 UTC"
+        }
+      },
+      "exit_conditions": {
+        "quick_profit": {
+          "rule": "take profit at +2% gain (fast exit)",
+          "gain_pct": 0.02,
+          "hold_bars_max": 5
+        },
+        "stop_loss": {
+          "rule": "tight stop at 1% below entry (scalp discipline)",
+          "stop_pct": 0.01,
+          "requirement": "exit immediately if triggered"
+        },
+        "time_exit": {
+          "rule": "force exit after 5 bars (3-5 min) regardless of P&L",
+          "bars_max": 5,
+          "bar_size_min": 60,
+          "requirement": "exit after 5 bars if still in trade"
+        }
+      },
+      "position_sizing": {
+        "capital_alloc_pct": 0.15,
+        "tranche": "single entry (no scale-in)",
+        "max_positions": 2
+      },
+      "symbols": "all 8 (AMD, MU, WDC, SNDK, TSM, INTC, LRCX, STX)",
+      "validation_status": "not_validated",
+      "confidence": "low",
+      "source_quotes": [
+        "Scalp on intrabar momentum, quick entries and exits",
+        "2% gain target, 1% tight stop",
+        "Volume spike + RSI > 60 confirmation",
+        "Max 5-bar hold (3-5 minutes)"
+      ]
+    },
+    {
+      "setup_id": 4,
+      "name": "Gap Up + Support Entry",
+      "description": "Premarket gap up > 2%, find support, enter on bounce with RSI confirmation",
+      "category": "gap_entry",
+      "entry_conditions": {
+        "gap_condition": {
+          "rule": "stock must gap up > 2% at open vs prior close",
+          "gap_pct": 0.02,
+          "requirement": "open > close_prev * (1 + gap_pct)"
+        },
+        "support_bounce": {
+          "rule": "find first support (3-4% below open), wait for bounce",
+          "support_range_pct": 0.04,
+          "requirement": "price approaches but holds above support"
+        },
+        "entry_trigger": {
+          "rule": "enter on close above support with RSI(14) > 40",
+          "rsi_min": 40,
+          "volume_min": 40000,
+          "requirement": "price > support and RSI > rsi_min and volume > volume_min"
+        },
+        "time_window": {
+          "rule": "entry must occur within first 90 minutes (09:30-11:00 UTC)",
+          "start_min": 930,
+          "end_min": 1100,
+          "requirement": "entry between 09:30-11:00 UTC"
+        }
+      },
+      "exit_conditions": {
+        "profit_target_1": {
+          "rule": "first target at gap close level (retracement), take 40% of position",
+          "gain_pct": 0.02,
+          "exit_size": 0.40
+        },
+        "profit_target_2": {
+          "rule": "second target at +5% from entry, take 40% more",
+          "gain_pct": 0.05,
+          "exit_size": 0.40
+        },
+        "trail_remaining": {
+          "rule": "trail final 20% with 3% stop",
+          "trail_pct": 0.03,
+          "exit_size": 0.20
+        },
+        "stop_loss": {
+          "rule": "hard stop at 2.5% below entry (break of support confirms stop)",
+          "stop_pct": 0.025,
+          "requirement": "exit if price < entry * (1 - stop_pct)"
+        },
+        "time_exit": {
+          "rule": "close at end of day if no target hit",
+          "eod_time": 1600
+        }
+      },
+      "position_sizing": {
+        "capital_alloc_pct": 0.25,
+        "tranche": "single entry (no scale-in)",
+        "max_positions": 3
+      },
+      "symbols": "all 8 (AMD, MU, WDC, SNDK, TSM, INTC, LRCX, STX)",
+      "validation_status": "not_validated",
+      "confidence": "moderate",
+      "source_quotes": [
+        "Gap up > 2% premarket setup",
+        "Find support, enter on bounce",
+        "RSI confirmation, 2.5% stop loss",
+        "Targets: gap close level and +5%"
+      ]
+    }
+  ],
+  "backtesting_notes": {
+    "data_requirements": "1-min or 5-min OHLC historicals, volume data, RSI calculations",
+    "capital_base": "$30,000 starting",
+    "position_sizing": "quarter to full position depends on setup, trailing stops where specified",
+    "risk_management": "Hard stops enforced, no recovery trades, daily loss tracking",
+    "test_windows": [
+      "Development: Aug 4-Sep 4, 2026 (24 trading days)",
+      "Holdout: Jul 6-Aug 3, 2026 (21 trading days, out-of-sample)"
+    ],
+    "symbols": "AMD, MU, WDC, SNDK, TSM, INTC, LRCX, STX (all 8 semis)",
+    "validation_threshold": "+20% improvement required on holdout window to confirm edge"
+  }
+}

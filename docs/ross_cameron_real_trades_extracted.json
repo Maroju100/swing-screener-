@@ -1,0 +1,210 @@
+{
+  "meta": {
+    "source": "Ross Cameron YouTube transcripts - actual trade examples",
+    "date_extracted": "2026-09-07",
+    "methodology": "Extracted from detailed trade breakdowns where Ross explains exact entry/exit prices"
+  },
+  "real_trades": [
+    {
+      "trade_id": "RT_001",
+      "video": "Day 37 Small Account Challenge - +$19,323",
+      "description": "Stock squeeze from $2 to $4 in under 5 minutes",
+      "entry_setup": {
+        "name": "Micro Cap Squeeze Entry (Low Float, Rapid Acceleration)",
+        "trigger": "Stock showing rapid acceleration with increasing candle sizes",
+        "entry_condition": "Hesitation/bottoming tail after initial push",
+        "entry_price_range_low": 2.50,
+        "entry_price_range_high": 2.75,
+        "entry_type": "Initial starter position, then add into squeeze"
+      },
+      "exit_setup": {
+        "name": "Seller Exhaustion Exit",
+        "exit_condition": "Big seller appears at resistance, pull the rip cord",
+        "exit_price": 4.00,
+        "exit_type": "All-in exit when volume exhausts"
+      },
+      "risk_management": {
+        "position_sizing": "Starter entry + adding into move",
+        "stop_loss": "Not explicit, but aggressive scaling in"
+      },
+      "key_indicators": [
+        "Accelerating candle sizes (momentum)",
+        "Brief pullback (consolidation)",
+        "Volume surge (low float stock)",
+        "Resistance at $4 (seller pressure)"
+      ],
+      "account_size": 80000,
+      "profit": 19323,
+      "profit_pct": 24.15
+    },
+    {
+      "trade_id": "RT_002",
+      "video": "Trader Rallies from -$26k to +$8k",
+      "description": "Series of VWAP break trades and dip buybacks",
+      "entry_setup": {
+        "name": "VWAP Break of Support + Dip",
+        "trigger": "Break of VWAP support level",
+        "entry_condition": "Price bounces at/off VWAP after pullback",
+        "entry_type": "Multiple tranches - initial entry + re-entries on dips"
+      },
+      "exit_setup": {
+        "name": "Partial Profit Taking",
+        "exit_condition": "Take profits at resistance or small gains (% not specified)",
+        "exit_type": "Multiple exits, scaling out"
+      },
+      "specific_trades": [
+        {
+          "sequence": 1,
+          "setup": "Initial trade",
+          "profit": 6000
+        },
+        {
+          "sequence": 2,
+          "setup": "Pullback, re-entry for VWAP break",
+          "profit": 2500
+        },
+        {
+          "sequence": 3,
+          "setup": "Consolidation dip",
+          "profit": 1500
+        },
+        {
+          "sequence": 4,
+          "setup": "Final trade at open, buying dip off 12 selling into 13",
+          "profit": 8430
+        }
+      ],
+      "account_start": "Down $26,000",
+      "account_end": "+$8,430",
+      "key_indicators": [
+        "VWAP breaks",
+        "Support bounces",
+        "Volume surges on breaks",
+        "Micro pullbacks for re-entry"
+      ]
+    },
+    {
+      "trade_id": "RT_003",
+      "video": "+$19,000 In One Trade",
+      "description": "Break through 655 resistance to 850 squeeze",
+      "entry_setup": {
+        "name": "Break of Level Entry",
+        "trigger": "Break of 655 level",
+        "entry_price": 655,
+        "target_levels": [
+          665,
+          700,
+          750,
+          850
+        ]
+      },
+      "exit_setup": {
+        "name": "Level Exhaustion",
+        "exit_condition": "Squeeze to 8 (80? assuming $6.55-$8.00 move)",
+        "profit": 19000
+      },
+      "key_indicators": [
+        "Break of previous resistance",
+        "Looking for squeeze and retest of pre-market high"
+      ]
+    },
+    {
+      "trade_id": "RT_004",
+      "video": "News Catalyst Trade - $1,921.72",
+      "description": "Stock with news catalyst volume surge",
+      "entry_setup": {
+        "name": "News Catalyst + Support Level Entry",
+        "trigger": "News catalyst overnight, volume surge, stock pops from $4 to $6",
+        "entry_conditions": [
+          "High volume catalyst news",
+          "Support bounce at daily resistance area",
+          "Dip down to support after initial pop"
+        ],
+        "entry_prices": [4, 6, 7, 8, 9, 10, 12]
+      },
+      "exit_setup": {
+        "name": "Multiple Micro Exits",
+        "exit_condition": "Jump in and out quickly on squeezes",
+        "exit_prices": [6, 7, 8, 10, 12, 14, 18, 19]
+      },
+      "specific_moves": [
+        "$4 → $6 (micro pullback missed)",
+        "$6 → $7 (not on scanner)",
+        "$7 → $8 (higher volume)",
+        "$9 bounce (dip trade considered but not taken - red volume candle)",
+        "$10 → $12 (break through)",
+        "$12 → $14 (big push)",
+        "$14 → dip → $18 (continuation)",
+        "$18 → dip → $19 (final push)"
+      ],
+      "profit": 1921.72,
+      "key_indicators": [
+        "News catalyst (overnight volume surge)",
+        "Initial pop after news",
+        "Support bounces",
+        "Volume confirmation on breaks",
+        "Micro pullbacks for entries"
+      ]
+    }
+  ],
+  "pattern_summary": {
+    "common_elements": [
+      "Low-float stocks (quick squeezes)",
+      "News/catalysts (volume surge)",
+      "VWAP as support/resistance",
+      "Breakouts above resistance levels",
+      "Micro pullback entries after big moves",
+      "Support bounces",
+      "Multiple small profits vs one big swing"
+    ],
+    "entry_types": [
+      "Break of level (swing high/low/VWAP)",
+      "Support bounce (dip buy)",
+      "Micro pullback in trend"
+    ],
+    "exit_types": [
+      "Resistance level reached",
+      "Seller exhaustion (volume stopping move)",
+      "Multiple scale-out profits"
+    ],
+    "timeframes": [
+      "Intraday only (minutes to hours)",
+      "Most trades 1-4 hour duration",
+      "Scalp mindset: quick in, quick out"
+    ]
+  },
+  "recommended_backtest_setup": {
+    "name": "Ross Cameron Live Trading Micro Squeeze (RLMS)",
+    "rules": {
+      "entry_conditions": [
+        "Volume surge on stock (3x+ recent average)",
+        "Price action: break of previous resistance or bounce off support",
+        "Entry on pullback after initial move (safer entry)",
+        "Position size: small starter, add into squeeze"
+      ],
+      "exit_conditions": [
+        "Resistance level reached (chart-based)",
+        "Seller exhaustion (volume dries up, big red candle)",
+        "Trailing stop: 1-2% below recent high",
+        "Time-based: if no movement in 1 hour, exit"
+      ],
+      "position_sizing": "Starter 25% of capital, add 25% per confirmed push",
+      "risk_management": [
+        "Stop loss: 3-5% below entry (support break)",
+        "Max hold: 2-4 hours",
+        "Scale out: take 50% at first target, trail rest"
+      ],
+      "stock_selection": [
+        "Pre-market gappers (>10% overnight)",
+        "News catalysts (earnings, FDA approval, etc)",
+        "Micro-cap/low-float (float <5M preferred)",
+        "Volume surge (3x+ average)"
+      ],
+      "best_times": [
+        "First 30 mins after open (highest volume)",
+        "Pre-market (news-driven moves)",
+        "Avoid afternoon chop"
+      ]
+    }
+  }
+}
