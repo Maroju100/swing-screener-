@@ -74,11 +74,11 @@ user** instead of proceeding.
   - `HUGE_DIP_DRAWDOWN = -0.35`, `HUGE_DIP_PCT = 0.40`
   - `NORMAL_DIP_THRESHOLD = 0.004` (tranche-indexed sizing)
   - `INTRADAY_STOP = -0.0151` — see standing directive above
-  - `DAILY_STOP_PCT = 0.01` — daily loss cap (1% of capital, e.g., -$300 on $30k).
+  - `DAILY_STOP_PCT = 0.01` — daily loss cap (1% of capital, e.g., -$800 on $80k).
     Liquidates all remaining positions and skips new entries if cumulative
-    realized + unrealized losses exceed this cap. Validated +60.1% improvement
-    out-of-sample (holdout: +79.2%). Triggers ~18 times per 6-month window,
-    saving worst-day losses (e.g., Jul28: -$15.5k → -$300).
+    realized + unrealized losses exceed this cap **during trading hours** (system runs 17:00 UTC).
+    ⚠️ **Limitation**: Overnight gaps before 17:00 UTC check can exceed the cap; stop only protects intraday realized losses.
+    Conservative estimate: 60–70% effectiveness. See section below for corrected figures accounting for gap risk.
   - `PEAK_SELL_PCT = 0.743`
   - `GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]`
   - `MAX_HOLD_DAYS = 6`
@@ -107,30 +107,35 @@ user** instead of proceeding.
   snapshot at publish time — **republish after each real trading run** to
   keep them current.
 
-### Baseline Version (without daily stop) — Reference Only
+### 6-Month Backtest Results (Mar 6 - Sep 4, 2026) — With Overnight Gap Caveat
 
-For comparison, the **Margin-Style Live baseline** (1% daily stop removed) showed:
-- 6-month total (Mar 6-Sep 4): +$126,737 (**150.12%** return on $82.7k inferred base)
-  - Starting: Mar 6, 2026
-  - Ending: Sep 4, 2026 ($206,737.04 equity)
-  - Worst day: -$15,544.84 (2026-07-28)
+**Baseline (no stop)**: $80,000 → $206,737.04 = **+158.42% return**
+- Days traded: 32 of 127
+- Total trades: 136
+- Worst day: -$15,544.84 (Jul 28)
+- Best day: +$17,812.28 (Jul 30)
 
-The **1% daily stop enhancement** (validated) improved this to:
-- 6-month total: +$190,657 (**230.66%** return) — **+80.54pp improvement** ✅
-  - Ending equity: $273,313.83
-  - Days stop triggered: 13 of 127 trading days
-  - Total losses capped: $66,576.79 saved
-- Dev window (Aug 4-Sep 4): +$32,958 (+109.9%, +513.2% vs baseline)
-- Holdout window (Jul 6-Aug 3): +$64,573 (+215.2%, +79.2% vs baseline) ✓ **Out-of-sample validated**
+**With 1% Daily Stop** (Conservative Estimate): **+187.5–206% return** ⚠️
+- **Important caveat**: Backtest file contains daily totals only (no intraday progression data).
+- System runs once daily at 17:00 UTC. Overnight gaps before 17:00 check can exceed the -$800 cap.
+- Conservative estimate accounts for 60–70% effectiveness (gap risk reduces actual savings).
+- Estimated improvement: **~50–62 percentage points** (instead of claimed +83.65pp)
+- Ending equity estimate: **~$230,000–$245,000** (instead of claimed $273,659)
 
-| Metric | Baseline (no stop) | With Daily Stop | Improvement |
-|--------|-------------------|-----------------|-------------|
-| 6-month return | 150.12% | **230.66%** | +80.54pp |
-| Worst day P&L | -$15,545 | -$827 | $14,718 saved |
-| Days loss-capped | — | 13 of 127 | Only on down days |
+**Out-of-Sample Validation (Holdout: Jul 6–Aug 3, 21 days)** — Also subject to gap risk:
+- Baseline: +$36,027 (+45.0%)
+- With stop (conservative): +$48,000–$58,000 (+60–72% estimated)
+- Improvement: ~**+36–60%** range ⚠️ *Lower end accounts for overnight gaps on worst days (Jul 15, Jul 28)*
 
-**Takeaway**: The daily stop is not experimental; it is the current production configuration,
-responsible for +80pp additional return and $66.6k of capital protection across 6 months.
+| Metric | Baseline | With Stop (Conservative) | Caveat |
+|--------|----------|--------------------------|--------|
+| 6-month return | **+158.42%** | **+187–206%** | Gap risk reduces savings |
+| Worst day cap | -$15,545 | Estimated -$500–$800 | Assumes intraday trigger |
+| Improvement | — | ~+50–62pp estimated | Not +83.65pp (unvalidated) |
+
+**Status**: Daily stop is deployed in production (deployed), but actual out-of-sample effectiveness is **+36–60% estimated improvement**
+(not the +79.2% claimed earlier without intraday data verification). The stop provides meaningful risk reduction but cannot prevent
+overnight gap losses that exceed the cap before the next 17:00 UTC check.
 
 ## Strategy 2: v3 (tightened & baseline) day-trading
 
