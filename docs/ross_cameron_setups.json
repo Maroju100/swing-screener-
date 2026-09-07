@@ -103,6 +103,7 @@
         },
         "breakout_entry": {
           "rule": "enter on close above flag high (previous resistance)",
+          "volume_min": 50000,
           "volume_confirmation": "volume > 50k shares",
           "requirement": "price closes above flag_high and volume > 50k"
         },
@@ -242,7 +243,7 @@
       "exit_conditions": {
         "profit_target_1": {
           "rule": "first target at gap close level (retracement), take 40% of position",
-          "target_level": "gap_close_level",
+          "gain_pct": 0.02,
           "exit_size": 0.40
         },
         "profit_target_2": {

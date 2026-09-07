@@ -27,7 +27,14 @@ class RossCameronBacktester:
         """Load OHLCV data from JSON file."""
         try:
             with open(filepath, 'r') as f:
-                return json.load(f)
+                raw_data = json.load(f)
+
+            # Handle nested structure: data['data']['results']
+            if 'data' in raw_data and isinstance(raw_data['data'], dict):
+                if 'results' in raw_data['data']:
+                    return {'results': raw_data['data']['results']}
+
+            return raw_data
         except Exception as e:
             print(f"❌ Error loading {filepath}: {e}")
             return {}
@@ -77,11 +84,41 @@ class RossCameronBacktester:
         trades = []
         position = None
 
-        if not historicals or 'bars' not in historicals:
+        if not historicals:
             return {'status': 'error', 'message': 'No historicals data'}
 
-        bars = historicals['bars']
-        symbol = historicals.get('symbol', 'UNKNOWN')
+        # Handle nested results structure
+        results = historicals.get('results', [])
+        if not results:
+            return {'status': 'error', 'message': 'No results in historicals'}
+
+        bars_by_symbol = {}
+        for result in results:
+            symbol = result.get('symbol', 'UNKNOWN')
+            raw_bars = result.get('bars', [])
+            # Normalize bar format: convert Robinhood API format to standard format
+            normalized_bars = []
+            for bar in raw_bars:
+                normalized_bars.append({
+                    'open': float(bar.get('open_price', 0)),
+                    'high': float(bar.get('high_price', 0)),
+                    'low': float(bar.get('low_price', 0)),
+                    'close': float(bar.get('close_price', 0)),
+                    'volume': int(bar.get('volume', 0)),
+                    'begins_at': bar.get('begins_at', '')
+                })
+            bars_by_symbol[symbol] = normalized_bars
+
+        # For now, concatenate all symbols' bars for testing
+        all_bars = []
+        for symbol in sorted(bars_by_symbol.keys()):
+            all_bars.extend(bars_by_symbol[symbol])
+
+        if not all_bars:
+            return {'status': 'error', 'message': 'No bars found in results'}
+
+        bars = all_bars
+        symbol = 'BASKET'
 
         # Pre-calculate technical indicators
         closes = [b['close'] for b in bars]
@@ -172,19 +209,200 @@ class RossCameronBacktester:
         return trades
 
     def _backtest_bull_flag(self, setup: Dict, bars: List[Dict]) -> List[Dict]:
-        """Bull Flag Breakout logic (simplified)."""
-        # Simplified: look for consolidation and breakout
+        """Bull Flag Breakout logic."""
         trades = []
+        position = None
+        entry_config = setup['entry_conditions']
+        exit_config = setup['exit_conditions']
+
+        for i, bar in enumerate(bars):
+            if position is None:
+                # Look for 10%+ move in prior 5 days
+                if i >= 5:
+                    lookback = bars[i-5:i]
+                    prior_low = min(b['low'] for b in lookback)
+                    current_high = max(b['high'] for b in lookback)
+                    move = (current_high - prior_low) / prior_low
+
+                    if move >= entry_config['prior_move']['move_pct']:
+                        # Check for flag consolidation (3-8% range)
+                        last_3 = bars[max(0, i-3):i]
+                        range_val = (max(b['high'] for b in last_3) - min(b['low'] for b in last_3)) / bar['close']
+
+                        # Entry on breakout above recent high
+                        if (range_val >= 0.05 and range_val <= 0.08 and
+                            bar['close'] > max(b['high'] for b in last_3[:-1]) and
+                            bar.get('volume', 0) > entry_config['breakout_entry']['volume_min']):
+                            position = {
+                                'entry_bar': i,
+                                'entry_price': bar['close'],
+                                'flag_high': max(b['high'] for b in last_3),
+                                'flag_low': min(b['low'] for b in last_3),
+                                'shares': 100,
+                                'status': 'open',
+                                'profits_taken': []
+                            }
+
+            elif position and position['status'] == 'open':
+                entry_price = position['entry_price']
+                profit = (bar['close'] - entry_price) / entry_price
+
+                # Check stop loss
+                if bar['close'] < position['flag_low'] * (1 - exit_config['stop_loss']['stop_pct']):
+                    trades.append({
+                        'entry_bar': position['entry_bar'],
+                        'exit_bar': i,
+                        'entry_price': entry_price,
+                        'exit_price': bar['close'],
+                        'pnl': profit * 100,
+                        'reason': 'stop_loss'
+                    })
+                    position = None
+
+                # Check profit targets
+                elif profit >= exit_config['profit_target_1']['gain_pct'] and 'target1' not in position.get('profits_taken', []):
+                    position['profits_taken'].append('target1')
+
+                elif profit >= exit_config['profit_target_2']['gain_pct'] and 'target2' not in position.get('profits_taken', []):
+                    trades.append({
+                        'entry_bar': position['entry_bar'],
+                        'exit_bar': i,
+                        'entry_price': entry_price,
+                        'exit_price': bar['close'],
+                        'pnl': profit * 100,
+                        'reason': 'profit_target'
+                    })
+                    position = None
+
         return trades
 
     def _backtest_scalp(self, setup: Dict, bars: List[Dict]) -> List[Dict]:
-        """Scalp + Quick Momentum logic (simplified)."""
+        """Scalp + Quick Momentum logic."""
         trades = []
+        position = None
+        entry_config = setup['entry_conditions']
+        exit_config = setup['exit_conditions']
+
+        for i, bar in enumerate(bars):
+            if position is None:
+                # Volume spike + RSI confirmation
+                if i >= 20:
+                    avg_vol = sum(b.get('volume', 0) for b in bars[i-20:i]) / 20
+                    vol_spike = bar.get('volume', 0) > avg_vol * entry_config['volume_spike']['volume_multiplier']
+
+                    if (vol_spike and
+                        bar['rsi'] > entry_config['momentum_confirm']['rsi_min'] and
+                        i >= 2 and bar['close'] > max(bars[i-2]['high'], bars[i-1]['high'])):
+                        position = {
+                            'entry_bar': i,
+                            'entry_price': bar['close'],
+                            'shares': 100,
+                            'status': 'open'
+                        }
+
+            elif position and position['status'] == 'open':
+                entry_price = position['entry_price']
+                profit = (bar['close'] - entry_price) / entry_price
+                bars_held = i - position['entry_bar']
+
+                # Quick profit exit
+                if profit >= exit_config['quick_profit']['gain_pct']:
+                    trades.append({
+                        'entry_bar': position['entry_bar'],
+                        'exit_bar': i,
+                        'entry_price': entry_price,
+                        'exit_price': bar['close'],
+                        'pnl': profit * 100,
+                        'reason': 'quick_profit'
+                    })
+                    position = None
+
+                # Tight stop loss
+                elif profit < -exit_config['stop_loss']['stop_pct']:
+                    trades.append({
+                        'entry_bar': position['entry_bar'],
+                        'exit_bar': i,
+                        'entry_price': entry_price,
+                        'exit_price': bar['close'],
+                        'pnl': profit * 100,
+                        'reason': 'stop_loss'
+                    })
+                    position = None
+
+                # Force exit after 5 bars
+                elif bars_held >= exit_config['time_exit']['bars_max']:
+                    trades.append({
+                        'entry_bar': position['entry_bar'],
+                        'exit_bar': i,
+                        'entry_price': entry_price,
+                        'exit_price': bar['close'],
+                        'pnl': profit * 100,
+                        'reason': 'time_exit'
+                    })
+                    position = None
+
         return trades
 
     def _backtest_gap_up(self, setup: Dict, bars: List[Dict]) -> List[Dict]:
-        """Gap Up + Support logic (simplified)."""
+        """Gap Up + Support logic."""
         trades = []
+        position = None
+        entry_config = setup['entry_conditions']
+        exit_config = setup['exit_conditions']
+
+        for i, bar in enumerate(bars):
+            if position is None:
+                # Check for gap up at open
+                if i > 0:
+                    gap = (bar['open'] - bars[i-1]['close']) / bars[i-1]['close']
+
+                    if gap >= entry_config['gap_condition']['gap_pct']:
+                        # Find support (4% below open)
+                        support = bar['open'] * (1 - entry_config['support_bounce']['support_range_pct'])
+
+                        # Look for bounce
+                        if bar['close'] > support and bar['rsi'] > entry_config['entry_trigger']['rsi_min']:
+                            position = {
+                                'entry_bar': i,
+                                'entry_price': bar['close'],
+                                'gap_close': bars[i-1]['close'],
+                                'support': support,
+                                'shares': 100,
+                                'status': 'open',
+                                'profits_taken': []
+                            }
+
+            elif position and position['status'] == 'open':
+                entry_price = position['entry_price']
+                profit = (bar['close'] - entry_price) / entry_price
+
+                # Check stop loss
+                if bar['close'] < position['support']:
+                    trades.append({
+                        'entry_bar': position['entry_bar'],
+                        'exit_bar': i,
+                        'entry_price': entry_price,
+                        'exit_price': bar['close'],
+                        'pnl': profit * 100,
+                        'reason': 'stop_loss'
+                    })
+                    position = None
+
+                # Check profit targets
+                elif profit >= exit_config['profit_target_1']['gain_pct'] and 'target1' not in position.get('profits_taken', []):
+                    position['profits_taken'].append('target1')
+
+                elif profit >= exit_config['profit_target_2']['gain_pct'] and 'target2' not in position.get('profits_taken', []):
+                    trades.append({
+                        'entry_bar': position['entry_bar'],
+                        'exit_bar': i,
+                        'entry_price': entry_price,
+                        'exit_price': bar['close'],
+                        'pnl': profit * 100,
+                        'reason': 'profit_target'
+                    })
+                    position = None
+
         return trades
 
     def _calculate_stats(self, setup: Dict, trades: List[Dict], bars: List[Dict]) -> Dict:
@@ -268,10 +486,21 @@ class RossCameronBacktester:
 if __name__ == '__main__':
     bt = RossCameronBacktester()
 
-    # Example usage
-    setup_ids = [1]  # Test Setup 1 (DIP + VWAP)
-    data_files = []  # Will be populated with actual backtest data
+    # Run backtests for all setups on both windows
+    setup_ids = [1, 2, 3, 4]  # All 4 setups
+    data_files = [
+        '/tmp/tgt_full_aug4_sep4.json',     # Dev window
+        '/tmp/wdc_mu_tsm_5min_jul6aug3.json'  # Holdout window
+    ]
 
     print("✓ Backtester initialized with 4 setups from Ross Cameron transcripts")
-    print("  Ready for testing when historical data is provided")
+    print(f"  Testing {len(setup_ids)} setups on {len(data_files)} windows...\n")
+
+    results = bt.run_backtest(setup_ids, data_files)
+    bt.print_results(results)
+
+    # Save results to file
+    with open('/tmp/ross_cameron_backtest_results.json', 'w') as f:
+        json.dump(results, f, indent=2)
+    print("\n✓ Results saved to /tmp/ross_cameron_backtest_results.json")
 

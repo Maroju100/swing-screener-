@@ -192,6 +192,49 @@ and do not wire it toward real money.
   1-minute historicals for `SNDK, WDC, MU, TSM`) to advance the paper
   ledger; ask before wiring it to a daily trigger like Strategy 1.
 
+## Strategy 4: Ross Cameron YouTube Setups — NOT VALIDATED (2026-09-07)
+
+**Status: Research project, no edge found. Setups archived for reference, not deployed.**
+
+Extracted 4 day-trading momentum setups from 66MB dataset of 3,617 Ross Cameron YouTube
+transcripts using NLP keyword matching and rule parametrization from transcript segments.
+All 4 setups were backtested on 6-month window (Mar 6-Sep 4, 2026) using 1-minute OHLCV data.
+
+- **Setups extracted**: 
+  1. DIP + VWAP Bounce Entry (buy dip near VWAP, exit on tiers 5%/10%)
+  2. Bull Flag Breakout Entry (detect 10%+ move + consolidation, breakout entry)
+  3. Scalp + Quick Momentum Entry (volume spike 3x avg + RSI>60, 2% quick exit)
+  4. Gap Up + Support Entry (>2% gap, support bounce, tiered targets)
+
+- **Backtest results** (dev Aug 4-Sep 4 vs holdout Jul 6-Aug 3):
+  - Setup 1 (DIP): -11.13% dev, -3.42% holdout → **NO EDGE**
+  - Setup 2 (Bull Flag): 0 trades dev, 0 trades holdout → **NO SIGNALS** (rules too strict)
+  - Setup 3 (Scalp): +0.12% dev, -0.37% holdout → **NO EDGE** (marginal in-sample, negative OOS)
+  - Setup 4 (Gap Up): +1.47% dev, -4.32% holdout → **OVERFIT** (fails out-of-sample)
+
+- **Comparison to live strategies**:
+  - Margin-Style Live (real money): +155.10% (6-month, validated ✓)
+  - Buy & Hold (all 8 semis): +25.4% (passive baseline)
+  - v3 Baseline (paper): +23.8% (production parameters)
+  - **All 4 Ross Cameron setups**: negative or near-zero returns, failed validation
+
+- **Key finding**: Educational content provides directional guidance (VWAP bounces,
+  gap reversals) but lacks the real-time regime detection and dynamic position sizing
+  that make Margin-Style Live successful. Static rules extracted from transcripts cannot
+  adapt to changing market microstructure.
+
+- **Why extracted setups failed**:
+  1. Entry rules trigger too frequently relative to tradeable opportunity (low win rates).
+  2. Lookback windows (prior 10%+ move, consolidation ranges) are too restrictive or too loose
+     depending on symbol float and intraday volatility profile.
+  3. Timing constraints (morning-only gates, EOD closes) reduce signal frequency across 8 semis.
+  4. Period-specific optimizations (Gap Up works in late Aug/early Sep, fails in July) indicate
+     calendar overfitting, not generalizable edge.
+
+- **Recommendation**: Do not deploy. Continue monitoring Margin-Style Live's validated edge.
+  Results and detailed comparison table available at:
+  `https://claude.ai/code/artifact/03df1b57-e81b-4118-b0bc-f5e0534154c5`
+
 ## Conventions used across this repo's dashboards/backtests
 
 - **Dashboard testing before publish**: extract the `<script
