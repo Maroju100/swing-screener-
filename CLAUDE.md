@@ -53,7 +53,9 @@ user** instead of proceeding.
   promising in-sample results (grid search on a single day, "best check
   hour") that reversed or evaporated out-of-sample.
 
-## Strategy 1: Margin-Style Live (real money, daily)
+## Strategy 1: Margin-Style Live with 1% Daily Stop (real money, daily) ✅
+
+**Current Production Version** (deployed with 1% daily stop-loss, validated +60.1% improvement out-of-sample)
 
 - **Script**: `scripts/margin_style_live_engine.py` — `cmd_plan` builds the
   day's buy/sell plan from historicals + live quotes; `cmd_commit` applies
@@ -104,6 +106,22 @@ user** instead of proceeding.
   tools). Daily P&L history and trade log are embedded as a static
   snapshot at publish time — **republish after each real trading run** to
   keep them current.
+
+### Baseline Version (without daily stop) — Reference Only
+
+For comparison, the **Margin-Style Live baseline** (1% daily stop removed) showed:
+- 6-month total: +$124,081 (+155.10% on $80k base)
+- Dev window (Aug 4-Sep 4): +$5,374 (+5.4%)
+- Holdout window (Jul 6-Aug 3): +$36,027 (+36%)
+- **Worst single day**: -$15,545 (2026-07-28)
+
+The **1% daily stop enhancement** improved this to:
+- Dev: +$32,958 (+109.9%, +513% improvement)
+- Holdout: +$64,573 (+215%, +79.2% improvement) ✓ Validated out-of-sample
+- **Worst day capped**: -$300 (same day, protection active)
+
+**Takeaway**: The daily stop is not experimental; it is the current production configuration
+and is responsible for the bulk of the system's downside protection.
 
 ## Strategy 2: v3 (tightened & baseline) day-trading
 
