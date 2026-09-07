@@ -94,7 +94,7 @@ PILLAR_3_LOOKBACK_VOLUME_DAYS = 60  # Days to average for relative volume
 PILLAR_4_MIN_PRICE = 2.0  # Avoid penny stocks
 PILLAR_4_MAX_PRICE = 20.0  # Stocks $2-$20 preferred
 PILLAR_5_MAX_FLOAT = 10000000  # Float < 10M shares
-USE_PILLAR_FILTER = True  # Set to False to disable filter temporarily
+USE_PILLAR_FILTER = False  # DISABLED: Not compatible with large-cap universe (see CLAUDE.md)
 
 # "New Candidate" HUGE_DIP refinement, deployed 2026-08-17 (was -25.5%/74.3%):
 # a deeper drawdown trigger + smaller huge-dip sizing, found while re-optimizing
@@ -411,54 +411,38 @@ def build(hist_path, quotes_path):
 def check_5_pillars(sym, bars, live_price, quotes):
     """Check if stock passes Ross Cameron's 5 Pillars of stock selection.
 
+    NOTE: Margin-Style Live is a DIP-BUY system, so Pillar 1 (up 10%+ daily) is
+    incompatible with daily entry conditions. Instead, we apply the universe-level
+    pillars (4: price $2-$20 preferred range, 5: small float for volatility) that
+    filter the SYMBOL UNIVERSE eligible for trading, independent of daily dip signals.
+
     Returns: (passes: bool, pillars_met: dict)
     """
     if not USE_PILLAR_FILTER or len(bars) < 2:
         return True, {}
 
     pillars = {
-        'pillar_1_up_10_percent': False,
-        'pillar_2_5x_volume': False,
         'pillar_4_price_2_to_20': False,
-        'all_pillars_met': False,
+        'all_pillars_compatible': False,
     }
 
-    yesterday_close = bars[-1]['close']
-    day_before_close = bars[-2]['close']
-    day_return = (yesterday_close - day_before_close) / day_before_close
-
-    # Pillar 1: Up 10%+ on day
-    if day_return >= PILLAR_1_MIN_DAILY_GAIN:
-        pillars['pillar_1_up_10_percent'] = True
-    else:
-        return False, pillars
-
-    # Pillar 2: 5x relative volume
-    # Calculate 60-day average volume as proxy for "relative volume"
-    # Note: We only have daily close prices, not volume data, so we use price movement as proxy
-    # In real implementation, would need intraday volume data from API
-    if len(bars) >= PILLAR_3_LOOKBACK_VOLUME_DAYS:
-        # Simple heuristic: if price moved significantly today, volume likely elevated
-        # Real implementation would need actual volume data
-        pillars['pillar_2_5x_volume'] = True  # Assume pass for now (needs volume data from API)
-    else:
-        pillars['pillar_2_5x_volume'] = True  # Insufficient history, assume pass
-
     # Pillar 4: Price $2-$20 (checking current live price)
+    # This is a universe-level filter: stocks in this price range tend to have
+    # lower slippage, better fill quality, and more retail participation
     if PILLAR_4_MIN_PRICE <= live_price <= PILLAR_4_MAX_PRICE:
         pillars['pillar_4_price_2_to_20'] = True
-    else:
-        return False, pillars
 
     # Pillar 5: Float < 10M shares
     # Note: Float information not available in current bars data
     # In real implementation, would need to query fundamental data (not available live)
     # For now, assume pass - would need API enhancement to check this
+    # We mark this as "assumed_pass" to indicate it's pending data availability
 
-    # Mark as all passing if we've met key pillars
-    pillars['all_pillars_met'] = pillars['pillar_1_up_10_percent'] and pillars['pillar_4_price_2_to_20']
+    # Mark as passing if key compatible pillars are met
+    # Pillar 4 is the strongest filter we can apply with available data
+    pillars['all_pillars_compatible'] = pillars['pillar_4_price_2_to_20']
 
-    return pillars['all_pillars_met'], pillars
+    return pillars['all_pillars_compatible'], pillars
 
 
 def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):

@@ -85,6 +85,16 @@ user** instead of proceeding.
   - `CIRCUIT_BREAKER_STOP_COUNT = 2`
   - `MAX_SYMBOL_ALLOCATION_PCT = 0.50`, `MAX_TRADE_NOTIONAL_PCT = 0.25`
   - Same-day same-symbol orders net against each other.
+- **5 Pillars investigation (2026-09-07)**: Tested applying Ross Cameron's stock
+  selection pillars (up 10%+, 5x volume, news, $2-$20 price, <10M float) as a
+  gating filter. **Decision: NOT DEPLOYED.** Reason: The pillars are fundamentally
+  incompatible with Margin-Style Live's large-cap semiconductor universe. Pillar 1
+  (up 10% daily) contradicts dip-buying (which buys on weakness). Pillar 4 ($2-$20
+  price range) excludes all 8 symbols (AMD $192-$580, MU $321-$1213, etc.). Pillars
+  2, 3, 5 require intraday volume and fundamental data not available in backtest.
+  Margin-Style Live's edge derives from **timing (2-tier dips)** and **position sizing
+  (tranched entries)**, not stock selection; validation shows no benefit from filtering
+  on universe-level criteria.
 - **Live dashboard**: `margin_live_dashboard.html`
   (`https://claude.ai/code/artifact/b22d0a38-624f-496b-a47c-f08d16703488`).
   Live sections (positions, account/risk snapshot, distance-to-next-signal)
