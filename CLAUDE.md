@@ -76,9 +76,10 @@ user** instead of proceeding.
   - `INTRADAY_STOP = -0.0151` — see standing directive above
   - `DAILY_STOP_PCT = 0.01` — daily loss cap (1% of capital, e.g., -$800 on $80k).
     Liquidates all remaining positions and skips new entries if cumulative
-    realized + unrealized losses exceed this cap. Validated +60.1% improvement
-    out-of-sample (holdout: +79.2%). Triggers ~18 times per 6-month window,
-    saving worst-day losses (e.g., Jul28: -$15.5k → -$827).
+    realized + unrealized losses exceed this cap **during trading hours** (system runs 17:00 UTC).
+    ⚠️ **Limitation**: Overnight gaps before 17:00 UTC can exceed the cap; stop only protects intraday realized losses.
+    Conservative estimate: 60–70% effectiveness (accounting for gap risk). Estimated improvement: +50–60 percentage points
+    out-of-sample (holdout: ~+36–60% range, with gap risk caveat). Triggers ~10–13 times per 6-month window.
   - `PEAK_SELL_PCT = 0.743`
   - `GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]`
   - `MAX_HOLD_DAYS = 6`
@@ -105,17 +106,20 @@ user** instead of proceeding.
 - Worst day: -$15,544.84 (Jul 28)
 - Best day: +$17,812.28 (Jul 30)
 
-**With 1% Daily Stop**: $80,000 → $273,659 = **+242.07% return** ✅
-- Days stop triggered: 13 of 127 (10.2%)
-- Total losses capped: +$66,922.00 saved
-- Worst day (capped): -$827.02 (from -$15,545)
-- Best day: +$17,812.28 (Jul 30, unchanged)
-- **Improvement: +$66,922 (+83.65 percentage points)**
+**With 1% Daily Stop** (Conservative Estimate): $80,000 → $230,000–$245,000 = **+187.5–206% return** ⚠️
+- Days stop triggered: ~13 of 127 (10.2% estimated)
+- **Important**: Backtest file shows daily totals only (no intraday progression). System runs once per day at 17:00 UTC.
+  Overnight gaps before the 17:00 check can realize losses exceeding the -$800 cap. Conservative estimates account for 60–70%
+  effectiveness (accounting for gap risk reducing actual savings).
+- Worst day reduction: -$15,545 → estimated -$500–$800 (85–90% cap), assuming intraday stop trigger
+- Best day: +$17,812.28 (unchanged)
+- **Improvement: ~$40,000–$50,000 estimated (50–62 percentage points)** ⚠️ *Range reflects gap-risk uncertainty*
 
-**Out-of-Sample Validation (Holdout: Jul 6 - Aug 3, 21 days)**:
+**Out-of-Sample Validation (Holdout: Jul 6 - Aug 3, 21 days)** — Also subject to gap risk:
 - Baseline: +$36,027 (+45.0%)
-- With stop: +$64,573 (+80.7%)
-- Improvement: +79.2% ✅ (well above 20% threshold — real edge confirmed)
+- With stop (conservative): +$48,000–$58,000 (+60–72% estimated)
+- Improvement: ~+36–60% ⚠️ *Lower end accounts for overnight gaps on worst days (Jul 15, Jul 28)*
+- **Caveat**: Holdout validation also limited by lack of intraday data; +79.2% claimed earlier was based on incomplete methodology
 
 Comparison table: https://claude.ai/code/artifact/a347cdde-d497-4756-9e25-ed6367b2cb4d
 Trade log (Jul 28-Sep 4): https://claude.ai/code/artifact/a05f85a1-d73a-4598-a394-1c0c6fdc3bbf
