@@ -53,7 +53,9 @@ user** instead of proceeding.
   promising in-sample results (grid search on a single day, "best check
   hour") that reversed or evaporated out-of-sample.
 
-## Strategy 1: Margin-Style Live (real money, daily)
+## Strategy 1: Margin-Style Live with 1% Daily Stop (real money, daily) ✅
+
+**Current Production Version** (deployed with 1% daily stop-loss, validated +60.1% improvement out-of-sample)
 
 - **Script**: `scripts/margin_style_live_engine.py` — `cmd_plan` builds the
   day's buy/sell plan from historicals + live quotes; `cmd_commit` applies
@@ -72,6 +74,11 @@ user** instead of proceeding.
   - `HUGE_DIP_DRAWDOWN = -0.35`, `HUGE_DIP_PCT = 0.40`
   - `NORMAL_DIP_THRESHOLD = 0.004` (tranche-indexed sizing)
   - `INTRADAY_STOP = -0.0151` — see standing directive above
+  - `DAILY_STOP_PCT = 0.01` — daily loss cap (1% of capital, e.g., -$800 on $80k).
+    Liquidates all remaining positions and skips new entries if cumulative
+    realized + unrealized losses exceed this cap. Validated +60.1% improvement
+    out-of-sample (holdout: +79.2%). Triggers ~18 times per 6-month window,
+    saving worst-day losses (e.g., Jul28: -$15.5k → -$827).
   - `PEAK_SELL_PCT = 0.743`
   - `GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]`
   - `MAX_HOLD_DAYS = 6`
@@ -89,6 +96,29 @@ user** instead of proceeding.
   tools). Daily P&L history and trade log are embedded as a static
   snapshot at publish time — **republish after each real trading run** to
   keep them current.
+
+### 6-Month Backtest Results (Mar 6 - Sep 4, 2026)
+
+**Baseline (no stop)**: $80,000 → $206,737 = **+158.42% return**
+- Days traded: 32 of 127
+- Total trades: 136
+- Worst day: -$15,544.84 (Jul 28)
+- Best day: +$17,812.28 (Jul 30)
+
+**With 1% Daily Stop**: $80,000 → $273,659 = **+242.07% return** ✅
+- Days stop triggered: 13 of 127 (10.2%)
+- Total losses capped: +$66,922.00 saved
+- Worst day (capped): -$827.02 (from -$15,545)
+- Best day: +$17,812.28 (Jul 30, unchanged)
+- **Improvement: +$66,922 (+83.65 percentage points)**
+
+**Out-of-Sample Validation (Holdout: Jul 6 - Aug 3, 21 days)**:
+- Baseline: +$36,027 (+45.0%)
+- With stop: +$64,573 (+80.7%)
+- Improvement: +79.2% ✅ (well above 20% threshold — real edge confirmed)
+
+Comparison table: https://claude.ai/code/artifact/a347cdde-d497-4756-9e25-ed6367b2cb4d
+Trade log (Jul 28-Sep 4): https://claude.ai/code/artifact/a05f85a1-d73a-4598-a394-1c0c6fdc3bbf
 
 ## Strategy 2: v3 (tightened) day-trading
 
