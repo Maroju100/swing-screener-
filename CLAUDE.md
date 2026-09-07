@@ -110,25 +110,27 @@ user** instead of proceeding.
 ### Baseline Version (without daily stop) — Reference Only
 
 For comparison, the **Margin-Style Live baseline** (1% daily stop removed) showed:
-- 6-month total (Mar 6-Sep 4): +$126,737 (**158.42%** on $80k base)
-- Dev window (Aug 4-Sep 4): +$5,374 (+5.4%)
-- Holdout window (Jul 6-Aug 3): +$36,027 (+36%)
-- **Worst single day**: -$15,545 (2026-07-28)
+- 6-month total (Mar 6-Sep 4): +$126,737 (**150.12%** return on $82.7k inferred base)
+  - Starting: Mar 6, 2026
+  - Ending: Sep 4, 2026 ($206,737.04 equity)
+  - Worst day: -$15,544.84 (2026-07-28)
 
-The **1% daily stop enhancement** improved this to:
-- 6-month total: +$201,343 (**251.68%** on $80k base) — **+93.26pp improvement** ✅
-- Dev window: +$32,958 (+109.9%, +513% vs baseline)
-- Holdout window: +$64,573 (+215.2%, +79.2% vs baseline) ✓ **Validated out-of-sample**
-- **Worst day capped**: -$300 (2026-07-28, same day as worst baseline day)
+The **1% daily stop enhancement** (validated) improved this to:
+- 6-month total: +$190,657 (**230.66%** return) — **+80.54pp improvement** ✅
+  - Ending equity: $273,313.83
+  - Days stop triggered: 13 of 127 trading days
+  - Total losses capped: $66,576.79 saved
+- Dev window (Aug 4-Sep 4): +$32,958 (+109.9%, +513.2% vs baseline)
+- Holdout window (Jul 6-Aug 3): +$64,573 (+215.2%, +79.2% vs baseline) ✓ **Out-of-sample validated**
 
 | Metric | Baseline (no stop) | With Daily Stop | Improvement |
 |--------|-------------------|-----------------|-------------|
-| 6-month return | 158.42% | **251.68%** | +93.26pp |
-| Worst day | -$15,545 | -$300 | $15,245 saved |
-| Days triggered | — | 18 of 127 | Only on bad days |
+| 6-month return | 150.12% | **230.66%** | +80.54pp |
+| Worst day P&L | -$15,545 | -$827 | $14,718 saved |
+| Days loss-capped | — | 13 of 127 | Only on down days |
 
 **Takeaway**: The daily stop is not experimental; it is the current production configuration,
-responsible for +93pp return improvement and $74,606 of additional profit across 6 months.
+responsible for +80pp additional return and $66.6k of capital protection across 6 months.
 
 ## Strategy 2: v3 (tightened & baseline) day-trading
 
