@@ -2234,6 +2234,51 @@
         "equity_peak": 11536.58
       },
       "notes": "Standard day: Max-hold exits on WDC/INTC (6-day hold threshold), peak trims on remaining 4 positions. No new entries today."
+    },
+    {
+      "timestamp": "2026-09-10T18:21:57Z",
+      "event": "circuit_breaker_triggered",
+      "orders_placed": 5,
+      "order_details": [
+        {
+          "symbol": "SNDK",
+          "side": "sell",
+          "quantity": 0.014876,
+          "price_est": 1716.065,
+          "status": "unconfirmed"
+        },
+        {
+          "symbol": "LRCX",
+          "side": "sell",
+          "quantity": 0.163018,
+          "price_est": 300.445,
+          "status": "unconfirmed"
+        },
+        {
+          "symbol": "STX",
+          "side": "sell",
+          "quantity": 0.492554,
+          "price_est": 866.818,
+          "status": "unconfirmed"
+        },
+        {
+          "symbol": "WDC",
+          "side": "sell",
+          "quantity": 1.907367,
+          "price_est": 465.6,
+          "status": "unconfirmed"
+        },
+        {
+          "symbol": "MU",
+          "side": "sell",
+          "quantity": 0.924063,
+          "price_est": 983.3,
+          "status": "unconfirmed"
+        }
+      ],
+      "safe_settled_cash": 9099.2,
+      "total_equity": 15234.17,
+      "notes": "Circuit breaker triggered (5 stops). Position mismatch alert: WDC and MU quantities in state file exceeded actual holdings. Executed sells with available quantities only. All orders placed at market, unconfirmed status as of log time."
     }
   ]
 }
