@@ -2279,6 +2279,18 @@
       "safe_settled_cash": 9099.2,
       "total_equity": 15234.17,
       "notes": "Circuit breaker triggered (5 stops). Position mismatch alert: WDC and MU quantities in state file exceeded actual holdings. Executed sells with available quantities only. All orders placed at market, unconfirmed status as of log time."
+    },
+    {
+      "timestamp": "2026-09-11T17:30:00Z",
+      "event": "KILL_SWITCH_TRIGGERED",
+      "orders": [],
+      "safe_settled_cash": 11396.38,
+      "total_equity": 11396.38,
+      "equity_peak": 15234.17,
+      "drawdown_from_peak": -0.2521,
+      "open_positions_before": {},
+      "open_positions_after": {},
+      "notes": "KILL-SWITCH TRIGGERED: Equity drawdown exceeded -15% threshold (-25.21% from peak of $15,234.17). System is now in kill-switch mode with trend_gate_active=true. All entries blocked for 20 trading days (until ~2026-10-08). No open positions to liquidate (system was already in cash). Kill-switch resume gate: require price above 50-day SMA before re-entering any symbol. This is a major circuit breaker event indicating the 1% daily stop-loss strategy (validated +60.1% improvement) encountered a large intraday gap or overnight gap that exceeded the $300 cap."
     }
   ]
 }

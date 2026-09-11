@@ -1,29 +1,8 @@
 {
-  "pending_settlement": [
-    {
-      "amount": 4.31,
-      "settle_date": "2026-09-10",
-      "symbol": "TSM"
-    },
-    {
-      "amount": 26.35,
-      "settle_date": "2026-09-10",
-      "symbol": "SNDK"
-    },
-    {
-      "amount": 51.4,
-      "settle_date": "2026-09-10",
-      "symbol": "LRCX"
-    },
-    {
-      "amount": 111.37,
-      "settle_date": "2026-09-10",
-      "symbol": "STX"
-    }
-  ],
-  "open_positions": {},
-  "equity_peak": 15234.17,
-  "kill_switch_active": false,
-  "kill_switch_triggered_date": null,
-  "trend_gate_active": false
+ "pending_settlement": [],
+ "open_positions": {},
+ "equity_peak": 15234.17,
+ "kill_switch_active": true,
+ "kill_switch_triggered_date": "2026-09-11",
+ "trend_gate_active": true
 }
