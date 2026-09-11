@@ -59,12 +59,16 @@ convention as the 9-Way Combo's 3-hour checks: today's live price stands in for
 today's not-yet-final daily close/low, noted explicitly as an approximation.
 
 Modes:
-  plan   <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json>
+  plan   <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json> [actual_holdings_json]
          -> prints JSON: {"sells": [...], "buys": [...]}
          daily_hist.json shape: {"data": {"results": [{"symbol":.., "bars":[{"begins_at":.., "open_price":.., "close_price":.., "high_price":.., "low_price":..}]}]}}
          live_quotes.json shape: {"AMD": 555.0, "MU": 972.86, ...}
          excluded_symbols_json = JSON list of symbols currently held by the OTHER
          two live systems on this account (from get_equity_positions there).
+         actual_holdings_json (optional) = JSON map {symbol: shares} from get_equity_positions,
+         used to validate state file against actual account holdings. If provided, detects
+         and corrects phantom/orphaned positions before equity calculation to prevent
+         equity_peak inflation from position mismatches.
 
   commit <executed_actions.json>
          -> updates docs/margin_style_live_state.json: closed positions' proceeds
@@ -391,7 +395,61 @@ def build(hist_path, quotes_path):
     return bars_by_sym, quotes
 
 
-def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
+def validate_positions_against_holdings(state, actual_holdings):
+    """Validate state file positions against actual account holdings.
+
+    Returns a dict of validated shares (state_shares, actual_shares, mismatch_warning).
+    Mismatches can occur if:
+    - A position was deleted from state but shares still exist (orphaned)
+    - A position exists in state but no shares are held (phantom)
+    - Share count differs between state and actual holdings
+
+    Args:
+        state: dict with 'open_positions' key
+        actual_holdings: dict of {symbol: share_count} from account
+
+    Returns:
+        dict mapping symbol to {state_shares, actual_shares, has_mismatch, warning_msg}
+    """
+    validation = {}
+    state_positions = state.get('open_positions', {})
+
+    for sym in set(list(state_positions.keys()) + list(actual_holdings.keys())):
+        state_shares = state_positions.get(sym, {}).get('shares', 0.0)
+        actual_shares = actual_holdings.get(sym, 0.0)
+        has_mismatch = abs(state_shares - actual_shares) > 1e-6
+
+        warning_msg = None
+        if has_mismatch:
+            if state_shares > 1e-6 and actual_shares < 1e-6:
+                warning_msg = f"PHANTOM: {sym} has {state_shares} in state but 0 actual shares"
+            elif state_shares < 1e-6 and actual_shares > 1e-6:
+                warning_msg = f"ORPHANED: {sym} has {actual_shares} actual shares but not in state"
+            else:
+                warning_msg = f"MISMATCH: {sym} state={state_shares} vs actual={actual_shares}"
+
+        validation[sym] = {
+            'state_shares': state_shares,
+            'actual_shares': actual_shares,
+            'has_mismatch': has_mismatch,
+            'warning_msg': warning_msg
+        }
+
+    return validation
+
+
+def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols, actual_holdings_json=None):
+    """Plan trades for the day.
+
+    Args:
+        hist_path: path to daily_hist.json
+        quotes_path: path to live_quotes.json
+        real_cash: float, actual settled cash in account
+        excluded_symbols: JSON string of symbols held by other systems
+        actual_holdings_json: JSON string of {symbol: shares} from get_equity_positions.
+                            If provided, validates state file against actual holdings.
+                            If not provided, uses state file as-is (backward compatible).
+    """
     bars_by_sym, quotes = build(hist_path, quotes_path)
     state = load_state()
     today = datetime.now(timezone.utc).date().isoformat()
@@ -399,6 +457,34 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
     state['pending_settlement'] = [p for p in state['pending_settlement'] if p['settle_date'] > today]
     pending_total = sum(p['amount'] for p in state['pending_settlement'])
     safe_cash = max(0.0, real_cash - pending_total)
+
+    # Validate positions against actual holdings if provided
+    position_validation = {}
+    actual_holdings = {}
+    if actual_holdings_json:
+        try:
+            actual_holdings = json.loads(actual_holdings_json)
+            position_validation = validate_positions_against_holdings(state, actual_holdings)
+
+            # Log any mismatches and correct phantom positions before equity calculation
+            mismatches = [v for sym, v in position_validation.items() if v['has_mismatch']]
+            if mismatches:
+                print(f"WARNING: Position mismatch(es) detected:", file=sys.stderr)
+                for sym, validation in position_validation.items():
+                    if validation['has_mismatch']:
+                        print(f"  {validation['warning_msg']}", file=sys.stderr)
+                        # Remove phantom positions from state to prevent equity inflation
+                        if sym in state['open_positions'] and validation['actual_shares'] < 1e-6:
+                            print(f"  -> Removing phantom position {sym} from state", file=sys.stderr)
+                            del state['open_positions'][sym]
+                        # Correct position share count if actual is more up-to-date
+                        elif sym in state['open_positions'] and validation['actual_shares'] > 0:
+                            old_shares = state['open_positions'][sym]['shares']
+                            state['open_positions'][sym]['shares'] = validation['actual_shares']
+                            print(f"  -> Correcting {sym} shares {old_shares} -> {validation['actual_shares']}",
+                                  file=sys.stderr)
+        except Exception as e:
+            print(f"WARNING: Failed to parse actual_holdings_json: {e}", file=sys.stderr)
 
     sells = []
     # PEAK/GAIN sells are deferred here rather than appended straight to `sells`, so they
@@ -709,10 +795,11 @@ def cmd_commit(actions_path):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("Usage: plan <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json>  OR  commit <actions.json>")
+        print("Usage: plan <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json> [actual_holdings_json]  OR  commit <actions.json>")
         sys.exit(1)
     if sys.argv[1] == 'plan':
-        cmd_plan(sys.argv[2], sys.argv[3], float(sys.argv[4]), json.loads(sys.argv[5]))
+        actual_holdings = sys.argv[6] if len(sys.argv) > 6 else None
+        cmd_plan(sys.argv[2], sys.argv[3], float(sys.argv[4]), sys.argv[5], actual_holdings)
     elif sys.argv[1] == 'commit':
         cmd_commit(sys.argv[2])
     else:
