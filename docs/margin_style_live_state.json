@@ -1,8 +1,8 @@
 {
  "pending_settlement": [],
  "open_positions": {},
- "equity_peak": 15234.17,
- "kill_switch_active": true,
- "kill_switch_triggered_date": "2026-09-11",
- "trend_gate_active": true
+ "equity_peak": 11536.58,
+ "kill_switch_active": false,
+ "kill_switch_triggered_date": null,
+ "trend_gate_active": false
 }
