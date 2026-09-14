@@ -58,6 +58,28 @@ parameters were tuned on daily closes. "Today" price is a live-quote proxy, same
 convention as the 9-Way Combo's 3-hour checks: today's live price stands in for
 today's not-yet-final daily close/low, noted explicitly as an approximation.
 
+REAL-DATA VALIDATION UPDATE (2026-09-14): a faithful cash/tranche-modeled replica of
+this file's actual cmd_plan() logic (not a simplified single-trade-per-trigger
+approximation) was run cold against real daily bars, $25,000 start, current 8-symbol
+universe:
+  6 months (2026-03-14 -> 2026-09-11): +230.56% ($25,000 -> $82,640.31). Max
+    drawdown -3.36% (2026-07-21 $63,739.39 -> 2026-07-29 $61,600.89, -$2,138.50) -
+    the deepest of several shallow 1-3% drawdown episodes through the window.
+  3 months (2026-06-14 -> 2026-09-11): +101.06% ($25,000 -> $50,264.95). Max
+    drawdown -3.35% (2026-07-21 -> 2026-07-28, -$1,300.34) - same late-July stretch.
+  1 month (2026-08-14 -> 2026-09-11): +5.77% ($25,000 -> $26,441.57). Max drawdown
+    -1.43% (2026-08-26 -> 2026-09-03, -$358.72).
+Also tested and REJECTED: a "skip bad days" confidence gate (same idea explored for
+Day-Trading v3, see that file's docstring) using ONLY prior-day data (no lookahead) -
+trailing 5-day basket realized volatility. Skipping high-volatility days DESTROYED
+94% of the held-out test-period return (+573.5% -> +36.1% on a longer Jul'25-Sep'26
+window) because this strategy's edge IS volatility - HUGE_DIP/NORMAL_DIP triggers are
+volatility events, so a "choppy day" filter cuts the strategy's own bread and butter.
+This is the opposite conclusion from Day-Trading v3 (a momentum strategy that a
+volatility filter can, cautiously, help) - do not carry a day-skip gate over from one
+system to the other; they are structurally opposite and respond oppositely. Do not
+add a confidence/day-skip gate to this engine.
+
 Modes:
   plan   <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json> [actual_holdings_json]
          -> prints JSON: {"sells": [...], "buys": [...]}

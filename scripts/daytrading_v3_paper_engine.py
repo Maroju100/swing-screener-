@@ -42,6 +42,32 @@ not a replacement. It exists to capture same-day intraday moves (like 2026-08-13
 WDC/SNDK/MU rally) that a once-daily system structurally cannot react to - not to
 out-return the primary system.
 
+REAL-DATA VALIDATION UPDATE (2026-09-14): the +5.81%/+6.30% figures above came from
+an earlier pass whose data provenance was never confirmed. This engine's exact logic
+was re-transliterated and run cold against genuine, non-interpolated 30-minute
+Robinhood historicals (confirmed real - not gap-fill placeholders - for WDC/MU/SNDK
+back to roughly late Jan/early Feb 2026). Results, all real bars:
+  6 months (2026-03-16 -> 2026-09-11, 125 trading days): +9.62% ($5,000 -> $5,481.16).
+  3 months (2026-06-14 -> 2026-09-11): +1.21% ($5,000 -> $5,060.73), max drawdown
+    -10.47% (2026-06-30 $5,115.39 -> 2026-07-29 $4,579.93, -$535.46).
+  1 month (2026-08-14 -> 2026-09-11): +0.53% ($5,000 -> $5,026.70), max drawdown
+    -1.09% (2026-08-20 -> 2026-09-01, -$54.44).
+  Sub-window check on 2026-06-08 -> 2026-08-13 (the closest real-bar window to the
+    original "3 sub-windows" claim): +4.99% overall, 2 of 3 sub-windows profitable
+    (Jun8-29 +4.90%, Jun30-Jul22 -4.27% LOSING, Jul23-Aug13 +4.37%) - softer than the
+    +5.81%/+6.30% figures above; treat those older numbers as unverified/superseded
+    by this real-bar backtest.
+  A perfect-hindsight upper bound (skip every day that turns out to lose, impossible
+    to know in advance) over the same 6 months would be +39.74% - so roughly 30% of
+    capital is given back to bad days. THREE candidate real-time "skip bad days"
+    signals were tried and none survived genuine out-of-sample validation: a same-day
+    Efficiency-Ratio gate (hurt at every threshold), a same-day basket-breadth=3/3-up
+    gate (looked strong on one window, failed on a second), and a prior-day (no
+    lookahead) trailing-volatility gate (looked strong on train+test drawn from the
+    same 6-month stretch, but never even fired on a third, non-overlapping window -
+    wrong volatility regime). Do not add a confidence/day-skip gate to this engine
+    without a signal that survives a genuinely separate third window first.
+
 HARD RULE: this is a paper tracker. Never call review_equity_order or
 place_equity_order for anything this script does.
 """
