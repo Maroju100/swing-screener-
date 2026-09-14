@@ -2168,6 +2168,16 @@
     "trend_gate_active": false
    },
    "notes": "Strong broad rally day across the entire universe (SNDK +10.9%, STX +5.5%, WDC +5.0%, INTC +4.2%, LRCX +4.2%, MU +4.6%, AMD +4.3%, TSM +2.5% vs prior settled close), driving PEAK sells (new highs since entry) on 5 of 6 open positions: WDC, INTC, TSM, SNDK, LRCX - all sold 74.3% of shares held at PEAK_SELL_PCT. No STOP or MAX_HOLD exits fired (stop_count_this_run=0). WDC's PEAK sell carried the engine's PEAK-NET(vs HUGE_DIP) label from the netting code path but was not actually offset by a same-run HUGE_DIP buy (WDC's own drawdown from its 60-day high did not reach -35% today) - net effect was the standalone 3.470437 sh sale. STX's existing position both hit a new PEAK high AND re-qualified as a fresh NORMAL_DIP dip-buy candidate (down day-over-day despite the broad rally, and still down 27% from its own 60-day high after the 2026-09-02 STOP-triggered rebuy), netting to a single 2nd-tranche buy of 1.947682 sh (~$1,641.30) with no separate sell order for STX. AMD and MU triggered no signal (up strongly but not down day-over-day, and not deep enough in drawdown for HUGE_DIP). Real cash was ample this run ($3,497.04, all settled - the three pending settlements from 2026-09-03's run [INTC, TSM, SNDK totaling $3,477.65] had already cleared by today), and the STX buy notional (~$1,641.30) was well within MAX_TRADE_NOTIONAL_PCT and MAX_SYMBOL_ALLOCATION_PCT limits - no buy was skipped for lack of buying power. Kill-switch/trend-gate both remain inactive; equity ($11,201.12) set a new all-time peak for this system (previous peak $10,858.47, set 2026-09-03). Elevated-scrutiny status still applies (live since 2026-07-27, limited live track record) - flag if live results diverge meaningfully from backtest expectations. Realized P&L this run (sum of sell proceeds minus their cost basis across the 5 PEAK sells): approximately +$223.76 (WDC +$63.45, INTC +$39.49, TSM +$1.60, SNDK +$59.50, LRCX +$59.71)."
+  },
+  {
+   "timestamp": "2026-09-14T17:05:00Z",
+   "orders": [],
+   "safe_settled_cash": 11396.38,
+   "total_equity": 11396.38,
+   "equity_peak": 11396.38,
+   "circuit_breaker_triggered": false,
+   "stop_count_this_run": 0,
+   "notes": "No trading activity. All 8 universe symbols down 1.9%-7.2% (AMD -4.3%, MU -4.9%, WDC -3.2%, SNDK -3.9%, TSM -2.9%, INTC -4.4%, LRCX -7.2%, STX -1.9%). No open positions to manage, no HUGE_DIP or NORMAL_DIP entry signals triggered. Real cash remains fully settled at $11,396.38. Kill-switch and trend-gate both inactive. System awaits significant dip entry opportunity."
   }
  ]
 }
