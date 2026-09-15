@@ -74,7 +74,7 @@ user** instead of proceeding.
   - `HUGE_DIP_DRAWDOWN = -0.35`, `HUGE_DIP_PCT = 0.40`
   - `NORMAL_DIP_THRESHOLD = 0.004` (tranche-indexed sizing)
   - `INTRADAY_STOP = -0.0151` — see standing directive above
-  - `DAILY_STOP_PCT = 0.01` — daily loss cap (1% of capital, e.g., -$800 on $80k).
+  - `DAILY_STOP_PCT = 0.01` — daily loss cap (1% of capital; currently -$163.96 on live $16,396.38).
     Liquidates all remaining positions and skips new entries if cumulative
     realized + unrealized losses exceed this cap **during trading hours** (system runs 17:00 UTC).
     ⚠️ **Limitation**: Overnight gaps before 17:00 UTC check can exceed the cap; stop only protects intraday realized losses.
