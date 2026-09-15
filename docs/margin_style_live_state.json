@@ -1,6 +1,42 @@
 {
  "pending_settlement": [],
- "open_positions": {},
+ "open_positions": {
+  "LRCX": {
+   "shares": 15.324865,
+   "entry": 267.43,
+   "peak": 267.43,
+   "tranches": 1,
+   "opened": "2026-09-15"
+  },
+  "WDC": {
+   "shares": 9.95385,
+   "entry": 411.66,
+   "peak": 411.66,
+   "tranches": 1,
+   "opened": "2026-09-15"
+  },
+  "SNDK": {
+   "shares": 2.682303,
+   "entry": 1532.77,
+   "peak": 1532.77,
+   "tranches": 1,
+   "opened": "2026-09-15"
+  },
+  "INTC": {
+   "shares": 39.797036,
+   "entry": 97.7,
+   "peak": 97.7,
+   "tranches": 1,
+   "opened": "2026-09-15"
+  },
+  "STX": {
+   "shares": 0.254996,
+   "entry": 763.68,
+   "peak": 763.68,
+   "tranches": 1,
+   "opened": "2026-09-15"
+  }
+ },
  "equity_peak": 16396.38,
  "kill_switch_active": false,
  "kill_switch_triggered_date": null,
