@@ -13,9 +13,9 @@
  ],
  "open_positions": {
   "LRCX": {
-   "shares": 14.755994,
+   "shares": 14.187123,
    "entry": 267.43,
-   "peak": 270.915,
+   "peak": 271.525,
    "tranches": 1,
    "opened": "2026-09-15"
   },
@@ -31,13 +31,6 @@
    "entry": 1532.5887,
    "peak": 1532.77,
    "tranches": 2,
-   "opened": "2026-09-15"
-  },
-  "INTC": {
-   "shares": 10.227838,
-   "entry": 97.7,
-   "peak": 101.56,
-   "tranches": 1,
    "opened": "2026-09-15"
   },
   "STX": {
