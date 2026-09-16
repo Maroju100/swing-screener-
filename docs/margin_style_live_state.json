@@ -2,42 +2,42 @@
   "pending_settlement": [],
   "open_positions": {
     "WDC": {
-      "shares": 9.954,
-      "entry": 400.0,
-      "peak": 417.52,
+      "shares": 9.953850,
+      "entry": 411.66,
+      "peak": 415.34,
       "tranches": 1,
       "opened": "2026-09-12"
     },
     "SNDK": {
-      "shares": 2.682,
-      "entry": 1450.0,
-      "peak": 1515.60,
+      "shares": 2.682303,
+      "entry": 1532.60,
+      "peak": 1532.60,
       "tranches": 1,
       "opened": "2026-09-12"
     },
     "INTC": {
-      "shares": 10.228,
-      "entry": 95.0,
-      "peak": 99.41,
+      "shares": 10.227838,
+      "entry": 97.70,
+      "peak": 99.73,
       "tranches": 1,
       "opened": "2026-09-12"
     },
     "LRCX": {
-      "shares": 14.756,
-      "entry": 255.0,
-      "peak": 266.63,
+      "shares": 14.755994,
+      "entry": 267.43,
+      "peak": 267.43,
       "tranches": 1,
       "opened": "2026-09-12"
     },
     "STX": {
-      "shares": 0.255,
-      "entry": 750.0,
-      "peak": 777.28,
+      "shares": 0.254996,
+      "entry": 763.35,
+      "peak": 774.08,
       "tranches": 1,
       "opened": "2026-09-12"
     }
   },
-  "equity_peak": 11536.58,
+  "equity_peak": 16508.13,
   "kill_switch_active": false,
   "kill_switch_triggered_date": null,
   "trend_gate_active": false

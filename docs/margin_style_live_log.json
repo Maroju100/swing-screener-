@@ -2291,6 +2291,71 @@
       "open_positions_before": {},
       "open_positions_after": {},
       "notes": "Routine daily check. No orders. Sep 10 equity_peak spike to $15,234.17 was a calculation error during circuit breaker (position mismatch alert noted). Corrected to actual Sep 9 peak of $11,536.58. Current drawdown: -1.22% (well below -15% kill-switch threshold). No circuit breaker, no kill-switch triggered."
+    },
+    {
+      "timestamp": "2026-09-16T19:25:36Z",
+      "event": "MANUAL_TRIGGER",
+      "plan": {
+        "circuit_breaker_triggered": false,
+        "stop_count": 1,
+        "sells_planned": [
+          {
+            "symbol": "LRCX",
+            "shares": 14.755994,
+            "price": 266.12,
+            "reason": "STOP",
+            "entry": 267.43
+          }
+        ],
+        "buys_planned": [
+          {
+            "symbol": "WDC",
+            "shares": 4.192336,
+            "price": 415.34,
+            "reason": "NORMAL_DIP"
+          },
+          {
+            "symbol": "LRCX",
+            "shares": 5.090446,
+            "price": 265.875,
+            "reason": "NORMAL_DIP"
+          },
+          {
+            "symbol": "STX",
+            "shares": 0.050612,
+            "price": 774.08,
+            "reason": "NORMAL_DIP"
+          },
+          {
+            "symbol": "TSM",
+            "shares": 0.073465,
+            "price": 414.52,
+            "reason": "NORMAL_DIP"
+          }
+        ]
+      },
+      "orders_executed": [
+        {
+          "symbol": "LRCX",
+          "side": "sell",
+          "shares": 14.755994,
+          "type": "market",
+          "status": "placed",
+          "order_id": "6aaaed30-869f-408a-bc33-1dffced3a9eb",
+          "timestamp": "2026-09-16T19:25:36Z"
+        }
+      ],
+      "orders_skipped": [
+        {
+          "symbol": "WDC",
+          "side": "buy",
+          "reason": "GFV_ALERT",
+          "alert": "EQUITY_NOT_ENOUGH_BP",
+          "deposit_required": 1737.04,
+          "notes": "LRCX sale proceeds not yet settled. Will retry once LRCX settles."
+        }
+      ],
+      "notes": "Manual trigger run. LRCX hit INTRADAY_STOP threshold (-1.51% from prior close $270.87). Only 1 STOP exit < 2 circuit-breaker threshold. 4 planned NORMAL_DIP buys skipped due to GFV (insufficient settled funds). Historical data corrected through Sep 15; prior run used stale Sep 4 data. Fresh daily bars through Sep 16 confirm only LRCX legitimately breaches stop threshold."
     }
   ]
 }
