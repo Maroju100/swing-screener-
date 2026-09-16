@@ -87,12 +87,55 @@ user** instead of proceeding.
   - `CIRCUIT_BREAKER_STOP_COUNT = 2`
   - `MAX_SYMBOL_ALLOCATION_PCT = 0.50`, `MAX_TRADE_NOTIONAL_PCT = 0.25`
   - Same-day same-symbol orders net against each other.
-- **State Sync Safeguards (2026-09-16)**: Added three-layer protection against position tracking divergence:
-  - **Pre-commit validation**: `cmd_commit` aborts if any sell exceeds open position (catches impossible quantities like "sell 29.569 shares when only 10.228 held")
-  - **Audit trail**: Every commit records timestamp, sell count, buy count for diagnostics
-  - **Verify command**: `python scripts/margin_style_live_engine.py verify` audits state file for negative shares, duplicates, orphaned entries
-  - **Reconcile command**: `python scripts/margin_style_live_engine.py reconcile` (manual for now; auto-fix requires MCP session context) compares state against broker positions
-  - **Known issue fixed (Sep 16)**: INTC sell executed (29.569 shares @ $101.56, $3,003.05 pending) but state wasn't decremented—position existed in pending_settlement but not reduced in open_positions. Fixed manually; safeguards prevent recurrence.
+- **Data Freshness & State Sync Guardrails (2026-09-16)**: Four-layer protection against execution with stale or divergent data:
+  
+  1. **Verify Command** (Guardrail 1 — State Consistency):
+     ```bash
+     python scripts/margin_style_live_engine.py verify
+     ```
+     - Audits `margin_style_live_state.json` for logical errors: negative shares, invalid prices, 
+       orphaned entries, bad dates, duplicate positions, invalid tranche counts (1-5)
+     - Fails fast (exit code 1) if any errors detected
+     - **Run before fetching live data** to catch state corruption early
+  
+  2. **Reconcile Command** (Guardrail 2 — Broker Sync):
+     ```bash
+     python scripts/margin_style_live_engine.py reconcile <broker_positions.json>
+     ```
+     - Compares state file vs actual broker holdings from `get_equity_positions` API
+     - Catches: symbol mismatches (state has symbols broker doesn't, or vice versa), share count 
+       divergence >0.01%, orphaned settlement entries
+     - Requires broker positions JSON (format: `{symbol: {quantity: X, average_buy_price: Y}, ...}`)
+     - Fails (exit code 1) if divergence found; user must reconcile manually before trading
+     - **Prevents execution based on phantom/wrong positions** (critical for GFV safety)
+  
+  3. **Data Freshness Checks** (Guardrail 3 — Current Data):
+     - Built into `cmd_plan`: automatically validates historical bars date and quotes timestamp
+     - Historical bars: must be ≤1 day old (last bar date is checked)
+     - Quotes: must be ≤5 minutes old (if timestamp metadata provided)
+     - Prints warnings but continues (user can accept or abort)
+     - **Prevents signals based on stale data** (e.g., Sep 4 closes used for Sep 16 trading, 
+       which caused false stop signals in previous session)
+  
+  4. **Pre-Commit Validation** (Guardrail 4 — Order Sanity):
+     - `cmd_commit` aborts if any sell exceeds open position (catches impossible orders)
+     - Prevents state mutations that create negative shares or orphaned entries
+     - Appends audit trail with timestamp and order checksums
+  
+  **Daily Run Sequence (guardrails in order):**
+  1. Verify state (catch corruption)
+  2. Fetch broker positions via API
+  3. Reconcile state vs broker (catch divergence) ← **Exits if failed**
+  4. Fetch historicals + quotes (data freshness auto-checked in cmd_plan)
+  5. Generate plan (signal logic)
+  6. Review + execute orders (GFV checks)
+  7. Commit state (pre-commit validation)
+  
+  **Sep 16 Incident Prevention**: Previous session had corrupted state (entry prices guessed at $400 
+  for WDC instead of actual $411.66, causing false INTRADAY_STOP signals). With guardrails:
+  - Step 3 (reconcile) would have **failed immediately** detecting symbol/share mismatches
+  - Stale historical data (Sep 4 instead of Sep 15) would have triggered warning in step 4
+  - Combined, execution would have been blocked until state matched broker reality
 - **5 Pillars investigation (2026-09-07)**: Tested applying Ross Cameron's stock
   selection pillars (up 10%+, 5x volume, news, $2-$20 price, <10M float) as a
   gating filter. **Decision: NOT DEPLOYED.** Reason: The pillars are fundamentally

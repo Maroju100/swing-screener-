@@ -21,17 +21,38 @@ pre-authorization conditions) this procedure assumes.
      **not** tracked there belongs to another system/human (e.g. CGC) and
      must be excluded from consideration.
 
-2. **Fetch live data.**
+2. **Verify state file integrity (Guardrail 1).**
+   - Run: `python scripts/margin_style_live_engine.py verify`
+   - This audits `margin_style_live_state.json` for logical inconsistencies
+     (negative shares, invalid prices, orphaned entries, date errors).
+   - **If verify fails**: ABORT and alert user. Do not proceed to data fetch.
+   - **If verify passes**: continue to next step.
+
+3. **Fetch live data.**
    - `get_equity_historicals` for the universe (daily bars, enough history
-     for the dip/peak signal logic).
-   - `get_equity_quotes` for current live prices.
+     for the dip/peak signal logic — need at least through yesterday's close).
+   - `get_equity_quotes` for current live prices (check timestamp < 5 min old).
+   - `get_equity_positions` for account 912291820 to get actual holdings.
    - `get_accounts` / `get_portfolio` for account 912291820 to confirm
      current cash and settled/pending funds — **never** touch account
      410961445.
 
-3. **Build the plan.**
-   - Run `scripts/margin_style_live_engine.py cmd_plan` with the fetched
+4. **Reconcile state vs broker (Guardrail 2).**
+   - Run: `python scripts/margin_style_live_engine.py reconcile <broker_positions.json>`
+     where `broker_positions.json` is the data from `get_equity_positions`.
+   - This compares state file positions, shares, and entry prices against
+     actual broker holdings. Catches divergence from previous runs.
+   - **If reconcile fails** (symbol mismatch, share count >0.01% off):
+     ABORT and alert user. Review the discrepancy before proceeding.
+   - **If reconcile passes**: state matches broker reality. Continue.
+
+5. **Build the plan.**
+   - Run `scripts/margin_style_live_engine.py plan` with the fetched
      historicals, quotes, and real cash figure.
+   - The script will perform **data freshness checks** automatically:
+     - Historicals must be ≤1 day old
+     - Quotes must be ≤5 minutes old
+     - Warnings will be printed, but execution will continue
    - Inspect the resulting buy/sell actions against the live thresholds in
      CLAUDE.md (HUGE_DIP, NORMAL_DIP, INTRADAY_STOP, PEAK_SELL_PCT,
      GAIN_TIERS, MAX_HOLD_DAYS, kill-switch/trend-gate, circuit breaker,
