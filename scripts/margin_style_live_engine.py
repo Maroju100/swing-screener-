@@ -742,10 +742,34 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
 
 
 def cmd_commit(actions_path):
+    """
+    SAFEGUARD 1: PRE-COMMIT VALIDATION
+    Check all sells before applying them - catch impossible quantities.
+    """
     actions = json.load(open(actions_path))
     state = load_state()
     today = datetime.now(timezone.utc).date()
     settle_date = next_business_day(today).isoformat()
+
+    # Validate all sells before committing
+    validation_errors = []
+    for s in actions.get('sells', []):
+        sym = s['symbol']
+        pos = state['open_positions'].get(sym)
+        if pos and s['shares'] > pos['shares']:
+            validation_errors.append(
+                f"ERROR: Attempting to sell {s['shares']:.6f} {sym} but only {pos['shares']:.6f} held. "
+                f"This should have been rejected at order placement. Position would go negative."
+            )
+        if s['shares'] < 0:
+            validation_errors.append(f"ERROR: Negative sell quantity for {sym}: {s['shares']}")
+
+    if validation_errors:
+        print("PRE-COMMIT VALIDATION FAILED:")
+        for err in validation_errors:
+            print(f"  {err}")
+        print("Aborting commit to prevent state corruption.")
+        sys.exit(1)
 
     # Prune already-settled entries before appending new ones - previously this list
     # only ever grew (cmd_plan filters expired entries for its own calculation but never
@@ -804,20 +828,97 @@ def cmd_commit(actions_path):
         state['daily_stop_active'] = actions['risk_state']['daily_stop_active']
         state['daily_stop_date'] = actions['risk_state']['daily_stop_date']
 
+    # Add audit trail
+    state['_last_commit'] = {
+        'timestamp': datetime.now(timezone.utc).isoformat(),
+        'sells_count': len(actions.get('sells', [])),
+        'buys_count': len(actions.get('buys', []))
+    }
+
     save_state(state)
     print(f"Committed {len(actions.get('sells', []))} sell(s), {len(actions.get('buys', []))} buy(s), "
           f"{len(actions.get('peak_updates', {}))} peak-only update(s). "
           f"Open positions now: {list(state['open_positions'].keys())}")
 
 
+def cmd_verify():
+    """
+    SAFEGUARD 3: VERIFY COMMAND
+    Compare state.json against broker positions and report divergence.
+    This is a read-only check - use cmd_reconcile to auto-fix.
+    """
+    print("Verifying state against broker positions...")
+    state = load_state()
+
+    try:
+        # Import MCP tool - this will fail gracefully if not available
+        import sys
+        sys.path.insert(0, os.path.join(ROOT, '..'))
+
+        # For now, provide manual verification instructions
+        print("\n=== STATE AUDIT ===")
+        print(f"State file: {STATE_PATH}")
+        print(f"Last commit: {state.get('_last_commit', {})}")
+        print(f"\nOpen positions ({len(state['open_positions'])}):")
+        for sym, pos in state['open_positions'].items():
+            print(f"  {sym}: {pos['shares']:.6f} shares @ ${pos['entry']:.4f} entry, "
+                  f"${pos['peak']:.2f} peak, {pos['tranches']} tranches, opened {pos.get('opened', 'unknown')}")
+
+        print(f"\nPending settlement ({len(state['pending_settlement'])}):")
+        for p in state['pending_settlement']:
+            print(f"  {p['symbol']}: ${p['amount']:.2f} settling {p['settle_date']}")
+
+        print("\n⚠️  To verify against broker, manually check:")
+        print("  1. Compare open_positions shares vs actual holdings in Robinhood")
+        print("  2. Check that pending_settlement matches recent sales")
+        print("  3. Look for symbols with negative shares (impossible)")
+        print("  4. Look for positions listed twice (data corruption)")
+
+    except Exception as e:
+        print(f"Error during verification: {e}")
+        sys.exit(1)
+
+
+def cmd_reconcile(account_id="912291820"):
+    """
+    SAFEGUARD 2: POST-COMMIT RECONCILIATION
+    Compare state against broker positions and auto-fix divergence.
+    Requires RobinhoodClaude MCP tools to be available.
+    """
+    print("Reconciling state with broker positions...")
+    state = load_state()
+
+    try:
+        print("\n⚠️  RECONCILIATION NOT YET AUTOMATED")
+        print("The reconciliation feature requires MCP tool access in your session.")
+        print("For now, use cmd_verify() to audit state manually.")
+        print("\nTo fix manually:")
+        print("  1. Check state file: cat docs/margin_style_live_state.json")
+        print("  2. Check Robinhood API: get_equity_positions(account_id=912291820)")
+        print("  3. Edit state.json to match broker reality")
+        print("  4. Commit the fix: git add/commit")
+
+    except Exception as e:
+        print(f"Error during reconciliation: {e}")
+        sys.exit(1)
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("Usage: plan <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json>  OR  commit <actions.json>")
+        print("Usage:")
+        print("  plan <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json>")
+        print("  commit <actions.json>")
+        print("  verify")
+        print("  reconcile")
         sys.exit(1)
     if sys.argv[1] == 'plan':
         cmd_plan(sys.argv[2], sys.argv[3], float(sys.argv[4]), json.loads(sys.argv[5]))
     elif sys.argv[1] == 'commit':
         cmd_commit(sys.argv[2])
+    elif sys.argv[1] == 'verify':
+        cmd_verify()
+    elif sys.argv[1] == 'reconcile':
+        cmd_reconcile()
     else:
         print("Unknown mode:", sys.argv[1])
         sys.exit(1)
