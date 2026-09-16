@@ -87,6 +87,12 @@ user** instead of proceeding.
   - `CIRCUIT_BREAKER_STOP_COUNT = 2`
   - `MAX_SYMBOL_ALLOCATION_PCT = 0.50`, `MAX_TRADE_NOTIONAL_PCT = 0.25`
   - Same-day same-symbol orders net against each other.
+- **State Sync Safeguards (2026-09-16)**: Added three-layer protection against position tracking divergence:
+  - **Pre-commit validation**: `cmd_commit` aborts if any sell exceeds open position (catches impossible quantities like "sell 29.569 shares when only 10.228 held")
+  - **Audit trail**: Every commit records timestamp, sell count, buy count for diagnostics
+  - **Verify command**: `python scripts/margin_style_live_engine.py verify` audits state file for negative shares, duplicates, orphaned entries
+  - **Reconcile command**: `python scripts/margin_style_live_engine.py reconcile` (manual for now; auto-fix requires MCP session context) compares state against broker positions
+  - **Known issue fixed (Sep 16)**: INTC sell executed (29.569 shares @ $101.56, $3,003.05 pending) but state wasn't decremented—position existed in pending_settlement but not reduced in open_positions. Fixed manually; safeguards prevent recurrence.
 - **5 Pillars investigation (2026-09-07)**: Tested applying Ross Cameron's stock
   selection pillars (up 10%+, 5x volume, news, $2-$20 price, <10M float) as a
   gating filter. **Decision: NOT DEPLOYED.** Reason: The pillars are fundamentally

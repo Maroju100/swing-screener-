@@ -67,12 +67,23 @@ Modes:
          two live systems on this account (from get_equity_positions there).
 
   commit <executed_actions.json>
-         -> updates docs/margin_style_live_state.json: closed positions' proceeds
+         -> SAFEGUARD 1: Pre-commit validation (aborts if sell > open position)
+         -> Updates docs/margin_style_live_state.json: closed positions' proceeds
          go into pending_settlement; new/updated tranches are recorded with their
-         running avg_cost, peak, and tranche count.
+         running avg_cost, peak, and tranche count. Adds audit trail (_last_commit).
          executed_actions.json shape:
            {"sells": [{"symbol":.., "shares":.., "price":.., "reason":..}],
             "buys":  [{"symbol":.., "shares":.., "price":.., "reason":"HUGE_DIP|NORMAL_DIP"}]}
+
+  verify
+         -> SAFEGUARD 3: Audit state.json against broker positions (read-only).
+         Checks for negative shares, duplicates, orphaned settlement entries,
+         and pending settlement that exceeds open positions.
+
+  reconcile
+         -> SAFEGUARD 2: Compare state.json vs broker positions and report
+         divergence. (Manual for now; auto-fix requires MCP session context.)
+         Use this to detect if state drifted from reality between commits.
 """
 import json, sys, os
 from datetime import datetime, timezone, timedelta
