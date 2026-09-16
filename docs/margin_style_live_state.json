@@ -1,40 +1,58 @@
 {
- "pending_settlement": [],
+ "pending_settlement": [
+  {
+   "amount": 154.12,
+   "settle_date": "2026-09-17",
+   "symbol": "LRCX"
+  },
+  {
+   "amount": 3003.05,
+   "settle_date": "2026-09-17",
+   "symbol": "INTC"
+  }
+ ],
  "open_positions": {
   "LRCX": {
-   "shares": 15.324865,
+   "shares": 14.755994,
    "entry": 267.43,
-   "peak": 267.43,
+   "peak": 270.915,
    "tranches": 1,
    "opened": "2026-09-15"
   },
   "WDC": {
-   "shares": 9.95385,
-   "entry": 411.66,
-   "peak": 411.66,
-   "tranches": 1,
+   "shares": 22.218975,
+   "entry": 419.6973,
+   "peak": 426.22,
+   "tranches": 2,
    "opened": "2026-09-15"
   },
   "SNDK": {
-   "shares": 2.682303,
-   "entry": 1532.77,
+   "shares": 4.599131,
+   "entry": 1532.5887,
    "peak": 1532.77,
-   "tranches": 1,
+   "tranches": 2,
    "opened": "2026-09-15"
   },
   "INTC": {
-   "shares": 39.797036,
+   "shares": 10.227838,
    "entry": 97.7,
-   "peak": 97.7,
+   "peak": 101.56,
    "tranches": 1,
    "opened": "2026-09-15"
   },
   "STX": {
-   "shares": 0.254996,
-   "entry": 763.68,
-   "peak": 763.68,
-   "tranches": 1,
+   "shares": 8.079551,
+   "entry": 790.714,
+   "peak": 791.595,
+   "tranches": 2,
    "opened": "2026-09-15"
+  },
+  "TSM": {
+   "shares": 5.459688,
+   "entry": 418.16,
+   "peak": 418.16,
+   "tranches": 1,
+   "opened": "2026-09-16"
   }
  },
  "equity_peak": 16396.38,
