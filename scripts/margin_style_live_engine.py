@@ -69,6 +69,41 @@ universe:
     drawdown -3.35% (2026-07-21 -> 2026-07-28, -$1,300.34) - same late-July stretch.
   1 month (2026-08-14 -> 2026-09-11): +5.77% ($25,000 -> $26,441.57). Max drawdown
     -1.43% (2026-08-26 -> 2026-09-03, -$358.72).
+
+CORRECTION (2026-09-16) -- the figures immediately above are OVERSTATED and should
+not be treated as this engine's real expected performance. The replica's STOP fill
+always used stop_price = prev_close * (1 + INTRADAY_STOP), even on days the OPEN
+itself already gapped below that level (real overnight news/gap risk) -- a real
+stop order can't fill better than the market opens. Checked directly: 809 of 5,672
+symbol-days (14.3%) in the 3-year history had the open already below where the
+-1.51% stop would trigger; of the 1,043 STOP trades actually taken in the 3-year
+backtest, 310 (29.7%) were affected, averaging -1.83% worse than the assumed fill.
+That looks small per trade, but this engine reinvests aggressively (up to 95% of
+cash on a HUGE_DIP, tranches compounding on each other) across 1,000+ trades, so a
+~2% tax on a third of all stop-outs compounds into a massive difference. Re-run
+with STOP fills corrected to min(stop_price, that day's open) -- everything else
+(PEAK/GAIN sells, kill-switch, candidate generation, tranche sizing) held identical
+byte-for-byte to isolate this one assumption:
+  6 months: +230.56% -> +162.24% ($25,000 -> $65,560.53). Max drawdown -3.36% -> -9.29%.
+  3 months: +101.06% -> +70.51% ($25,000 -> $42,627.89). Max drawdown -3.35% -> -9.28%.
+  1 month:  +5.77% -> +3.42% ($25,000 -> $25,854.51). Max drawdown -1.43% -> -3.41%.
+  3 years:  +845.71% -> -4.19% ($25,000 -> $23,951.48). Max drawdown -7.84% -> -20.69%.
+The 3-year number doesn't just shrink, it flips from spectacular to a small loss --
+the compounding effect is severe enough over a long enough run to erase the edge
+entirely. Unresolved tension: the real live account's own independently-cited
+historical range (+120-165%) doesn't match what this corrected backtest implies a
+worst-case-fill assumption should produce -- possible explanations (none confirmed)
+are that real broker stop execution beats the exact opening print, the real account
+simply hasn't yet lived through as many severe gap days as this specific 3-year
+window contained, or the "honest fills" correction referenced elsewhere in this
+docstring's own change history only covered T+1 settlement / phantom-drawdown
+issues, not overnight gap risk specifically -- meaning this engine's live
+parameters (HUGE_DIP_DRAWDOWN, HUGE_DIP_PCT, TRANCHE_SCHEDULE, etc., see the
+tuning history below) may themselves have been selected under a backtest that
+never modeled this. Do not treat the 6-month/3-month/1-month/3-year figures above
+this correction as validated without this caveat attached, and treat re-tuning any
+parameter against a backtest as suspect until that backtest is confirmed gap-aware.
+
 Also tested and REJECTED: a "skip bad days" confidence gate (same idea explored for
 Day-Trading v3, see that file's docstring) using ONLY prior-day data (no lookahead) -
 trailing 5-day basket realized volatility. Skipping high-volatility days DESTROYED
