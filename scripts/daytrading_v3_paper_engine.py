@@ -42,11 +42,21 @@ not a replacement. It exists to capture same-day intraday moves (like 2026-08-13
 WDC/SNDK/MU rally) that a once-daily system structurally cannot react to - not to
 out-return the primary system.
 
-REAL-DATA VALIDATION UPDATE (2026-09-14): the +5.81%/+6.30% figures above came from
-an earlier pass whose data provenance was never confirmed. This engine's exact logic
-was re-transliterated and run cold against genuine, non-interpolated 30-minute
-Robinhood historicals (confirmed real - not gap-fill placeholders - for WDC/MU/SNDK
-back to roughly late Jan/early Feb 2026). Results, all real bars:
+BACKTEST VALIDATION UPDATE (2026-09-14) -- LABEL CORRECTED 2026-09-17: this section
+was originally headed "REAL-DATA VALIDATION UPDATE," ambiguous with "the paper
+account's real results." Every figure below is a SIMULATION run against real
+historical PRICE data -- "real" describes the market data, not that these trades
+were actually placed (this file places NO real or paper orders in its own state
+files beyond what a live run of it executes; these numbers are from an independent
+backtest, not from docs/daytrading_v3_paper_log.json). Check that log directly for
+what this paper tracker has actually recorded, rather than citing the figures below
+as its live paper-trading history.
+
+The +5.81%/+6.30% figures above came from an earlier pass whose data provenance was
+never confirmed. This engine's exact logic was re-transliterated and run cold
+against genuine, non-interpolated 30-minute Robinhood historicals (confirmed real -
+not gap-fill placeholders - for WDC/MU/SNDK back to roughly late Jan/early Feb
+2026). Results, all real bars, backtest only:
   6 months (2026-03-16 -> 2026-09-11, 125 trading days): +9.62% ($5,000 -> $5,481.16).
   3 months (2026-06-14 -> 2026-09-11): +1.21% ($5,000 -> $5,060.73), max drawdown
     -10.47% (2026-06-30 $5,115.39 -> 2026-07-29 $4,579.93, -$535.46).
@@ -76,7 +86,8 @@ day's high/low), wait for a real breakout (a CANDLE CLOSE beyond the range, not
 just a wick), do NOT buy the breakout directly - wait for a retest back to the
 broken level holding as new support/resistance, enter only on a strong confirming
 candle at the retest. Stop = low of the retest candle. Target = 2:1 reward:risk
-(his stated minimum in all 3 worked examples). Results on real bars, WDC/MU/SNDK:
+(his stated minimum in all 3 worked examples). Backtest results (real historical
+price data, no live or paper orders placed), WDC/MU/SNDK:
   30-min-bar proxy (Feb-Sep 2026, n=199): +41.9% at 1% risk/trade, 49.2% win rate.
   Real 5-min bars, his actual stated timeframe (Aug14-Sep16 2026, n=180): +22.2%
     at 1% risk/trade, 38.9% win rate - softer than the 30-min proxy but same

@@ -58,10 +58,17 @@ parameters were tuned on daily closes. "Today" price is a live-quote proxy, same
 convention as the 9-Way Combo's 3-hour checks: today's live price stands in for
 today's not-yet-final daily close/low, noted explicitly as an approximation.
 
-REAL-DATA VALIDATION UPDATE (2026-09-14): a faithful cash/tranche-modeled replica of
-this file's actual cmd_plan() logic (not a simplified single-trade-per-trigger
-approximation) was run cold against real daily bars, $25,000 start, current 8-symbol
-universe:
+BACKTEST VALIDATION UPDATE (2026-09-14) -- LABEL CORRECTED 2026-09-17: this and the
+CORRECTION section below were originally headed "REAL-DATA VALIDATION UPDATE," which
+reads ambiguously as "these are the account's real results." They are NOT. Every
+figure in both sections comes from a SIMULATION (a from-scratch replica of this
+file's cmd_plan() logic) run against real historical PRICE data -- "real" describes
+the market data, not the outcome. No live order produced any of these numbers. See
+"ACTUAL LIVE ACCOUNT PERFORMANCE" below for what the account has actually done.
+
+A faithful cash/tranche-modeled replica of this file's actual cmd_plan() logic (not
+a simplified single-trade-per-trigger approximation) was run cold against real daily
+bars, $25,000 assumed start, current 8-symbol universe:
   6 months (2026-03-14 -> 2026-09-11): +230.56% ($25,000 -> $82,640.31). Max
     drawdown -3.36% (2026-07-21 $63,739.39 -> 2026-07-29 $61,600.89, -$2,138.50) -
     the deepest of several shallow 1-3% drawdown episodes through the window.
@@ -103,6 +110,28 @@ tuning history below) may themselves have been selected under a backtest that
 never modeled this. Do not treat the 6-month/3-month/1-month/3-year figures above
 this correction as validated without this caveat attached, and treat re-tuning any
 parameter against a backtest as suspect until that backtest is confirmed gap-aware.
+
+ACTUAL LIVE ACCOUNT PERFORMANCE (pulled 2026-09-17, account 912291820 "Agentic 2" --
+the ONLY account this line refers to; distinct from every figure above, which is a
+backtest). Real trading only began the week of 2026-07-02 (the `year` window's
+earlier buckets show zero trades). Realized P&L since, from get_realized_pnl:
+  2026-07-02 -> 07-09: -$30.71 (2 trades)      2026-07-23 -> 07-30: -$138.45 (9 trades)
+  2026-07-30 -> 08-06: +$356.23 (31 trades)    2026-08-06 -> 08-13: +$217.49 (17 trades)
+  2026-08-13 -> 08-20: +$167.56 (28 trades)    2026-08-20 -> 08-27: +$62.16 (17 trades)
+  2026-08-27 -> 09-03: +$115.09 (14 trades)    2026-09-03 -> 09-10: +$695.33 (20 trades)
+  2026-09-10 -> 09-17: +$27.84 (8 trades)
+  TOTAL REALIZED, ~11 weeks of actual trading: +$1,472.54.
+  Current total account value: $16,661.10 ($9,571.82 equity + $7,089.28 cash).
+This is dramatically smaller than either backtest figure above for a comparable
+span -- the gap-corrected 3-month backtest shows +70.51%, the original (overstated)
+3-month backtest shows +101.06%; the real account's ~11-week realized total is a
+few thousand dollars, not anywhere near that scale. This does NOT confirm the
+gap-corrected backtest is right and the original was wrong -- if anything it argues
+the gap-corrected figures are STILL optimistic relative to what the account has
+actually realized, not conservative enough. Re-pull get_realized_pnl before citing
+any of the backtest figures above as "what this engine is expected to do" -- the
+live number is the only one that reflects actual fills, actual timing, and actual
+capital deployed, and it should be the anchor, not the simulations.
 
 Also tested and REJECTED: a "skip bad days" confidence gate (same idea explored for
 Day-Trading v3, see that file's docstring) using ONLY prior-day data (no lookahead) -
