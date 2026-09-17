@@ -1,44 +1,60 @@
 {
-  "pending_settlement": [],
-  "open_positions": {
-    "WDC": {
-      "shares": 9.953850,
-      "entry": 411.66,
-      "peak": 415.34,
-      "tranches": 1,
-      "opened": "2026-09-12"
-    },
-    "SNDK": {
-      "shares": 2.682303,
-      "entry": 1532.60,
-      "peak": 1532.60,
-      "tranches": 1,
-      "opened": "2026-09-12"
-    },
-    "INTC": {
-      "shares": 10.227838,
-      "entry": 97.70,
-      "peak": 99.73,
-      "tranches": 1,
-      "opened": "2026-09-12"
-    },
-    "LRCX": {
-      "shares": 14.755994,
-      "entry": 267.43,
-      "peak": 267.43,
-      "tranches": 1,
-      "opened": "2026-09-12"
-    },
-    "STX": {
-      "shares": 0.254996,
-      "entry": 763.35,
-      "peak": 774.08,
-      "tranches": 1,
-      "opened": "2026-09-12"
-    }
+ "pending_settlement": [
+  {
+   "amount": 3135.34,
+   "settle_date": "2026-09-18",
+   "symbol": "WDC"
   },
-  "equity_peak": 16508.13,
-  "kill_switch_active": false,
-  "kill_switch_triggered_date": null,
-  "trend_gate_active": false
+  {
+   "amount": 842.15,
+   "settle_date": "2026-09-18",
+   "symbol": "INTC"
+  },
+  {
+   "amount": 151.54,
+   "settle_date": "2026-09-18",
+   "symbol": "STX"
+  }
+ ],
+ "open_positions": {
+  "WDC": {
+   "shares": 2.558139,
+   "entry": 411.66,
+   "peak": 423.94,
+   "tranches": 1,
+   "opened": "2026-09-12"
+  },
+  "SNDK": {
+   "shares": 2.8048230000000003,
+   "entry": 1535.3009,
+   "peak": 1594.43,
+   "tranches": 2,
+   "opened": "2026-09-12"
+  },
+  "INTC": {
+   "shares": 2.628554,
+   "entry": 97.7,
+   "peak": 110.82,
+   "tranches": 1,
+   "opened": "2026-09-12"
+  },
+  "LRCX": {
+   "shares": 18.356946,
+   "entry": 267.532,
+   "peak": 267.95,
+   "tranches": 2,
+   "opened": "2026-09-12"
+  },
+  "STX": {
+   "shares": 0.065534,
+   "entry": 763.35,
+   "peak": 799.82,
+   "tranches": 1,
+   "opened": "2026-09-12"
+  }
+ },
+ "equity_peak": 20873.33,
+ "kill_switch_active": false,
+ "kill_switch_triggered_date": null,
+ "trend_gate_active": false
 }
