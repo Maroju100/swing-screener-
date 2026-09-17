@@ -68,6 +68,35 @@ back to roughly late Jan/early Feb 2026). Results, all real bars:
     wrong volatility regime). Do not add a confidence/day-skip gate to this engine
     without a signal that survives a genuinely separate third window first.
 
+RELATED SETUP EXPLORED (2026-09-17): Opening Range Breakout + Break-and-Retest,
+sourced from a Scarface Trades transcript ("The Dark Side of ORB Trading") -
+NOT part of this engine's own rules, documented here as adjacent research on the
+same WDC/MU/SNDK universe. Mechanics: mark the opening range (first bar of the
+day's high/low), wait for a real breakout (a CANDLE CLOSE beyond the range, not
+just a wick), do NOT buy the breakout directly - wait for a retest back to the
+broken level holding as new support/resistance, enter only on a strong confirming
+candle at the retest. Stop = low of the retest candle. Target = 2:1 reward:risk
+(his stated minimum in all 3 worked examples). Results on real bars, WDC/MU/SNDK:
+  30-min-bar proxy (Feb-Sep 2026, n=199): +41.9% at 1% risk/trade, 49.2% win rate.
+  Real 5-min bars, his actual stated timeframe (Aug14-Sep16 2026, n=180): +22.2%
+    at 1% risk/trade, 38.9% win rate - softer than the 30-min proxy but same
+    direction, confirming the effect survives the granularity correction.
+  Randomization control (5,000 random-entry draws per symbol, same stop/target
+    mechanics): real result beat 93.1% (WDC), 99.2% (MU), 96.5% (SNDK) of random
+    draws - the strongest randomization result of any setup tested this session,
+    including the validated Doji setup above (87-95th percentile there).
+CORRECTION / caveat (2026-09-17): tested against real small-cap/low-float movers
+(Ross Cameron's own named real trades, real minute bars, n=12 across 7 ticker-days)
+and came back INCONCLUSIVE, not confirmatory - net positive (+0.250 avg R) but
+driven almost entirely by 2 trades in one name, and 4 of 7 ticker-days produced
+ZERO signals at all. Likely structural, not a flaw in the setup: violent low-float
+gappers (e.g. one name moved from ~$2.91 to over $4 within a single 1-minute bar
+at the open) blow through the opening-range reference level before an orderly
+breakout-then-retest sequence has any chance to form. Treat ORB+Retest as validated
+for liquid large/mid-cap names (where it was built and tested) but UNPROVEN, not
+disproven, for low-float small-cap movers - do not assume it transfers.
+No engine implements this setup yet; it is documented here as a candidate only.
+
 HARD RULE: this is a paper tracker. Never call review_equity_order or
 place_equity_order for anything this script does.
 """
