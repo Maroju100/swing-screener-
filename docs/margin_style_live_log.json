@@ -2356,6 +2356,78 @@
         }
       ],
       "notes": "Manual trigger run. LRCX hit INTRADAY_STOP threshold (-1.51% from prior close $270.87). Only 1 STOP exit < 2 circuit-breaker threshold. 4 planned NORMAL_DIP buys skipped due to GFV (insufficient settled funds). Historical data corrected through Sep 15; prior run used stale Sep 4 data. Fresh daily bars through Sep 16 confirm only LRCX legitimately breaches stop threshold."
+    },
+    {
+      "timestamp": "2026-09-18T17:07:51Z",
+      "orders": [
+        {
+          "symbol": "INTC",
+          "side": "sell",
+          "shares": 2.628554,
+          "price": 106.98,
+          "reason": "STOP",
+          "order_id": "6aad6fdd-fbc6-4dbb-95ab-36e16891c056"
+        },
+        {
+          "symbol": "SNDK",
+          "side": "sell",
+          "shares": 2.083983,
+          "price": 1743.57,
+          "reason": "PEAK",
+          "order_id": "6aad6fe0-9a81-45e8-aced-31ac950aa973"
+        },
+        {
+          "symbol": "STX",
+          "side": "sell",
+          "shares": 0.048692,
+          "price": 844.69,
+          "reason": "PEAK",
+          "order_id": "6aad6fe3-40b8-46e9-823d-df87a4dee88e"
+        },
+        {
+          "symbol": "LRCX",
+          "side": "buy",
+          "shares": 0.577466,
+          "price": 283.39,
+          "reason": "HUGE_DIP",
+          "order_id": "6aad6fe5-bb5e-42b7-b93a-b48fcca6a1d6"
+        },
+        {
+          "symbol": "WDC",
+          "side": "buy",
+          "shares": 7.114352,
+          "price": 438.41,
+          "reason": "HUGE_DIP",
+          "order_id": "6aad6fe7-6390-412f-b0ba-cc1c1a92138c"
+        }
+      ],
+      "proceeds": 3955.9,
+      "pending_settlement_date": "2026-09-21",
+      "safe_settled_cash": 10061.32,
+      "total_equity": 21612.74,
+      "open_positions": {
+        "WDC": {
+          "shares": 9.672491,
+          "entry": 431.3353,
+          "peak": 438.41
+        },
+        "SNDK": {
+          "shares": 0.72084,
+          "entry": 1535.3009,
+          "peak": 1743.57
+        },
+        "LRCX": {
+          "shares": 18.934412,
+          "entry": 268.0156,
+          "peak": 283.39
+        },
+        "STX": {
+          "shares": 0.016842,
+          "entry": 763.35,
+          "peak": 844.69
+        }
+      },
+      "notes": "STOP triggered on INTC (-1.51%). PEAK triggered on SNDK (new high 1,743.57) and STX (new high 844.69). HUGE_DIP triggered on LRCX and WDC; both netted against pending PEAK sales. No circuit breaker. Kill switch OFF. Trend gate OFF."
     }
   ]
 }
