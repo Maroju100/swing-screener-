@@ -377,6 +377,33 @@ TRADE_CAP_SCHEDULE = [0.25, 0.25, 0.15, 0.10, 0.05]
 MAX_HOLD_DAYS = 6
 
 
+def has_momentum_confirmation(bars, index, lookback=3):
+    """Check if a down day has real momentum confirmation (not just noise).
+
+    Returns True if the day has one or more of:
+    - 3+ consecutive down days (genuine selling pressure)
+    - Could extend with RSI/SMA checks, but 3+ consecutive downs is sufficient
+
+    Args:
+        bars: list of bar dicts with 'close' field
+        index: index of current bar in bars
+        lookback: how many consecutive down days required (default 3)
+
+    Returns:
+        True if momentum confirmed (real dip), False if likely noise
+    """
+    if index < lookback:
+        return True  # Not enough history, default to True (be permissive early)
+
+    # Count consecutive down days ending at current bar
+    down_count = 0
+    for i in range(index - lookback + 1, index + 1):
+        if i >= 0 and i < len(bars) and bars[i]['close'] < bars[i-1]['close']:
+            down_count += 1
+
+    return down_count >= lookback
+
+
 def next_business_day(d):
     d2 = d + timedelta(days=1)
     while d2.weekday() >= 5:
@@ -713,6 +740,11 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
             if drawdown <= HUGE_DIP_DRAWDOWN:
                 reason = 'HUGE_DIP'
             elif day_return <= -NORMAL_DIP_THRESHOLD and (not pos or pos.get('tranches', 0) < MAX_TRANCHES):
+                # IMPROVEMENT: Entry Signal Quality Filter
+                # Only enter NORMAL_DIP if it has momentum confirmation (3+ consecutive down days)
+                # This filters noise entries on marginal -0.4% down days without real selling pressure
+                if not has_momentum_confirmation(bars, len(bars) - 1, lookback=3):
+                    continue  # Skip this noisy entry, wait for real momentum confirmation
                 reason = 'NORMAL_DIP'
             else:
                 continue

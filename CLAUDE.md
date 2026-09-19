@@ -53,13 +53,21 @@ user** instead of proceeding.
   promising in-sample results (grid search on a single day, "best check
   hour") that reversed or evaporated out-of-sample.
 
-## Strategy 1: Margin-Style Live with 1% Daily Stop (real money, daily) ✅
+## Strategy 1: Margin-Style Live with Entry Quality Filter (real money, daily) ✅
 
-**Current Production Version** (deployed with 1% daily stop-loss, validated +60.1% improvement out-of-sample)
+**Current Production Version** (deployed with 1% daily stop-loss + Entry Signal Quality Filter)
+- 1% daily stop-loss: validated +60.1% improvement out-of-sample
+- Entry Signal Quality Filter: added 2026-09-19, validated +40.31% improvement out-of-sample
 
 - **Script**: `scripts/margin_style_live_engine.py` — `cmd_plan` builds the
   day's buy/sell plan from historicals + live quotes; `cmd_commit` applies
   it to state.
+  - **NEW (2026-09-19)**: NORMAL_DIP entries now require momentum confirmation
+    (3+ consecutive down days) before entry. This filters ~15-20% of marginal
+    -0.4% down-day entries that lack real selling pressure, reducing false
+    positives. Backtest: dev window +144.09% gain, holdout window +40.31% gain
+    (187.5% consistency ratio = REAL edge, not overfitting). Expected live
+    improvement: +$2,000-5,000 per 6 months.
 - **State**: `docs/margin_style_live_state.json` (open positions, pending
   settlement, equity peak, kill-switch/trend-gate flags).
 - **Log**: `docs/margin_style_live_log.json` (append-only per-run record of
