@@ -1,6 +1,6 @@
 #!/bin/bash
 # Daily Entry Quality Filter Paper Tracking
-# Run daily at 19:00 UTC (2 hours after Margin-Style Live)
+# Run daily at 18:00 UTC (right after Margin-Style Live at 17:00 UTC)
 
 cd /home/user/swing-screener-
 

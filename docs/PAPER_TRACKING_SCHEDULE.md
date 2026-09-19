@@ -6,7 +6,7 @@
 
 ## Daily Update
 
-Run the paper tracking validation daily at **19:00 UTC** (2 hours after Margin-Style Live run at 17:00 UTC):
+Run the paper tracking validation daily at **18:00 UTC** (right after Margin-Style Live run at 17:00 UTC):
 
 ```bash
 bash scripts/daily_paper_tracking.sh
