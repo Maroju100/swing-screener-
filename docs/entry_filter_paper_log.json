@@ -12,6 +12,19 @@
       "filtered_return_pct": 205.1,
       "filtered_entries": 18,
       "note": "Paper tracking started - cumulative through 2026-09-19"
+    },
+    {
+      "date": "2026-09-19",
+      "timestamp": "2026-09-19T08:28:13.599561Z",
+      "days_in_window": 127,
+      "baseline_pnl": 124080.9,
+      "filtered_pnl": 164083.77,
+      "improvement": 40002.87,
+      "improvement_pct": 32.24,
+      "baseline_return_pct": 155.1,
+      "filtered_return_pct": 205.1,
+      "filtered_entries": 18,
+      "note": "Cumulative tracking through 2026-09-19"
     }
   ]
 }
