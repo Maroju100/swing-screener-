@@ -1,0 +1,15 @@
+{
+  "start_date": "2026-09-19",
+  "strategy": "Entry Signal Quality Filter (3+ consecutive down days)",
+  "capital_base": 30000,
+  "cumulative_results": {
+    "baseline_pnl": 124080.9,
+    "filtered_pnl": 164083.77,
+    "improvement": 40002.87,
+    "improvement_pct": 32.24,
+    "days_tracked": 127,
+    "filtered_entries_skipped": 18
+  },
+  "last_update": "2026-09-19T08:24:13.087190Z",
+  "status": "tracking"
+}
