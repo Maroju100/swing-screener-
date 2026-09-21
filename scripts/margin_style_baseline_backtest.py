@@ -97,10 +97,12 @@ baseline looks like once the double-sell is removed.
 import argparse
 import contextlib
 import datetime as _dt
+import importlib.util
 import inspect
 import io
 import json
 import os
+import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -152,6 +154,30 @@ def extract_plan_json(stdout_text):
     raise ValueError('no JSON object found in cmd_plan output:\n' + stdout_text[:500])
 
 
+def load_engine(rev=None):
+    """Load the production engine, optionally as of a past git revision.
+
+    Lets us ask whether a documented figure was produced by an OLDER engine.
+    The historical copy is written into .backtest_scratch/, whose parent is the
+    repo root, so the engine's own ROOT/STATE_PATH resolution matches what it
+    saw in scripts/ -- STATE_PATH is redirected in run() before any call.
+    """
+    if rev is None:
+        return MS
+    src = subprocess.check_output(
+        ['git', 'show', f'{rev}:scripts/margin_style_live_engine.py'],
+        cwd=ROOT, text=True)
+    os.makedirs(SCRATCH, exist_ok=True)
+    path = os.path.join(SCRATCH, f'engine_{rev}.py')
+    with open(path, 'w') as fh:
+        fh.write(src)
+    spec = importlib.util.spec_from_file_location(f'engine_{rev}', path)
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def patched_cmd_plan():
     """Return a cmd_plan whose DAILY_STOP branch clears pending_peak_gain.
 
@@ -181,7 +207,10 @@ def patched_cmd_plan():
     return ns['cmd_plan']
 
 
-def run(start, end, capital, verbose=False, patch_bug=False, no_daily_stop=False):
+def run(start, end, capital, verbose=False, patch_bug=False, no_daily_stop=False,
+        engine_rev=None):
+    global MS
+    MS = load_engine(engine_rev)
     bars_by_sym = load_bars()
 
     os.makedirs(SCRATCH, exist_ok=True)
@@ -274,6 +303,7 @@ def run(start, end, capital, verbose=False, patch_bug=False, no_daily_stop=False
         'window': {'start': start, 'end': end, 'trading_days': len(day_equity)},
         'daily_stop_bug_patched': patch_bug,
         'daily_stop_disabled': no_daily_stop,
+        'engine_rev': engine_rev or 'working tree',
         'capital': capital,
         'final_equity': round(prev_equity, 2),
         'total_pnl': round(total_pnl, 2),
@@ -302,14 +332,19 @@ def main():
     ap.add_argument('--no-daily-stop', action='store_true',
                     help="raise DAILY_STOP_PCT out of reach so the daily stop never "
                          "fires - reproduces CLAUDE.md's 'Baseline (no stop)' row")
+    ap.add_argument('--engine-rev',
+                    help='replay a PAST version of the engine (git rev), to test whether '
+                         'a documented figure came from an older engine')
     args = ap.parse_args()
 
     r = run(args.start, args.end, args.capital, verbose=args.verbose,
-            patch_bug=args.patch_daily_stop_bug, no_daily_stop=args.no_daily_stop)
+            patch_bug=args.patch_daily_stop_bug, no_daily_stop=args.no_daily_stop,
+            engine_rev=args.engine_rev)
 
     print('=' * 72)
     print('MARGIN-STYLE LIVE - BASELINE BACKTEST (engine replay, no rule patched)')
     print('=' * 72)
+    print(f"Engine          {r['engine_rev']}")
     print(f"Window          {r['window']['start']} -> {r['window']['end']} "
           f"({r['window']['trading_days']} trading days)")
     print(f"Capital         ${r['capital']:,.2f}")

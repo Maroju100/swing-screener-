@@ -300,13 +300,37 @@ below are what makes a claim checkable.
 > Reproduce: `python3 scripts/margin_style_baseline_backtest.py [flags]`
 > (committed script + committed bars in `data/`, so this is checkable).
 >
+> **"It was an older engine" was tested and does not explain it.** Replaying six
+> engine revisions over the same window (`--engine-rev <sha>`), 6-month return:
+>
+> | Engine rev | Date | Replayed |
+> |---|---|---|
+> | `3f2660e` | 2026-08-18 | +87.80% |
+> | `7bd9628` | 2026-08-19 | **+99.59%** |
+> | `19a509c` | 2026-08-20 | +78.94% |
+> | `34979e4` | 2026-08-21 | +64.12% |
+> | `859057e` | 2026-08-27 (last pre-daily-stop) | +64.12% |
+> | working tree | 2026-09-21 | +64.12% (`--no-daily-stop`) |
+>
+> None reaches +155%. Capital scale does not explain it either — the current
+> engine returns +68.69% / +63.49% / +64.12% / +65.38% at $10k / $30k / $80k /
+> $200k, i.e. roughly scale-invariant.
+>
+> Two side-findings worth keeping: (a) `859057e` and the current engine with the
+> stop disabled agree to the cent, which is a useful determinism check on the
+> harness; (b) `7bd9628`'s +99.59% is suspiciously close to the "+99.4%" figure
+> the live trigger's CAPITAL SIZING note cites as the *before* state of the
+> "+99.4% → +155.7%" comparison — so +155% may be the **after** figure of a
+> change this replay already includes, meaning it was never a like-for-like
+> baseline.
+>
 > Two honest caveats: (a) the replay prices "today" off the daily close as a
 > proxy for the 17:00 UTC live quote — a real approximation, though not one that
-> should flip +45% to −9%; (b) the engine has changed a lot since these numbers
-> were produced (MAX_HOLD 2026-08-21, tranche schedule 2026-08-19, capital sizing
-> 2026-08-21, daily stop 2026-09-06), so they may describe an older engine. Either
-> way they **do not describe the engine running today**, so do not quote them as
-> this strategy's track record until the gap is explained.
+> should flip +45% to −9%; (b) the untested variable is now the **bars**: these
+> are split-adjusted daily bars fetched 2026-09-21, and the original run's data
+> is gone, so a data difference cannot be ruled out. Either way these figures
+> **do not describe the engine running today**, so do not quote them as this
+> strategy's track record until the gap is explained.
 >
 > **The `--patch-daily-stop-bug` flag exists because the daily stop is broken —
 > see the DAILY_STOP defect note under Key thresholds above.**
