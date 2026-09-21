@@ -125,10 +125,26 @@ below are what makes a claim checkable.
   shows 0 positions (`equity_peak` 17,696.92). The engines have diverged too
   (~430 insertions / 175 deletions apart; `main` carries position-mismatch
   detection the branch lacks). **Do NOT merge the branch into `main`** — it
-  would overwrite live state with a stale fork and add the daily-stop code that
-  production has correctly never had. Reconcile against the **broker** as the
-  only authority (`get_equity_positions` on 912291820), then port wanted
-  changes file-by-file. Unresolved as of 2026-09-21.
+  would add the daily-stop code that production has correctly never had.
+  Port wanted changes file-by-file instead.
+- 🚨 **BROKER CHECKED 2026-09-21 — `main`'s state file is WRONG.**
+  `get_equity_positions` on 912291820 returns **only CGC (2 sh)** — zero
+  universe symbols. `get_portfolio`: `equity_value` **$1.85**, `cash`
+  **$17,693.63**, `total_value` **$17,695.48**. The account is flat.
+  - **The development branch's state is CORRECT**: 0 open positions,
+    `equity_peak` 17,696.92 ≈ the real total_value. ✅
+  - **`main`'s state is STALE and claims phantom positions**: WDC 9.6725,
+    SNDK 0.7208, LRCX 4.1784, STX 0.0168, `equity_peak` 20,873.33 — roughly
+    $3,178 above what the account actually holds. ❌
+  - Likely cause: the real 2026-09-21 run ("4 MAX_HOLD + STOP exits, now flat")
+    executed and was committed to the **development branch instead of `main`**,
+    so `main` never recorded the exits and still believes those positions are open.
+  - **Consequence**: until `main`'s state is corrected to flat, a run off `main`
+    starts from phantom holdings — `cmd_plan` derives `total_equity`, PEAK and
+    STOP decisions from state, so it would emit sell orders for shares that do
+    not exist. The daily procedure's reconcile step (Guardrail 2) is what should
+    catch this, and `main`'s position-mismatch detection helps, but the state
+    file itself still needs fixing. **Fix `main`'s state before the next run.**
 - ⚠️ **Why it was disabled — replay says it is harmful.** The "+60.1%
   improvement out-of-sample" claim is withdrawn: it
   came from post-processing a fixed `day_pnl` series (Evidence Rule 1's
