@@ -53,21 +53,14 @@ user** instead of proceeding.
   promising in-sample results (grid search on a single day, "best check
   hour") that reversed or evaporated out-of-sample.
 
-## Strategy 1: Margin-Style Live with Entry Quality Filter (real money, daily) ✅
+## Strategy 1: Margin-Style Live (real money, daily) ✅
 
-**Current Production Version** (deployed with 1% daily stop-loss + Entry Signal Quality Filter)
+**Current Production Version** (deployed with 1% daily stop-loss)
 - 1% daily stop-loss: validated +60.1% improvement out-of-sample
-- Entry Signal Quality Filter: added 2026-09-19, validated +40.31% improvement out-of-sample
 
 - **Script**: `scripts/margin_style_live_engine.py` — `cmd_plan` builds the
   day's buy/sell plan from historicals + live quotes; `cmd_commit` applies
   it to state.
-  - **NEW (2026-09-19)**: NORMAL_DIP entries now require momentum confirmation
-    (3+ consecutive down days) before entry. This filters ~15-20% of marginal
-    -0.4% down-day entries that lack real selling pressure, reducing false
-    positives. Backtest: dev window +144.09% gain, holdout window +40.31% gain
-    (187.5% consistency ratio = REAL edge, not overfitting). Expected live
-    improvement: +$2,000-5,000 per 6 months.
 - **State**: `docs/margin_style_live_state.json` (open positions, pending
   settlement, equity peak, kill-switch/trend-gate flags).
 - **Log**: `docs/margin_style_live_log.json` (append-only per-run record of
@@ -163,6 +156,14 @@ user** instead of proceeding.
   tools). Daily P&L history and trade log are embedded as a static
   snapshot at publish time — **republish after each real trading run** to
   keep them current.
+- **REMOVED (2026-09-21)**: Entry Signal Quality Filter (3+ consecutive down days)
+  was backtest-validated to claim +40.31% improvement but comprehensive filter
+  backtest across 5 alternatives on full 6-month, dev, and holdout windows showed
+  all entry confirmation filters are counterproductive. The 3+ down-days filter
+  specifically reduced 6-month returns by 99% ($124k → $1.4k), found zero quality
+  days in full 6-month period, and delivered -$122,632 in lost profit. Reverted to
+  baseline strategy (trade all days). See `/tmp/backtest_all_filters.py` for
+  detailed comparison of 5 filter variants.
 
 ### 6-Month Backtest Results (Mar 6 - Sep 4, 2026) — With Overnight Gap Analysis
 
