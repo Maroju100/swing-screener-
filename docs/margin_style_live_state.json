@@ -1,44 +1,36 @@
 {
-  "pending_settlement": [],
-  "open_positions": {
-    "WDC": {
-      "shares": 9.953850,
-      "entry": 411.66,
-      "peak": 415.34,
-      "tranches": 1,
-      "opened": "2026-09-12"
-    },
-    "SNDK": {
-      "shares": 2.682303,
-      "entry": 1532.60,
-      "peak": 1532.60,
-      "tranches": 1,
-      "opened": "2026-09-12"
-    },
-    "INTC": {
-      "shares": 10.227838,
-      "entry": 97.70,
-      "peak": 99.73,
-      "tranches": 1,
-      "opened": "2026-09-12"
-    },
-    "LRCX": {
-      "shares": 14.755994,
-      "entry": 267.43,
-      "peak": 267.43,
-      "tranches": 1,
-      "opened": "2026-09-12"
-    },
-    "STX": {
-      "shares": 0.254996,
-      "entry": 763.35,
-      "peak": 774.08,
-      "tranches": 1,
-      "opened": "2026-09-12"
-    }
+ "pending_settlement": [
+  {
+   "amount": 5290.27,
+   "settle_date": "2026-09-22",
+   "symbol": "WDC"
   },
-  "equity_peak": 16508.13,
-  "kill_switch_active": false,
-  "kill_switch_triggered_date": null,
-  "trend_gate_active": false
+  {
+   "amount": 1262.51,
+   "settle_date": "2026-09-22",
+   "symbol": "SNDK"
+  },
+  {
+   "amount": 1259.0,
+   "settle_date": "2026-09-22",
+   "symbol": "LRCX"
+  },
+  {
+   "amount": 5160.5,
+   "settle_date": "2026-09-22",
+   "symbol": "STX"
+  }
+ ],
+ "open_positions": {},
+ "equity_peak": 17696.92,
+ "kill_switch_active": false,
+ "kill_switch_triggered_date": null,
+ "trend_gate_active": false,
+ "daily_stop_active": false,
+ "daily_stop_date": null,
+ "_last_commit": {
+  "timestamp": "2026-09-21T17:06:48.586045+00:00",
+  "sells_count": 4,
+  "buys_count": 0
+ }
 }
