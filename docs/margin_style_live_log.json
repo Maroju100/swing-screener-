@@ -2245,4 +2245,64 @@
       "notes": "Manual trigger + broker reconciliation. Fresh daily bars (Jul 8 - Sep 15) confirm only LRCX breaches INTRADAY_STOP. Discovered dev branch state was out of sync with broker (showed TSM 5.46, WDC 22.2, SNDK 4.6 instead of actual TSM 0, WDC 9.95, SNDK 2.68). Corrected state to match broker API reality. 1 STOP sell placed, 4 NORMAL_DIP buys skipped pending settlement."
     }
   ]
+}    {
+      "timestamp": "2026-09-21T17:06:48Z",
+      "event": "SCHEDULED_RUN",
+      "orders_executed": [
+        {
+          "symbol": "WDC",
+          "side": "sell",
+          "shares": 11.948656,
+          "price": 442.75,
+          "reason": "MAX_HOLD",
+          "entry": 432.85,
+          "status": "placed",
+          "order_id": "6ab16414-bb8f-4e94-89bd-5709edeaf767"
+        },
+        {
+          "symbol": "SNDK",
+          "side": "sell",
+          "shares": 0.72084,
+          "price": 1751.44,
+          "reason": "STOP",
+          "entry": 1543.12,
+          "status": "placed",
+          "order_id": "6ab16417-f2fb-462a-ac61-964280b7f970"
+        },
+        {
+          "symbol": "LRCX",
+          "side": "sell",
+          "shares": 4.178418,
+          "price": 301.31,
+          "reason": "MAX_HOLD",
+          "entry": 270.08,
+          "status": "placed",
+          "order_id": "6ab1641a-6395-42f1-9f83-7e927455d598"
+        },
+        {
+          "symbol": "STX",
+          "side": "sell",
+          "shares": 5.904389,
+          "price": 874.01,
+          "reason": "MAX_HOLD",
+          "entry": 849.01,
+          "status": "placed",
+          "order_id": "6ab16421-ca92-43ca-961e-783bad2ff5a0"
+        }
+      ],
+      "orders_skipped": [],
+      "pending_settlement": {
+        "WDC": 5290.27,
+        "SNDK": 1262.51,
+        "LRCX": 1259.0,
+        "STX": 5160.50
+      },
+      "total_proceeds": 13972.28,
+      "settlement_date": "2026-09-22",
+      "real_cash_before": 4728.55,
+      "open_positions_before": 4,
+      "open_positions_after": 0,
+      "notes": "All 4 open positions closed. WDC, LRCX, STX hit MAX_HOLD threshold (9 days since opened on Sep 12, max hold is 6 days). SNDK hit INTRADAY_STOP trigger. No new entries evaluated due to historical data staleness (last bar Sep 18). State file was reconciled Sep 21 at run time to match broker holdings (positions were 95.7-272% off). System now flat, pending settlement of $13,972.28 for Sep 22. Risk state: kill_switch_active=false, trend_gate_active=false. Elevated-scrutiny caveat: this system has 9 days of real holdings on these 4 positions, showing realized P&L from entry prices at Sep 12."
+    }
+  ]
 }
