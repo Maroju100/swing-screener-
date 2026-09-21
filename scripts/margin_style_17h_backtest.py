@@ -86,6 +86,9 @@ class FakeDatetime(real_datetime):
 
 
 def load_engine_src(rev):
+    """rev=None (or 'working') reads the CURRENT working-tree engine."""
+    if rev in (None, 'working'):
+        return open(os.path.join(ROOT, 'scripts', 'margin_style_live_engine.py')).read()
     return subprocess.check_output(
         ['git', 'show', f'{rev}:scripts/margin_style_live_engine.py'], cwd=ROOT, text=True)
 

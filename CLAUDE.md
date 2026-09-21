@@ -98,9 +98,19 @@ below are what makes a claim checkable.
 
 ## Strategy 1: Margin-Style Live (real money, daily) ✅
 
-**Current Production Version** (deployed with 1% daily stop-loss)
-- ⚠️ **The 1% daily stop-loss is deployed but is NOT validated — replay says it
-  is harmful.** The "+60.1% improvement out-of-sample" claim is withdrawn: it
+**Current Production Version** — baseline, no daily stop.
+
+- ✅ **The 1% daily stop-loss was DISABLED 2026-09-21** at the user's explicit
+  request (`DAILY_STOP_ENABLED = False` in
+  `scripts/margin_style_live_engine.py`). Replaying the working tree now
+  reproduces the baseline **exactly**: $124,080.90 realized / **+155.10%** /
+  714 trades, identical to pre-stop engine `859057e`. Verify with
+  `scripts/margin_style_17h_backtest.py --engine-rev working`.
+  Disabling also makes the DAILY_STOP double-sell defect **unreachable**, so it
+  is now latent-and-gated rather than latent-and-live. The defect itself is
+  still unfixed — **fix it before ever setting the flag back to True.**
+- ⚠️ **Why it was disabled — replay says it is harmful.** The "+60.1%
+  improvement out-of-sample" claim is withdrawn: it
   came from post-processing a fixed `day_pnl` series (Evidence Rule 1's
   forbidden method), not from replaying the engine. Engine replay with the
   DAILY_STOP defect patched gives **+79.71% vs +155.10% baseline** over 6

@@ -236,13 +236,28 @@ CIRCUIT_BREAKER_STOP_COUNT = 2    # if this many STOP exits fire in the same run
                                   # simultaneous selloff across the basket), skip all new
                                   # entries this run - stops/exits still execute normally,
                                   # only fresh buys pause. Re-evaluated fresh next run.
-DAILY_STOP_PCT = 0.01             # daily loss cap: if cumulative realized + unrealized loss
-                                  # from all positions exceeds this % of starting capital,
-                                  # liquidate all remaining positions and skip new entries
-                                  # for rest of day. Validated +60.1% improvement out-of-sample
-                                  # on 45-day holdout window (Jul6-Aug3 vs Aug4-Sep4).
-                                  # Triggered on ~18 days over 6-month backtest, saving
-                                  # $74,606 in worst-day losses (e.g. Jul28: -$15.5k -> -$300).
+DAILY_STOP_ENABLED = False        # DISABLED 2026-09-21 at the user's explicit request.
+                                  # Engine replay (not day_pnl post-processing) shows the daily
+                                  # stop is NET HARMFUL: +79.71% vs +155.10% baseline over the
+                                  # 6-month window, and +8.72% vs +11.73% on a genuine fresh
+                                  # holdout -- worse in BOTH windows, so not a one-window fluke.
+                                  # Reproduce:
+                                  #   scripts/margin_style_17h_backtest.py --engine-rev bc814c4 \
+                                  #       --patch-daily-stop-bug
+                                  # The "+60.1% improvement out-of-sample" that justified adding
+                                  # it was produced by post-processing a fixed day_pnl series
+                                  # (cmd_plan never called) -- the method CLAUDE.md Evidence
+                                  # Rule 1 forbids -- and it capped at 1% of $30,000 while the
+                                  # underlying run used $80,000.
+                                  # Disabling also makes the DAILY_STOP double-sell defect
+                                  # unreachable (see the branch below), so that defect is now
+                                  # latent-and-gated rather than latent-and-live.
+                                  # It never fired in production, so nothing was lost.
+                                  # To re-enable: set True -- but FIX THE DOUBLE-SELL FIRST.
+DAILY_STOP_PCT = 0.01             # daily loss cap, retained for when/if the stop is re-enabled:
+                                  # if cumulative realized + unrealized loss from all positions
+                                  # exceeds this % of cash, liquidate all remaining positions
+                                  # and skip new entries for the rest of the day.
 
 # KILL-SWITCH + TREND RE-ENTRY GATE, added 2026-08-20. A portfolio-level circuit
 # breaker distinct from CIRCUIT_BREAKER_STOP_COUNT above: that one reacts to how
@@ -615,7 +630,9 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
     daily_total_loss = realized_loss + unrealized_loss
 
     # Check if loss threshold exceeded and trigger emergency liquidation if needed
-    if not daily_stop_active and daily_total_loss >= daily_loss_cap:
+    # DAILY_STOP_ENABLED is False -- see the constant for why. While it is False this
+    # branch never runs, which also gates the double-sell defect documented below.
+    if DAILY_STOP_ENABLED and not daily_stop_active and daily_total_loss >= daily_loss_cap:
         daily_stop_active = True
         daily_stop_date = today
         # Emergency liquidation: force-close all remaining open positions
