@@ -71,6 +71,32 @@ user** instead of proceeding.
   `trig_01VfH6Nhfbk7YLaTkzHWLG7E`. (A walk-forward-validated backtest
   found switching the check-hour does not hold up out-of-sample — keep
   17:00.)
+  - **Check *frequency* is settled too — do not add intraday runs
+    (2026-09-21).** Three independent prior findings in this repo point the
+    same way: once-daily checks can beat intraday checks for Margin-Style
+    (`scripts/backtest_daytrade_once_daily_noon.py` docstring), twice-daily
+    beat continuous checking for the day-trading engine on a 3-window
+    walk-forward (`scripts/daytrade_paper_engine.py`), and 3-hour checks
+    beat both hourly and twice-daily for the agentic system
+    (`docs/agentic_log.json`, which carries its own "skipped
+    paper-tracking validation" caveat).
+  - Mechanism: entry signals read **completed prior daily closes**, so an
+    extra check adds no entry information — but it does give
+    `INTRADAY_STOP` and `PEAK_SELL_PCT` another chance to fire on intraday
+    noise and cut a winner short. More checks tighten exits without
+    improving entries.
+  - A real test would extend
+    `scripts/margin_style_timing_comparison.py`'s
+    `backtest_with_intraday_checks` harness to multi-check schedules over
+    real intraday bars (its non-interpolated span is 2026-01-30 →
+    2026-08-06), then walk-forward validate. **Scaling daily P&L by an
+    assumed "extra executions capture N% more" multiplier is not a
+    backtest** — that was attempted on 2026-09-21 and the resulting
+    "3×/day adds +2.7pp" claim was fabricated, not measured. Same defect
+    invalidated a "close at 2:45 PM CDT vs hold overnight" comparison from
+    the same session: `day_pnl` is a daily-bar series and carries no
+    intraday decomposition, so it cannot answer what share of a day's P&L
+    occurred before any given clock time.
 - **Key thresholds** (do not change without explicit request):
   - `HUGE_DIP_DRAWDOWN = -0.35`, `HUGE_DIP_PCT = 0.40`
   - `NORMAL_DIP_THRESHOLD = 0.004` (tranche-indexed sizing)
