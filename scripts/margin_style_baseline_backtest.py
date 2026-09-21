@@ -1,8 +1,31 @@
 #!/usr/bin/env python3
 """Reproducible baseline backtest for Margin-Style Live.
 
-WHY THIS EXISTS
----------------
+⚠️ SUPERSEDED FOR THE 6-MONTH FIGURE -- READ FIRST (2026-09-21)
+----------------------------------------------------------------
+This script's price basis is WRONG for validating the documented track record,
+and results it produced (+64.12% / +26.07% / -9.29%) were used to wrongly
+"retract" figures that are in fact correct.
+
+It prices "today" off the DAILY CLOSE. The live system fires at 17:00 UTC, and
+the original backtest -- scripts/margin_style_original_6month_backtest.py --
+correctly prices off the ACTUAL ~17:00 UTC hourly bar. That original reproduces
+CLAUDE.md's $124,080.90 / +155.10% to the cent.
+
+The daily-close substitution is NOT harmless: PEAK_SELL_PCT trims on every new
+high and INTRADAY_STOP compares against the prior close, so the price source
+changes which rules fire every single day. This harness also runs with ~85 days
+of prior lookback that the original did not have.
+
+Use margin_style_original_6month_backtest.py as the reference for that window.
+This script remains useful for engine-revision sweeps (--engine-rev) and for
+isolating the DAILY_STOP defect (--patch-daily-stop-bug), but any ABSOLUTE
+return it prints should be read as "daily-close basis", not as the strategy's
+track record. Fixing it means feeding it 17:00 hourly quotes; until then do not
+compare its output against documented figures.
+
+WHY THIS EXISTS (original rationale, still true as far as it goes)
+------------------------------------------------------------------
 The headline baseline figure for this strategy (+155.10% / $124,080.90 over
 Mar 6 - Sep 4 2026) traced only to /tmp/margin_live_full_backtest_v2_results.json
 -- a bare pair of dicts (day_pnl, day_equity) with no trades, no parameters, no

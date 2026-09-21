@@ -285,55 +285,48 @@ below are what makes a claim checkable.
 
 ### 6-Month Backtest Results (Mar 6 - Sep 4, 2026) — With Overnight Gap Analysis
 
-> ⚠️ **THESE NUMBERS DO NOT REPRODUCE (checked 2026-09-21).** They came from
-> `/tmp/margin_live_full_backtest_v2_results.json`, a bare `day_pnl`/`day_equity`
-> pair with no trades, parameters or provenance. Replaying the **current**
-> production engine against real split-adjusted bars gives materially different,
-> and in one case opposite-signed, results:
+> ✅ **THESE NUMBERS ARE REAL AND REPRODUCE EXACTLY (verified 2026-09-21).**
+> Run `python3 scripts/margin_style_original_6month_backtest.py` — the original
+> script, preserved verbatim, with its data committed in `data/`:
 >
-> | Claim below | Replayed | Command |
-> |---|---|---|
-> | Baseline (no stop) **+155.10%** | **+64.12%** | `--no-daily-stop` |
-> | With 1% daily stop **+248.36%** | **+26.07%** | `--patch-daily-stop-bug` |
-> | Holdout Jul 6–Aug 3 baseline **+45.0%** | **−9.29%** | `--no-daily-stop --start 2026-07-06 --end 2026-08-03` |
+> ```
+> Realized P&L: $+124,080.90                    <- the $124,080.90 below
+> 124,080.90 / 80,000 = +155.10%                <- the +155.10% below
+> Total incl. mark-to-market: +$126,737.07 (+158.42%)
+> 80,000 + 126,737.04 = $206,737.04             <- the ending equity below
+> ```
 >
-> Reproduce: `python3 scripts/margin_style_baseline_backtest.py [flags]`
-> (committed script + committed bars in `data/`, so this is checkable).
+> **+155.10% and +158.42% are both correct**, and are not in conflict: +155.10%
+> is **realized P&L only**; +158.42% adds end-of-window unrealized
+> mark-to-market. Earlier sessions treated the gap between them as a discrepancy
+> to be explained — it is just two measures of one run.
 >
-> **"It was an older engine" was tested and does not explain it.** Replaying six
-> engine revisions over the same window (`--engine-rev <sha>`), 6-month return:
+> The run used engine `859057e`, the revision live at 2026-09-06 01:55 and the
+> last one before the daily stop, which is exactly why "Baseline (no stop)" is
+> the right label.
 >
-> | Engine rev | Date | Replayed |
-> |---|---|---|
-> | `3f2660e` | 2026-08-18 | +87.80% |
-> | `7bd9628` | 2026-08-19 | **+99.59%** |
-> | `19a509c` | 2026-08-20 | +78.94% |
-> | `34979e4` | 2026-08-21 | +64.12% |
-> | `859057e` | 2026-08-27 (last pre-daily-stop) | +64.12% |
-> | working tree | 2026-09-21 | +64.12% (`--no-daily-stop`) |
+> ⚠️ **A RETRACTION POSTED HERE ON 2026-09-21 CLAIMING THESE DID NOT REPRODUCE
+> WAS ITSELF WRONG.** It reported +64.12% / +26.07% / −9.29% from
+> `scripts/margin_style_baseline_backtest.py`, which priced "today" off the
+> **daily close**. The original — correctly — prices off the **actual ~17:00 UTC
+> hourly bar**, the moment the live trigger fires. That is not a harmless proxy:
+> `PEAK_SELL_PCT` trims on every new high and `INTRADAY_STOP` compares against
+> the prior close, so the price source changes which rules fire *every day*. The
+> daily-close harness also ran with ~85 days of prior lookback where the original
+> had none. **Use the 17:00-quote script as the reference for this window.**
 >
-> None reaches +155%. Capital scale does not explain it either — the current
-> engine returns +68.69% / +63.49% / +64.12% / +65.38% at $10k / $30k / $80k /
-> $200k, i.e. roughly scale-invariant.
+> **The lesson, which generalizes:** a new harness was treated as ground truth
+> and used to contradict an established, documented result before it had been
+> validated against any known reference. That is backwards. Validate a new
+> measurement tool against a result you can already reproduce *first*; only then
+> is it entitled to overturn anything.
 >
-> Two side-findings worth keeping: (a) `859057e` and the current engine with the
-> stop disabled agree to the cent, which is a useful determinism check on the
-> harness; (b) `7bd9628`'s +99.59% is suspiciously close to the "+99.4%" figure
-> the live trigger's CAPITAL SIZING note cites as the *before* state of the
-> "+99.4% → +155.7%" comparison — so +155% may be the **after** figure of a
-> change this replay already includes, meaning it was never a like-for-like
-> baseline.
->
-> Two honest caveats: (a) the replay prices "today" off the daily close as a
-> proxy for the 17:00 UTC live quote — a real approximation, though not one that
-> should flip +45% to −9%; (b) the untested variable is now the **bars**: these
-> are split-adjusted daily bars fetched 2026-09-21, and the original run's data
-> is gone, so a data difference cannot be ruled out. Either way these figures
-> **do not describe the engine running today**, so do not quote them as this
-> strategy's track record until the gap is explained.
->
-> **The `--patch-daily-stop-bug` flag exists because the daily stop is broken —
-> see the DAILY_STOP defect note under Key thresholds above.**
+> Still genuinely open (do not treat as settled either way):
+> - The **+248.36% with-daily-stop** row has not been re-verified with the
+>   17:00-quote method, and the daily stop carries the defect noted under Key
+>   thresholds above.
+> - The **holdout −9.29%** was produced by the daily-close harness and is
+>   therefore unreliable; the holdout needs re-running the 17:00 way.
 
 **Baseline (no stop)**: $80,000 → $206,737.04 = **+155.10% return**
 - Days traded: 32 of 127
