@@ -158,6 +158,32 @@ below are what makes a claim checkable.
     realized + unrealized losses exceed this cap **during trading hours** (system runs 17:00 UTC).
     ⚠️ **Limitation**: Overnight gaps before 17:00 UTC check can exceed the cap; stop only protects intraday realized losses.
     Conservative estimate: 60–70% effectiveness. See section below for corrected figures accounting for gap risk.
+
+    🐞 **KNOWN DEFECT — UNFIXED as of 2026-09-21. Read before DAILY_STOP ever
+    fires.** PEAK/GAIN sells are decided early and parked in `pending_peak_gain`
+    (~line 560); they are not appended to `sells` until ~line 787. The
+    DAILY_STOP block (~line 622) guards itself with
+    `closed_symbols = {s['symbol'] for s in sells}`, which **cannot see the
+    parked sells**, so it liquidates the full position of a symbol that already
+    has a PEAK sell pending. Line 787 then appends that sell anyway → **two
+    sells, same symbol, same day, totalling ~174.3% of the position.**
+    `cmd_commit`'s pre-commit validation does not catch it: it checks each sell
+    independently against the pre-mutation position, never the running total.
+    The KILL_SWITCH block (~line 651) does this correctly — it clears
+    `pending_peak_gain = {}` and `peak_updates = {}` first. DAILY_STOP just
+    omits those two lines; that asymmetry is the entire bug.
+    - **Live impact so far: none.** DAILY_STOP has never fired in live trading
+      (0 occurrences in `docs/margin_style_live_log.json` since deployment
+      2026-09-06). The broker would also reject the oversized second order. But
+      the defect is latent and fires the first time the daily cap is breached,
+      and it would leave state wrong.
+    - **In backtest it is catastrophic**: 63 duplicate-sell days and
+      $13,808,086 of phantom proceeds over Mar 6–Sep 4 2026, turning a +26%
+      replay into a fake +17,437%.
+    - Fix is two lines in the DAILY_STOP branch, mirroring KILL_SWITCH.
+      `scripts/margin_style_baseline_backtest.py --patch-daily-stop-bug`
+      applies it **in memory only** so backtests are usable; production is
+      untouched and still carries the defect.
   - `PEAK_SELL_PCT = 0.743`
   - `GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]`
   - `MAX_HOLD_DAYS = 6`
@@ -258,6 +284,32 @@ below are what makes a claim checkable.
   **unknown**, not "counterproductive."
 
 ### 6-Month Backtest Results (Mar 6 - Sep 4, 2026) — With Overnight Gap Analysis
+
+> ⚠️ **THESE NUMBERS DO NOT REPRODUCE (checked 2026-09-21).** They came from
+> `/tmp/margin_live_full_backtest_v2_results.json`, a bare `day_pnl`/`day_equity`
+> pair with no trades, parameters or provenance. Replaying the **current**
+> production engine against real split-adjusted bars gives materially different,
+> and in one case opposite-signed, results:
+>
+> | Claim below | Replayed | Command |
+> |---|---|---|
+> | Baseline (no stop) **+155.10%** | **+64.12%** | `--no-daily-stop` |
+> | With 1% daily stop **+248.36%** | **+26.07%** | `--patch-daily-stop-bug` |
+> | Holdout Jul 6–Aug 3 baseline **+45.0%** | **−9.29%** | `--no-daily-stop --start 2026-07-06 --end 2026-08-03` |
+>
+> Reproduce: `python3 scripts/margin_style_baseline_backtest.py [flags]`
+> (committed script + committed bars in `data/`, so this is checkable).
+>
+> Two honest caveats: (a) the replay prices "today" off the daily close as a
+> proxy for the 17:00 UTC live quote — a real approximation, though not one that
+> should flip +45% to −9%; (b) the engine has changed a lot since these numbers
+> were produced (MAX_HOLD 2026-08-21, tranche schedule 2026-08-19, capital sizing
+> 2026-08-21, daily stop 2026-09-06), so they may describe an older engine. Either
+> way they **do not describe the engine running today**, so do not quote them as
+> this strategy's track record until the gap is explained.
+>
+> **The `--patch-daily-stop-bug` flag exists because the daily stop is broken —
+> see the DAILY_STOP defect note under Key thresholds above.**
 
 **Baseline (no stop)**: $80,000 → $206,737.04 = **+155.10% return**
 - Days traded: 32 of 127
