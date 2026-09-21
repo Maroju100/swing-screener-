@@ -1,6 +1,12 @@
 #!/bin/bash
-# Daily Entry Quality Filter Paper Tracking
-# Run daily at 18:00 UTC (right after Margin-Style Live at 17:00 UTC)
+# DISABLED 2026-09-21 — the engine this wraps produces invalid numbers.
+# See scripts/entry_filter_paper_engine.py's docstring and Evidence Rule 1
+# in CLAUDE.md. No trigger schedules this; it is kept only for history.
+# (Without this guard the script would print "Paper tracking updated"
+# even though both python calls now fail.)
+echo "DISABLED 2026-09-21: entry-filter paper tracking produced invalid numbers." >&2
+echo "See scripts/entry_filter_paper_engine.py docstring / CLAUDE.md Evidence Rule 1." >&2
+exit 1
 
 cd /home/user/swing-screener-
 

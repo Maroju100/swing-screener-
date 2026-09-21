@@ -53,6 +53,49 @@ user** instead of proceeding.
   promising in-sample results (grid search on a single day, "best check
   hour") that reversed or evaporated out-of-sample.
 
+### Evidence rules — HARD RULES, added 2026-09-21 after four fabricated results
+
+These exist because four separate analyses (entry filter "helps", entry
+filter "hurts", "close at 2:45 PM CDT", "3×/day execution") all reported
+confident numbers produced by the same invalid method, giving the user
+contradictory answers to the same questions across sessions. The rules
+below are what makes a claim checkable.
+
+1. **A rule-change result is valid only if produced by replaying the
+   engine** — `cmd_plan` / `cmd_commit` day-by-day, per
+   `.claude/skills/backtest-variant/SKILL.md`. **Post-processing
+   `day_pnl` with an assumed multiplier is NOT a backtest and must never
+   be reported as one.** `day_pnl` is the *output* of the baseline rules;
+   changing an entry/exit rule changes which positions are open, which
+   changes the tranche index, sizing, `MAX_HOLD_DAYS` timing, the
+   `PEAK_SELL_PCT` reference peak, the circuit-breaker count and
+   settlement — the whole path diverges. Multiplying a fixed P&L series
+   assumes that path is unchanged, which is exactly what a rule change
+   breaks. Such a script returns whatever multiplier was typed into it;
+   it has no contact with the question.
+2. **Evidence must be committed, not in `/tmp`.** Any number cited in
+   this file needs a script in `scripts/` plus the command to reproduce
+   it. `/tmp` is wiped when the container recycles, after which the claim
+   outlives its evidence and becomes unfalsifiable — which is how
+   contradictory claims came to coexist here.
+3. **Label every number MEASURED or ESTIMATED**, and state an estimate's
+   assumption inline. Estimates must not be given the same tables,
+   decimal precision, or confident tone as replay output. Report
+   precision the sample supports — "+2.69pp" off 24 days with ~15 winning
+   days is false precision.
+4. **A reversal requires a diagnosis, not just a new number.** If a
+   result flips sign (e.g. +40% → −99%), explain what specifically was
+   wrong with the earlier test. Without that, it is unknown which one is
+   broken, so neither may be used and the honest status is "unknown."
+5. **Before writing a result into this file, check it against what is
+   already here.** The removed filter note previously asserted both "zero
+   quality days in the full 6-month period" and "$1.4k P&L" — mutually
+   impossible, and it sat in production instructions unnoticed.
+6. **If the available data cannot answer the question, say so and stop.**
+   Do not substitute an assumption for a measurement. "Close at 2:45 PM
+   CDT vs hold overnight" was unanswerable from daily bars; the correct
+   output was "this needs intraday data", not a `*0.60` factor.
+
 ## Strategy 1: Margin-Style Live (real money, daily) ✅
 
 **Current Production Version** (deployed with 1% daily stop-loss)
@@ -71,20 +114,29 @@ user** instead of proceeding.
   `trig_01VfH6Nhfbk7YLaTkzHWLG7E`. (A walk-forward-validated backtest
   found switching the check-hour does not hold up out-of-sample — keep
   17:00.)
-  - **Check *frequency* is settled too — do not add intraday runs
-    (2026-09-21).** Three independent prior findings in this repo point the
-    same way: once-daily checks can beat intraday checks for Margin-Style
-    (`scripts/backtest_daytrade_once_daily_noon.py` docstring), twice-daily
-    beat continuous checking for the day-trading engine on a 3-window
-    walk-forward (`scripts/daytrade_paper_engine.py`), and 3-hour checks
-    beat both hourly and twice-daily for the agentic system
+  - **Check *frequency* is settled too — do not add intraday runs.**
+    The primary evidence is in this trigger's own prompt (CHECK-FREQUENCY
+    CHANGE, 2026-08-05, readable via `list_triggers` on
+    `trig_01VfH6Nhfbk7YLaTkzHWLG7E`): a multi-frequency backtest over
+    3-week / 30-day / 60-day windows using **exact production strategy
+    logic** compared 1hr / 2hr / 3hr / twice-daily against three
+    once-daily timings. **Every once-daily timing beat every intraday
+    frequency by a wide margin in all three windows**, and midday won 2 of
+    3 outright — which is why the trigger is at 17:00 UTC.
+  - **Documented root cause** (from that same study, not inferred):
+    `PEAK_SELL_PCT` trims 74.3% of a position on *every new high it sees*,
+    so checking more often means **more forced trims during a sustained
+    rally** — winners get cut before they run. Entry signals read
+    completed prior daily closes, so extra checks add no entry
+    information to offset this. The accepted trade-off is that
+    `INTRADAY_STOP` is also only checked once/day.
+  - Three further findings point the same way: once-daily can beat
+    intraday for Margin-Style (`scripts/backtest_daytrade_once_daily_noon.py`
+    docstring), twice-daily beat continuous checking for the day-trading
+    engine on a 3-window walk-forward (`scripts/daytrade_paper_engine.py`),
+    and 3-hour beat both hourly and twice-daily for the agentic system
     (`docs/agentic_log.json`, which carries its own "skipped
     paper-tracking validation" caveat).
-  - Mechanism: entry signals read **completed prior daily closes**, so an
-    extra check adds no entry information — but it does give
-    `INTRADAY_STOP` and `PEAK_SELL_PCT` another chance to fire on intraday
-    noise and cut a winner short. More checks tighten exits without
-    improving entries.
   - A real test would extend
     `scripts/margin_style_timing_comparison.py`'s
     `backtest_with_intraday_checks` harness to multi-check schedules over
@@ -182,14 +234,28 @@ user** instead of proceeding.
   tools). Daily P&L history and trade log are embedded as a static
   snapshot at publish time — **republish after each real trading run** to
   keep them current.
-- **REMOVED (2026-09-21)**: Entry Signal Quality Filter (3+ consecutive down days)
-  was backtest-validated to claim +40.31% improvement but comprehensive filter
-  backtest across 5 alternatives on full 6-month, dev, and holdout windows showed
-  all entry confirmation filters are counterproductive. The 3+ down-days filter
-  specifically reduced 6-month returns by 99% ($124k → $1.4k), found zero quality
-  days in full 6-month period, and delivered -$122,632 in lost profit. Reverted to
-  baseline strategy (trade all days). See `/tmp/backtest_all_filters.py` for
-  detailed comparison of 5 filter variants.
+- **REMOVED (2026-09-21) — and NO valid measurement exists in either
+  direction.** The Entry Signal Quality Filter (3+ consecutive down days)
+  is **not** in `scripts/margin_style_live_engine.py`; production runs
+  baseline (trade all days). That is the correct conservative state, but
+  the reasoning originally recorded for removing it was invalid, and so
+  was the reasoning for adding it. **Do not cite any of these numbers:**
+  - `+40.31%` (helps) — original validation; basis not recoverable.
+  - `+32.24%` (helps) — `docs/entry_filter_paper_state.json`. This was
+    **never forward paper tracking**: it recorded `days_tracked: 127` on
+    its `start_date` of 2026-09-19, because
+    `scripts/entry_filter_paper_engine.py` re-post-processes the
+    historical `day_pnl` series on every run. Both log entries are from
+    the same day, 4 minutes apart, identical.
+  - `−99%` ($124k → $1.4k, "zero quality days") — from
+    `/tmp/backtest_all_filters.py`, whose core line applies an invented
+    multiplier: `adjusted_pnl = daily_pnl * 0.4 if daily_pnl > 0 else
+    daily_pnl`. Internally self-contradictory besides: zero trading days
+    cannot produce $1,449.
+  All three share one defect — see **Rule 1** in the standing directives.
+  Re-testing the filter properly (replay via the `backtest-variant`
+  method) is an open, unstarted task; until then the honest status is
+  **unknown**, not "counterproductive."
 
 ### 6-Month Backtest Results (Mar 6 - Sep 4, 2026) — With Overnight Gap Analysis
 

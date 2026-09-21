@@ -1,12 +1,31 @@
 #!/usr/bin/env python3
 """
-Entry Quality Filter Paper Tracking Engine
-Tracks simulated vs actual performance of the Entry Quality Filter
-against live/real historical data.
+DISABLED 2026-09-21 — THIS SCRIPT PRODUCES INVALID NUMBERS. DO NOT RUN.
 
-Usage:
-  python scripts/entry_filter_paper_engine.py run_daily [date]
-  python scripts/entry_filter_paper_engine.py report [days]
+It is named a "paper tracking engine" but it tracks nothing. Every run
+re-reads the historical backtest at /tmp/margin_live_full_backtest_v2_results.json
+and re-post-processes its day_pnl series, so it reports the same ~127-day
+historical figure no matter when it is invoked — which is why
+docs/entry_filter_paper_state.json recorded days_tracked=127 on its own
+start_date, and why both log entries were written four minutes apart with
+identical values.
+
+The method itself is also invalid, not just the labelling: it multiplies a
+fixed baseline P&L series by an assumed factor to model a changed entry
+rule. Per Evidence Rule 1 in CLAUDE.md, that is not a backtest — day_pnl is
+the OUTPUT of the baseline rules, and changing an entry rule changes which
+positions are open, the tranche index, sizing, MAX_HOLD timing, the
+PEAK_SELL reference peak and settlement. The path diverges; the multiplier
+does not model that. Such a script returns whatever factor was typed into
+it.
+
+To actually answer whether the Entry Signal Quality Filter helps, replay
+cmd_plan/cmd_commit per .claude/skills/backtest-variant/SKILL.md against a
+separate state file, then walk-forward validate. That work is open and
+unstarted.
+
+Kept in the tree as a worked example of the defect. The functions below are
+left intact deliberately — the entry point refuses to run.
 """
 
 import json
@@ -202,9 +221,14 @@ def print_report(max_days=None):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print("Usage: python scripts/entry_filter_paper_engine.py [run_daily|report]")
-        sys.exit(1)
+    sys.exit(
+        "DISABLED 2026-09-21: this script produces invalid numbers — see the "
+        "module docstring.\nIt re-post-processes a historical day_pnl series "
+        "with an assumed multiplier and reports the result as forward paper "
+        "tracking.\nBoth the labelling and the method are wrong (CLAUDE.md, "
+        "Evidence Rule 1).\nTo test the entry filter, replay cmd_plan/cmd_commit "
+        "per .claude/skills/backtest-variant/SKILL.md instead."
+    )
 
     command = sys.argv[1]
     backtest_file = '/tmp/margin_live_full_backtest_v2_results.json'

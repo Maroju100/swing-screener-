@@ -1,15 +1,19 @@
 {
-  "start_date": "2026-09-19",
-  "strategy": "Entry Signal Quality Filter (3+ consecutive down days)",
-  "capital_base": 30000,
-  "cumulative_results": {
-    "baseline_pnl": 124080.9,
-    "filtered_pnl": 164083.77,
-    "improvement": 40002.87,
+  "status": "INVALID — DO NOT USE",
+  "invalidated_on": "2026-09-21",
+  "what_this_file_used_to_claim": {
+    "strategy": "Entry Signal Quality Filter (3+ consecutive down days)",
     "improvement_pct": 32.24,
+    "improvement": 40002.87,
     "days_tracked": 127,
-    "filtered_entries_skipped": 18
+    "start_date": "2026-09-19"
   },
-  "last_update": "2026-09-19T08:28:13.599812Z",
-  "status": "tracking"
+  "why_it_is_invalid": [
+    "It was labelled paper tracking but contained no forward data. It recorded days_tracked=127 on its own start_date of 2026-09-19, because scripts/entry_filter_paper_engine.py re-post-processes the historical day_pnl series from /tmp/margin_live_full_backtest_v2_results.json on every run instead of observing live outcomes.",
+    "Both entries in the companion log were written on the same day, four minutes apart, with identical numbers.",
+    "The underlying method multiplies a fixed baseline P&L series by an assumed factor. See Evidence Rule 1 in CLAUDE.md: that is not a backtest, because changing an entry rule changes the whole downstream path (tranche index, sizing, MAX_HOLD timing, PEAK_SELL reference peak, settlement)."
+  ],
+  "current_truth": "The Entry Signal Quality Filter is NOT in scripts/margin_style_live_engine.py. Production runs baseline (trade all days). Whether the filter helps or hurts is UNKNOWN — no valid measurement exists in either direction.",
+  "to_get_a_real_answer": "Re-test by replaying cmd_plan/cmd_commit per .claude/skills/backtest-variant/SKILL.md, then walk-forward validate. Open, unstarted task.",
+  "note": "Prior contents are preserved in git history."
 }
