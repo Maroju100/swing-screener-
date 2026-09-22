@@ -702,6 +702,57 @@ below are what makes a claim checkable.
     that is asserted to reproduce the baseline **exactly** when set to 0, so the
     measured difference is the rule and nothing else.
 
+### 🚨 PRICE-BASIS DEFECT — every backtest priced 46 minutes late (found 2026-09-22)
+
+**The harness has never priced at the live check time.** It prices "today" off
+the hourly bar labelled `17:00`, taking its `close_price`. Hourly bars are
+**left-labelled**, so that bar *spans* 17:00–18:00 and its close is the
+**18:00 UTC = 1:00 PM CDT** price. The live trigger fires at **~17:14 UTC =
+12:14 PM CDT**. Reproduce the proof:
+`python3 -c` comparing the hourly bar against 30-minute bars — over 24
+symbol-days the hourly 17:00 close matches the **30-minute 17:30 bar's close
+23 times** and the 30-minute 17:00 close once.
+
+**It is not cosmetic.** Same rules, same window, only the priced instant differs:
+
+| Priced at | Realized | Return |
+|---|---|---|
+| 18:00 UTC · 1:00 PM CDT | $30,623 | **+38.3%** ← what every backtest used |
+| 17:30 UTC · 12:30 PM CDT | $28,131 | +35.2% |
+| 17:00 UTC · 12:00 PM CDT | $18,694 | **+23.4%** ← nearest to the live fire |
+
+**Fix**: `price_field` on `H.run`. The hourly 17:00 bar's **open** *is* the
+17:00 UTC price and exists across the whole window. Default stays `close_price`
+so the $124,080.90 anchor still reproduces exactly; pass `open_price` for a
+live-accurate basis.
+
+**⚠️ The +155.10% anchor is NOT withdrawn.** It remains the exact, reproducible
+output of its stated methodology. It is simply priced at 1:00 PM CDT rather than
+at the live check. **The live-accurate figure for the same rules and window is
++125.9%** ($100,745 on $80k, 5 bps/side). Quote +155.10% only as "the published
+anchor"; quote **+125.9%** for "what the live system's rules would have done".
+
+**Every conclusion gets STRONGER at the correct basis** — reproduce with
+`data/research/price_basis.json`:
+
+| # | Configuration | @ live basis | Return | Sharpe |
+|---|---|---|---|---|
+| **1** | **PRODUCTION — current rules** | **$100,745** | **+125.9%** | 3.38 |
+| 2 | Trade cap 10% | $96,337 | +120.4% | 3.40 |
+| 3 | Intraday stop −2.5% | $87,855 | +109.8% | 3.11 |
+| 4 | Best grid-search config | $62,326 | +77.9% | 2.57 |
+| 5 | Quality filter 3+ down days | $33,504 | +41.9% | 2.54 |
+| 6 | No intraday stop | −$9,956 | −12.4% | −0.83 |
+
+Production is **rank 1 outright** — nothing beats it, so the significance caveat
+needed at the 1 PM basis is not needed here at all. The −2.5% stop that ranked
+1st at 1 PM falls to **3rd** and takes the **largest** hit of any config (−31%
+vs −19% for production), independently corroborating the bootstrap verdict that
+its advantage was a timing artifact.
+
+**Standing rule from this:** a backtest's price basis must be stated as a
+*clock time*, not as a bar label. "The 17:00 bar" is not "17:00".
+
 ### Rule research, 2026-09-22 — six questions, five answers, one refusal
 
 > 🏆 **IS THE LIVE CONFIGURATION THE BEST TESTED? Yes, on a risk-adjusted basis
