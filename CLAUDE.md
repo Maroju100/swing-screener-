@@ -180,6 +180,72 @@ below are what makes a claim checkable.
     sat unexamined for five days. Step 13 of the trigger prompt (append to the
     `runs` array every run) is what prevents a recurrence; it is not optional
     bookkeeping.
+- ✅ **THE REST OF THE LOG WAS THEN AUDITED (`fcf6fcc`, 2026-09-22) — only ONE
+  other equity figure is wrong, and it was not the engine's fault.** Run
+  `python3 scripts/audit_phantom_equity.py --rev origin/main`. It takes the
+  **broker's own filled-order history** as truth (committed as
+  `data/broker_fills_912291820_2026-09-08_2026-09-21.csv`), replays it *backward*
+  from the account's known-flat position on 2026-09-22, and compares against the
+  state file reconstructed from git history. It self-checks against two state
+  commits known to have matched the broker and **refuses to report** if it cannot
+  reproduce them.
+
+  | Date | Figure | Logged | Corrected | Cause |
+  |---|---|---|---|---|
+  | 2026-09-18 | `total_equity` | 21,612.74 | **17,430.89** | engine defect (phantom LRCX) |
+  | 2026-09-10 | `total_equity` | 15,234.17 | **11,387.97** | **owner's manual trades** |
+  | 2026-09-08 | `equity_peak` | 11,536.58 | — | ✅ verified clean |
+  | 2026-09-11 | all | 11,396.38 | — | ✅ verified clean (state was flat) |
+
+  - **`real_cash_*` fields everywhere in the log are fine** — they come straight
+    from `get_portfolio` and are broker-sourced *inputs*, not state-derived
+    outputs. Only `total_equity`, `equity_peak` and `drawdown_from_peak` inherit
+    state errors.
+  - 🚨 **MANUAL TRADES DESYNC THE STATE FILE, with no engine defect involved.**
+    Sep 10's overstatement is entirely the owner's own Sep 9 sells (WDC 4.131460,
+    MU 1.957520, `placed_agent=user`, $3,998.18). `cmd_plan` has no way to learn
+    about a trade the engine did not place. Cross-check that confirms the
+    correction: the *next* run, off a clean flat state, logged `total_equity`
+    **11,396.38** — within **$8.41** of the corrected 11,387.97.
+  - **The August `equity_peak` lineage is moot, and that is provable.** Sep 8's
+    peak was reconstructed from that run's own inputs — positions $5,641.62 +
+    `real_cash` $5,896.75 = **$11,538.37**, within **$1.79** of the logged
+    11,536.58 — and it *exceeded* the stored peak of 11,201.12, so `equity_peak`
+    was re-set that day from clean state. Nothing from before Sep 8 propagated
+    past it. The twelve Aug-21…Sep-04 peaks are **not checkable** from the
+    committed fill window (Evidence Rule 6) and are labelled as such by the
+    script rather than guessed at.
+  - **Two `equity_peak` hand-edits are in the history, and one was wrong.**
+    `a6e8ac4` (Sep 15) raised it 11,396.38 → 16,396.38 for a $5,000 deposit —
+    correct in principle, since a deposit raises equity without being a gain.
+    But `93ed6a5` (Sep 14) had **lowered** it 11,536.58 → 11,396.38 on a no-trade
+    day by setting the peak equal to current cash. That is the genuine
+    anti-pattern the "never lower a high-water mark" rule exists to stop: it
+    silently resets the drawdown to zero. It no longer matters only because
+    later *real* equity exceeded both paths — the corrected 17,696.92 is ≥ every
+    true equity the account reached (Sep 17 ≈16,902, Sep 18 ≈17,431, Sep 21
+    17,695.48, and 11,536.58 + 5,000 = 16,536.58).
+- 🚨 **OPEN QUESTION FOR THE USER — the 2026-09-21 run liquidated $6,147.55 of
+  the account owner's OWN manual purchases.** This is not an equity-reporting
+  error; it is real money moved.
+  - On 2026-09-18 the owner bought **STX 5.887547 sh ($5,000.00 @ 849.2501**,
+    order `6aad73ae`) and **WDC 2.276165 sh ($1,000.00 @ 439.3354**, order
+    `6aad73c3`). The engine's state knew only its own STX 0.016842 and WDC
+    9.672491.
+  - Step 8 of the daily procedure says to reconcile every sell against the **real
+    broker share count**. So on Sep 21 the run sold the full balances:
+    **STX 5.904389 = 0.016842 + 5.887547** and
+    **WDC 11.948656 = 9.672491 + 2.276165** — exact to the share.
+  - Proceeds on the owner's portion were $6,147.55 against $6,000.00 paid, i.e.
+    **+$147.55**, so no loss — but they were not this system's shares to trade.
+  - **The cross-system symbol-safety rule did not catch it** because that rule
+    only excludes symbols **absent** from `margin_style_live_state.json`. Here
+    the symbols were present, just with a smaller quantity. The rule has a hole:
+    it is symbol-level, and this is a quantity-level problem.
+  - **Nothing was changed unilaterally.** Capping each sell at the *state*
+    quantity would prevent this, but it is a real-money behaviour change that
+    would also stop the run from clearing genuine engine drift — which is what
+    step 8 was added for. Ask the user before altering sell sizing.
 - ✅ **THE FOUR GUARDRAILS ARE NOW REAL IN PRODUCTION (`294328d`,
   2026-09-22).** They had been documented since 2026-09-16 but existed only on
   the development branch — `main` supported just `plan` and `commit`, which is
