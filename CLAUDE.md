@@ -563,7 +563,16 @@ below are what makes a claim checkable.
   4. **Pre-Commit Validation** (Guardrail 4 — Order Sanity):
      - `cmd_commit` aborts if any sell exceeds open position (catches impossible orders)
      - Prevents state mutations that create negative shares or orphaned entries
-     - Appends audit trail with timestamp and order checksums
+     - ⚠️ **CORRECTED 2026-09-22 — there is NO audit trail.** This bullet used to
+       claim `cmd_commit` "appends audit trail with timestamp and order
+       checksums." It does not: `grep -c "_last_commit\|audit"
+       scripts/margin_style_live_engine.py` → `0`. The `_last_commit` block
+       sitting in `docs/margin_style_live_state.json` was **hand-written** by the
+       2026-09-22 port commit (`01b484e`) and is never updated by the engine, so
+       it is permanently stale — it still read `2026-09-21` after the 2026-09-22
+       run committed. The sell-exceeds-position abort above **is** real and was
+       read in the source. Treat `docs/margin_style_live_log.json` (trigger step
+       13) as the only audit trail; do not read `_last_commit` as one.
   
   **Daily Run Sequence (guardrails in order):**
   1. Verify state (catch corruption)

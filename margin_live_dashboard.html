@@ -1,0 +1,1083 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Margin-Style Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  .viz-root {
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --page:           #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --muted:          #898781;
+    --gridline:       #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --good:           #0ca30c;
+    --critical:       #d03b3b;
+    --warning:        #fab219;
+    --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
+    --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7; --s8: #e34948;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-1:      #1a1a19;
+      --page:           #0d0d0d;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --muted:          #898781;
+      --gridline:       #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.10);
+      --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+      --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --page:           #0d0d0d;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --muted:          #898781;
+    --gridline:       #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,0.10);
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+    --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--page); }
+
+  .viz-root {
+    background: var(--page);
+    color: var(--text-primary);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    min-height: 100vh;
+    padding: 20px 16px 48px;
+  }
+  .num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  .wrap { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+
+  .hdr { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .hdr-title { display: flex; flex-direction: column; gap: 4px; }
+  .eyebrow { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  h1 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+  .hdr-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 100px;
+    border: 1px solid var(--border); color: var(--text-secondary); background: var(--surface-1);
+    white-space: nowrap;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+  .dot.live { background: var(--good); box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 25%, transparent); }
+  .dot.bad { background: var(--critical); }
+  .dot.wait { background: var(--warning); }
+
+  button.refresh {
+    font: inherit; font-size: 12px; font-weight: 600; font-family: inherit;
+    color: var(--text-primary); background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 100px; padding: 6px 12px 6px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  }
+  button.refresh:hover { border-color: var(--text-secondary); }
+  button.refresh:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
+  button.refresh svg { width: 13px; height: 13px; }
+  button.refresh.spinning svg { animation: spin 0.7s linear infinite; }
+  @media (prefers-reduced-motion: reduce) { button.refresh.spinning svg { animation: none; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .banner {
+    border: 1px solid var(--border); background: var(--surface-1); border-radius: 10px;
+    padding: 12px 14px; font-size: 13px; color: var(--text-secondary); display: none;
+    border-left: 3px solid var(--warning);
+  }
+  .banner.show { display: block; }
+  .banner strong { color: var(--text-primary); }
+
+  .empty {
+    border: 1px solid var(--border); background: var(--surface-1); border-radius: 12px;
+    padding: 40px 24px; text-align: center; color: var(--text-secondary); font-size: 14px; line-height: 1.6;
+  }
+  .empty strong { color: var(--text-primary); display: block; font-size: 16px; margin-bottom: 6px; }
+
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 18px 14px;
+  }
+  .card-hd { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+  .card-title { font-size: 14px; font-weight: 600; }
+  .card-sub { font-size: 12px; color: var(--muted); }
+
+  .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .stat-tile {
+    border: 1px solid var(--border); background: var(--page); border-radius: 10px;
+    padding: 12px 14px; display: flex; flex-direction: column; gap: 4px;
+  }
+  .stat-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .stat-value { font-size: 20px; font-weight: 700; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+  .stat-sub { font-size: 11px; color: var(--text-secondary); }
+  .stat-value.up, .stat-sub.up { color: var(--good); }
+  .stat-value.down, .stat-sub.down { color: var(--critical); }
+
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 560px; }
+  thead th {
+    text-align: right; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--muted); font-weight: 600; padding: 6px 8px 8px; border-bottom: 1px solid var(--gridline);
+    position: sticky; top: 0; background: var(--surface-1);
+  }
+  thead th:first-child, tbody td:first-child { text-align: left; }
+  tbody td { padding: 9px 8px; border-bottom: 1px solid var(--gridline); text-align: right; }
+  tbody tr:last-child td { border-bottom: none; }
+  .sym-cell { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  .sym-swatch { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 100px;
+    font-size: 12px; font-weight: 600; font-family: "IBM Plex Mono", ui-monospace, monospace;
+  }
+  .badge.down { color: var(--critical); }
+  .badge.up { color: var(--good); }
+  .badge.warn { color: var(--warning); }
+  .badge.flat { background: color-mix(in srgb, var(--muted) 16%, transparent); color: var(--text-secondary); }
+  .badge.solid-buy { background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }
+  .badge.solid-sell { background: color-mix(in srgb, var(--critical) 14%, transparent); color: var(--critical); }
+
+  footer.note { font-size: 11.5px; color: var(--muted); line-height: 1.6; padding: 2px 4px; }
+
+  .param-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin-top: 4px; }
+  .param-card {
+    border: 1px solid var(--border); background: var(--page); border-radius: 10px; padding: 11px 13px;
+  }
+  .param-name { font-size: 12.5px; font-weight: 700; margin-bottom: 3px; }
+  .param-detail { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .param-detail .num { color: var(--text-primary); font-weight: 600; }
+
+  .chart-wrap { position: relative; }
+  svg.chart { width: 100%; height: auto; display: block; overflow: visible; }
+  .gridline { stroke: var(--gridline); stroke-width: 1; }
+  .baseline { stroke: var(--baseline); stroke-width: 1; }
+  .axis-label { fill: var(--muted); font-size: 10px; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+  .bar-pnl { transition: opacity 0.15s ease; cursor: pointer; }
+  .bar-pnl:hover { opacity: 0.75; }
+
+  .tooltip {
+    position: absolute; pointer-events: none; z-index: 5; min-width: 130px;
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 10px; font-size: 11px; box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    opacity: 0; transform: translate(-50%, -110%); transition: opacity 0.1s ease;
+  }
+  .tooltip.show { opacity: 1; }
+  .tooltip-time { color: var(--muted); font-family: "IBM Plex Mono", ui-monospace, monospace; margin-bottom: 5px; font-size: 10px; }
+  .tooltip-row { display: flex; align-items: center; gap: 6px; padding: 1.5px 0; }
+  .tooltip-row .sym { color: var(--text-secondary); }
+  .tooltip-row .val { font-family: "IBM Plex Mono", ui-monospace, monospace; margin-left: auto; }
+
+  .signal-log-empty { color: var(--muted); font-size: 12.5px; padding: 10px 4px; }
+</style>
+
+<div class="viz-root" data-palette="#2a78d6,#eb6834,#1baf7a,#eda100,#e87ba4,#008300,#4a3aa7,#e34948">
+  <div class="wrap">
+
+    <div class="hdr">
+      <div class="hdr-title">
+        <div class="eyebrow">Real money &middot; Robinhood &ldquo;Agentic 2&rdquo; &middot; checked once daily</div>
+        <h1>Margin-Style Live</h1>
+      </div>
+      <div class="hdr-meta">
+        <span class="pill" id="connPill"><span class="dot wait" id="connDot"></span><span id="connText">Connecting&hellip;</span></span>
+        <span class="pill" id="updatedPill" style="display:none">Updated <span class="num" id="updatedText">&mdash;</span></span>
+        <button class="refresh" id="refreshBtn" type="button">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2v3.2h-3.2"/></svg>
+          Check now
+        </button>
+      </div>
+    </div>
+
+    <div class="banner" id="errBanner"></div>
+    <div class="empty" id="emptyState" style="display:none"></div>
+
+    <div id="mainContent" style="display:none">
+
+      <div class="card">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Account &amp; risk snapshot</div>
+            <div class="card-sub">Live from Robinhood &middot; scale-in dip-buy / scale-out peak-sell, cash account, no leverage</div>
+          </div>
+          <span class="pill" style="border-left:3px solid var(--warning)">Informational only &mdash; this page never places orders</span>
+        </div>
+        <div class="stat-row" id="statRow" style="margin-top:8px"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Open positions</div>
+            <div class="card-sub">Live shares &amp; price &middot; entry/peak/opened as recorded by the strategy's own state</div>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Symbol</th><th>Shares</th><th>Entry (avg)</th><th>Live price</th>
+              <th>Gain</th><th>Peak</th><th>Stop threshold</th><th>Dist. to stop</th><th>Held (trading days)</th>
+            </tr></thead>
+            <tbody id="posBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Distance to next signal &mdash; all 8 universe symbols</div>
+            <div class="card-sub">Based on yesterday's completed close (the actual basis the algorithm checks) &middot; live price shown for context only</div>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Symbol</th><th style="text-align:left">Status</th>
+              <th>60-day high</th><th>Yday close vs high</th><th>Dist. to HUGE_DIP (-35%)</th>
+              <th>Yday vs 2d-ago</th><th>Dist. to NORMAL_DIP (-0.4%)</th>
+            </tr></thead>
+            <tbody id="distBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Live regime gauge</div>
+            <div class="card-sub">How deep is the current basket-wide pullback, and does history suggest this is a good regime for the strategy?</div>
+          </div>
+        </div>
+        <div id="regimeGaugeBody"></div>
+        <div class="table-scroll" style="margin-top:14px">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Window (real, backtested)</th><th>Trading days</th>
+              <th>Avg 60d drawdown</th><th>% days &le;-35% DD</th><th>Realized P&amp;L</th><th>P&amp;L / trading day</th>
+            </tr></thead>
+            <tbody>
+              <tr><td style="text-align:left">Flat (Sep'25&ndash;Jan'26, 5-symbol only)</td><td class="num">104</td><td class="num">-4.8%</td><td class="num">0.00%</td><td class="num"><span class="badge flat">+0.00%</span></td><td class="num">0.000%</td></tr>
+              <tr><td style="text-align:left">Mixed (Sep'25&ndash;Mar'26)</td><td class="num">124</td><td class="num">-5.2%</td><td class="num">0.00%</td><td class="num"><span class="badge up">+9.36%</span></td><td class="num">0.075%</td></tr>
+              <tr><td style="text-align:left">First half (Mar&ndash;May'26)</td><td class="num">63</td><td class="num">-6.1%</td><td class="num">0.00%</td><td class="num"><span class="badge up">+50.72%</span></td><td class="num">0.805%</td></tr>
+              <tr><td style="text-align:left">Full 6mo (Mar&ndash;Aug'26)</td><td class="num">127</td><td class="num">-12.2%</td><td class="num">5.41%</td><td class="num"><span class="badge up">+155.10%</span></td><td class="num">1.271%</td></tr>
+              <tr><td style="text-align:left">Down-market (Jun22&ndash;Jul29'26)</td><td class="num">27</td><td class="num">-18.3%</td><td class="num">7.41%</td><td class="num"><span class="badge up">+10.91%</span></td><td class="num">0.404%</td></tr>
+              <tr><td style="text-align:left">Second half (Jun&ndash;Aug'26)</td><td class="num">63</td><td class="num">-18.1%</td><td class="num">10.74%</td><td class="num"><span class="badge up">+57.34%</span></td><td class="num">0.910%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="param-detail" style="margin-top:10px">
+          <strong>Read with caution:</strong> deeper 60-day drawdowns are directionally associated with a better subsequent P&amp;L pace (correlation of avg drawdown vs. P&amp;L-per-trading-day across these 6 overlapping windows: -0.48 &mdash; moderate, not strong; correlation vs. total P&amp;L is only -0.24 once window length isn't normalized out). It is <em>not</em> a clean threshold: the shortest deep-drawdown window (down-market, 27 days) underperformed the much-shallower first-half window because it ended mid-dip, before the recovery leg could be captured &mdash; how long a window runs, and whether it happens to end during the payoff, matter as much as drawdown depth itself. These are also only 6 overlapping windows on one 12-month stretch, not independent samples. Treat the "Regime read" badge below as descriptive context for calibrating expectations, not a validated go/no-go signal.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Realized P&amp;L</div>
+            <div class="card-sub">Every figure in this card is broker-sourced &middot; headline refreshes live, the daily series is a snapshot taken 2026-09-22</div>
+          </div>
+        </div>
+        <div class="stat-row" id="brokerPnlRow" style="margin:8px 0 14px"></div>
+        <div class="banner show" style="border-left-color:var(--good);margin-bottom:12px">
+          <strong>These figures come from Robinhood&rsquo;s own books.</strong> The chart and table below
+          are the broker&rsquo;s per-trade realized P&amp;L aggregated by day &mdash; not, as before, a
+          reconstruction from <code>docs/margin_style_live_log.json</code>. That reconstruction was
+          understating the account by <span class="num">$1,463.11</span>, because six trading days with
+          real fills (<span class="num">Sep&nbsp;8, 9, 10, 16, 17, 18</span>) are missing from the run log
+          entirely. The <em>trade log</em> further down is still log-derived and still has those gaps.
+        </div>
+        <svg class="chart" id="pnlBarSvg" viewBox="0 0 900 260" preserveAspectRatio="none"></svg>
+        <div class="table-scroll" style="margin-top:10px; max-height:220px; overflow-y:auto">
+          <table>
+            <thead><tr><th style="text-align:left">Date</th><th>Realized P&amp;L</th><th>Cumulative</th></tr></thead>
+            <tbody id="dailyPnlBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Trade log</div>
+            <div class="card-sub">Buys/sells this system placed, as recorded in the run log &middot; newest first &middot; <strong>incomplete</strong> &mdash; missing Sep&nbsp;8/9/10/16/17/18, and it never includes trades the account owner placed by hand</div>
+          </div>
+        </div>
+        <div class="table-scroll" style="max-height:340px; overflow-y:auto">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Time (UTC)</th><th style="text-align:left">Symbol</th><th style="text-align:left">Side</th>
+              <th>Shares</th><th>Price</th><th>Amount</th><th style="text-align:left">Reason</th><th>P&amp;L</th>
+            </tr></thead>
+            <tbody id="tradeLogBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Backtested alternative setups vs. Margin-Style Live</div>
+            <div class="card-sub">Research only, not live &middot; publicly-documented setups from named traders, backtested with real Robinhood historicals and 5bps slippage &middot; static snapshot, does not update</div>
+          </div>
+        </div>
+
+        <div style="font-size:12.5px; font-weight:600; margin:2px 0 6px; color:var(--text-secondary)">August 2026 (1 month) &mdash; top 5 of ~30 setups tested across Ross Cameron, Alex Temiz, Jack Kellogg, Tim Sykes, Steven Dux, and 10+ other named setups</div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Strategy</th><th style="text-align:left">Universe</th>
+              <th>P&amp;L %</th><th style="text-align:left">Note</th>
+            </tr></thead>
+            <tbody>
+              <tr style="background:color-mix(in srgb, var(--good) 8%, transparent)">
+                <td style="text-align:left; font-weight:700">Margin-Style Live (real)</td>
+                <td style="text-align:left">Semis (8-symbol)</td>
+                <td class="num"><span class="badge up">+12.63%</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">Real production result, 13 real orders</td>
+              </tr>
+              <tr style="background:color-mix(in srgb, var(--good) 5%, transparent)">
+                <td style="text-align:left; font-weight:600">Margin-Style Live + 1% Daily Stop ✓</td>
+                <td style="text-align:left">Semis (8-symbol)</td>
+                <td class="num"><span class="badge down">WITHDRAWN</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">WITHDRAWN 2026-09-21. The +30.01% / "+513.2% improvement" came from post-processing a fixed day_pnl series (cmd_plan never called). Engine replay says the daily stop is net HARMFUL: +79.71% vs +155.10% baseline over 6 months.</td>
+              </tr>
+              <tr>
+                <td style="text-align:left">Margin-Style Live + 1% Hourly Stop</td>
+                <td style="text-align:left">Semis (8-symbol)</td>
+                <td class="num"><span class="badge down">WITHDRAWN</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">WITHDRAWN 2026-09-21. Same invalid method as the daily-stop row above.</td>
+              </tr>
+              <tr>
+                <td style="text-align:left">Dux-style VWAP Reclaim + RVOL</td>
+                <td style="text-align:left">Small-cap / low-float</td>
+                <td class="num"><span class="badge up">+5.23%</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">Risk-based position sizing + compounding, not outlier-driven</td>
+              </tr>
+              <tr>
+                <td style="text-align:left">Opening Range Breakout (15-min)</td>
+                <td style="text-align:left">Semis (8-symbol)</td>
+                <td class="num"><span class="badge up">+2.25%</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">SMB Capital &middot; broad-based, not outlier-driven</td>
+              </tr>
+              <tr>
+                <td style="text-align:left">Flat Top Breakout</td>
+                <td style="text-align:left">Small-cap / low-float</td>
+                <td class="num"><span class="badge up">+2.05%</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">Ross Cameron &middot; one trade drove most of it &mdash; only +0.38% excluding it</td>
+              </tr>
+              <tr>
+                <td style="text-align:left">First Red Day</td>
+                <td style="text-align:left">Small-cap / low-float</td>
+                <td class="num"><span class="badge up">+1.72%</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">Alex Temiz &middot; one trade drove nearly all of it &mdash; -0.47% excluding it</td>
+              </tr>
+              <tr>
+                <td style="text-align:left">Micro Pullback</td>
+                <td style="text-align:left">Small-cap / low-float</td>
+                <td class="num"><span class="badge up">+1.04%</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">Ross Cameron &middot; one trade drove it &mdash; -2.66% excluding it</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="font-size:12.5px; font-weight:600; margin:16px 0 6px; color:var(--text-secondary)">March&ndash;August 2026 (6 months) &mdash; Linda Raschke's "Holy Grail" (ADX/EMA20 trend-pullback), fresh $30k both sides</div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Strategy</th><th style="text-align:left">Universe</th>
+              <th>P&amp;L %</th><th>Max drawdown</th><th style="text-align:left">Note</th>
+            </tr></thead>
+            <tbody>
+              <tr style="background:color-mix(in srgb, var(--good) 8%, transparent)">
+                <td style="text-align:left; font-weight:700">Margin-Style Live (real)</td>
+                <td style="text-align:left">Semis (8-symbol)</td>
+                <td class="num"><span class="badge up">+155.10%</span></td>
+                <td class="num"><span class="badge up">-8.68%</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">Real engine replayed on real data, correct 17:00 UTC quote methodology, 0 kill-switches. CORRECTED 2026-09-22: this row read +145.80% while the notes below already said that figure was superseded &mdash; an internal contradiction, now resolved in favour of the reproducible number. +155.10% is realized P&amp;L ($124,080.90 on $80,000); +158.42% adds end-of-window mark-to-market. Same run, two measures. Reproduce: scripts/margin_style_original_6month_backtest.py</td>
+              </tr>
+              <tr style="background:color-mix(in srgb, var(--good) 5%, transparent)">
+                <td style="text-align:left; font-weight:600">Margin-Style Live + 1% Daily Stop ✓</td>
+                <td style="text-align:left">Semis (8-symbol)</td>
+                <td class="num"><span class="badge down">+79.71%</span></td>
+                <td class="num"><span class="badge up">-8.68%</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">CORRECTED 2026-09-21: engine replay (bc814c4, double-sell defect patched) gives <strong>+79.71%</strong> vs +155.10% baseline &mdash; the stop roughly HALVES returns, and loses on a genuine holdout too (+8.72% vs +11.73%). The old range came from post-processing day_pnl, not replay.</td>
+              </tr>
+              <tr>
+                <td style="text-align:left">Margin-Style Live + 1% Hourly Stop</td>
+                <td style="text-align:left">Semis (8-symbol)</td>
+                <td class="num"><span class="badge down">WITHDRAWN</span></td>
+                <td class="num"><span class="badge up">-8.68%</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">WITHDRAWN 2026-09-21: produced by the same invalid day_pnl post-processing. Never measured by replay. Note also that intraday checking is separately contraindicated &mdash; PEAK_SELL trims on every new high, so more checks cut winners short.</td>
+              </tr>
+              <tr>
+                <td style="text-align:left">Buy &amp; hold</td>
+                <td style="text-align:left">Semis (8-symbol)</td>
+                <td class="num"><span class="badge up">+100.64%</span></td>
+                <td class="num"><span class="badge down">-35.06%</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">Same universe, same window, equal $10k/symbol, held throughout &mdash; added 2026-09-06 for the drawdown comparison</td>
+              </tr>
+              <tr>
+                <td style="text-align:left">Raschke Holy Grail</td>
+                <td style="text-align:left">100-stock broad universe</td>
+                <td class="num"><span class="badge up">+56.95%</span></td>
+                <td class="num">&mdash;</td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">30 entries, 40.7% win rate</td>
+              </tr>
+              <tr>
+                <td style="text-align:left">Raschke Holy Grail</td>
+                <td style="text-align:left">Semis (8-symbol)</td>
+                <td class="num"><span class="badge down">-1.26%</span></td>
+                <td class="num">&mdash;</td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">Only 6 entries &mdash; too choppy/volatile for this trend filter most of the window</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="font-size:12.5px; font-weight:600; margin:16px 0 6px; color:var(--text-secondary)">Full 6-Month (Mar 6 - Sep 4, 2026) &mdash; Margin-Style Live variants at $30k capital</div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Strategy</th><th style="text-align:left">Universe</th>
+              <th>P&amp;L %</th><th>Max drawdown</th><th style="text-align:left">Note</th>
+            </tr></thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left">Margin-Style Live (base, no stop)</td>
+                <td style="text-align:left">Semis (8-symbol)</td>
+                <td class="num"><span class="badge up">+155.10%</span></td>
+                <td class="num"><span class="badge down">-8.68%</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">VERIFIED 2026-09-21 &mdash; reproduces to the cent. $124,080.90 realized at $80k = +155.10%; +158.42% including end-of-window mark-to-market ($206,737.04 ending equity). Both are the same run, different measures. Reproduce: scripts/margin_style_original_6month_backtest.py</td>
+              </tr>
+              <tr style="background:color-mix(in srgb, var(--good) 5%, transparent)">
+                <td style="text-align:left; font-weight:600">Margin-Style Live + 1% Daily Stop ✓</td>
+                <td style="text-align:left">Semis (8-symbol)</td>
+                <td class="num"><span class="badge down">+79.71%</span></td>
+                <td class="num"><span class="badge up">-8.68%</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">CORRECTED 2026-09-21: replay gives <strong>+79.71%</strong>, i.e. the stop costs ~75pp against the +155.10% baseline. The "+60.1% improvement, validated out-of-sample" claim is withdrawn.</td>
+              </tr>
+              <tr>
+                <td style="text-align:left">Margin-Style Live + 1% Hourly Stop</td>
+                <td style="text-align:left">Semis (8-symbol)</td>
+                <td class="num"><span class="badge down">WITHDRAWN</span></td>
+                <td class="num"><span class="badge up">-8.68%</span></td>
+                <td style="text-align:left; font-size:12px; color:var(--text-secondary)">WITHDRAWN 2026-09-21: same invalid method, never replayed.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="font-size:11.5px; color:var(--muted); margin-top:10px; line-height:1.5">
+          An earlier same-day check of this 6-month comparison wrongly showed Margin-Style Live at -16.91% with 4 false kill-switch triggers &mdash; caused by substituting the day's closing price for the strategy's actual 17:00&nbsp;UTC daily check price in that one-off script. Re-verified against the original validated methodology. <strong>RESOLVED 2026-09-21:</strong> the original script was recovered and committed as scripts/margin_style_original_6month_backtest.py; it reproduces $124,080.90 realized = <strong>+155.10%</strong> exactly, so the tables above now carry that rather than the old +145.80%. Note the recurring failure mode: substituting the daily close for the 17:00&nbsp;UTC check price broke this comparison once before, and broke it again on 2026-09-21. Every "beats Margin-Style Live" candidate found in the August-only search was later shown to hinge on one or two concentrated trades, not a repeatable edge &mdash; noted per-row above.
+        </div>
+        <div style="font-size:11.5px; color:var(--muted); margin-top:6px; line-height:1.5">
+          <strong>Drawdown added 2026-09-06:</strong> a fresh independent re-run of the real, unmodified engine against the same 17:00&nbsp;UTC-quote methodology (not a new/tuned variant) found the strategy's peak-to-trough equity drawdown was <strong>-8.68%</strong> vs. buy-and-hold's <strong>-35.06%</strong> over the same window &mdash; essentially the same total return, a quarter of the pain getting there. <strong>RESOLVED 2026-09-21:</strong> the +158.42% and the realized +155.10% are the SAME run measured two ways &mdash; +155.10% is realized P&amp;L only, +158.42% adds end-of-window unrealized mark-to-market ($206,737.04 ending equity on $80,000). They were never in conflict. The older +145.80% came from a script that has not been recovered; the recovered original (scripts/margin_style_original_6month_backtest.py) reproduces $124,080.90 / +155.10% to the cent, so that is the figure to use.
+        </div>
+        <div style="font-size:11.5px; color:var(--critical); margin-top:10px; line-height:1.5; background:color-mix(in srgb,var(--critical) 8%,transparent); padding:10px 12px; border-left:3px solid var(--critical); border-radius:4px">
+          <strong>⚠️ CORRECTION 2026-09-21 &mdash; the daily stop-loss figures above were withdrawn</strong><br>Everything previously in this box (the &ldquo;+187&ndash;206% range&rdquo;, the &ldquo;60&ndash;70% effectiveness&rdquo; estimate, and &ldquo;out-of-sample validation still holds&rdquo;) rested on two invalid steps. <strong>First</strong>, the stop was never modelled by replaying the engine &mdash; it was simulated by capping a fixed day_pnl series (<code>stop_amount = 30000 * stop_level</code>, cmd_plan never called), which cannot model a rule change because liquidating positions alters every subsequent day. It also applied a $300 cap (1% of $30,000) to P&amp;L generated by an $80,000 run. <strong>Second</strong>, the &ldquo;holdout&rdquo; was not a holdout: its $36,027 is exactly the Jul 6&ndash;Aug 3 slice of the same continuous run, and its &ldquo;+45%&rdquo; divides that slice by the original $80,000 even though equity had compounded to $162,679 by then. A genuine fresh holdout returns +11.73%.<br><br>Proper engine replay: the daily stop returns <strong>+79.71% vs +155.10% baseline</strong> over six months and <strong>+8.72% vs +11.73%</strong> on a real holdout &mdash; worse in both windows. It also carries an unfixed double-sell defect; run with that defect left in, the same window prints a fake +1215.80%.<br><br><strong>It was never live on real money.</strong> The daily stop existed only on a development branch. The production branch that the daily trigger checks out has never contained it &mdash; which is also why it never appears in the live run log.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Strategy setup &amp; thresholds</div>
+          <div class="card-sub">Scaled Dip-Buy / Scaled Peak-Sell &middot; reverse-engineered then parameter-optimized &middot; checked once daily at ~12pm CDT</div>
+        </div>
+        <div class="param-grid">
+          <div class="param-card">
+            <div class="param-name">HUGE_DIP entry</div>
+            <div class="param-detail">Yesterday's close <span class="num">&le; -35%</span> cumulative from the trailing 60-day high &rarr; deploy <span class="num">40%</span> of safe settled cash into that symbol.</div>
+          </div>
+          <div class="param-card">
+            <div class="param-name">NORMAL_DIP entry</div>
+            <div class="param-detail">Yesterday's close <span class="num">&le; -0.4%</span> vs. the close 2 days ago, and fewer than 5 tranches held since last full exit &rarr; tranche-indexed sizing: <span class="num">95% / 55% / 35% / 20% / 10%</span> of cash for the 1st&ndash;5th tranche.</div>
+          </div>
+          <div class="param-card">
+            <div class="param-name">Intraday stop</div>
+            <div class="param-detail">Live price <span class="num">&le; -1.51%</span> vs. prior close &rarr; sell the entire position. Highest priority, never netted against a same-day buy.</div>
+          </div>
+          <div class="param-card">
+            <div class="param-name">Max hold</div>
+            <div class="param-detail">Position open <span class="num">&ge; 6 trading days</span> with no STOP/PEAK/GAIN exit of its own &rarr; sell entirely. Frees stale capital for fresher dips.</div>
+          </div>
+          <div class="param-card">
+            <div class="param-name">Peak sell</div>
+            <div class="param-detail">Live price is a new high since the position opened &rarr; sell <span class="num">74.3%</span> of shares, ratchet the peak. May net against a same-day buy.</div>
+          </div>
+          <div class="param-card">
+            <div class="param-name">Gain tiers</div>
+            <div class="param-detail">Checked only if not a new peak. Gain from entry <span class="num">&ge;20%</span> &rarr; sell 90%; <span class="num">&ge;10%</span> &rarr; sell 50%; <span class="num">&ge;5%</span> &rarr; sell 20%.</div>
+          </div>
+          <div class="param-card">
+            <div class="param-name">Kill-switch + trend gate</div>
+            <div class="param-detail">Total equity <span class="num">&ge;15%</span> below its all-time peak &rarr; liquidate everything, block new entries for <span class="num">20 trading days</span>. Once ever triggered, every future dip candidate must also be above its 50-day SMA, permanently.</div>
+          </div>
+          <div class="param-card">
+            <div class="param-name">Circuit breaker</div>
+            <div class="param-detail"><span class="num">2+</span> STOP exits in one run &rarr; pause all new entries for that run only.</div>
+          </div>
+          <div class="param-card">
+            <div class="param-name">Position caps</div>
+            <div class="param-detail">Max <span class="num">50%</span> of system equity in one symbol. Max <span class="num">25%</span> of current total equity notional per individual trade.</div>
+          </div>
+          <div class="param-card">
+            <div class="param-name">Universe</div>
+            <div class="param-detail">Exactly <span class="num">AMD, MU, WDC, SNDK, TSM, INTC, LRCX, STX</span>. Equities only, no options, no leverage &mdash; settled cash only.</div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="note" id="footerNote"></footer>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+const SYMBOLS = ["AMD","MU","WDC","SNDK","TSM","INTC","LRCX","STX"];
+const SLOT = { AMD:1, MU:2, WDC:3, SNDK:4, TSM:5, INTC:6, LRCX:7, STX:8 };
+const root = document.querySelector('.viz-root');
+const cssColor = (sym) => getComputedStyle(root).getPropertyValue('--s' + SLOT[sym]).trim();
+const goodColor = () => getComputedStyle(root).getPropertyValue('--good').trim();
+const criticalColor = () => getComputedStyle(root).getPropertyValue('--critical').trim();
+const mutedColor = () => getComputedStyle(root).getPropertyValue('--muted').trim();
+
+const $ = (id) => document.getElementById(id);
+const fmtMoney = (v) => (v >= 0 ? '' : '-') + '$' + Math.abs(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtSignedMoney = (v) => (v >= 0 ? '+$' : '-$') + Math.abs(v).toFixed(2);
+const fmtPct = (v) => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+const fmtTime = (iso) => { const d = new Date(iso); return d.toLocaleDateString(undefined,{month:'short',day:'numeric'}) + ' ' + d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}); };
+
+function setConn(kind, text) {
+  $('connDot').className = 'dot ' + kind;
+  $('connText').textContent = text;
+}
+function showEmpty(html) { $('emptyState').style.display = 'block'; $('emptyState').innerHTML = html; $('mainContent').style.display = 'none'; }
+function showBanner(html) { const b = $('errBanner'); b.innerHTML = html; b.classList.add('show'); }
+function hideBanner() { $('errBanner').classList.remove('show'); }
+
+// =====================================================================
+// STATIC DATA snapshot, embedded at publish time from the real, git-
+// tracked docs/margin_style_live_state.json and docs/margin_style_live_log.json.
+// This system checks once a day (not continuously like an intraday feed),
+// so unlike a live day-trading dashboard there is nothing to poll for this
+// part - state.json changes only when the daily routine (or a manual
+// retrigger) actually commits a new run. Republish this page after a run
+// Refreshed 2026-09-22 17:16 UTC from production state (main @ 456d6ca), the
+// first run after the account was converted back to a CASH account
+// (get_accounts: type=cash, unsettled_funds $0.00).
+// This run: BUY SNDK 2.349880 sh @ 1884.3999 (NORMAL_DIP), filled, $0 fees.
+// Sized off buying_power $17,693.63 - not the cash field - per the 2026-09-22
+// change; the two are equal today only because nothing is unsettled.
+// The four pending_settlement entries ($12,972.28, dated 2026-09-22) settled
+// and pruned to [], matching the broker's unsettled_funds of $0.
+// equity_peak stays 17,696.92; total equity 17,693.63 => drawdown -0.02%, so
+// the kill-switch does NOT fire. That peak was CORRECTED from 20,873.33 on
+// 2026-09-22: it was never a high-water mark but a double-count, after the
+// 2026-09-16 run sold LRCX 14.755994 sh while leaving the position in
+// open_positions, so those shares counted twice from 2026-09-17.
+// to refresh it. Live sections below (account snapshot, positions' current
+// price/gain, distance-to-signal) DO refresh from the broker in real time.
+// =====================================================================
+const MS_STATE = {"pending_settlement":[],"open_positions":{"SNDK":{"shares":2.34988,"entry":1884.3999,"peak":1884.3999,"tranches":1,"opened":"2026-09-22"}},"equity_peak":17696.92,"kill_switch_active":false,"kill_switch_triggered_date":null,"trend_gate_active":false,"_last_commit":{"timestamp":"2026-09-21T17:06:48.586045+00:00","sells_count":4,"buys_count":0,"ported_from":"ca55e21 (development branch) on 2026-09-22"}};
+// Realized P&L as Robinhood's own books reported it at publish time
+// (get_realized_pnl, span "all"). Embedded for the same reason MS_STATE is:
+// so the page shows the real number even when the live call cannot run.
+// The watch below replaces it with a fresh figure whenever it succeeds.
+const BROKER_PNL_SNAPSHOT = { total_returns: "2674.92", total_rate_of_return: "0.0261981558493123",
+  data_points: [{ number_of_trades: 2 }, { number_of_trades: 92 }, { number_of_trades: 62 }],
+  asOf: "2026-09-22" };
+
+const MS_DATA = {"trades":[{"t":"2026-09-22T17:16:41Z","sym":"SNDK","side":"BUY","shares":2.34988,"price":1884.3999,"notional":4428.11,"reason":"NORMAL_DIP","drawdown":-0.2434,"day_return":-0.0141,"pnl":null},{"t":"2026-09-21T17:06:48Z","sym":"WDC","side":"SELL","shares":11.948656,"price":442.75,"notional":5290.27,"reason":"MAX_HOLD","entry":432.85,"reconstructed_entry":false,"pnl":118.29},{"t":"2026-09-21T17:06:48Z","sym":"SNDK","side":"SELL","shares":0.72084,"price":1751.44,"notional":1262.51,"reason":"STOP","entry":1543.12,"reconstructed_entry":false,"pnl":150.17},{"t":"2026-09-21T17:06:48Z","sym":"LRCX","side":"SELL","shares":4.178418,"price":301.31,"notional":1259.0,"reason":"MAX_HOLD","entry":270.08,"reconstructed_entry":false,"pnl":130.49},{"t":"2026-09-21T17:06:48Z","sym":"STX","side":"SELL","shares":5.904389,"price":874.01,"notional":5160.5,"reason":"MAX_HOLD","entry":849.01,"reconstructed_entry":false,"pnl":147.61},{"t":"2026-09-15T17:02:00Z","sym":"STX","side":"BUY","shares":0.254996,"price":763.68,"notional":194.75,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-09-15T17:02:00Z","sym":"INTC","side":"BUY","shares":39.797036,"price":97.7,"notional":3888.38,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-09-15T17:02:00Z","sym":"SNDK","side":"BUY","shares":2.682303,"price":1532.77,"notional":4115.58,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-09-15T17:02:00Z","sym":"WDC","side":"BUY","shares":9.95385,"price":411.66,"notional":4096.28,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-09-15T17:02:00Z","sym":"LRCX","side":"BUY","shares":15.324865,"price":267.43,"notional":4098.26,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-27T14:42:00Z","sym":"SNDK","side":"BUY","shares":2.001409,"price":1249.6199,"notional":2501.0,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-27T14:42:00Z","sym":"INTC","side":"BUY","shares":21.169297,"price":87.2547,"notional":1847.12,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-27T14:42:00Z","sym":"MU","side":"BUY","shares":0.085625,"price":857.7498,"notional":73.44,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-27T14:42:00Z","sym":"WDC","side":"BUY","shares":0.08565,"price":472.3899,"notional":40.46,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-28T15:46:00Z","sym":"INTC","side":"SELL","shares":21.169297,"price":87.8101,"notional":1858.88,"reason":"STOP","entry":87.2547,"reconstructed_entry":false,"pnl":11.76},{"t":"2026-07-28T15:46:00Z","sym":"MU","side":"SELL","shares":0.085625,"price":826.93,"notional":70.81,"reason":"STOP","entry":857.7498,"reconstructed_entry":false,"pnl":-2.64},{"t":"2026-07-28T15:46:00Z","sym":"WDC","side":"SELL","shares":0.08565,"price":451.71,"notional":38.69,"reason":"STOP","entry":472.3899,"reconstructed_entry":false,"pnl":-1.77},{"t":"2026-07-30T14:47:00Z","sym":"SNDK","side":"SELL","shares":0.356757,"price":1245.3663,"notional":444.29,"reason":"PEAK","entry":1107.3642,"reconstructed_entry":false,"pnl":49.23},{"t":"2026-07-30T14:47:00Z","sym":"INTC","side":"SELL","shares":3.387743,"price":92.7701,"notional":314.28,"reason":"PEAK","entry":86.635,"reconstructed_entry":false,"pnl":20.78},{"t":"2026-07-30T14:47:00Z","sym":"SNDK","side":"BUY","shares":0.732938,"price":1246.2099,"notional":913.39,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-30T14:47:00Z","sym":"LRCX","side":"BUY","shares":2.622128,"price":308.1499,"notional":808.01,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-30T14:47:00Z","sym":"INTC","side":"BUY","shares":2.242667,"price":92.7935,"notional":208.1,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-30T14:47:00Z","sym":"MU","side":"BUY","shares":0.062613,"price":851.7999,"notional":53.33,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-30T16:40:00Z","sym":"SNDK","side":"SELL","shares":0.636259,"price":1250.4201,"notional":795.59,"reason":"PEAK","entry":1226.202,"reconstructed_entry":false,"pnl":15.41},{"t":"2026-07-30T16:40:00Z","sym":"MU","side":"SELL","shares":0.046521,"price":857.4663,"notional":39.89,"reason":"PEAK","entry":851.7999,"reconstructed_entry":false,"pnl":0.26},{"t":"2026-07-30T16:40:00Z","sym":"SNDK","side":"BUY","shares":0.536457,"price":1247.0795,"notional":669.0,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-30T16:40:00Z","sym":"LRCX","side":"BUY","shares":1.50191,"price":295.6447,"notional":444.03,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-30T16:40:00Z","sym":"INTC","side":"BUY","shares":1.236463,"price":91.9995,"notional":113.75,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-30T16:40:00Z","sym":"MU","side":"BUY","shares":0.034197,"price":854.9599,"notional":29.24,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-30T17:52:00Z","sym":"SNDK","side":"SELL","shares":0.562106,"price":1260.1481,"notional":708.34,"reason":"PEAK","entry":1241.0062,"reconstructed_entry":false,"pnl":10.76},{"t":"2026-07-30T17:52:00Z","sym":"MU","side":"SELL","shares":0.037365,"price":870.14,"notional":32.51,"reason":"PEAK","entry":853.9487,"reconstructed_entry":false,"pnl":0.6},{"t":"2026-07-30T19:42:00Z","sym":"SNDK","side":"SELL","shares":0.144461,"price":1264.4866,"notional":182.67,"reason":"PEAK","entry":1241.0062,"reconstructed_entry":false,"pnl":3.39},{"t":"2026-07-30T19:42:00Z","sym":"MU","side":"SELL","shares":0.009603,"price":873.0635,"notional":8.38,"reason":"PEAK","entry":853.9487,"reconstructed_entry":false,"pnl":0.18},{"t":"2026-07-31T19:49:00Z","sym":"SNDK","side":"SELL","shares":0.049969,"price":1228.0,"notional":61.36,"reason":"STOP","entry":1241.0062,"reconstructed_entry":false,"pnl":-0.65},{"t":"2026-07-31T19:49:00Z","sym":"MU","side":"SELL","shares":0.003321,"price":834.9535,"notional":2.77,"reason":"STOP","entry":853.9487,"reconstructed_entry":false,"pnl":-0.06},{"t":"2026-08-03T14:37:00Z","sym":"SNDK","side":"BUY","shares":0.795216,"price":1263.2799,"notional":1004.58,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-03T14:37:00Z","sym":"INTC","side":"BUY","shares":11.110926,"price":90.0,"notional":999.98,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-03T14:37:00Z","sym":"LRCX","side":"BUY","shares":3.342502,"price":290.8768,"notional":972.26,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-03T14:37:00Z","sym":"MU","side":"BUY","shares":0.306275,"price":819.6641,"notional":251.04,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-03T14:37:00Z","sym":"AMD","side":"BUY","shares":0.080535,"price":479.8529,"notional":38.64,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-03T16:46:00Z","sym":"SNDK","side":"SELL","shares":0.590845,"price":1279.95,"notional":756.25,"reason":"PEAK","entry":1263.2799,"reconstructed_entry":true,"pnl":9.85},{"t":"2026-08-03T16:46:00Z","sym":"MU","side":"SELL","shares":0.227562,"price":820.955,"notional":186.82,"reason":"PEAK","entry":819.6641,"reconstructed_entry":true,"pnl":0.29},{"t":"2026-08-03T16:46:00Z","sym":"AMD","side":"SELL","shares":0.059838,"price":480.69,"notional":28.76,"reason":"PEAK","entry":479.8529,"reconstructed_entry":true,"pnl":0.05},{"t":"2026-08-03T18:51:00Z","sym":"SNDK","side":"SELL","shares":0.151848,"price":1294.5,"notional":196.57,"reason":"PEAK","entry":1263.2799,"reconstructed_entry":true,"pnl":4.74},{"t":"2026-08-03T18:51:00Z","sym":"MU","side":"SELL","shares":0.058484,"price":825.5,"notional":48.28,"reason":"PEAK","entry":819.6641,"reconstructed_entry":true,"pnl":0.34},{"t":"2026-08-03T18:51:00Z","sym":"AMD","side":"SELL","shares":0.015378,"price":485.24,"notional":7.46,"reason":"PEAK","entry":479.8529,"reconstructed_entry":true,"pnl":0.08},{"t":"2026-08-03T19:39:00Z","sym":"SNDK","side":"SELL","shares":0.039025,"price":1294.835,"notional":50.53,"reason":"PEAK","entry":1263.2799,"reconstructed_entry":true,"pnl":1.23},{"t":"2026-08-03T19:39:00Z","sym":"MU","side":"SELL","shares":0.01503,"price":830.985,"notional":12.49,"reason":"PEAK","entry":819.6641,"reconstructed_entry":true,"pnl":0.17},{"t":"2026-08-04T13:49:00Z","sym":"INTC","side":"SELL","shares":11.711061,"price":97.4366,"notional":1141.09,"reason":"PEAK","entry":90.3042,"reconstructed_entry":true,"pnl":83.53},{"t":"2026-08-04T13:49:00Z","sym":"LRCX","side":"SELL","shares":5.547639,"price":311.37,"notional":1727.37,"reason":"PEAK","entry":297.9019,"reconstructed_entry":true,"pnl":74.72},{"t":"2026-08-04T13:49:00Z","sym":"SNDK","side":"SELL","shares":0.010029,"price":1387.92,"notional":13.92,"reason":"PEAK","entry":1263.2799,"reconstructed_entry":true,"pnl":1.25},{"t":"2026-08-04T13:49:00Z","sym":"MU","side":"SELL","shares":0.003863,"price":881.515,"notional":3.41,"reason":"PEAK","entry":819.6641,"reconstructed_entry":true,"pnl":0.24},{"t":"2026-08-04T13:49:00Z","sym":"AMD","side":"SELL","shares":0.003952,"price":514.13,"notional":2.03,"reason":"PEAK","entry":479.8529,"reconstructed_entry":true,"pnl":0.14},{"t":"2026-08-04T13:49:00Z","sym":"SNDK","side":"BUY","shares":0.608612,"price":1391.625,"notional":846.96,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-04T13:49:00Z","sym":"INTC","side":"BUY","shares":2.232512,"price":97.686,"notional":218.09,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-04T13:49:00Z","sym":"WDC","side":"BUY","shares":0.061231,"price":544.825,"notional":33.36,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-04T14:42:00Z","sym":"INTC","side":"SELL","shares":4.668499,"price":99.3299,"notional":463.72,"reason":"PEAK","entry":92.927,"reconstructed_entry":true,"pnl":29.89},{"t":"2026-08-04T16:26:00Z","sym":"INTC","side":"SELL","shares":1.199805,"price":100.09,"notional":120.09,"reason":"PEAK","entry":92.927,"reconstructed_entry":true,"pnl":8.59},{"t":"2026-08-04T16:26:00Z","sym":"LRCX","side":"SELL","shares":1.425743,"price":313.73,"notional":447.3,"reason":"PEAK","entry":297.9019,"reconstructed_entry":true,"pnl":22.57},{"t":"2026-08-05T17:17:47Z","sym":"INTC","side":"SELL","shares":0.308349,"price":101.9,"notional":31.42,"reason":"PEAK","entry":92.927,"reconstructed_entry":true,"pnl":2.77},{"t":"2026-08-05T17:17:47Z","sym":"LRCX","side":"SELL","shares":0.493158,"price":311.53,"notional":153.63,"reason":"STOP","entry":297.9019,"reconstructed_entry":true,"pnl":6.72},{"t":"2026-08-05T17:17:47Z","sym":"SNDK","side":"SELL","shares":0.454776,"price":1413.4291,"notional":642.79,"reason":"PEAK","entry":1390.8976,"reconstructed_entry":true,"pnl":10.25},{"t":"2026-08-05T17:17:47Z","sym":"AMD","side":"SELL","shares":0.001367,"price":486.0,"notional":0.66,"reason":"STOP","entry":479.8529,"reconstructed_entry":true,"pnl":0.01},{"t":"2026-08-05T17:17:47Z","sym":"WDC","side":"SELL","shares":0.045495,"price":547.61,"notional":24.91,"reason":"PEAK","entry":544.825,"reconstructed_entry":true,"pnl":0.13},{"t":"2026-08-07T19:37:11Z","sym":"SNDK","side":"BUY","shares":0.81105,"price":1213.8857,"notional":984.52,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-07T19:37:11Z","sym":"WDC","side":"BUY","shares":2.294631,"price":437.0299,"notional":1002.82,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-07T19:37:11Z","sym":"LRCX","side":"BUY","shares":3.214607,"price":310.0299,"notional":996.62,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-07T19:37:11Z","sym":"MU","side":"BUY","shares":1.014445,"price":873.9399,"notional":886.56,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-10T19:02:27Z","sym":"INTC","side":"SELL","shares":0.085326,"price":98.5798,"notional":8.41,"reason":"STOP","entry":97.63,"reconstructed_entry":true,"pnl":0.08},{"t":"2026-08-10T19:02:27Z","sym":"SNDK","side":"SELL","shares":0.60261,"price":1255.005,"notional":756.28,"reason":"PEAK","entry":1213.8857,"reconstructed_entry":true,"pnl":24.78},{"t":"2026-08-10T19:02:27Z","sym":"WDC","side":"SELL","shares":1.704911,"price":441.8384,"notional":753.3,"reason":"PEAK","entry":437.0299,"reconstructed_entry":true,"pnl":8.2},{"t":"2026-08-10T19:02:27Z","sym":"MU","side":"SELL","shares":0.753733,"price":879.59,"notional":662.98,"reason":"PEAK","entry":873.9399,"reconstructed_entry":true,"pnl":4.26},{"t":"2026-08-10T19:02:27Z","sym":"SNDK","side":"BUY","shares":0.636832,"price":1253.339,"notional":798.17,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-10T19:02:27Z","sym":"WDC","side":"BUY","shares":0.278787,"price":441.7966,"notional":123.17,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-10T19:02:27Z","sym":"AMD","side":"BUY","shares":0.143778,"price":475.46,"notional":68.36,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-10T19:02:27Z","sym":"MU","side":"BUY","shares":0.043022,"price":880.7888,"notional":37.89,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-11T17:19:52Z","sym":"LRCX","side":"SELL","shares":1.499571,"price":309.975,"notional":464.83,"reason":"PEAK-NET(vs NORMAL_DIP)","entry":310.0299,"reconstructed_entry":true,"pnl":-0.08},{"t":"2026-08-11T17:19:52Z","sym":"SNDK","side":"BUY","shares":0.162846,"price":1266.2058,"notional":206.2,"reason":"HUGE_DIP-NET(vs PEAK)","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-11T17:19:52Z","sym":"AMD","side":"BUY","shares":1.931392,"price":465.833,"notional":899.71,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-11T17:19:52Z","sym":"INTC","side":"BUY","shares":5.104223,"price":97.4,"notional":497.15,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-11T17:19:52Z","sym":"MU","side":"BUY","shares":0.325541,"price":851.9651,"notional":277.35,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-11T17:19:52Z","sym":"STX","side":"BUY","shares":0.187226,"price":819.01,"notional":153.34,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-11T17:19:52Z","sym":"TSM","side":"BUY","shares":0.201319,"price":421.17,"notional":84.79,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-12T17:35:22Z","sym":"SNDK","side":"SELL","shares":0.592704,"price":1373.5,"notional":814.08,"reason":"PEAK-NET(vs HUGE_DIP)","entry":1247.26,"reconstructed_entry":true,"pnl":74.82},{"t":"2026-08-12T17:35:22Z","sym":"WDC","side":"SELL","shares":0.364123,"price":458.04,"notional":166.78,"reason":"PEAK-NET(vs NORMAL_DIP)","entry":438.56,"reconstructed_entry":true,"pnl":7.09},{"t":"2026-08-12T17:35:22Z","sym":"LRCX","side":"SELL","shares":1.274272,"price":328.78,"notional":418.96,"reason":"PEAK","entry":310.0299,"reconstructed_entry":true,"pnl":23.89},{"t":"2026-08-12T17:35:22Z","sym":"MU","side":"SELL","shares":0.467551,"price":929.66,"notional":434.66,"reason":"PEAK","entry":863.04,"reconstructed_entry":true,"pnl":31.15},{"t":"2026-08-12T17:35:22Z","sym":"AMD","side":"SELL","shares":1.541851,"price":486.95,"notional":750.8,"reason":"PEAK","entry":466.5,"reconstructed_entry":true,"pnl":31.53},{"t":"2026-08-12T17:35:22Z","sym":"INTC","side":"SELL","shares":3.792438,"price":101.72,"notional":385.77,"reason":"PEAK","entry":97.4,"reconstructed_entry":true,"pnl":16.38},{"t":"2026-08-12T17:35:22Z","sym":"STX","side":"SELL","shares":0.139109,"price":877.55,"notional":122.08,"reason":"PEAK","entry":819.01,"reconstructed_entry":true,"pnl":8.14},{"t":"2026-08-12T17:35:22Z","sym":"TSM","side":"SELL","shares":0.14958,"price":429.5,"notional":64.24,"reason":"PEAK","entry":421.17,"reconstructed_entry":true,"pnl":1.25},{"t":"2026-08-13T17:13:45Z","sym":"SNDK","side":"SELL","shares":0.308653,"price":1565.15,"notional":483.09,"reason":"PEAK","entry":1247.26,"reconstructed_entry":true,"pnl":98.12},{"t":"2026-08-13T17:13:45Z","sym":"WDC","side":"SELL","shares":0.374757,"price":492.77,"notional":184.67,"reason":"PEAK","entry":438.56,"reconstructed_entry":true,"pnl":20.32},{"t":"2026-08-13T17:13:45Z","sym":"LRCX","side":"SELL","shares":0.327488,"price":343.56,"notional":112.51,"reason":"PEAK","entry":310.0299,"reconstructed_entry":true,"pnl":10.98},{"t":"2026-08-13T17:13:45Z","sym":"MU","side":"SELL","shares":0.120161,"price":971.68,"notional":116.76,"reason":"PEAK","entry":863.04,"reconstructed_entry":true,"pnl":13.05},{"t":"2026-08-13T17:13:45Z","sym":"AMD","side":"SELL","shares":0.396256,"price":494.39,"notional":195.91,"reason":"PEAK","entry":466.5,"reconstructed_entry":true,"pnl":11.05},{"t":"2026-08-13T17:13:45Z","sym":"INTC","side":"SELL","shares":0.974656,"price":105.46,"notional":102.79,"reason":"PEAK","entry":97.4,"reconstructed_entry":true,"pnl":7.86},{"t":"2026-08-13T17:13:45Z","sym":"STX","side":"SELL","shares":0.035751,"price":920.77,"notional":32.92,"reason":"PEAK","entry":819.01,"reconstructed_entry":true,"pnl":3.64},{"t":"2026-08-13T17:13:45Z","sym":"TSM","side":"SELL","shares":0.038442,"price":434.22,"notional":16.69,"reason":"PEAK","entry":421.17,"reconstructed_entry":true,"pnl":0.5},{"t":"2026-08-14T17:13:25Z","sym":"LRCX","side":"SELL","shares":0.113276,"price":328.22,"notional":37.18,"reason":"STOP","entry":310.0299,"reconstructed_entry":true,"pnl":2.06},{"t":"2026-08-14T17:13:25Z","sym":"SNDK","side":"SELL","shares":0.079323,"price":1630.5301,"notional":129.34,"reason":"PEAK","entry":1247.26,"reconstructed_entry":true,"pnl":30.4},{"t":"2026-08-14T17:13:25Z","sym":"WDC","side":"SELL","shares":0.096313,"price":496.0401,"notional":47.78,"reason":"PEAK","entry":438.56,"reconstructed_entry":true,"pnl":5.54},{"t":"2026-08-14T17:13:25Z","sym":"MU","side":"SELL","shares":0.020782,"price":964.2219,"notional":20.04,"reason":"GAIN50","entry":863.04,"reconstructed_entry":true,"pnl":2.1},{"t":"2026-08-14T17:13:25Z","sym":"AMD","side":"SELL","shares":0.101838,"price":503.1001,"notional":51.23,"reason":"PEAK","entry":466.5,"reconstructed_entry":true,"pnl":3.73},{"t":"2026-08-14T17:13:25Z","sym":"INTC","side":"SELL","shares":0.067426,"price":102.9001,"notional":6.94,"reason":"GAIN20","entry":97.4,"reconstructed_entry":true,"pnl":0.37},{"t":"2026-08-14T17:13:25Z","sym":"STX","side":"SELL","shares":0.009188,"price":966.6745,"notional":8.88,"reason":"PEAK","entry":819.01,"reconstructed_entry":true,"pnl":1.36},{"t":"2026-08-17T23:20:41Z","sym":"MU","side":"SELL","shares":0.01544,"price":1020.02,"notional":15.75,"reason":"PEAK","entry":863.04,"reconstructed_entry":true,"pnl":2.42},{"t":"2026-08-17T23:20:41Z","sym":"WDC","side":"SELL","shares":0.024752,"price":null,"notional":null,"reason":"PEAK","entry":438.56,"reconstructed_entry":true,"pnl":null},{"t":"2026-08-17T23:20:41Z","sym":"AMD","side":"SELL","shares":0.026172,"price":null,"notional":null,"reason":"PEAK","entry":466.5,"reconstructed_entry":true,"pnl":null},{"t":"2026-08-17T23:20:41Z","sym":"SNDK","side":"SELL","shares":0.020386,"price":null,"notional":null,"reason":"PEAK","entry":1247.26,"reconstructed_entry":true,"pnl":null},{"t":"2026-08-17T23:20:41Z","sym":"STX","side":"SELL","shares":0.002361,"price":null,"notional":null,"reason":"PEAK","entry":819.01,"reconstructed_entry":true,"pnl":null},{"t":"2026-08-17T23:20:41Z","sym":"INTC","side":"BUY","shares":11.901481,"price":null,"notional":null,"reason":"NORMAL_DIP-NET(vs GAIN20)","pnl":null,"note":"fill price not recorded"},{"t":"2026-08-17T23:20:41Z","sym":"LRCX","side":"BUY","shares":3.645163,"price":null,"notional":null,"reason":"NORMAL_DIP","pnl":null,"note":"fill price not recorded"},{"t":"2026-08-17T23:20:41Z","sym":"TSM","side":"BUY","shares":2.437835,"price":null,"notional":null,"reason":"NORMAL_DIP","pnl":null,"note":"fill price not recorded"},{"t":"2026-08-18T17:12:34Z","sym":"SNDK","side":"SELL","shares":0.007052,"price":1619.0542,"notional":11.42,"reason":"STOP","entry":1247.26,"reconstructed_entry":true,"pnl":2.62},{"t":"2026-08-18T17:12:34Z","sym":"WDC","side":"SELL","shares":0.008562,"price":500.0001,"notional":4.28,"reason":"STOP","entry":438.56,"reconstructed_entry":true,"pnl":0.53},{"t":"2026-08-18T17:12:34Z","sym":"MU","side":"SELL","shares":0.005341,"price":936.1601,"notional":5.0,"reason":"STOP","entry":863.04,"reconstructed_entry":true,"pnl":0.39},{"t":"2026-08-18T17:12:34Z","sym":"AMD","side":"SELL","shares":0.009053,"price":478.9322,"notional":4.34,"reason":"STOP","entry":466.5,"reconstructed_entry":true,"pnl":0.11},{"t":"2026-08-18T17:12:34Z","sym":"INTC","side":"SELL","shares":12.171184,"price":96.0005,"notional":1168.44,"reason":"STOP","entry":97.4,"reconstructed_entry":true,"pnl":-17.03},{"t":"2026-08-18T17:12:34Z","sym":"STX","side":"SELL","shares":0.000817,"price":913.8301,"notional":0.75,"reason":"STOP","entry":819.01,"reconstructed_entry":true,"pnl":0.08},{"t":"2026-08-18T17:12:34Z","sym":"TSM","side":"SELL","shares":2.451132,"price":412.7801,"notional":1011.78,"reason":"STOP","entry":421.17,"reconstructed_entry":true,"pnl":-20.56},{"t":"2026-08-18T17:12:34Z","sym":"LRCX","side":"SELL","shares":3.645163,"price":322.3601,"notional":1175.06,"reason":"STOP","entry":322.3601,"reconstructed_entry":true,"pnl":0.0},{"t":"2026-08-19T17:26:10Z","sym":"WDC","side":"BUY","shares":2.634879,"price":468.2299,"notional":1233.73,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-19T17:26:10Z","sym":"INTC","side":"BUY","shares":13.361839,"price":93.1873,"notional":1245.15,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-19T17:26:10Z","sym":"SNDK","side":"BUY","shares":0.788318,"price":1565.7699,"notional":1234.32,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-19T17:26:10Z","sym":"LRCX","side":"BUY","shares":3.841612,"price":308.2403,"notional":1184.14,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-19T17:26:10Z","sym":"MU","side":"BUY","shares":0.063382,"price":928.4999,"notional":58.85,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-20T17:28:08Z","sym":"WDC","side":"SELL","shares":1.957715,"price":470.38,"notional":920.87,"reason":"PEAK","entry":468.2299,"reconstructed_entry":true,"pnl":4.21},{"t":"2026-08-20T17:28:08Z","sym":"SNDK","side":"SELL","shares":0.58572,"price":1587.3997,"notional":929.77,"reason":"PEAK","entry":1565.7699,"reconstructed_entry":true,"pnl":12.67},{"t":"2026-08-20T17:28:08Z","sym":"MU","side":"SELL","shares":0.047093,"price":954.2501,"notional":44.94,"reason":"PEAK","entry":928.4999,"reconstructed_entry":true,"pnl":1.21},{"t":"2026-08-20T17:28:08Z","sym":"STX","side":"BUY","shares":0.039868,"price":855.49,"notional":34.11,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-21T19:10:10Z","sym":"INTC","side":"SELL","shares":13.361839,"price":90.2827,"notional":1206.34,"reason":"STOP","entry":93.1873,"reconstructed_entry":true,"pnl":-38.81},{"t":"2026-08-21T19:10:10Z","sym":"SNDK","side":"SELL","shares":0.15053,"price":1600.1768,"notional":240.87,"reason":"PEAK","entry":1565.7699,"reconstructed_entry":true,"pnl":5.18},{"t":"2026-08-21T19:10:10Z","sym":"LRCX","side":"SELL","shares":2.854318,"price":313.321,"notional":894.32,"reason":"PEAK","entry":308.2403,"reconstructed_entry":true,"pnl":14.5},{"t":"2026-08-21T19:10:10Z","sym":"MU","side":"SELL","shares":0.012103,"price":966.7401,"notional":11.7,"reason":"PEAK","entry":928.4999,"reconstructed_entry":true,"pnl":0.46},{"t":"2026-08-21T19:10:10Z","sym":"WDC","side":"BUY","shares":1.648881,"price":466.97,"notional":769.98,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-21T19:10:10Z","sym":"INTC","side":"BUY","shares":6.999861,"price":90.4099,"notional":632.86,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-24T17:12:47Z","sym":"WDC","side":"SELL","shares":2.326045,"price":436.3647,"notional":1015.0,"reason":"STOP","entry":467.3368,"reconstructed_entry":true,"pnl":-72.04},{"t":"2026-08-24T17:12:47Z","sym":"SNDK","side":"SELL","shares":0.052068,"price":1494.0422,"notional":77.79,"reason":"STOP","entry":1565.7699,"reconstructed_entry":true,"pnl":-3.73},{"t":"2026-08-24T17:12:47Z","sym":"LRCX","side":"SELL","shares":0.987294,"price":306.0766,"notional":302.19,"reason":"STOP","entry":308.2403,"reconstructed_entry":true,"pnl":-2.14},{"t":"2026-08-24T17:12:47Z","sym":"MU","side":"SELL","shares":0.004186,"price":916.9521,"notional":3.84,"reason":"STOP","entry":928.4999,"reconstructed_entry":true,"pnl":-0.05},{"t":"2026-08-24T17:12:47Z","sym":"STX","side":"SELL","shares":0.039868,"price":796.7898,"notional":31.77,"reason":"STOP","entry":855.49,"reconstructed_entry":true,"pnl":-2.34},{"t":"2026-08-24T17:12:47Z","sym":"INTC","side":"SELL","shares":6.999861,"price":87.6601,"notional":613.61,"reason":"STOP","entry":90.4099,"reconstructed_entry":true,"pnl":-19.25},{"t":"2026-08-25T17:13:20Z","sym":"WDC","side":"BUY","shares":5.936742,"price":442.2999,"notional":2625.82,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-25T17:13:20Z","sym":"INTC","side":"BUY","shares":29.798776,"price":87.7994,"notional":2616.31,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-25T17:13:20Z","sym":"SNDK","side":"BUY","shares":1.418496,"price":1481.9999,"notional":2102.21,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-25T17:13:20Z","sym":"LRCX","side":"BUY","shares":8.407923,"price":311.7399,"notional":2621.09,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-25T17:13:20Z","sym":"STX","side":"BUY","shares":0.613427,"price":815.8499,"notional":500.46,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-26T17:42:51Z","sym":"WDC","side":"SELL","shares":4.410999,"price":467.4001,"notional":2061.7,"reason":"PEAK","entry":442.2999,"reconstructed_entry":false,"pnl":110.72},{"t":"2026-08-26T17:42:51Z","sym":"SNDK","side":"SELL","shares":1.053943,"price":1509.2601,"notional":1590.67,"reason":"PEAK","entry":1481.9999,"reconstructed_entry":false,"pnl":28.73},{"t":"2026-08-26T17:42:51Z","sym":"LRCX","side":"SELL","shares":6.247087,"price":313.5101,"notional":1958.52,"reason":"PEAK","entry":311.7399,"reconstructed_entry":false,"pnl":11.06},{"t":"2026-08-26T17:42:51Z","sym":"STX","side":"SELL","shares":0.455776,"price":841.7235,"notional":383.64,"reason":"PEAK","entry":815.8499,"reconstructed_entry":false,"pnl":11.79},{"t":"2026-08-27T17:10:59Z","sym":"WDC","side":"SELL","shares":1.525743,"price":449.325,"notional":685.55,"reason":"STOP","entry":442.2999,"reconstructed_entry":false,"pnl":10.72},{"t":"2026-08-27T17:10:59Z","sym":"STX","side":"SELL","shares":0.157651,"price":830.7845,"notional":130.97,"reason":"STOP","entry":815.8499,"reconstructed_entry":false,"pnl":2.35},{"t":"2026-08-27T17:10:59Z","sym":"INTC","side":"SELL","shares":22.140491,"price":90.9406,"notional":2013.47,"reason":"PEAK","entry":87.7994,"reconstructed_entry":false,"pnl":69.55},{"t":"2026-08-27T17:10:59Z","sym":"LRCX","side":"SELL","shares":1.605501,"price":316.297,"notional":507.82,"reason":"PEAK","entry":311.7399,"reconstructed_entry":false,"pnl":7.32},{"t":"2026-08-27T17:27:21Z","sym":"INTC","side":"BUY","shares":20.717176,"price":91.1299,"notional":1887.95,"reason":"HUGE_DIP-NET(vs PEAK)","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-27T17:27:21Z","sym":"WDC","side":"BUY","shares":3.67924,"price":449.2599,"notional":1652.93,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-27T17:27:21Z","sym":"SNDK","side":"BUY","shares":0.671016,"price":1474.5365,"notional":989.44,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-27T17:27:21Z","sym":"LRCX","side":"BUY","shares":2.586796,"price":315.9153,"notional":817.21,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-07-28T00:00:00Z","sym":"INTC","side":"RECONCILE","shares":4.559546,"price":null,"notional":null,"reason":"trade-log reconciled to committed state","pnl":null,"note":"reconstructed 0.0 sh vs. real 4.559546 sh"},{"t":"2026-07-28T00:00:00Z","sym":"SNDK","side":"RECONCILE","shares":-1.521252,"price":null,"notional":null,"reason":"trade-log reconciled to committed state","pnl":null,"note":"reconstructed 2.001409 sh vs. real 0.480157 sh"},{"t":"2026-08-07T00:00:00Z","sym":"INTC","side":"RECONCILE","shares":-0.021331,"price":null,"notional":null,"reason":"broker reconciliation (no trade)","pnl":null,"note":"reconstructed 0.106657 sh vs. real 0.085326 sh"},{"t":"2026-08-07T00:00:00Z","sym":"MU","side":"RECONCILE","shares":-0.001336,"price":null,"notional":null,"reason":"broker reconciliation (no trade)","pnl":null,"note":"reconstructed 0.001336 sh vs. real 0.0 sh"},{"t":"2026-08-07T00:00:00Z","sym":"WDC","side":"RECONCILE","shares":-0.015736,"price":null,"notional":null,"reason":"broker reconciliation (no trade)","pnl":null,"note":"reconstructed 0.015736 sh vs. real 0.0 sh"},{"t":"2026-08-07T00:00:00Z","sym":"SNDK","side":"RECONCILE","shares":-0.157305,"price":null,"notional":null,"reason":"broker reconciliation (no trade)","pnl":null,"note":"reconstructed 0.157305 sh vs. real 0.0 sh"},{"t":"2026-08-17T00:00:00Z","sym":"STX","side":"RECONCILE","shares":0.002361,"price":null,"notional":null,"reason":"trade-log reconciled to committed state","pnl":null,"note":"reconstructed 0.000817 sh vs. real 0.003178 sh"},{"t":"2026-08-17T00:00:00Z","sym":"WDC","side":"RECONCILE","shares":0.024752,"price":null,"notional":null,"reason":"trade-log reconciled to committed state","pnl":null,"note":"reconstructed 0.008562 sh vs. real 0.033314 sh"},{"t":"2026-08-17T00:00:00Z","sym":"AMD","side":"RECONCILE","shares":0.026172,"price":null,"notional":null,"reason":"trade-log reconciled to committed state","pnl":null,"note":"reconstructed 0.009053 sh vs. real 0.035225 sh"},{"t":"2026-08-17T00:00:00Z","sym":"SNDK","side":"RECONCILE","shares":0.020386,"price":null,"notional":null,"reason":"trade-log reconciled to committed state","pnl":null,"note":"reconstructed 0.007052 sh vs. real 0.027438 sh"},{"t":"2026-08-18T00:00:00Z","sym":"STX","side":"RECONCILE","shares":-0.002361,"price":null,"notional":null,"reason":"trade-log reconciled to committed state","pnl":null,"note":"reconstructed 0.002361 sh vs. real 0.0 sh"},{"t":"2026-08-18T00:00:00Z","sym":"WDC","side":"RECONCILE","shares":-0.024752,"price":null,"notional":null,"reason":"trade-log reconciled to committed state","pnl":null,"note":"reconstructed 0.024752 sh vs. real 0.0 sh"},{"t":"2026-08-18T00:00:00Z","sym":"AMD","side":"RECONCILE","shares":-0.026172,"price":null,"notional":null,"reason":"trade-log reconciled to committed state","pnl":null,"note":"reconstructed 0.026172 sh vs. real 0.0 sh"},{"t":"2026-08-18T00:00:00Z","sym":"SNDK","side":"RECONCILE","shares":-0.020386,"price":null,"notional":null,"reason":"trade-log reconciled to committed state","pnl":null,"note":"reconstructed 0.020386 sh vs. real 0.0 sh"},{"t":"2026-08-28T17:10:59Z","sym":"INTC","side":"SELL","shares":28.375461,"price":89.3401,"notional":2535.07,"reason":"STOP","entry":90.231,"reconstructed_entry":false,"pnl":-25.28},{"t":"2026-08-28T17:10:59Z","sym":"LRCX","side":"SELL","shares":3.142131,"price":304.0801,"notional":955.46,"reason":"STOP","entry":315.1773,"reconstructed_entry":false,"pnl":-34.87},{"t":"2026-08-28T17:10:59Z","sym":"WDC","side":"SELL","shares":2.733675,"price":461.5301,"notional":1261.67,"reason":"PEAK","entry":449.2599,"reconstructed_entry":false,"pnl":33.54},{"t":"2026-08-31T18:39:23Z","sym":"WDC","side":"SELL","shares":0.945565,"price":447.445,"notional":423.09,"reason":"STOP","entry":449.2599,"reconstructed_entry":false,"pnl":-1.72},{"t":"2026-08-31T18:39:23Z","sym":"WDC","side":"BUY","shares":6.001492,"price":447.5553,"notional":2686.0,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-31T18:39:23Z","sym":"INTC","side":"BUY","shares":27.078836,"price":89.7799,"notional":2431.14,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-31T18:39:23Z","sym":"SNDK","side":"BUY","shares":0.968723,"price":1506.9699,"notional":1459.84,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-31T18:39:23Z","sym":"LRCX","side":"BUY","shares":6.881053,"price":301.8299,"notional":2076.91,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-08-31T18:39:23Z","sym":"STX","side":"BUY","shares":0.127705,"price":822.0599,"notional":104.98,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-09-01T17:30:35Z","sym":"LRCX","side":"SELL","shares":6.881053,"price":289.2372,"notional":1990.26,"reason":"STOP","entry":301.8299,"reconstructed_entry":false,"pnl":-86.65},{"t":"2026-09-01T17:30:35Z","sym":"WDC","side":"SELL","shares":4.082427,"price":450.0701,"notional":1837.38,"reason":"PEAK-NET(vs HUGE_DIP)","entry":447.5553,"reconstructed_entry":false,"pnl":10.27},{"t":"2026-09-01T17:30:35Z","sym":"SNDK","side":"SELL","shares":1.489189,"price":1563.7688,"notional":2328.75,"reason":"PEAK","entry":1491.5699,"reconstructed_entry":false,"pnl":107.52},{"t":"2026-09-01T17:30:35Z","sym":"INTC","side":"BUY","shares":1.921889,"price":88.6999,"notional":170.47,"reason":"HUGE_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-09-01T17:30:35Z","sym":"TSM","side":"BUY","shares":0.585359,"price":413.882,"notional":242.27,"reason":"NORMAL_DIP","drawdown":null,"day_return":null,"pnl":null},{"t":"2026-09-02T17:12:20Z","sym":"SNDK","side":"SELL","shares":0.515103,"price":1538.892,"notional":792.69,"reason":"MAX_HOLD","entry":1491.5699,"reconstructed_entry":false,"pnl":24.38},{"t":"2026-09-02T17:12:20Z","sym":"STX","side":"SELL","shares":0.127705,"price":799.8844,"notional":102.15,"reason":"STOP","entry":822.0599,"reconstructed_entry":false,"pnl":-2.83},{"t":"2026-09-02T17:12:20Z","sym":"INTC","side":"SELL","shares":5.130794,"price":89.9306,"notional":461.42,"reason":"PEAK-NET(vs HUGE_DIP)","entry":89.7083,"reconstructed_entry":false,"pnl":1.14},{"t":"2026-09-02T17:12:20Z","sym":"WDC","side":"BUY","shares":5.562657,"price":443.9999,"notional":2469.98,"reason":"HUGE_DIP","drawdown":-0.3964,"day_return":-0.0002,"pnl":null},{"t":"2026-09-02T17:12:20Z","sym":"SNDK","side":"BUY","shares":1.752766,"price":1539.2399,"notional":2698.11,"reason":"NORMAL_DIP","drawdown":-0.3418,"day_return":-0.019,"pnl":null},{"t":"2026-09-02T17:12:20Z","sym":"LRCX","side":"BUY","shares":3.327865,"price":287.7672,"notional":957.68,"reason":"NORMAL_DIP","drawdown":-0.3303,"day_return":-0.0374,"pnl":null},{"t":"2026-09-03T17:17:03Z","sym":"INTC","side":"SELL","shares":14.029762,"price":90.7101,"notional":1272.64,"reason":"PEAK-NET(vs HUGE_DIP)","entry":89.7083,"reconstructed_entry":false,"pnl":14.06},{"t":"2026-09-03T17:17:03Z","sym":"TSM","side":"SELL","shares":0.434922,"price":414.3901,"notional":180.23,"reason":"PEAK","entry":413.882,"reconstructed_entry":false,"pnl":0.22},{"t":"2026-09-03T17:17:03Z","sym":"SNDK","side":"SELL","shares":1.302305,"price":1554.7701,"notional":2024.78,"reason":"PEAK","entry":1539.2399,"reconstructed_entry":false,"pnl":20.23},{"t":"2026-09-03T17:17:03Z","sym":"WDC","side":"BUY","shares":1.252971,"price":446.7533,"notional":559.72,"reason":"HUGE_DIP","drawdown":-0.3984,"day_return":-0.0034,"pnl":null},{"t":"2026-09-03T17:17:03Z","sym":"LRCX","side":"BUY","shares":1.608423,"price":287.8662,"notional":463.03,"reason":"NORMAL_DIP","drawdown":-0.3346,"day_return":-0.0065,"pnl":null},{"t":"2026-09-03T17:17:03Z","sym":"STX","side":"BUY","shares":0.448008,"price":800.296,"notional":358.54,"reason":"NORMAL_DIP","drawdown":-0.261,"day_return":-0.0099,"pnl":null},{"t":"2026-09-04T17:14:37Z","sym":"WDC","side":"SELL","shares":3.470437,"price":463.4601,"notional":1608.41,"reason":"PEAK-NET(vs HUGE_DIP)","entry":445.176,"reconstructed_entry":false,"pnl":63.45},{"t":"2026-09-04T17:14:39Z","sym":"INTC","side":"SELL","shares":7.311246,"price":95.1101,"notional":695.37,"reason":"PEAK","entry":89.7083,"reconstructed_entry":false,"pnl":39.49},{"t":"2026-09-04T17:14:40Z","sym":"TSM","side":"SELL","shares":0.111775,"price":428.2301,"notional":47.87,"reason":"PEAK","entry":413.882,"reconstructed_entry":false,"pnl":1.6},{"t":"2026-09-04T17:14:41Z","sym":"SNDK","side":"SELL","shares":0.334693,"price":1717.0201,"notional":574.67,"reason":"PEAK","entry":1539.2399,"reconstructed_entry":false,"pnl":59.5},{"t":"2026-09-04T17:14:41Z","sym":"LRCX","side":"SELL","shares":3.667662,"price":304.0801,"notional":1115.26,"reason":"PEAK","entry":287.7995,"reconstructed_entry":false,"pnl":59.71},{"t":"2026-09-04T17:14:50Z","sym":"STX","side":"BUY","shares":1.947682,"price":842.9299,"notional":1641.76,"reason":"NORMAL_DIP-NET(vs PEAK)","drawdown":null,"day_return":null,"pnl":null}],"daily":[{"date":"2026-07-02","pnl":-63.04},{"date":"2026-07-07","pnl":32.33},{"date":"2026-07-24","pnl":-182.02},{"date":"2026-07-27","pnl":36.21},{"date":"2026-07-28","pnl":7.36},{"date":"2026-07-30","pnl":100.93},{"date":"2026-07-31","pnl":-1.02},{"date":"2026-08-03","pnl":16.81},{"date":"2026-08-04","pnl":218.94},{"date":"2026-08-05","pnl":20.57},{"date":"2026-08-06","pnl":0.06},{"date":"2026-08-07","pnl":-14.5},{"date":"2026-08-10","pnl":35.9},{"date":"2026-08-11","pnl":-0.31},{"date":"2026-08-12","pnl":196.34},{"date":"2026-08-13","pnl":163.51},{"date":"2026-08-14","pnl":44.03},{"date":"2026-08-17","pnl":2.6},{"date":"2026-08-18","pnl":-42.58},{"date":"2026-08-20","pnl":18.09},{"date":"2026-08-21","pnl":-18.65},{"date":"2026-08-24","pnl":-99.57},{"date":"2026-08-26","pnl":162.29},{"date":"2026-08-27","pnl":89.93},{"date":"2026-08-28","pnl":-26.59},{"date":"2026-08-31","pnl":-1.72},{"date":"2026-09-01","pnl":39.08},{"date":"2026-09-02","pnl":14.39},{"date":"2026-09-03","pnl":33.48},{"date":"2026-09-04","pnl":220.57},{"date":"2026-09-08","pnl":452.62},{"date":"2026-09-09","pnl":-11.34},{"date":"2026-09-10","pnl":-67.64},{"date":"2026-09-16","pnl":95.47},{"date":"2026-09-17","pnl":200.76},{"date":"2026-09-18","pnl":461.92},{"date":"2026-09-21","pnl":539.71}],"total_realized":2674.92,"adjustments":[{"date":"2026-07-28","sym":"INTC","reconstructed_shares":0.0,"true_shares":4.559546,"delta_shares":4.559546,"reason":"trade-log reconciled to committed state"},{"date":"2026-07-28","sym":"SNDK","reconstructed_shares":2.001409,"true_shares":0.480157,"delta_shares":-1.521252,"reason":"trade-log reconciled to committed state"},{"date":"2026-08-07","sym":"INTC","reconstructed_shares":0.106657,"true_shares":0.085326,"delta_shares":-0.021331,"reason":"broker reconciliation (no trade)"},{"date":"2026-08-07","sym":"MU","reconstructed_shares":0.001336,"true_shares":0.0,"delta_shares":-0.001336,"reason":"broker reconciliation (no trade)"},{"date":"2026-08-07","sym":"WDC","reconstructed_shares":0.015736,"true_shares":0.0,"delta_shares":-0.015736,"reason":"broker reconciliation (no trade)"},{"date":"2026-08-07","sym":"SNDK","reconstructed_shares":0.157305,"true_shares":0.0,"delta_shares":-0.157305,"reason":"broker reconciliation (no trade)"},{"date":"2026-08-17","sym":"STX","reconstructed_shares":0.000817,"true_shares":0.003178,"delta_shares":0.002361,"reason":"trade-log reconciled to committed state"},{"date":"2026-08-17","sym":"WDC","reconstructed_shares":0.008562,"true_shares":0.033314,"delta_shares":0.024752,"reason":"trade-log reconciled to committed state"},{"date":"2026-08-17","sym":"AMD","reconstructed_shares":0.009053,"true_shares":0.035225,"delta_shares":0.026172,"reason":"trade-log reconciled to committed state"},{"date":"2026-08-17","sym":"SNDK","reconstructed_shares":0.007052,"true_shares":0.027438,"delta_shares":0.020386,"reason":"trade-log reconciled to committed state"},{"date":"2026-08-18","sym":"STX","reconstructed_shares":0.002361,"true_shares":0.0,"delta_shares":-0.002361,"reason":"trade-log reconciled to committed state"},{"date":"2026-08-18","sym":"WDC","reconstructed_shares":0.024752,"true_shares":0.0,"delta_shares":-0.024752,"reason":"trade-log reconciled to committed state"},{"date":"2026-08-18","sym":"AMD","reconstructed_shares":0.026172,"true_shares":0.0,"delta_shares":-0.026172,"reason":"trade-log reconciled to committed state"},{"date":"2026-08-18","sym":"SNDK","reconstructed_shares":0.020386,"true_shares":0.0,"delta_shares":-0.020386,"reason":"trade-log reconciled to committed state"}],"daily_source":"broker get_pnl_trade_history span=all, 2026-09-22; see data/broker_realized_pnl_912291820_all.csv"};
+const SNAPSHOT_TIME = "2026-09-22 17:16 UTC";
+
+// The trade log's own running totals drifted from the real account at several
+// points (inconsistent field names across the log's history, a queued order
+// logged before its fill price was known, and untracked broker corrections).
+// Rather than let that drift compound silently, every trade below is replayed
+// against the actual git-committed state snapshot after each run and forced
+// back to the real share count whenever it doesn't match - producing an EXACT
+// tie-out to real positions today (verified: SNDK/WDC/INTC/STX/TSM all match
+// the broker to 6 decimal places). Each correction is kept as a visible RECONCILE
+// row (gray, no $ sign) instead of being absorbed invisibly - so you can see
+// exactly which days had incomplete logging and how many shares it affected.
+// RECONCILE rows never carry a price/pnl - they represent shares whose actual
+// disposition (sold at what price, or a bookkeeping correction) isn't
+// recoverable from history, not a real market gain or loss.
+const RECON_CAVEAT = "Every BUY/SELL row is a real executed order. A few historical runs (flagged as gray RECONCILE rows) had incomplete logging - those share counts are corrected to match the real, git-committed account state at that point, but carry no recoverable price/P&L. The 'Realized P&L to date' tile and the Realized P&L card above it are NOT derived from these rows - both come from Robinhood's own books (get_pnl_trade_history / get_realized_pnl, span=all). This trade log is the system's record of its own orders and is knowingly incomplete: six trading days with real fills (Sep 8, 9, 10, 16, 17, 18) never got a run-log entry, and trades the account owner placed by hand never appear here at all.";
+
+// ---------- account & risk snapshot ----------
+function renderStatRow(portfolio, accounts, liveUnrealized) {
+  const totalRealized = MS_DATA.total_realized;
+  const totalPnl = totalRealized + liveUnrealized;
+  const equityPeak = MS_STATE.equity_peak;
+  const totalValue = portfolio ? Number(portfolio.total_value) : null;
+  const dd = totalValue !== null ? (totalValue - equityPeak) / equityPeak * 100 : null;
+  const daysLive = Math.round((Date.now() - Date.parse('2026-07-22T20:15:00Z')) / 86400000);
+
+  const tiles = [
+    { label: 'Account value', value: totalValue !== null ? fmtMoney(totalValue) : '&mdash;', sub: totalValue !== null ? `vs. peak ${fmtMoney(equityPeak)}` : '' },
+    { label: 'Drawdown from peak', value: dd !== null ? fmtPct(dd) : '&mdash;', cls: dd !== null ? (dd < -1 ? 'down' : '') : '', sub: 'kill-switch at -15%' },
+    { label: 'Cash (settled + pending)', value: portfolio ? fmtMoney(Number(portfolio.cash)) : '&mdash;', sub: accounts ? `unsettled: ${fmtMoney(Number(accounts.unsettled_funds||0))}` : '' },
+    { label: 'Realized P&L to date', value: fmtSignedMoney(totalRealized), cls: totalRealized >= 0 ? 'up' : 'down', sub: 'broker-sourced, not log-derived' },
+    { label: 'Unrealized P&L (live)', value: fmtSignedMoney(liveUnrealized), cls: liveUnrealized >= 0 ? 'up' : 'down', sub: 'on open positions now' },
+    { label: 'Total P&L since inception', value: fmtSignedMoney(totalPnl), cls: totalPnl >= 0 ? 'up' : 'down', sub: `${daysLive} days live` },
+    { label: 'Kill-switch', value: MS_STATE.kill_switch_active ? 'ACTIVE' : 'off', cls: MS_STATE.kill_switch_active ? 'down' : 'up', sub: MS_STATE.kill_switch_triggered_date ? `triggered ${MS_STATE.kill_switch_triggered_date}` : 'never triggered' },
+    { label: 'Trend gate', value: MS_STATE.trend_gate_active ? 'ACTIVE' : 'off', sub: MS_STATE.trend_gate_active ? 'dip entries need price > 50-day SMA' : 'no restriction' },
+  ];
+  $('statRow').innerHTML = tiles.map(t => `<div class="stat-tile">
+    <div class="stat-label">${t.label}</div>
+    <div class="stat-value ${t.cls||''}">${t.value}</div>
+    <div class="stat-sub ${t.cls||''}">${t.sub||''}</div>
+  </div>`).join('');
+}
+
+// ---------- open positions (live price/gain over the strategy's own tracked entry/peak) ----------
+function tradingDaysHeld(sym, openedDate, dailyBars) {
+  if (!dailyBars || !dailyBars.length) return null;
+  const opened = Date.parse(openedDate + 'T00:00:00Z');
+  return dailyBars.filter(b => b.t > opened).length;
+}
+
+function renderPositions(quotes, dailyBarsBySym) {
+  const rows = Object.entries(MS_STATE.open_positions).map(([sym, pos]) => {
+    const q = quotes[sym];
+    const live = q ? q.last : null;
+    const priorClose = q ? q.prevClose : null;
+    const gainPct = live !== null ? (live - pos.entry) / pos.entry * 100 : null;
+    const stopThresh = priorClose !== null ? priorClose * (1 - 0.0151) : null;
+    const distToStop = (live !== null && stopThresh !== null) ? (live - stopThresh) / stopThresh * 100 : null;
+    const daysHeld = tradingDaysHeld(sym, pos.opened, dailyBarsBySym[sym]);
+    return { sym, pos, live, gainPct, stopThresh, distToStop, daysHeld };
+  });
+  rows.sort((a, b) => (b.gainPct ?? -999) - (a.gainPct ?? -999));
+
+  $('posBody').innerHTML = rows.map(r => {
+    const gainCls = r.gainPct === null ? '' : (r.gainPct >= 0 ? 'up' : 'down');
+    const newHigh = r.live !== null && r.live > r.pos.peak;
+    const stopCls = r.distToStop === null ? '' : (r.distToStop <= 2 ? 'down' : (r.distToStop <= 6 ? 'warn' : ''));
+    const heldNote = r.daysHeld === null ? '&mdash;' : `${r.daysHeld} / 6${r.daysHeld >= 6 ? ' &mdash; MAX_HOLD due' : ''}`;
+    return `<tr>
+      <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(r.sym)}"></span>${r.sym}</span></td>
+      <td class="num">${r.pos.shares.toFixed(6)}</td>
+      <td class="num">$${r.pos.entry.toFixed(4)}</td>
+      <td class="num">${r.live !== null ? '$' + r.live.toFixed(4) : '&mdash;'}</td>
+      <td class="num"><span class="badge ${gainCls}">${r.gainPct !== null ? fmtPct(r.gainPct) : '&mdash;'}</span></td>
+      <td class="num">$${r.pos.peak.toFixed(4)}${newHigh ? ' <span class="badge solid-buy">NEW HIGH</span>' : ''}</td>
+      <td class="num">${r.stopThresh !== null ? '$' + r.stopThresh.toFixed(4) : '&mdash;'}</td>
+      <td class="num"><span class="badge ${stopCls}">${r.distToStop !== null ? fmtPct(r.distToStop) : '&mdash;'}</span></td>
+      <td class="num">${heldNote}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ---------- distance to next entry signal, all 8 symbols ----------
+function renderDistance(quotes, dailyBarsBySym) {
+  const rows = SYMBOLS.map(sym => {
+    const bars = dailyBarsBySym[sym];
+    if (!bars || bars.length < 60) return { sym, warming: true };
+    const closes = bars.map(b => b.close);
+    const last60 = closes.slice(-60);
+    const high60 = Math.max(...last60);
+    const cYday = closes[closes.length - 1];
+    const c2ago = closes[closes.length - 2];
+    const ddFromHigh = (cYday - high60) / high60 * 100;
+    const dayReturn = (cYday - c2ago) / c2ago * 100;
+    const hugeDipGap = ddFromHigh - (-35);
+    const normalDipGap = dayReturn - (-0.4);
+    const held = MS_STATE.open_positions[sym];
+    return { sym, warming: false, high60, ddFromHigh, dayReturn, hugeDipGap, normalDipGap, held, live: quotes[sym] };
+  });
+
+  $('distBody').innerHTML = rows.map(r => {
+    if (r.warming) return `<tr><td style="text-align:left">${r.sym}</td><td colspan="6" style="text-align:left; color:var(--muted)">Warming up &mdash; not enough daily bars yet</td></tr>`;
+    let status;
+    if (r.hugeDipGap <= 0) status = '<span class="badge solid-buy">HUGE_DIP met</span>';
+    else if (r.normalDipGap <= 0) status = '<span class="badge solid-buy">NORMAL_DIP met</span>';
+    else if (r.held) status = `<span class="badge flat">holding (t${r.held.tranches})</span>`;
+    else status = '<span class="badge flat">no signal</span>';
+    return `<tr>
+      <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(r.sym)}"></span>${r.sym}</span></td>
+      <td style="text-align:left">${status}</td>
+      <td class="num">$${r.high60.toFixed(2)}</td>
+      <td class="num"><span class="badge ${r.ddFromHigh <= -35 ? 'up' : ''}">${fmtPct(r.ddFromHigh)}</span></td>
+      <td class="num">${r.hugeDipGap <= 0 ? 'MET' : fmtPct(-r.hugeDipGap) + ' more needed'}</td>
+      <td class="num"><span class="badge ${r.dayReturn <= -0.4 ? 'up' : ''}">${fmtPct(r.dayReturn)}</span></td>
+      <td class="num">${r.normalDipGap <= 0 ? 'MET' : fmtPct(-r.normalDipGap) + ' more needed'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ---------- live regime gauge ----------
+function computeRegime(dailyBarsBySym) {
+  const rows = [];
+  for (const sym of SYMBOLS) {
+    const bars = dailyBarsBySym[sym];
+    if (!bars || bars.length < 60) continue;
+    const closes = bars.map(b => b.close);
+    const high60 = Math.max(...closes.slice(-60));
+    const cYday = closes[closes.length - 1];
+    rows.push({ sym, ddFromHigh: (cYday - high60) / high60 * 100 });
+  }
+  if (!rows.length) return { ready: 0 };
+  const avgDD = rows.reduce((s, r) => s + r.ddFromHigh, 0) / rows.length;
+  const atHugeDip = rows.filter(r => r.ddFromHigh <= -35).map(r => r.sym);
+  const approaching = rows.filter(r => r.ddFromHigh > -35 && r.ddFromHigh <= -25).map(r => r.sym);
+  let tier;
+  if (avgDD <= -15) tier = { label: 'Deep drawdown', cls: 'solid-buy' };
+  else if (avgDD <= -8) tier = { label: 'Transitional', cls: 'warn' };
+  else tier = { label: 'Shallow', cls: 'flat' };
+  return { ready: rows.length, avgDD, atHugeDip, approaching, tier };
+}
+
+function renderRegimeGauge(dailyBarsBySym) {
+  const el = $('regimeGaugeBody');
+  if (!el) return;
+  const r = computeRegime(dailyBarsBySym);
+  if (r.ready < SYMBOLS.length) {
+    el.innerHTML = `<div class="stat-sub" style="color:var(--muted)">Warming up &mdash; waiting for 60 days of daily history (${r.ready}/${SYMBOLS.length} symbols ready).</div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="stat-row">
+      <div class="stat-tile">
+        <div class="stat-label">Basket avg 60d drawdown</div>
+        <div class="stat-value ${r.avgDD <= -8 ? 'down' : ''}">${fmtPct(r.avgDD)}</div>
+        <div class="stat-sub">vs. trailing 60-day high, yesterday's close</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-label">At HUGE_DIP (&le;-35%)</div>
+        <div class="stat-value ${r.atHugeDip.length ? 'down' : ''}">${r.atHugeDip.length}</div>
+        <div class="stat-sub">${r.atHugeDip.length ? r.atHugeDip.join(', ') : 'none currently'}</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-label">Approaching (&minus;25% to &minus;35%)</div>
+        <div class="stat-value ${r.approaching.length ? 'warn' : ''}">${r.approaching.length}</div>
+        <div class="stat-sub">${r.approaching.length ? r.approaching.join(', ') : 'none currently'}</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-label">Regime read</div>
+        <div class="stat-value"><span class="badge ${r.tier.cls}">${r.tier.label}</span></div>
+        <div class="stat-sub">directional context only &mdash; see calibration table</div>
+      </div>
+    </div>`;
+}
+
+// ---------- daily realized P&L chart + table ----------
+const PNL_W = 900, PNL_H = 260, PNL_PAD_L = 56, PNL_PAD_R = 14, PNL_PAD_T = 14, PNL_PAD_B = 34;
+
+function renderDailyPnl() {
+  const daily = MS_DATA.daily;
+  const svg = $('pnlBarSvg');
+  if (!daily.length) { svg.innerHTML = ''; return; }
+
+  const vals = daily.map(d => d.pnl);
+  let vMax = Math.max(0.01, ...vals), vMin = Math.min(-0.01, ...vals);
+  const vPad = Math.max(5, (vMax - vMin) * 0.15);
+  vMax += vPad; vMin -= vPad;
+  const plotL = PNL_PAD_L, plotR = PNL_W - PNL_PAD_R, plotT = PNL_PAD_T, plotB = PNL_H - PNL_PAD_B;
+  const zeroY = plotT + (1 - (0 - vMin) / (vMax - vMin)) * (plotB - plotT);
+  const bw = (plotR - plotL) / daily.length;
+
+  let grid = `<line x1="${plotL}" y1="${zeroY.toFixed(2)}" x2="${plotR}" y2="${zeroY.toFixed(2)}" class="baseline"/>`;
+  const rawStep = (vMax - vMin) / 4;
+  const mag = Math.pow(10, Math.floor(Math.log10(rawStep || 1)));
+  const step = Math.max(10, Math.round(rawStep / mag) * mag);
+  for (let v = Math.ceil(vMin / step) * step; v <= vMax; v += step) {
+    if (Math.abs(v) < step / 2) continue;
+    const y = plotT + (1 - (v - vMin) / (vMax - vMin)) * (plotB - plotT);
+    grid += `<line x1="${plotL}" y1="${y.toFixed(2)}" x2="${plotR}" y2="${y.toFixed(2)}" class="gridline"/>`;
+    grid += `<text x="${plotL - 8}" y="${(y + 3).toFixed(2)}" text-anchor="end" class="axis-label">${v >= 0 ? '+' : ''}${v.toFixed(0)}</text>`;
+  }
+
+  let bars = '';
+  daily.forEach((d, i) => {
+    const x = plotL + i * bw;
+    const y0 = plotT + (1 - (Math.max(0, d.pnl) - vMin) / (vMax - vMin)) * (plotB - plotT);
+    const y1 = plotT + (1 - (Math.min(0, d.pnl) - vMin) / (vMax - vMin)) * (plotB - plotT);
+    const color = d.pnl >= 0 ? goodColor() : criticalColor();
+    const barW = Math.max(2, bw * 0.6);
+    bars += `<rect class="bar-pnl" data-idx="${i}" x="${(x + (bw - barW) / 2).toFixed(2)}" y="${y0.toFixed(2)}" width="${barW.toFixed(2)}" height="${Math.max(1, y1 - y0).toFixed(2)}" rx="2" fill="${color}"/>`;
+    if (i === 0 || i === daily.length - 1 || i % Math.ceil(daily.length / 8) === 0) {
+      const lbl = new Date(d.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      grid += `<text x="${(x + bw / 2).toFixed(2)}" y="${PNL_H - 10}" text-anchor="middle" class="axis-label">${lbl}</text>`;
+    }
+  });
+
+  svg.innerHTML = `<g>${grid}</g><g>${bars}</g>`;
+
+  const tooltip = document.createElement('div');
+  svg.querySelectorAll('.bar-pnl').forEach(el => {
+    const d = daily[Number(el.dataset.idx)];
+    el.addEventListener('mouseenter', (evt) => {
+      const wrap = svg.parentElement;
+      let tt = wrap.querySelector('.pnl-tooltip');
+      if (!tt) { tt = document.createElement('div'); tt.className = 'tooltip pnl-tooltip'; wrap.style.position = 'relative'; wrap.appendChild(tt); }
+      tt.innerHTML = `<div class="tooltip-time">${d.date}</div><div class="tooltip-row"><span class="val">${fmtSignedMoney(d.pnl)}</span></div>`;
+      tt.classList.add('show');
+    });
+    el.addEventListener('mousemove', (evt) => {
+      const wrap = svg.parentElement;
+      const tt = wrap.querySelector('.pnl-tooltip');
+      if (!tt) return;
+      const box = wrap.getBoundingClientRect();
+      tt.style.left = Math.min(Math.max(evt.clientX - box.left, 70), box.width - 70) + 'px';
+      tt.style.top = Math.max(evt.clientY - box.top - 10, 80) + 'px';
+    });
+    el.addEventListener('mouseleave', () => { const tt = svg.parentElement.querySelector('.pnl-tooltip'); if (tt) tt.classList.remove('show'); });
+  });
+
+  let cum = 0;
+  $('dailyPnlBody').innerHTML = daily.map(d => {
+    cum += d.pnl;
+    const cls = d.pnl >= 0 ? 'up' : 'down';
+    const cumCls = cum >= 0 ? 'up' : 'down';
+    return `<tr>
+      <td style="text-align:left">${d.date}</td>
+      <td class="num"><span class="badge ${cls}">${fmtSignedMoney(d.pnl)}</span></td>
+      <td class="num"><span class="badge ${cumCls}">${fmtSignedMoney(cum)}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ---------- trade log ----------
+function renderTradeLog() {
+  const trades = [...MS_DATA.trades].sort((a, b) => Date.parse(b.t) - Date.parse(a.t));
+  if (!trades.length) { $('tradeLogBody').innerHTML = `<tr><td colspan="8" class="signal-log-empty">No trades yet.</td></tr>`; return; }
+  $('tradeLogBody').innerHTML = trades.map(t => {
+    if (t.side === 'RECONCILE') {
+      const dir = t.shares >= 0 ? 'gained' : 'lost';
+      return `<tr style="opacity:0.7">
+        <td style="text-align:left" class="num">${new Date(t.t).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</td>
+        <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(t.sym)}"></span>${t.sym}</span></td>
+        <td style="text-align:left"><span class="badge flat">RECONCILE</span></td>
+        <td class="num">${dir} ${Math.abs(t.shares).toFixed(6)}</td>
+        <td class="num">&mdash;</td>
+        <td class="num">&mdash;</td>
+        <td style="text-align:left; font-size:12px; color:var(--muted)">${t.reason} &middot; ${t.note}</td>
+        <td class="num">&mdash;</td>
+      </tr>`;
+    }
+    let detail = t.reason || '';
+    if (t.drawdown !== null && t.drawdown !== undefined) detail += ` &middot; ${(t.drawdown*100).toFixed(1)}% from 60d high`;
+    if (t.day_return !== null && t.day_return !== undefined) detail += ` &middot; day ${(t.day_return*100).toFixed(2)}%`;
+    if (t.reconstructed_entry) detail += ` <span style="color:var(--muted)">(cost basis from running avg, not the log's own entry field)</span>`;
+    if (t.note) detail += ` <span style="color:var(--muted)">(${t.note})</span>`;
+    const pnlCell = t.pnl === null || t.pnl === undefined ? '&mdash;' :
+      `<span class="badge ${t.pnl >= 0 ? 'up' : 'down'}">${fmtSignedMoney(t.pnl)}</span>`;
+    return `<tr>
+      <td style="text-align:left" class="num">${fmtTime(t.t)}</td>
+      <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(t.sym)}"></span>${t.sym}</span></td>
+      <td style="text-align:left"><span class="badge solid-${t.side === 'BUY' ? 'buy' : 'sell'}">${t.side}</span></td>
+      <td class="num">${t.shares.toFixed(6)}</td>
+      <td class="num">${t.price !== null ? '$' + t.price.toFixed(4) : '&mdash;'}</td>
+      <td class="num">${t.notional !== null ? fmtMoney(t.notional) : '&mdash;'}</td>
+      <td style="text-align:left; font-size:12px; color:var(--text-secondary)">${detail}</td>
+      <td class="num">${pnlCell}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ---------- data ingestion ----------
+function ingestQuotes(payload) {
+  const out = {};
+  const results = payload?.data?.results || [];
+  for (const r of results) {
+    const q = r.quote;
+    if (!q) continue;
+    const price = Number(q.last_trade_price ?? q.last_non_reg_trade_price);
+    const prev = Number(q.adjusted_previous_close ?? q.previous_close);
+    if (!isFinite(price) || !isFinite(prev)) continue;
+    out[q.symbol] = { last: price, prevClose: prev };
+  }
+  return out;
+}
+function ingestDailyBars(payload) {
+  const out = {};
+  const results = payload?.data?.results || [];
+  for (const r of results) {
+    const bars = (r.bars || []).filter(b => !b.interpolated).map(b => ({ t: Date.parse(b.begins_at), close: Number(b.close_price) }));
+    if (bars.length) out[r.symbol] = bars;
+  }
+  return out;
+}
+
+function describeError(err) {
+  switch (err.code) {
+    case 'needs_reauth': return { retract: true, msg: `<strong>Robinhood connection needs reauth.</strong> Reconnect it in claude.ai Settings &rarr; Connectors.` };
+    case 'server_not_connected': return { retract: true, msg: `<strong>Robinhood isn't connected.</strong> Add it in claude.ai Settings &rarr; Connectors.` };
+    case 'selection_required': return { retract: true, msg: `<strong>Choose a Robinhood account</strong> to continue &mdash; check the connector picker.` };
+    case 'blocked_by_policy': return { retract: true, msg: `<strong>This data is blocked by workspace policy</strong> for this view.` };
+    case 'approval_required': return { retract: true, msg: `<strong>This call needs manual approval</strong> and can't run automatically here.` };
+    case 'not_in_manifest': return { retract: true, msg: `<strong>This page is asking for data it hasn't been approved for yet.</strong> Reload the page &mdash; it was republished with an extra read-only Robinhood tool, and the approval is per version.` };
+    case 'not_granted': case 'capability_disabled': case 'capability_removed': return { retract: true, msg: `<strong>Live Robinhood data isn't enabled for this view.</strong> Open the page directly in claude.ai.` };
+    case 'server_unavailable': return { retract: false, msg: `Robinhood is temporarily unreachable &mdash; showing last known data, retrying automatically.` };
+    case 'rate_limited': return { retract: false, msg: `Refreshing a bit too fast &mdash; backing off, showing last known data.` };
+    default: return { retract: false, msg: `Live update hiccup (${err.code}) &mdash; showing last known data.` };
+  }
+}
+
+const state = { quotes: {}, dailyBars: {}, portfolio: null, accounts: null, positions: null, ts: null };
+
+function renderBrokerPnl() {
+  const el = $('brokerPnlRow');
+  if (!el) return;
+  const live = state.brokerPnl;
+  const d = live || BROKER_PNL_SNAPSHOT;
+  const isLive = !!live;
+  const tot = Number(d.total_returns);
+  const rate = Number(d.total_rate_of_return) * 100;
+  const trades = (d.data_points || []).reduce((a, p) => a + (p.number_of_trades || 0), 0);
+  const recon = MS_DATA.total_realized;
+  const gap = tot - recon;
+
+  let src;
+  if (isLive) {
+    src = 'live from Robinhood';
+  } else if (state.brokerPnlError) {
+    src = 'snapshot ' + BROKER_PNL_SNAPSHOT.asOf + ' &mdash; live call unavailable';
+  } else {
+    src = 'snapshot ' + BROKER_PNL_SNAPSHOT.asOf + ' &mdash; refreshing&hellip;';
+  }
+
+  el.innerHTML =
+    '<div class="stat-tile"><div class="stat-label">Realized P&amp;L &mdash; broker</div>' +
+      '<div class="stat-value ' + (tot >= 0 ? 'up' : 'down') + '">' + fmtSignedMoney(tot) + '</div>' +
+      '<div class="stat-sub">' + trades + ' closing trades &middot; ' + fmtPct(rate) + '<br>' + src + '</div></div>' +
+    '<div class="stat-tile"><div class="stat-label">Sum of the table below</div>' +
+      '<div class="stat-value">' + fmtSignedMoney(recon) + '</div>' +
+      '<div class="stat-sub">broker daily series, snapshot</div></div>' +
+    '<div class="stat-tile"><div class="stat-label">Headline vs table</div>' +
+      '<div class="stat-value ' + (Math.abs(gap) < 0.01 ? '' : 'down') + '">' + fmtSignedMoney(gap) + '</div>' +
+      '<div class="stat-sub">should be $0.00 once both are broker-sourced</div></div>' +
+    (state.brokerPnlError
+      ? '<div class="stat-tile" style="grid-column:1/-1;border-left:3px solid var(--warning)">' +
+        '<div class="stat-sub">' + state.brokerPnlError + '</div></div>'
+      : '');
+}
+
+function renderAll() {
+  const haveQuotes = Object.keys(state.quotes).length > 0;
+  if (!haveQuotes && !state.portfolio) return;
+  $('mainContent').style.display = 'block';
+  $('emptyState').style.display = 'none';
+
+  let liveUnrealized = 0;
+  for (const [sym, pos] of Object.entries(MS_STATE.open_positions)) {
+    const q = state.quotes[sym];
+    if (q) liveUnrealized += (q.last - pos.entry) * pos.shares;
+  }
+
+  renderStatRow(state.portfolio, state.accounts, liveUnrealized);
+  renderPositions(state.quotes, state.dailyBars);
+  renderDistance(state.quotes, state.dailyBars);
+  renderRegimeGauge(state.dailyBars);
+  renderBrokerPnl();
+  renderDailyPnl();
+  renderTradeLog();
+
+  $('footerNote').innerHTML = `Position/state snapshot embedded ${SNAPSHOT_TIME} &mdash; republish this page after a live run to refresh it. Live sections (account value, current prices, gain%, distance-to-signal) update from Robinhood in real time. ${RECON_CAVEAT}`;
+
+  if (state.ts) { $('updatedPill').style.display = 'inline-flex'; $('updatedText').textContent = new Date(state.ts).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}); }
+}
+
+async function init() {
+  let mcp;
+  try { mcp = await window.claude.use('mcp'); } catch { mcp = null; }
+  if (!mcp) {
+    setConn('bad', 'Unavailable');
+    showEmpty(`<strong>Live data isn't available in this view.</strong>Open this page directly in claude.ai with the Robinhood connector enabled to see live account data.`);
+    return;
+  }
+
+  let quotesLoaded = false, hadFatal = false;
+  function markLoaded() { if (quotesLoaded && !hadFatal) setConn('live', 'Live'); }
+
+  mcp.watchTool('RobinhoodClaude', 'get_accounts', {}, (ev) => {
+    if (ev.type === 'data') {
+      const accts = ev.result.payload?.data?.accounts || [];
+      state.accounts = accts.find(a => a.account_number === '912291820') || null;
+      renderAll();
+    }
+  }, { refetchInterval: 60000 });
+
+  mcp.watchTool('RobinhoodClaude', 'get_portfolio', { account_number: '912291820' }, (ev) => {
+    if (ev.type === 'data') {
+      hadFatal = false; hideBanner();
+      state.portfolio = ev.result.payload?.data || null;
+      state.ts = ev.result.cache?.storedAt ?? Date.now();
+      renderAll();
+    } else {
+      const d = describeError(ev.error);
+      if (d.retract) { hadFatal = true; setConn('bad', 'Reconnect needed'); }
+      showBanner(d.msg);
+    }
+  }, { refetchInterval: 60000 });
+
+  mcp.watchTool('RobinhoodClaude', 'get_equity_quotes', { symbols: SYMBOLS }, (ev) => {
+    if (ev.type === 'data') {
+      hadFatal = false; hideBanner();
+      state.quotes = ingestQuotes(ev.result.payload);
+      quotesLoaded = true; markLoaded();
+      renderAll();
+    } else {
+      const d = describeError(ev.error);
+      if (d.retract) { hadFatal = true; setConn('bad', 'Reconnect needed'); }
+      showBanner(d.msg);
+    }
+  }, { refetchInterval: 60000 });
+
+  mcp.watchTool('RobinhoodClaude', 'get_realized_pnl',
+    { account_number: '912291820', span: 'all' },
+    (ev) => {
+      if (ev.type === 'data') {
+        state.brokerPnl = ev.result.payload?.data || null;
+        state.brokerPnlError = null;
+      } else {
+        // Contain the failure in this card - the rest of the page is
+        // unaffected - but never leave the tile on a spinner: fall back to the
+        // embedded snapshot and say, per error code, what would fix it.
+        state.brokerPnl = null;
+        state.brokerPnlError = describeError(ev.error).msg;
+      }
+      renderAll();
+    }, { refetchInterval: 300000 });
+
+  const startTime = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+  mcp.watchTool('RobinhoodClaude', 'get_equity_historicals',
+    { symbols: SYMBOLS, start_time: startTime, interval: 'day', bounds: 'regular' },
+    (ev) => {
+      if (ev.type === 'data') {
+        hadFatal = false; hideBanner();
+        state.dailyBars = ingestDailyBars(ev.result.payload);
+        renderAll();
+      } else {
+        const d = describeError(ev.error);
+        if (d.retract) { hadFatal = true; setConn('bad', 'Reconnect needed'); }
+        showBanner(d.msg);
+      }
+    }, { refetchInterval: 300000 });
+
+  $('refreshBtn').addEventListener('click', async () => {
+    const btn = $('refreshBtn');
+    btn.classList.add('spinning');
+    try { await mcp.invalidate('RobinhoodClaude'); } catch {}
+    setTimeout(() => btn.classList.remove('spinning'), 700);
+  });
+}
+
+init();
+</script>
+</body></html>

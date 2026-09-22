@@ -1,0 +1,10 @@
+{"data":{"results":[
+{"quote":{"symbol":"AMD","last_trade_price":"616.980000","adjusted_previous_close":"615.520000","previous_close":"615.520000"}},
+{"quote":{"symbol":"MU","last_trade_price":"1080.540000","adjusted_previous_close":"1043.960000","previous_close":"1043.960000"}},
+{"quote":{"symbol":"WDC","last_trade_price":"455.760000","adjusted_previous_close":"448.170000","previous_close":"448.170000"}},
+{"quote":{"symbol":"SNDK","last_trade_price":"1882.397500","adjusted_previous_close":"1766.640000","previous_close":"1766.640000"}},
+{"quote":{"symbol":"TSM","last_trade_price":"448.110000","adjusted_previous_close":"445.140000","previous_close":"445.140000"}},
+{"quote":{"symbol":"INTC","last_trade_price":"121.780100","adjusted_previous_close":"121.780000","previous_close":"121.780000"}},
+{"quote":{"symbol":"LRCX","last_trade_price":"306.480000","adjusted_previous_close":"302.280000","previous_close":"302.280000"}},
+{"quote":{"symbol":"STX","last_trade_price":"895.250000","adjusted_previous_close":"877.325000","previous_close":"877.325000"}}
+]}}
