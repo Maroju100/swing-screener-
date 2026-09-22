@@ -22,15 +22,14 @@
   }
  ],
  "open_positions": {},
- "equity_peak": 17696.92,
+ "equity_peak": 20873.33,
  "kill_switch_active": false,
  "kill_switch_triggered_date": null,
  "trend_gate_active": false,
- "daily_stop_active": false,
- "daily_stop_date": null,
  "_last_commit": {
   "timestamp": "2026-09-21T17:06:48.586045+00:00",
   "sells_count": 4,
-  "buys_count": 0
+  "buys_count": 0,
+  "ported_from": "ca55e21 (development branch) on 2026-09-22"
  }
 }

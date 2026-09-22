@@ -127,7 +127,40 @@ below are what makes a claim checkable.
   detection the branch lacks). **Do NOT merge the branch into `main`** — it
   would add the daily-stop code that production has correctly never had.
   Port wanted changes file-by-file instead.
-- 🚨 **BROKER CHECKED 2026-09-21 — `main`'s state file is WRONG.**
+- ✅ **RESOLVED 2026-09-22 — the Sep 21 run was ported to `main` (`01b484e`).**
+  `main` now correctly shows the account flat with $12,972.28 settling
+  2026-09-22, and both real-money files are back in sync across the branches.
+  Two judgement calls are recorded in that commit: **`equity_peak` was kept at
+  `main`'s 20,873.33**, not lowered to the branch's 17,696.92 (a high-water mark
+  must never be lowered, and the run did not change it), and the branch's
+  **corrupted log was not copied** — commit `dbae2ba` had concatenated a second
+  JSON document after the closing brace, so the entry was extracted and appended
+  properly instead. That entry's `total_proceeds` also read 13972.28 against an
+  actual order sum of 12972.27; corrected, original kept as
+  `total_proceeds_as_logged`.
+  - ⚠️ **LIVE CONSEQUENCE — the kill-switch is expected to fire on the next
+    run.** At $17,695.48 equity against `equity_peak` 20,873.33 the drawdown is
+    **−15.22%**, past `KILL_SWITCH_DD` (−15%). This looks like correct behaviour
+    rather than a false positive: `main`'s own Sep 18 log records
+    `total_equity` **21,612.74**, against which the drawdown is **−18.12%**.
+    Firing liquidates (nothing is open) and blocks new entries for
+    `KILL_SWITCH_RESUME_DAYS` (20 trading days), after which the permanent
+    SMA-50 trend gate also applies to every future entry. **If that is not
+    wanted, `equity_peak` must be revisited deliberately — do not tune it away
+    silently.**
+- 🚨 **THE FOUR "GUARDRAILS" BELOW DO NOT EXIST IN PRODUCTION (found
+  2026-09-22).** `main`'s engine supports only `plan` and `commit`. It has
+  **zero** occurrences of `cmd_verify`, `cmd_reconcile`,
+  `check_data_freshness`, or the pre-commit validation. The whole "Data
+  Freshness & State Sync Guardrails" section below describes development-branch
+  code. Verify:
+  `git show origin/main:scripts/margin_style_live_engine.py | grep -c cmd_verify` → `0`.
+  This is the same documentation-vs-reality gap as the daily stop, and it is why
+  nothing caught `main` carrying four phantom positions for four days. Porting
+  them to production is an open task — the engines have diverged ~430/175 lines,
+  so it is not a clean cherry-pick and needs its own verification before a live
+  run.
+- **Superseded, kept for the record — BROKER CHECK 2026-09-21:**
   `get_equity_positions` on 912291820 returns **only CGC (2 sh)** — zero
   universe symbols. `get_portfolio`: `equity_value` **$1.85**, `cash`
   **$17,693.63**, `total_value` **$17,695.48**. The account is flat.
