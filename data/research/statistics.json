@@ -65,7 +65,7 @@
   "sharpe": 3.022,
   "max_dd_pct": -16.27,
   "cost_bps": 5.0,
-  "seconds": 0.83
+  "seconds": 0.82
  },
  "baseline_full": {
   "realized": 124289.71,
@@ -78,6 +78,6 @@
   "sharpe": 3.834,
   "max_dd_pct": -8.84,
   "cost_bps": 5.0,
-  "seconds": 0.87
+  "seconds": 0.85
  }
 }

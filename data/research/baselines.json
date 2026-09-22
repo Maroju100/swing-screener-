@@ -9,8 +9,7 @@
   "days_with_pnl": 102,
   "sharpe": 4.018,
   "max_dd_pct": -8.68,
-  "cost_bps": 0.0,
-  "seconds": 0.44
+  "seconds": 0.4
  },
  "anchor_window_full_lookback": {
   "realized": 124353.48,
@@ -22,8 +21,7 @@
   "days_with_pnl": 102,
   "sharpe": 4.108,
   "max_dd_pct": -8.68,
-  "cost_bps": 0.0,
-  "seconds": 0.73
+  "seconds": 0.7
  },
  "research_baseline": {
   "realized": 132562.32,
@@ -35,19 +33,20 @@
   "days_with_pnl": 110,
   "sharpe": 3.983,
   "max_dd_pct": -8.68,
-  "cost_bps": 0.0,
-  "seconds": 0.83
+  "seconds": 0.7
  },
  "_meta": {
   "engine": "origin/main",
   "capital": 80000.0,
-  "anchor_reproduced": true,
+  "daily_data": "margin_live_daily_ext_2025-11-03_2026-09-21.json",
+  "hourly_data": "margin_live_hourly_ext_2026-03-06_2026-09-22.json",
   "research_window": [
    "2026-03-13",
    "2026-09-21"
   ],
+  "anchor_realized": 124080.9,
+  "anchor_reproduced": true,
   "lookback_effect_usd": -272.58,
-  "daily_data": "margin_live_daily_ext_2025-11-03_2026-09-21.json",
-  "hourly_data": "margin_live_hourly_ext_2026-03-06_2026-09-22.json"
+  "note": "All figures MEASURED by full engine replay. The research baseline, not the anchor, is the comparison point for every variant."
  }
 }

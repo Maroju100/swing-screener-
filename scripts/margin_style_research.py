@@ -71,12 +71,12 @@ DEFAULT_COST = 5.0   # the level conclusions are drawn at, unless stated otherwi
 
 def replay(start=RESEARCH_START, end=RESEARCH_END, params=None, tag='res',
            engine=ENGINE, capital=CAPITAL, src_patches=None,
-           daily=DAILY_EXT, hourly=HOURLY_EXT, cost_bps=0.0, price_field='close_price'):
+           daily=DAILY_EXT, hourly=HOURLY_EXT, cost_bps=0.0):
     t0 = time.time()
     with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
         r = H.run(start, end, capital, engine, params=params, tag=tag,
                   src_patches=src_patches, daily_path=daily, hourly_path=hourly,
-                  cost_bps=cost_bps, price_field=price_field)
+                  cost_bps=cost_bps)
     r['seconds'] = round(time.time() - t0, 2)
     return r
 
