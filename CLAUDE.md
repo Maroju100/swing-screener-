@@ -793,13 +793,31 @@ below are what makes a claim checkable.
   blind overwrite would have silently moved a reference result. `scripts/
   build_extended_datasets.py` keeps committed bars authoritative on overlap and
   appends only strictly-newer ones.
-- 🚨 **REPO INTEGRITY: every backtest script this file cites lives ONLY on the
-  development branch.** `margin_style_original_6month_backtest.py`,
-  `margin_style_17h_backtest.py`, `margin_style_baseline_backtest.py`,
-  `margin_style_monthly_breakdown.py` and all of `data/margin_live_*` are absent
-  from `main`, which was given this CLAUDE.md in `c51d706`. So every
-  "Reproduce: …" instruction **fails on `main`**, the branch production runs
-  from. Either port them or note the branch in each instruction.
+- ✅ **REPO INTEGRITY — FIXED 2026-09-22. Every "Reproduce: …" command in this
+  file now runs on `main`.** They previously did not: the backtest scripts and
+  their datasets existed only on the development branch, while this CLAUDE.md
+  was ported to `main` in `c51d706` — so production carried instructions that
+  could not be followed on the branch production runs from.
+  - Ported **file-by-file, never merged** (a merge would drag the daily-stop
+    code onto `main`, which has correctly never had it): the six margin-style
+    harnesses, `build_extended_datasets.py`, the TGT and entry-filter paper
+    engines, `v3_replay.py`, `fetch_semis_1min_data.py`, all of `data/` and
+    `data/research/`, both dashboard sources and their test harnesses.
+  - **Deliberately NOT ported**: `scripts/margin_style_live_engine.py` and
+    `docs/margin_style_live_{state,log}.json`. `main`'s copies are the
+    production/real-money originals and stay authoritative — the whole point of
+    porting rather than merging.
+  - **Verified on `main` after the port**, all six reproducing identically:
+    `margin_style_original_6month_backtest.py` → $124,080.90 / +158.42% total;
+    `margin_style_17h_backtest.py --validate` → PASS;
+    `margin_style_monthly_breakdown.py` → writes its JSON;
+    `margin_style_research.py baselines` → anchor PASS, 714 trades;
+    `margin_style_intraday_study.py validate` → PASS ($30,622.59, 371 trades);
+    `margin_style_research.py stats` → VERDICT: NOT SUPPORTED.
+  - ⚠️ `scripts/entry_filter_paper_engine.py` was ported **only so the citation
+    above is checkable**. It is the script that re-post-processes `day_pnl` on
+    every run and reports it as forward paper tracking. **Do not run it for a
+    number** — the filter question is settled by replay above.
 
 ### 6-Month Backtest Results (Mar 6 - Sep 4, 2026) — With Overnight Gap Analysis
 
