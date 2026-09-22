@@ -52,8 +52,18 @@ def load_payload(path):
 
 
 def main():
-    if len(sys.argv) < 2:
+    args = sys.argv[1:]
+    # --prefix names the output file. It is explicit because the filename otherwise
+    # depends only on the window, so consolidating a different symbol set over the
+    # same dates would silently overwrite an existing dataset.
+    prefix = 'semis_1min'
+    if '--prefix' in args:
+        i = args.index('--prefix')
+        prefix = args[i + 1]
+        del args[i:i + 2]
+    if not args:
         sys.exit(__doc__)
+    sys.argv = [sys.argv[0]] + args
 
     # symbol -> day -> {HH:MM: bar}   (dict keyed by time so overlapping chunks dedupe)
     acc = defaultdict(lambda: defaultdict(dict))
@@ -124,7 +134,7 @@ def main():
         'bars': bars,
     }
 
-    name = f'semis_1min_{common[0]}_{common[-1]}.json'
+    name = f'{prefix}_{common[0]}_{common[-1]}.json'
     dest = os.path.join(ROOT, 'data', name)
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     with open(dest, 'w') as fh:

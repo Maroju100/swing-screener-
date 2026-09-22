@@ -42,7 +42,16 @@ THE THREE THINGS MEASURED
    space" is answered by how much cost v3 can absorb before its edge is gone, NOT by
    guessing historical spreads, which this data source does not carry.
 
-3. WALK-FORWARD
+3. RELATIVE STRENGTH (--rs / --mkt / --rs-sweep)
+   RS = (symbol return since session open) - (benchmark return since session open),
+   evaluated bar by bar. Entries are blocked unless RS > --rs-min. `--mkt` instead
+   gates on the benchmark itself being up on the day. Both read only bars at or
+   before the decision bar. SPY (broad market) and SMH (semis sector) are both
+   tested, because the dashboard's existing breadth panels are computed WITHIN the
+   basket -- and these three names essentially are the sector, so a sector benchmark
+   is close to self-referential while a broad-market one is not.
+
+4. WALK-FORWARD
    Every variant is reported on the full window and on each half. A variant that only
    wins on one half is a red flag, not a finding.
 
@@ -57,6 +66,7 @@ USAGE
     python3 scripts/v3_replay.py                        # baseline params, no gate, no cost
     python3 scripts/v3_replay.py --sweep                # full report: gate x cost grid
     python3 scripts/v3_replay.py --er-gate 0.30 --cost-bps 10
+    python3 scripts/v3_replay.py --rs-sweep             # relative-strength grid
 """
 import argparse
 import inspect
@@ -69,6 +79,7 @@ sys.path.insert(0, os.path.join(ROOT, 'scripts'))
 SCRATCH = os.path.join(ROOT, '.backtest_scratch')
 
 DATA = os.path.join(ROOT, 'data', 'semis_1min_2026-08-10_2026-09-21.json')
+BENCH = os.path.join(ROOT, 'data', 'bench_1min_2026-08-10_2026-09-21.json')
 
 # CLAUDE.md Strategy 2 describes two parameter sets. NOTE the discrepancy recorded in
 # the report: daytrading_v3_paper_engine.py is titled "(tightened)" but its constants
@@ -122,7 +133,43 @@ def basket_er(bars, days, window_min):
     return out
 
 
-def build_variant(params, er_open, er_window_min, cost_bps, state_path, log_path):
+def rs_tables(bars, bench_bars, bench_sym):
+    """Causal intraday relative strength, keyed by (symbol, date, HH:MM).
+
+    At each bar t: sym_ret = close(t)/first_close(day) - 1, same for the benchmark,
+    and RS = sym_ret - bench_ret. Every term reads only bars at or before t, so the
+    filter is decidable at the moment it would be acted on -- unlike a whole-session
+    figure, which is the look-ahead trap that broke TGT's original validation.
+
+    The benchmark is forward-filled within a day so a missing ETF minute cannot
+    silently block an entry that the real rule would have allowed.
+    """
+    bench_ret, rs = {}, {}
+    for day, rows in bench_bars[bench_sym].items():
+        if not rows:
+            continue
+        base = rows[0][4]
+        last = 0.0
+        by_min = {r[0]: r[4] for r in rows}
+        for hh in range(13, 21):
+            for mm in range(60):
+                t = f'{hh:02d}:{mm:02d}'
+                if t in by_min:
+                    last = by_min[t] / base - 1.0
+                bench_ret[(day, t)] = last
+
+    for sym in bars:
+        for day, rows in bars[sym].items():
+            if not rows:
+                continue
+            base = rows[0][4]
+            for t, _o, _h, _l, c, _v in rows:
+                rs[(sym, day, t)] = (c / base - 1.0) - bench_ret.get((day, t), 0.0)
+    return rs, bench_ret
+
+
+def build_variant(params, er_open, er_window_min, cost_bps, state_path, log_path,
+                  rs=None, rs_min=0.0, bench_ret=None):
     """Import the real engine, patch only what the variant changes, return its run().
 
     state_path/log_path MUST be passed in and baked into the variant's namespace.
@@ -153,12 +200,21 @@ def build_variant(params, er_open, er_window_min, cost_bps, state_path, log_path
         assert src.count(old_buy) == 2, f'expected 2 buy sites, found {src.count(old_buy)}'
         src = src.replace(old_buy, 'sh = notional / (price * (1 + COST_C))')
 
+    # compose every entry-side filter into the one anchor, so adding a second gate
+    # cannot silently clobber the first
+    extra = []
     if er_open is not None:
+        extra.append('ER_OPEN.get(bar["date"], False) '
+                     'and int(hhmm[:2]) * 60 + int(hhmm[3:]) >= ER_READY_MIN')
+    if rs is not None:
+        extra.append('RS.get((sym, bar["date"], hhmm), -9.9) > RS_MIN')
+    if bench_ret is not None:
+        extra.append('BENCH_RET.get((bar["date"], hhmm), -9.9) > 0.0')
+    if extra:
         old = 'entry_ok = (vw[gi] is not None and price > vw[gi]'
         assert src.count(old) == 1, 'entry anchor moved'
-        src = src.replace(old, 'entry_ok = (ER_OPEN.get(bar["date"], False) '
-                               'and int(hhmm[:2]) * 60 + int(hhmm[3:]) >= ER_READY_MIN '
-                               'and vw[gi] is not None and price > vw[gi]')
+        src = src.replace(old, 'entry_ok = (' + ' and '.join(extra)
+                               + ' and vw[gi] is not None and price > vw[gi]')
 
     src = src.replace('def run(', 'def run_variant(', 1)
 
@@ -175,6 +231,9 @@ def build_variant(params, er_open, er_window_min, cost_bps, state_path, log_path
                               else {'capital': V3.CAPITAL, 'symbols': V3.SYMBOLS,
                                     'setup': 'replay', 'runs': []})
     ns['COST_C'] = c
+    ns['RS'] = rs or {}
+    ns['RS_MIN'] = rs_min
+    ns['BENCH_RET'] = bench_ret or {}
     ns['ER_OPEN'] = er_open or {}
     # 13:30 UTC open + window; entries blocked until the gate is actually knowable
     ns['ER_READY_MIN'] = 13 * 60 + 30 + (er_window_min or 0)
@@ -182,7 +241,8 @@ def build_variant(params, er_open, er_window_min, cost_bps, state_path, log_path
     return V3, ns['run_variant']
 
 
-def replay(tag, params, days, bars, er_open=None, er_window_min=30, cost_bps=0):
+def replay(tag, params, days, bars, er_open=None, er_window_min=30, cost_bps=0,
+           rs=None, rs_min=0.0, bench_ret=None):
     os.makedirs(SCRATCH, exist_ok=True)
     state_path = os.path.join(SCRATCH, f'v3_{tag}_state.json')
     log_path = os.path.join(SCRATCH, f'v3_{tag}_log.json')
@@ -191,7 +251,7 @@ def replay(tag, params, days, bars, er_open=None, er_window_min=30, cost_bps=0):
             os.remove(p)
 
     V3, run_variant = build_variant(params, er_open, er_window_min, cost_bps,
-                                    state_path, log_path)
+                                    state_path, log_path, rs, rs_min, bench_ret)
     raw_path = os.path.join(SCRATCH, f'v3_{tag}_raw.json')
     json.dump(to_raw_payload(bars, set(days)), open(raw_path, 'w'))
 
@@ -234,10 +294,21 @@ def main():
     ap.add_argument('--er-gate', type=float, default=None)
     ap.add_argument('--er-window', type=int, default=30)
     ap.add_argument('--cost-bps', type=float, default=0.0)
+    ap.add_argument('--rs', choices=['SPY', 'SMH'], default=None,
+                    help='block entries unless the symbol is outperforming this '
+                         'benchmark since the session open')
+    ap.add_argument('--rs-min', type=float, default=0.0)
+    ap.add_argument('--mkt', choices=['SPY', 'SMH'], default=None,
+                    help='block entries unless the benchmark itself is up on the day')
     ap.add_argument('--sweep', action='store_true')
+    ap.add_argument('--rs-sweep', action='store_true')
     args = ap.parse_args()
 
     meta, bars = load_bars()
+    bench_meta, bench_bars = (lambda d: (d['meta'], d['bars']))(json.load(open(BENCH)))
+    if bench_meta['window_start'] != meta['window_start'] or \
+       bench_meta['window_end'] != meta['window_end']:
+        sys.exit('benchmark window does not match the semis window -- refusing to run')
     days = sorted(next(iter(bars.values())))
     half = len(days) // 2
     windows = {'full': days, 'first half': days[:half], 'second half': days[half:]}
@@ -258,6 +329,39 @@ def main():
               'basket_er_by_day': {d: round(v, 4) for d, v in er_all.items()},
               'results': {}}
 
+    if args.rs_sweep:
+        # (label, rs_bench, rs_min, mkt_bench) -- one filter at a time, then the
+        # best RS variant combined with the ER gate
+        combos = [('no filter', None, 0.0, None)]
+        for b in ('SPY', 'SMH'):
+            combos.append((f'RS>0 vs {b}', b, 0.0, None))
+            combos.append((f'RS>+0.25% vs {b}', b, 0.0025, None))
+            combos.append((f'{b} up on day', None, 0.0, b))
+        costs = [0.0, 5.0, 10.0]
+        for wname, wdays in windows.items():
+            print(f"\n=== {wname}: {wdays[0]} -> {wdays[-1]} ({len(wdays)} days) ===")
+            print(f"{'variant':<34}{'return':>10}{'P&L':>11}{'trades':>8}{'days':>12}")
+            print('-' * 75)
+            for label, rb, rmin, mb in combos:
+                rs_t = bench_t = None
+                if rb:
+                    rs_t, _ = rs_tables(bars, bench_bars, rb)
+                if mb:
+                    _, bench_t = rs_tables(bars, bench_bars, mb)
+                for cb in costs:
+                    tag = f'{label} | {cb:.0f}bp'
+                    r = replay(f'rs_{wname[:4]}_{label[:12]}_{cb}', PARAMS[args.params],
+                               wdays, bars, None, args.er_window, cb,
+                               rs_t, rmin, bench_t)
+                    r['tag'] = tag
+                    print(fmt(r))
+                    report['results'].setdefault(wname, []).append(
+                        {k: v for k, v in r.items() if k != 'trade_list'})
+        dest = os.path.join(ROOT, 'data', 'v3_rs_results.json')
+        json.dump(report, open(dest, 'w'), indent=1)
+        print(f"\nwrote {os.path.relpath(dest, ROOT)}")
+        return
+
     if args.sweep:
         gates = [None, 0.18, 0.30]
         costs = [0.0, 5.0, 10.0, 20.0, 40.0]
@@ -268,12 +372,14 @@ def main():
         print(f"\n=== {wname}: {wdays[0]} -> {wdays[-1]} ({len(wdays)} days) ===")
         print(f"{'variant':<34}{'return':>10}{'P&L':>11}{'trades':>8}{'days':>12}")
         print('-' * 75)
+        rs_t = rs_tables(bars, bench_bars, args.rs)[0] if args.rs else None
+        bench_t = rs_tables(bars, bench_bars, args.mkt)[1] if args.mkt else None
         for g in gates:
             er_open = None if g is None else {d: v >= g for d, v in er_all.items()}
             for cb in costs:
                 tag = f"ER {'off' if g is None else f'>={g:.2f}'} | cost {cb:.0f}bp"
                 r = replay(f'{wname[:4]}_{g}_{cb}', PARAMS[args.params], wdays, bars,
-                           er_open, args.er_window, cb)
+                           er_open, args.er_window, cb, rs_t, args.rs_min, bench_t)
                 r['tag'] = tag
                 print(fmt(r))
                 report['results'].setdefault(wname, []).append(
