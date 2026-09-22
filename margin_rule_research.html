@@ -230,9 +230,9 @@
       Every structural variant tested was neutral or harmful.
     </p>
     <p>
-      <strong>No production parameter is recommended for change.</strong> The value of this
-      study is the five things it rules out, and the two prior claims it corrects &mdash; both of
-      which had the sign backwards.
+      <strong>No production parameter is recommended for change.</strong> And at the
+      price basis the live system actually trades at &mdash; a timing defect this study also
+      found &mdash; production ranks <strong>first outright</strong> among everything tested.
     </p>
   </div>
 
@@ -293,6 +293,75 @@
         <span class="num">$5,000</span> deposit on 15&nbsp;September raises the account
         without being a gain, and full contribution history is not available, so that
         figure is not computed rather than estimated.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">A timing defect in every backtest, including this one</h2>
+    <p class="sub">
+      Found while checking whether the replays price at the same moment the live system
+      trades. They did not.
+    </p>
+    <div class="callout" style="border-left-color: var(--bad); background: var(--bad-w)">
+      <h3>The replays priced 46 minutes after the live trigger fires</h3>
+      <p>
+        The harness prices &ldquo;today&rdquo; off the hourly bar labelled
+        <span class="mono">17:00</span>, using its close. Hourly bars are
+        <strong>left-labelled</strong> &mdash; that bar <em>spans</em> 17:00&ndash;18:00, so
+        its close is the <strong>18:00&nbsp;UTC (1:00&nbsp;PM&nbsp;CDT)</strong> price. The
+        live trigger fires at <strong>~17:14&nbsp;UTC (12:14&nbsp;PM&nbsp;CDT)</strong>.
+        Verified against 30-minute bars, not inferred from the label: over 24 symbol-days
+        the hourly close matches the 30-minute <span class="mono">17:30</span> bar 23 times.
+      </p>
+      <p>
+        <strong>The published +155.10% is not withdrawn.</strong> It is the exact,
+        reproducible output of its stated method &mdash; just priced at 1:00&nbsp;PM&nbsp;CDT.
+        The live-accurate figure for the same rules and window is
+        <strong class="num">+125.9%</strong>.
+      </p>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>Same rules, same window &mdash; only the priced instant differs</h3>
+      <p class="note">64-day window, 5&nbsp;bps per side.</p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Priced at</th><th>Realized</th><th>Return</th><th style="text-align:left">Note</th></tr></thead>
+          <tbody>
+            <tr><td>18:00 UTC &middot; 1:00 PM CDT</td><td class="num">$30,623</td><td class="num pos">+38.3%</td><td style="text-align:left">what every backtest used</td></tr>
+            <tr><td>17:30 UTC &middot; 12:30 PM CDT</td><td class="num">$28,131</td><td class="num pos">+35.2%</td><td style="text-align:left">&nbsp;</td></tr>
+            <tr class="hl"><td>17:00 UTC &middot; 12:00 PM CDT</td><td class="num">$18,694</td><td class="num pos">+23.4%</td><td style="text-align:left">nearest to the live fire</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>Every conclusion gets stronger at the correct basis</h3>
+      <p class="note">
+        Full 132-day window repriced at 17:00&nbsp;UTC. Production goes from rank 2 to
+        <strong>rank 1 outright</strong>, so the significance caveat it needed before is
+        no longer needed at all.
+      </p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>#</th><th style="text-align:left">Configuration</th><th>At live basis</th><th>Return</th><th>Sharpe</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>1</td><td style="text-align:left"><strong>PRODUCTION &mdash; current rules</strong></td><td class="num">$100,745</td><td class="num pos">+125.9%</td><td class="num">3.38</td></tr>
+            <tr><td>2</td><td style="text-align:left">Trade cap 10%</td><td class="num">$96,337</td><td class="num pos">+120.4%</td><td class="num">3.40</td></tr>
+            <tr><td>3</td><td style="text-align:left">Intraday stop &minus;2.5%</td><td class="num">$87,855</td><td class="num pos">+109.8%</td><td class="num">3.11</td></tr>
+            <tr><td>4</td><td style="text-align:left">Best grid-search config</td><td class="num">$62,326</td><td class="num pos">+77.9%</td><td class="num">2.57</td></tr>
+            <tr><td>5</td><td style="text-align:left">Quality filter 3+ down days</td><td class="num">$33,504</td><td class="num pos">+41.9%</td><td class="num">2.54</td></tr>
+            <tr><td>6</td><td style="text-align:left">No intraday stop</td><td class="num neg">&minus;$9,956</td><td class="num neg">&minus;12.4%</td><td class="num neg">&minus;0.83</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0">
+        The &minus;2.5% stop that ranked 1st at the wrong basis falls to <strong>3rd</strong>
+        and takes the <strong>largest</strong> hit of any configuration (&minus;31% against
+        &minus;19% for production) &mdash; independent corroboration of the bootstrap verdict
+        that its advantage was a timing artifact, not an edge.
       </p>
     </div>
   </section>
