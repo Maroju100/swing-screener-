@@ -1,0 +1,61 @@
+{
+ "window": [
+  "2026-06-22",
+  "2026-09-21"
+ ],
+ "engine": "origin/main",
+ "cost_bps": 5.0,
+ "rows": [
+  {
+   "frac": 0.0,
+   "label": "0% (production, hold all)",
+   "realized": 30622.59,
+   "pct": 38.28,
+   "sharpe": 2.458,
+   "max_dd_pct": -12.45,
+   "vol_ann_pct": 61.34,
+   "trades": 371
+  },
+  {
+   "frac": 0.25,
+   "label": "25% of each position sold at the bell",
+   "realized": 21895.64,
+   "pct": 27.37,
+   "sharpe": 2.295,
+   "max_dd_pct": -10.16,
+   "vol_ann_pct": 48.07,
+   "trades": 692
+  },
+  {
+   "frac": 0.5,
+   "label": "50% of each position sold at the bell",
+   "realized": 15439.24,
+   "pct": 19.3,
+   "sharpe": 2.25,
+   "max_dd_pct": -7.88,
+   "vol_ann_pct": 34.36,
+   "trades": 693
+  },
+  {
+   "frac": 0.75,
+   "label": "75% of each position sold at the bell",
+   "realized": 7637.84,
+   "pct": 9.55,
+   "sharpe": 1.849,
+   "max_dd_pct": -5.94,
+   "vol_ann_pct": 21.01,
+   "trades": 690
+  },
+  {
+   "frac": 1.0,
+   "label": "100% of each position sold at the bell",
+   "realized": -3878.85,
+   "pct": -4.85,
+   "sharpe": -1.109,
+   "max_dd_pct": -14.91,
+   "vol_ann_pct": 16.68,
+   "trades": 460
+  }
+ ],
+ "method": "MEASURED by full engine replay; exit priced at the 19:30 bar CLOSE (20:00 UTC bell) so only the overnight gap is given up"
+}
