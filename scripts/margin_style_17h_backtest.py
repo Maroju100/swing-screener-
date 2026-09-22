@@ -103,6 +103,28 @@ def apply_daily_stop_patch(src):
     return src.replace(old, new)
 
 
+def apply_no_settlement_lockup_patch(src):
+    """Remove the settlement-lockup discount from cmd_plan.
+
+    The engine computes safe_cash = real_cash - pending_total, withholding its
+    own tracked sale proceeds until T+1. That is correct for a CASH account.
+    Account 912291820 is type=limited_margin (get_accounts, 2026-09-22), where
+    unsettled proceeds ARE spendable: get_portfolio reports
+    buying_power == cash == $17,693.63 while unsettled_funds is $12,965.08 -- a
+    cash account's buying power would instead have been $4,728.55.
+
+    This measures what the conservative treatment costs. Source patched in
+    memory; the production engine is never written to.
+    """
+    old = "    safe_cash = max(0.0, real_cash - pending_total)"
+    new = "    safe_cash = max(0.0, real_cash)  # limited margin: unsettled spendable"
+    if src.count(old) != 1:
+        raise SystemExit(
+            f'settlement anchor matched {src.count(old)} times, expected 1 - '
+            'cmd_plan has changed; re-check the patch before trusting it.')
+    return src.replace(old, new)
+
+
 def extract_plan(text):
     """Tolerate engines that print freshness warnings ahead of the JSON."""
     lines = text.splitlines()
@@ -112,7 +134,7 @@ def extract_plan(text):
     return json.loads(text)
 
 
-def run(start, end, capital, engine_rev, patch_bug=False):
+def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False):
     os.makedirs(SCRATCH, exist_ok=True)
     state_path = os.path.join(SCRATCH, 'state_17h.json')
     if os.path.exists(state_path):
@@ -121,6 +143,8 @@ def run(start, end, capital, engine_rev, patch_bug=False):
     src = load_engine_src(engine_rev)
     if patch_bug:
         src = apply_daily_stop_patch(src)
+    if no_lockup:
+        src = apply_no_settlement_lockup_patch(src)
 
     ns = {'__file__': os.path.join(ROOT, 'scripts', 'margin_style_live_engine.py')}
     exec(compile(src, 'margin_style_live_engine.py', 'exec'), ns)
@@ -216,6 +240,7 @@ def run(start, end, capital, engine_rev, patch_bug=False):
     return {
         'start': start, 'end': end, 'trading_days': traded_days,
         'engine_rev': engine_rev, 'daily_stop_bug_patched': patch_bug,
+        'settlement_lockup_removed': no_lockup,
         'capital': capital,
         'realized': round(realized_total, 2),
         'unrealized': round(unrealized, 2),
@@ -231,7 +256,8 @@ def run(start, end, capital, engine_rev, patch_bug=False):
 def show(label, r):
     print(f"--- {label}")
     print(f"    engine {r['engine_rev']}"
-          f"{'  [DAILY_STOP bug PATCHED]' if r['daily_stop_bug_patched'] else ''}")
+          f"{'  [DAILY_STOP bug PATCHED]' if r['daily_stop_bug_patched'] else ''}"
+          f"{'  [NO SETTLEMENT LOCKUP]' if r.get('settlement_lockup_removed') else ''}")
     print(f"    {r['start']} -> {r['end']}  ({r['trading_days']} trading days, "
           f"{r['trade_count']} trades, capital ${r['capital']:,.0f})")
     print(f"    realized   ${r['realized']:>13,.2f}   ({r['realized_pct']:+.2f}%)")
@@ -262,13 +288,17 @@ def main():
     ap.add_argument('--capital', type=float, default=REF_CAPITAL)
     ap.add_argument('--engine-rev', default=ENGINE_NOSTOP)
     ap.add_argument('--patch-daily-stop-bug', action='store_true')
+    ap.add_argument('--no-settlement-lockup', action='store_true',
+                    help='remove the T+1 settlement discount (correct for a '
+                         'limited-margin account, where unsettled is spendable)')
     ap.add_argument('--json')
     args = ap.parse_args()
 
     if args.validate:
         sys.exit(0 if validate() else 1)
 
-    r = run(args.start, args.end, args.capital, args.engine_rev, args.patch_daily_stop_bug)
+    r = run(args.start, args.end, args.capital, args.engine_rev,
+            args.patch_daily_stop_bug, args.no_settlement_lockup)
     show(f"{args.start} -> {args.end}", r)
     if args.json:
         json.dump(r, open(args.json, 'w'), indent=1)

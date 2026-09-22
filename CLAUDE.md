@@ -185,14 +185,65 @@ below are what makes a claim checkable.
     withdrawn +248.36% / +60.1% claims named as withdrawn and "do not add the
     daily stop"), and the accepted kill-switch state with "do not fix a gated
     system by lowering `equity_peak`".
-- ⚠️ **Account type discrepancy, unresolved.** `get_accounts` reports 912291820
-  as **`type: limited_margin`** with non-zero `unsettled_funds` ($12,965.08 on
-  2026-09-22), but the trigger prompt and this file both describe it as a
-  **cash account** and apply strict cash/GFV settlement treatment. The
-  conservative treatment was deliberately kept (it can only under-deploy, never
-  over-deploy) and the prompt now tells each run to flag the discrepancy rather
-  than relax it. Worth resolving deliberately — if it really is limited margin,
-  the settlement-lockup modelling is more conservative than it needs to be.
+- ✅ **ACCOUNT TYPE RESOLVED 2026-09-22 — it is `limited_margin`, and it does
+  not matter to the engine.** Do not re-litigate this.
+  - **Evidence it is limited margin, not cash:** `get_accounts` →
+    `type: limited_margin`, `unsettled_funds: 12965.08`. `get_portfolio` →
+    `cash 17693.63`, **`buying_power 17693.63`**. The portfolio tool's own guide
+    says unsettled proceeds are excluded from `buying_power` *on a cash
+    account*; here they are included. A cash account's buying power would have
+    been `17693.63 − 12965.08 = 4728.55`. So unsettled proceeds **are**
+    spendable. References to a "cash account" elsewhere in this file and in
+    older trigger prompts are wrong.
+  - **But the engine's settlement discount is provably harmless either way.**
+    `cmd_plan` computes `safe_cash = real_cash − pending_total`, which looks
+    over-conservative — except `cmd_plan` first prunes
+    `settle_date > today` while `cmd_commit` writes
+    `settle_date = next_business_day(today)`. At **once-daily** cadence a sale on
+    day N settles before day N+1's run, so `pending_total` is already 0 by the
+    time it is subtracted. **MEASURED, not assumed:** replaying the 6-month
+    window with the discount removed gives results identical to the cent — 714
+    trades, $124,080.90 realized, +155.10%. Reproduce:
+    `scripts/margin_style_17h_backtest.py --engine-rev origin/main --no-settlement-lockup`
+    against the same command without the flag. **No engine change is needed or
+    warranted**; the discrepancy was documentation-only. (The discount *would*
+    bite if the system ever ran more than once a day — another reason not to add
+    intraday runs.)
+  - **Where limited margin actually shows up** is broker-side: on a cash account
+    `review_equity_order` warns about unsettled funds and the GFV hard rule
+    skips the order (this is what skipped 4 buys on 2026-09-16). On limited
+    margin those warnings should be rare or absent. **Keep the GFV skip rule
+    anyway** — it costs nothing when no warning fires and remains the last line
+    of defence. If unsettled warnings *do* appear on this account, that is
+    informative and worth reporting, not working around.
+- ⚠️ **NEW RISK that limited margin introduces — PATTERN DAY TRADER.** Limited
+  margin is a *margin* account for PDT purposes, and this account is around
+  **$17.7k, under the $25,000 PDT threshold**. The strategy can produce same-day
+  round trips (the same-day netting logic exists precisely because a PEAK sell
+  and a dip buy can land on one symbol the same day). Four or more day trades in
+  five business days would flag PDT and restrict further day trading until
+  equity exceeds $25k. This was never considered when the account was converted.
+  - **QUANTIFIED from `docs/margin_style_live_log.json` (2026-09-22) — the
+    exposure is NOT low.** Across 31 run-days carrying orders, **8 days had a
+    same-day round trip**, and the worst rolling five-run-day window held
+    **8 day trades** (2026-07-28 → 2026-08-04): Jul 30 (INTC, MU, SNDK),
+    Aug 3 (AMD, MU, SNDK), Aug 4 (INTC, SNDK), Aug 10 (MU, SNDK, WDC),
+    Aug 21 (INTC), Aug 27 (INTC, LRCX, WDC), Aug 31 (WDC), Sep 2 (SNDK).
+    The threshold is **4 in 5 business days**, so the strategy has cleared it
+    twice over. `MAX_HOLD_DAYS = 6` does not prevent this — a position can be
+    opened and closed the same day by PEAK/GAIN or INTRADAY_STOP.
+  - Same-day netting (added 2026-08-11) helps but does not eliminate it: a
+    netted PEAK-vs-buy becomes one order and is not a round trip, which is why
+    post-netting days show 1–3 instead of 2–3 — still non-zero.
+  - MEASURED/PROXY caveat (Evidence Rule 3): this counts "bought and sold the
+    same symbol on the same run-day" from the log, which approximates FINRA's
+    definition but is not the broker's own day-trade counter. Read it as
+    "clearly above threshold", not as an exact count.
+  - **On a cash account this mattered not at all** — PDT is a margin-account
+    rule, and cash accounts face GFV instead, which the hard rule already
+    covers. On limited margin it applies, and nothing in the system currently
+    detects or limits it. **OPEN — needs an explicit decision:** accept the
+    flag, add a same-day-round-trip limiter, or fund above $25k.
 - **Superseded, kept for the record — BROKER CHECK 2026-09-21:**
   `get_equity_positions` on 912291820 returns **only CGC (2 sh)** — zero
   universe symbols. `get_portfolio`: `equity_value` **$1.85**, `cash`
