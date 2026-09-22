@@ -913,7 +913,15 @@ def cmd_commit(actions_path):
     for s in actions.get('sells', []):
         sym = s['symbol']
         pos = state['open_positions'].get(sym)
-        if pos and s['shares'] > pos['shares']:
+        # Tolerance mirrors the mutation below, which already does
+        #   remaining = round(pos['shares'] - s['shares'], 6)
+        #   if remaining <= 1e-6: del state['open_positions'][sym]
+        # This check compared a 6dp-ROUNDED sell against an UNROUNDED holding with a
+        # strict >, so selling a whole position aborted the commit on floating-point
+        # dust -- AMD 155.404388 vs 155.40438799999998, off by 2e-14 (found
+        # 2026-09-22 by the rule-research grid search). 1e-6 of a share is far below
+        # the broker's 6dp order precision, so a genuine oversell is still caught.
+        if pos and s['shares'] > pos['shares'] + 1e-6:
             validation_errors.append(
                 f"ERROR: Attempting to sell {s['shares']:.6f} {sym} but only {pos['shares']:.6f} held. "
                 f"This should have been rejected at order placement. Position would go negative."
