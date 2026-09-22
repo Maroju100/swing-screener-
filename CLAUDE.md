@@ -185,8 +185,41 @@ below are what makes a claim checkable.
     withdrawn +248.36% / +60.1% claims named as withdrawn and "do not add the
     daily stop"), and the accepted kill-switch state with "do not fix a gated
     system by lowering `equity_peak`".
-- ✅ **ACCOUNT TYPE RESOLVED 2026-09-22 — it is `limited_margin`, and it does
-  not matter to the engine.** Do not re-litigate this.
+- 🎯 **DECISION 2026-09-22: reverting to a CASH account.** The user chose cash
+  over limited margin at current capital (~$17.7k), because the limited-margin
+  benefit is small and unquantifiable while the PDT exposure is real and
+  measured (see the PDT note below). Plan the setup for **cash only**.
+  - **The account change itself is the user's to make in Robinhood** — there is
+    no downgrade tool (`get_limited_margin_upgrade_info` only goes the other
+    way). Until it is done, `get_accounts` will still report
+    `type: limited_margin`; that is expected, not a fault.
+  - **The engine needs NO change.** `scripts/margin_style_live_engine.py` was
+    written for a cash account from the start (see its own docstring) and its
+    `pending_settlement` tracking is already the cash-correct model.
+  - ⚠️ **ONE fix the cash setup does need: feed `real_cash` from
+    `buying_power`, NOT `cash`.** On a cash account the `cash` field
+    **includes** unsettled proceeds, so sizing against it makes the engine ask
+    for money the broker will not release — which is exactly what rejected 4
+    `NORMAL_DIP` buys on 2026-09-16. `buying_power` is the broker's own
+    authoritative spendable figure and excludes unsettled funds on a cash
+    account. It is correct under **either** account type (on limited margin the
+    two are equal — measured 2026-09-22: `cash 17693.63`,
+    `buying_power 17693.63`), so it is safe to change before the conversion and
+    needs no follow-up after it.
+    - No double-discount: at once-daily cadence `cmd_plan`'s `pending_total` is
+      already 0 by the time it is subtracted (a sale on day N has
+      `settle_date = N+1`, and the `settle_date > today` prune drops it on day
+      N+1), so `safe_cash` lands on `buying_power` itself. The engine's own
+      subtraction stays as harmless belt-and-braces.
+    - **NOT backtest-validatable** (Evidence Rule 6): `buying_power` does not
+      exist in historical bar data, so no replay can measure this. It is an
+      operational-correctness fix, not a strategy change, and must not be
+      described as a validated improvement.
+  - **GFV becomes the live constraint** — the GFV hard rule at the top of this
+    file is now the binding safety mechanism, not a dormant one. Keep it exactly
+    as written.
+- 📌 **Superseded by the decision above, kept for the reasoning — ACCOUNT TYPE
+  AS OF 2026-09-22 was `limited_margin`.**
   - **Evidence it is limited margin, not cash:** `get_accounts` →
     `type: limited_margin`, `unsettled_funds: 12965.08`. `get_portfolio` →
     `cash 17693.63`, **`buying_power 17693.63`**. The portfolio tool's own guide
@@ -239,11 +272,15 @@ below are what makes a claim checkable.
     same symbol on the same run-day" from the log, which approximates FINRA's
     definition but is not the broker's own day-trade counter. Read it as
     "clearly above threshold", not as an exact count.
-  - **On a cash account this mattered not at all** — PDT is a margin-account
+  - **On a cash account this matters not at all** — PDT is a margin-account
     rule, and cash accounts face GFV instead, which the hard rule already
-    covers. On limited margin it applies, and nothing in the system currently
-    detects or limits it. **OPEN — needs an explicit decision:** accept the
-    flag, add a same-day-round-trip limiter, or fund above $25k.
+    covers.
+  - ✅ **CLOSED 2026-09-22 by reverting to cash** (see the decision above).
+    This measurement is *why* cash was chosen: 8 day trades in a 5-day window
+    against a limit of 4 is not a marginal exposure. **No round-trip limiter
+    was built** — a cash account removes the problem for free, so adding engine
+    logic for it would have been solving a problem that no longer exists. If
+    the account is ever moved back to margin, this note is the reason not to.
 - **Superseded, kept for the record — BROKER CHECK 2026-09-21:**
   `get_equity_positions` on 912291820 returns **only CGC (2 sh)** — zero
   universe symbols. `get_portfolio`: `equity_value` **$1.85**, `cash`
