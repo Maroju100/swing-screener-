@@ -635,6 +635,18 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
     if DAILY_STOP_ENABLED and not daily_stop_active and daily_total_loss >= daily_loss_cap:
         daily_stop_active = True
         daily_stop_date = today
+        # DOUBLE-SELL DEFECT FIXED 2026-09-22. These two lines mirror what the
+        # KILL_SWITCH branch below has always done, and their absence was the entire
+        # bug. PEAK/GAIN sells are decided earlier and parked in pending_peak_gain;
+        # they are not appended to `sells` until much later. `closed_symbols` is built
+        # from `sells` and therefore CANNOT see a parked sell, so this block would
+        # liquidate the full position of a symbol that already had a PEAK sell
+        # pending, and the later append would add that sell anyway -- two sells, same
+        # symbol, same day, ~174.3% of the position. In backtest that produced 63
+        # duplicate-sell days and $13.8M of phantom proceeds. Clearing the parked
+        # sells here makes the liquidation authoritative, as KILL_SWITCH's is.
+        pending_peak_gain = {}
+        peak_updates = {}
         # Emergency liquidation: force-close all remaining open positions
         for sym, pos in state['open_positions'].items():
             if sym not in closed_symbols and sym in quotes:
