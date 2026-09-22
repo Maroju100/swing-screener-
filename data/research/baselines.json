@@ -1,0 +1,53 @@
+{
+ "anchor": {
+  "realized": 124080.9,
+  "total": 126737.07,
+  "realized_pct": 155.1,
+  "total_pct": 158.42,
+  "trades": 714,
+  "days": 122,
+  "days_with_pnl": 102,
+  "sharpe": 4.018,
+  "max_dd_pct": -8.68,
+  "cost_bps": 0.0,
+  "seconds": 0.44
+ },
+ "anchor_window_full_lookback": {
+  "realized": 124353.48,
+  "total": 127013.2,
+  "realized_pct": 155.44,
+  "total_pct": 158.77,
+  "trades": 711,
+  "days": 122,
+  "days_with_pnl": 102,
+  "sharpe": 4.108,
+  "max_dd_pct": -8.68,
+  "cost_bps": 0.0,
+  "seconds": 0.73
+ },
+ "research_baseline": {
+  "realized": 132562.32,
+  "total": 134070.84,
+  "realized_pct": 165.7,
+  "total_pct": 167.59,
+  "trades": 771,
+  "days": 132,
+  "days_with_pnl": 110,
+  "sharpe": 3.983,
+  "max_dd_pct": -8.68,
+  "cost_bps": 0.0,
+  "seconds": 0.83
+ },
+ "_meta": {
+  "engine": "origin/main",
+  "capital": 80000.0,
+  "anchor_reproduced": true,
+  "research_window": [
+   "2026-03-13",
+   "2026-09-21"
+  ],
+  "lookback_effect_usd": -272.58,
+  "daily_data": "margin_live_daily_ext_2025-11-03_2026-09-21.json",
+  "hourly_data": "margin_live_hourly_ext_2026-03-06_2026-09-22.json"
+ }
+}

@@ -1,0 +1,3674 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Semis Momentum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  .viz-root {
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --page:           #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --muted:          #898781;
+    --gridline:       #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --good:           #0ca30c;
+    --critical:       #d03b3b;
+    --warning:        #fab219;
+    --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
+    --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7; --s8: #e34948;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-1:      #1a1a19;
+      --page:           #0d0d0d;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --muted:          #898781;
+      --gridline:       #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.10);
+      --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+      --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --page:           #0d0d0d;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --muted:          #898781;
+    --gridline:       #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,0.10);
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+    --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--page); }
+
+  .viz-root {
+    background: var(--page);
+    color: var(--text-primary);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    min-height: 100vh;
+    padding: 20px 16px 48px;
+  }
+  .num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  .wrap { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+
+  /* header */
+  .hdr { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .hdr-title { display: flex; flex-direction: column; gap: 4px; }
+  .eyebrow { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  h1 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+  .hdr-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 100px;
+    border: 1px solid var(--border); color: var(--text-secondary); background: var(--surface-1);
+    white-space: nowrap;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+  .dot.live { background: var(--good); box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 25%, transparent); }
+  .dot.bad { background: var(--critical); }
+  .dot.wait { background: var(--warning); }
+
+  button.refresh {
+    font: inherit; font-size: 12px; font-weight: 600; font-family: inherit;
+    color: var(--text-primary); background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 100px; padding: 6px 12px 6px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  }
+  button.refresh:hover { border-color: var(--text-secondary); }
+  button.refresh:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
+  button.refresh svg { width: 13px; height: 13px; }
+  button.refresh.spinning svg { animation: spin 0.7s linear infinite; }
+  @media (prefers-reduced-motion: reduce) { button.refresh.spinning svg { animation: none; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .banner {
+    border: 1px solid var(--border); background: var(--surface-1); border-radius: 10px;
+    padding: 12px 14px; font-size: 13px; color: var(--text-secondary); display: none;
+    border-left: 3px solid var(--warning);
+  }
+  .banner.show { display: block; }
+  .banner strong { color: var(--text-primary); }
+
+  .empty {
+    border: 1px solid var(--border); background: var(--surface-1); border-radius: 12px;
+    padding: 40px 24px; text-align: center; color: var(--text-secondary); font-size: 14px; line-height: 1.6;
+  }
+  .empty strong { color: var(--text-primary); display: block; font-size: 16px; margin-bottom: 6px; }
+
+  /* card */
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 18px 14px;
+  }
+  .card-hd { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+  .card-title { font-size: 14px; font-weight: 600; }
+  .card-sub { font-size: 12px; color: var(--muted); }
+
+  /* legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 2px 0; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); cursor: default; padding: 2px 0; }
+  .legend-item.dim { opacity: 0.35; }
+  .legend-swatch { width: 10px; height: 3px; border-radius: 2px; flex: none; }
+  .legend-item .num { color: var(--text-primary); font-size: 11px; margin-left: 2px; }
+
+  .chart-wrap { position: relative; }
+  svg.chart { width: 100%; height: auto; display: block; overflow: visible; }
+  .gridline { stroke: var(--gridline); stroke-width: 1; }
+  .baseline { stroke: var(--baseline); stroke-width: 1; }
+  .axis-label { fill: var(--muted); font-size: 10px; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+  .series-line { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: opacity 0.15s ease; }
+  .series-line.dim { opacity: 0.18; }
+  .series-end { transition: opacity 0.15s ease; }
+  .series-end.dim { opacity: 0.18; }
+  .crosshair { stroke: var(--text-secondary); stroke-width: 1; stroke-dasharray: 3 3; pointer-events: none; opacity: 0; }
+  .hover-capture { fill: transparent; cursor: crosshair; }
+
+  .accel-bar { transition: opacity 0.15s ease; }
+  .accel-row-label { fill: var(--text-primary); font-size: 12px; font-weight: 600; }
+  .accel-val-label { font-size: 11px; font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 600; }
+  .accel-val-label.pos { fill: var(--good); }
+  .accel-val-label.neg { fill: var(--critical); }
+  .accel-nodata { fill: var(--muted); font-size: 11px; font-style: italic; }
+
+  .tooltip {
+    position: absolute; pointer-events: none; z-index: 5; min-width: 150px;
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 10px; font-size: 11px; box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    opacity: 0; transform: translate(-50%, -110%); transition: opacity 0.1s ease;
+  }
+  .tooltip.show { opacity: 1; }
+  .tooltip-time { color: var(--muted); font-family: "IBM Plex Mono", ui-monospace, monospace; margin-bottom: 5px; font-size: 10px; }
+  .tooltip-row { display: flex; align-items: center; gap: 6px; padding: 1.5px 0; }
+  .tooltip-row .swatch { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .tooltip-row .sym { color: var(--text-secondary); flex: 1; }
+  .tooltip-row .val { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+  /* table */
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 560px; }
+  thead th {
+    text-align: right; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--muted); font-weight: 600; padding: 6px 8px 8px; border-bottom: 1px solid var(--gridline);
+  }
+  thead th:first-child, tbody td:first-child { text-align: left; }
+  tbody td { padding: 9px 8px; border-bottom: 1px solid var(--gridline); text-align: right; }
+  tbody tr:last-child td { border-bottom: none; }
+  .sym-cell { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  .sym-swatch { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 100px;
+    font-size: 12px; font-weight: 600; font-family: "IBM Plex Mono", ui-monospace, monospace;
+  }
+  .badge.down { color: var(--critical); }
+  .badge.up { color: var(--good); }
+  .badge.warn { background: color-mix(in srgb, var(--warning) 18%, transparent); color: var(--warning); }
+  .badge.flat { background: color-mix(in srgb, var(--muted) 16%, transparent); color: var(--text-secondary); }
+  .badge.accel-up { background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }
+  .badge.accel-down { background: color-mix(in srgb, var(--critical) 14%, transparent); color: var(--critical); }
+  .badge.accel-flat { background: color-mix(in srgb, var(--muted) 16%, transparent); color: var(--text-secondary); }
+
+  .gate-toggle-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .switch { position: relative; display: inline-block; width: 38px; height: 22px; flex: none; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch .track {
+    position: absolute; inset: 0; background: var(--gridline); border-radius: 100px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .switch .track::before {
+    content: ""; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px;
+    background: var(--surface-1); border-radius: 50%; transition: transform 0.15s; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  .switch input:checked + .track { background: var(--warning); }
+  .switch input:checked + .track::before { transform: translateX(16px); }
+  .switch input:focus-visible + .track { outline: 2px solid var(--warning); outline-offset: 2px; }
+  .gate-label { font-size: 13.5px; font-weight: 600; }
+  .badge.experimental { background: color-mix(in srgb, var(--warning) 20%, transparent); color: var(--warning); font-size: 10.5px; letter-spacing: 0.03em; text-transform: uppercase; }
+
+  footer.note { font-size: 11.5px; color: var(--muted); line-height: 1.6; padding: 2px 4px; }
+
+  .signal-status-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .signal-chip {
+    display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--page); flex: 1; min-width: 150px;
+  }
+  .signal-chip .sym-swatch { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .signal-chip .info { display: flex; flex-direction: column; gap: 2px; }
+  .signal-chip .sym-name { font-weight: 650; font-size: 13px; }
+  .signal-chip .status-text { font-size: 11.5px; color: var(--text-secondary); }
+  .signal-chip.holding { border-color: color-mix(in srgb, var(--good) 40%, var(--border)); }
+  .signal-chip .last-sig { font-size: 10.5px; color: var(--muted); margin-left: auto; text-align: right; }
+  .signal-log-empty { color: var(--muted); font-size: 12.5px; padding: 10px 4px; }
+
+  .alert-quiet {
+    display: flex; align-items: center; gap: 8px; padding: 10px 12px; margin-bottom: 12px;
+    border-radius: 10px; border: 1px solid var(--border); background: var(--page);
+    color: var(--muted); font-size: 12.5px;
+  }
+  .alert-card {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 8px;
+    border-radius: 10px; border: 1.5px solid; font-size: 13.5px;
+  }
+  .alert-card.buy { border-color: var(--good); background: color-mix(in srgb, var(--good) 12%, var(--surface-1)); }
+  .alert-card.sell { border-color: var(--critical); background: color-mix(in srgb, var(--critical) 12%, var(--surface-1)); }
+  .alert-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .alert-card.buy .alert-dot { background: var(--good); box-shadow: 0 0 0 4px color-mix(in srgb, var(--good) 25%, transparent); }
+  .alert-card.sell .alert-dot { background: var(--critical); box-shadow: 0 0 0 4px color-mix(in srgb, var(--critical) 25%, transparent); }
+  .alert-main { flex: 1; }
+  .alert-title { font-weight: 700; }
+  .alert-sub { color: var(--text-secondary); font-size: 12px; margin-top: 2px; }
+  .alert-time { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; color: var(--muted); white-space: nowrap; }
+</style>
+
+<div class="viz-root" data-palette="#2a78d6,#eb6834,#1baf7a,#eda100,#e87ba4,#008300,#4a3aa7,#e34948">
+  <div class="wrap">
+
+    <div class="hdr">
+      <div class="hdr-title">
+        <div class="eyebrow">Live &middot; 8-symbol semis basket &middot; SPY benchmark</div>
+        <h1>Semis Momentum</h1>
+      </div>
+      <div class="hdr-meta">
+        <span class="pill" id="connPill"><span class="dot wait" id="connDot"></span><span id="connText">Connecting&hellip;</span></span>
+        <span class="pill" id="updatedPill" style="display:none">Updated <span class="num" id="updatedText">&mdash;</span></span>
+        <button class="refresh" id="refreshBtn" type="button">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2v3.2h-3.2"/></svg>
+          Check now
+        </button>
+      </div>
+    </div>
+
+    <div class="banner" id="errBanner"></div>
+    <div class="empty" id="emptyState" style="display:none"></div>
+
+    <div id="mainContent" style="display:none">
+      <div class="card" id="erCard">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Is today worth day-trading? &mdash; Efficiency Ratio</div>
+            <div class="card-sub">Net move &divide; total distance traveled, since today's open &middot; near 1 = clean directional move, near 0 = whipsawing chop</div>
+          </div>
+        </div>
+        <div id="erSummary" style="margin-bottom:10px"></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Symbol</th><th>First 15m</th><th>First 30m</th><th>First 45m</th><th>First 60m</th>
+            </tr></thead>
+            <tbody id="erBody"></tbody>
+          </table>
+        </div>
+        <div class="card-sub" style="margin-top:10px">Backtest of this exact filter (22 days): high-ER mornings won 6-7 of 11 days vs. 2-3 of 11 for low-ER mornings, but the correlation (+0.13 to +0.23) isn't strong enough yet to treat as a hard go/no-go rule with this little history &mdash; use it as a sizing dial (trade smaller on low-ER mornings), not an on/off switch.</div>
+
+        <div class="card-sub" style="margin-top:18px; font-weight:600">Signed Efficiency Ratio &mdash; the Trend-Gated Trail (TGT) morning gate</div>
+        <div class="card-sub" style="margin-top:2px">Same net-move &divide; total-distance ratio as above, but SIGNED (keeps the direction of the net move instead of taking its absolute value) &mdash; this is what the TGT setup below gates on, decided once at the 30-minute mark (bold column) for SNDK/WDC/MU/TSM only. The unsigned ratio above is direction-blind (only 42% accurate at predicting up-vs-down days, worse than a coin flip) &mdash; signing it fixes that specific problem, but signing it has <strong>not</strong> been shown to produce a profitable trading edge on its own: an initial "12/12 split-half" validation claim was found to rest on a look-ahead backtest bug, and a corrected, properly out-of-sample re-check found no edge (see the TGT card below). Treat this table as a diagnostic of morning direction only, not a proven signal.</div>
+        <div id="serSummary" style="margin:8px 0 10px"></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Symbol</th><th>First 15m</th><th>First 30m (gate)</th><th>First 45m</th><th>First 60m</th>
+            </tr></thead>
+            <tbody id="serBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" id="breadthGateCard">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Basket Breadth Gate <span class="badge experimental">Experimental &middot; not yet validated</span></div>
+            <div class="card-sub">Skips new v3 entries/adds for the rest of today once basket breadth (% of the 8 symbols agreeing with today's net direction, averaged since open) drops below 70%</div>
+          </div>
+        </div>
+        <div class="gate-toggle-row">
+          <label class="switch">
+            <input type="checkbox" id="breadthGateToggle">
+            <span class="track"></span>
+          </label>
+          <span class="gate-label">Apply gate to today's paper signals</span>
+          <span id="breadthGateStatus"></span>
+        </div>
+        <div class="card-sub">Single-month backtest (Aug 2026, this basket): a fixed 70% threshold improved paper P&amp;L +45% over the month by mainly avoiding the 3 worst blowout days &mdash; not by reliably picking winners (several high-breadth days still lost money). Held up on both halves of that one month, but one month is thin evidence. Off by default; toggling it only affects today's live paper signals below, never past days already logged, and this dashboard places no real orders either way.</div>
+      </div>
+
+      <div class="card" id="marketRegimeCard">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Market Regime Probability &mdash; Live decision support</div>
+            <div class="card-sub">Real-time classification of whether semis are trending up, down, or choppy right now &mdash; use this to decide position sizing and entry timing over the next 1–2 hours</div>
+          </div>
+        </div>
+
+        <div class="regime-gauge" id="regimeGaugeContainer"></div>
+
+        <div class="card-sub" style="font-weight:600; margin-top:14px">How to use this for live decisions</div>
+        <div class="card-sub">
+          <strong>UP (green arrow):</strong> Breadth &gt; 50% and momentum building. Add on weakness, scale into strength. Expect higher odds of follow-through on existing positions. &mdash;
+          <strong>DOWN (red arrow):</strong> Breadth &lt; 50% and momentum breaking. Reduce size, tighten stops, avoid new entries unless setup looks obvious. &mdash;
+          <strong>CHOP (yellow chevron):</strong> Breadth near 50% or conflicting signals (e.g., high volume but no directional agreement). Stay flexible with position sizing; don't chase breakouts without confirmation.
+        </div>
+
+        <div class="card-sub" style="font-weight:600; margin-top:10px">Regime probability (live)</div>
+        <div id="regimeHistoryContainer" style="margin-top:8px"></div>
+
+        <div class="card-sub" style="margin-top:10px; color:var(--muted); font-size:12px">
+          Combines four live indicators: basket breadth (how many of 8 symbols are up/down), MACD momentum, buy/sell volume pressure, and price acceleration. Directional gauge only &mdash; use with your trading plan.
+        </div>
+      </div>
+
+
+
+      <div class="card" id="goodDayCard">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Good-Day Indicator &mdash; Breadth + Direction <span class="badge experimental">Experimental &middot; modest edge, high false-positive rate</span></div>
+            <div class="card-sub">SNDK / WDC / MU / TSM only &middot; flags a day as "good" when basket breadth &ge; 70% (running agreement average since open, same definition as the Basket Breadth Gate above) AND the basket's own average return-from-open is positive, both checked once at the 30-minute mark</div>
+          </div>
+        </div>
+        <div id="goodDayStatus" style="margin-bottom:10px"></div>
+        <div class="card-sub" style="font-weight:600">Backtest results with correct entry price (bar-30 close, not day open)</div>
+        <div class="card-sub" style="color:var(--critical); margin-bottom:8px"><strong>⚠ Correction (2026-09-06):</strong> prior numbers used look-ahead bias (entry at day's open). Gate is confirmed at 30-min mark, so achievable entry is bar-30 close. Results below reflect correct, achievable entries.</div>
+        <div class="table-scroll" style="margin-top:6px">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Window</th><th style="text-align:left">Bucket</th>
+              <th>Days</th><th>Selection</th><th>Gate + Hold P&amp;L</th><th>Avg per day</th>
+            </tr></thead>
+            <tbody>
+              <tr><td style="text-align:left" rowspan="3">Aug 4&ndash;Sep 4 (1-min bars, dev window)</td>
+                  <td style="text-align:left">Selected ("good")</td><td class="num">9</td><td class="num">38%</td><td class="num" style="color:var(--critical)">-$1,238</td><td class="num" style="color:var(--critical)">-$138</td></tr>
+              <tr><td style="text-align:left">Rejected</td><td class="num">15</td><td class="num">63%</td><td class="num">+$5,108</td><td class="num">+$341</td></tr>
+              <tr><td style="text-align:left">All days (no filter)</td><td class="num">24</td><td class="num">100%</td><td class="num">+$3,840</td><td class="num">+$160</td></tr>
+              <tr><td style="text-align:left; border-top:2px solid var(--baseline)" rowspan="3">Jul 6&ndash;Aug 3 (5-min bars, holdout &mdash; never seen)</td>
+                  <td style="text-align:left; border-top:2px solid var(--baseline)">Selected ("good")</td><td class="num" style="border-top:2px solid var(--baseline)">5</td><td class="num" style="border-top:2px solid var(--baseline)">24%</td><td class="num" style="border-top:2px solid var(--baseline); color:var(--good)">+$2,026</td><td class="num" style="border-top:2px solid var(--baseline); color:var(--good)">+$405</td></tr>
+              <tr><td style="text-align:left">Rejected</td><td class="num">16</td><td class="num">76%</td><td class="num" style="color:var(--critical)">-$7,143</td><td class="num" style="color:var(--critical)">-$446</td></tr>
+              <tr><td style="text-align:left">All days (no filter)</td><td class="num">21</td><td class="num">100%</td><td class="num" style="color:var(--critical)">-$5,117</td><td class="num" style="color:var(--critical)">-$244</td></tr>
+              <tr style="border-top:2px solid var(--baseline)"><td style="text-align:left; border-top:2px solid var(--baseline)"><strong>Combined</strong></td>
+                  <td style="text-align:left; border-top:2px solid var(--baseline)"><strong>Selected total</strong></td><td class="num" style="border-top:2px solid var(--baseline)"><strong>14</strong></td><td class="num" style="border-top:2px solid var(--baseline)"><strong>31%</strong></td><td class="num" style="border-top:2px solid var(--baseline); color:var(--good)"><strong>+$788</strong></td><td class="num" style="border-top:2px solid var(--baseline); color:var(--good)"><strong>+$56</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-sub" style="margin-top:10px"><strong>False positives (gated days that still lost money):</strong> 5 of 14 selected days = 36% false-positive rate. Aug 5 (-$158), Aug 12 (-$64), Aug 28 (-$80), Jul 9 (-$113), Jul 23 (-$19). Flat stop-loss grid search (1%-10% trails) did not improve results; gate + hold outperformed gate + any single stop % on both windows.</div>
+        <div class="card-sub" style="margin-top:10px">The selection rule works better than random (31% of days with +$788 total vs. all-days baseline), but: (1) 36% of selected days still lose money, (2) combined P&L (~$56/day average) is modest, and (3) stop-losses don't help. Kept for observation as a directional filter, not as a validated trading signal. This card is informational only and does not gate or place any orders.</div>
+      </div>
+
+      <div class="card" id="signalsCard">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Live trade signals &mdash; v3 (tightened), optimized params</div>
+            <div class="card-sub">All 8 semis &middot; recomputed from the live 1-min feed every refresh &middot; grid-searched params, favored by the 22-day comparison</div>
+          </div>
+          <span class="pill" style="border-left:3px solid var(--warning)">Informational only &mdash; no orders placed</span>
+        </div>
+        <div id="signalAlertBanner"></div>
+
+        <div id="v3FilterBar" style="border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin:8px 0 4px;display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+          <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7;font-weight:600">Entry filter</span>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+            <input type="checkbox" id="v3RsToggle" checked>
+            <span>Require RS &gt; 0 vs SPY</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px">
+            <span>Cost</span>
+            <input type="number" id="v3CostBps" value="2.5" min="0" max="50" step="0.5"
+                   style="width:62px;padding:3px 6px;border:1px solid var(--line);border-radius:4px;background:transparent;color:inherit;font:inherit">
+            <span style="opacity:.7">bps/side</span>
+          </label>
+          <span id="v3FilterNote" style="font-size:12px;opacity:.75"></span>
+        </div>
+        <div id="v3RsStrip" style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px"></div>
+
+        <div class="card-sub" style="font-weight:600">Buy / sell signal timeline</div>
+        <div class="chart-wrap" id="signalTimelineWrap" style="margin-top:6px">
+          <svg class="chart" id="signalTimelineSvg" viewBox="0 0 900 306" preserveAspectRatio="none"></svg>
+          <div class="tooltip" id="tooltipSignalTimeline"></div>
+        </div>
+        <div class="card-sub" style="margin-top:6px">&#9650; green = buy (entry/add, filled = entry, lighter = add) &middot; &#9660; red = sell (exhaustion exit) &middot; &#9660; gray = forced end-of-day close &middot; dashed line = now &middot; hover a marker for detail</div>
+
+        <div class="card-sub" style="font-weight:600; margin-top:16px">Running paper P&amp;L by symbol &mdash; $30,000 sim, persists through today in this browser (resets at US market midnight, ET)</div>
+        <div class="table-scroll" style="margin-top:6px">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Symbol</th><th>Realized</th><th>Unrealized</th><th>Total</th><th>Trades</th>
+            </tr></thead>
+            <tbody id="signalPnlBody"></tbody>
+            <tfoot id="signalPnlFoot"></tfoot>
+          </table>
+        </div>
+
+        <div class="card-sub" style="margin-top:16px; font-weight:600">Current state &amp; proximity to next trigger</div>
+        <div class="table-scroll" style="margin-top:6px">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Symbol</th><th style="text-align:left">Status</th>
+              <th style="text-align:left">Watching for</th><th style="text-align:left">Threshold (default)</th>
+              <th style="text-align:left">Current</th><th style="text-align:left">Distance to trigger</th>
+              <th style="text-align:left">What this means</th>
+            </tr></thead>
+            <tbody id="signalProximityBody"></tbody>
+          </table>
+        </div>
+        <div class="card-sub" style="margin-top:14px; font-weight:600">Signal history</div>
+        <div class="table-scroll" style="margin-top:6px; max-height:260px; overflow-y:auto">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Time</th><th style="text-align:left">Symbol</th>
+              <th style="text-align:left">Side</th><th style="text-align:left">Reason</th>
+              <th style="text-align:left">Detail</th>
+            </tr></thead>
+            <tbody id="signalLogBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" id="v3baselineSignalsCard">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">v3 Baseline (production) &mdash; live paper signals</div>
+            <div class="card-sub">All 8 semis &middot; original validated config before grid-search tightening &mdash; less aggressive entry/exit than tightened version</div>
+          </div>
+          <span class="pill" style="border-left:3px solid var(--good)">Validated baseline &middot; less volatile</span>
+        </div>
+
+        <div class="card-sub" style="font-weight:600">Running paper P&amp;L by symbol &mdash; $30,000 sim, persists through today in this browser (resets at US market midnight, ET)</div>
+        <div class="table-scroll" style="margin-top:6px">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Symbol</th><th>Realized</th><th>Unrealized</th><th>Total</th><th>Trades</th>
+            </tr></thead>
+            <tbody id="v3baselinePnlBody"></tbody>
+            <tfoot id="v3baselinePnlFoot"></tfoot>
+          </table>
+        </div>
+
+        <div class="card-sub" style="margin-top:16px; font-weight:600">Current state &amp; proximity to next trigger</div>
+        <div class="table-scroll" style="margin-top:6px">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Symbol</th><th style="text-align:left">Status</th>
+              <th style="text-align:left">Watching for</th><th style="text-align:left">Threshold (baseline)</th>
+              <th style="text-align:left">Current</th><th style="text-align:left">Distance to trigger</th>
+              <th style="text-align:left">What this means</th>
+            </tr></thead>
+            <tbody id="v3baselineProximityBody"></tbody>
+          </table>
+        </div>
+        <div class="card-sub" style="margin-top:14px; font-weight:600">Signal history</div>
+        <div class="table-scroll" style="margin-top:6px; max-height:260px; overflow-y:auto">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Time</th><th style="text-align:left">Symbol</th>
+              <th style="text-align:left">Side</th><th style="text-align:left">Reason</th>
+              <th style="text-align:left">Detail</th>
+            </tr></thead>
+            <tbody id="v3baselineLogBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" id="tgtSignalsCard">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Trend-Gated Trail (TGT) <span class="badge experimental">Experimental &middot; NOT validated</span></div>
+            <div class="card-sub">SNDK / WDC / MU / TSM &middot; morning signed-ER gate (&ge;0 over first 30m) &rarr; buy full slice &rarr; 3% trailing stop &rarr; VWAP-reclaim re-entry &rarr; EOD close ~19:55 UTC</div>
+          </div>
+          <span class="pill" style="border-left:3px solid var(--warning)">Informational only &mdash; no orders placed</span>
+        </div>
+        <div class="card-sub"><strong>Correction (2026-09-05):</strong> this setup was originally described here as validated by "12/12 split-half checks" &mdash; that claim was wrong. It came from a backtest that bought gated trades at the day's <em>opening</em> price, which isn't achievable since the gate itself can't be confirmed until 30 minutes into the session. Re-run with the real, achievable entry price, those same 12 checks come out 5/12 in the gate's favor &mdash; worse than a coin flip. A follow-up grid search (trained only on one separate window, tested out-of-sample on the rest) didn't do better (6/10), and its win/loss pattern was fully explained by which half of the calendar each check fell in, not a real per-day signal. <strong>No validated edge has been found for this gate.</strong> It's kept paper-tracking live (via <span style="font-family:'IBM Plex Mono',monospace; font-size:12px">scripts/trend_gated_trail_paper_engine.py</span>, state/log under <span style="font-family:'IBM Plex Mono',monospace; font-size:12px">docs/</span>) purely for observation, not as a proven strategy &mdash; the tables below are a live illustrative replay of the same rules against this page's currently fetched window, separate from that persisted paper ledger.</div>
+
+        <div class="card-sub" style="font-weight:600; margin-top:14px">Paper P&amp;L by symbol &mdash; $5,000 sim ($1,250/symbol), this fetched window only</div>
+        <div class="table-scroll" style="margin-top:6px">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Symbol</th><th>Realized</th><th>Unrealized</th><th>Total</th><th>Trades</th>
+            </tr></thead>
+            <tbody id="tgtPnlBody"></tbody>
+            <tfoot id="tgtPnlFoot"></tfoot>
+          </table>
+        </div>
+
+        <div class="card-sub" style="margin-top:16px; font-weight:600">Current state &amp; proximity to next trigger</div>
+        <div class="table-scroll" style="margin-top:6px">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Symbol</th><th style="text-align:left">Status</th>
+              <th style="text-align:left">Watching for</th><th style="text-align:left">Threshold</th>
+              <th style="text-align:left">Current</th><th style="text-align:left">Distance to trigger</th>
+              <th style="text-align:left">What this means</th>
+            </tr></thead>
+            <tbody id="tgtProximityBody"></tbody>
+          </table>
+        </div>
+        <div class="card-sub" style="margin-top:14px; font-weight:600">Signal history</div>
+        <div class="table-scroll" style="margin-top:6px; max-height:260px; overflow-y:auto">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Time</th><th style="text-align:left">Symbol</th>
+              <th style="text-align:left">Side</th><th style="text-align:left">Reason</th>
+              <th style="text-align:left">Detail</th>
+            </tr></thead>
+            <tbody id="tgtLogBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" id="v3BaselineCard">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">v3 Baseline (no gate) &mdash; Backtested Performance</div>
+            <div class="card-sub">All 8 semis &middot; trades all days without filtering &middot; baseline for comparison to gated approaches</div>
+          </div>
+          <span class="pill" style="border-left:3px solid var(--good)">Strong performer · validated out-of-sample</span>
+        </div>
+
+        <div class="card-sub" style="font-weight:600">Backtest results (real P&amp;L, $4,000 capital)</div>
+        <div class="table-scroll" style="margin-top:6px">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Window</th><th>P&amp;L</th><th>Return %</th><th>Notes</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>Aug 4–Sep 4 (dev)</td><td class="num" style="color:var(--good)">+$2,246</td><td class="num" style="color:var(--good)">+56.2%</td><td>24 trading days</td></tr>
+              <tr><td>Jul 6–Aug 3 (holdout)</td><td class="num" style="color:var(--good)">+$4,882</td><td class="num" style="color:var(--good)">+122.1%</td><td>21 trading days (never-seen OOS)</td></tr>
+              <tr style="font-weight:600; border-top:2px solid var(--gridline)"><td>Combined</td><td class="num" style="color:var(--good)">+$7,128</td><td class="num" style="color:var(--good)">+89.1%</td><td>45 trading days total</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-sub" style="margin-top:10px"><strong>Comparison to other setups:</strong></div>
+        <div class="table-scroll" style="margin-top:6px">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Setup</th><th>Combined P&amp;L</th><th>vs. v3 Baseline</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>Buy &amp; Hold (naive)</td><td class="num" style="color:var(--good)">+$7,624</td><td class="num">+$496 (+7.0%)</td></tr>
+              <tr><td>v3 Baseline (all days)</td><td class="num" style="color:var(--good)">+$7,128</td><td class="num" style="font-weight:600">Baseline</td></tr>
+              <tr><td>v3 + Good-Day Gate</td><td class="num">+$1,331</td><td class="num" style="color:var(--critical)">-$5,797 (-81.3%)</td></tr>
+              <tr><td>Gate + Hold</td><td class="num">+$788</td><td class="num" style="color:var(--critical)">-$6,340 (-88.9%)</td></tr>
+              <tr><td>v3 Tightened (ER gate)</td><td class="num" style="color:var(--critical)">-$240</td><td class="num" style="color:var(--critical)">-$7,368 ❌</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-sub" style="margin-top:10px"><strong>Key insight:</strong> v3 Baseline trades <em>every</em> day without filtering, which captures both the winners and the losers in the semis basket. Gating setups attempt to filter to "good" days only, but they consistently underperform: they miss enough winning days to offset the losses they prevent. The out-of-sample holdout window (+$4,882) confirms this — no gate beats simple continuous trading for this basket.</div>
+
+        <div class="card-sub" style="margin-top:10px; border-left:3px solid var(--warning); padding-left:10px"><strong>Update (2026-09-22) &mdash; the conclusion above is now too strong.</strong> "No gate beats simple continuous trading" held for the <em>day-level</em> gates tested here, which decide once each morning whether to trade at all. It does not hold for a <em>per-bar</em> filter. Replaying the real engine over 30 days of 1-minute bars, requiring RS&nbsp;&gt;&nbsp;0 vs SPY at each entry beat continuous trading at every cost level (+3.08% &rarr; +4.98% at zero cost; &minus;2.32% &rarr; +1.12% at 10&nbsp;bps/side) and was positive in both half-windows. That filter is live on the v3 cards above. The numbers in this card are from an earlier, separately-derived backtest and have not been re-measured against the committed bars.</div>
+        <div class="card-sub" style="margin-top:8px; font-size:12px; color:var(--text-secondary)">This card is informational only and does not gate, filter, or place any orders. The v3 signals card above remains the live paper reference.</div>
+      </div>
+
+      <div class="card" style="margin-top:14px" id="exitConfCard">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Exit Confidence &mdash; profit-taking risk <span class="badge experimental">Directional gauge &middot; not a hard trigger</span></div>
+            <div class="card-sub">0&ndash;100, only shown while a symbol is trading above today's VWAP (i.e. mid up-move) &middot; higher = historically worse odds over the next 10&ndash;20 minutes</div>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th style="text-align:left">Symbol</th><th>Score</th><th style="text-align:left">Risk</th><th style="text-align:left">Why</th>
+            </tr></thead>
+            <tbody id="exitConfBody"></tbody>
+          </table>
+        </div>
+        <div class="card-sub" style="margin-top:10px">Blends only the two components that actually showed a real backtested edge (VWAP extension relative to today's range, and volume vs. its trailing 20-bar average) &mdash; RSI level, MACD deceleration, and momentum deceleration were tested and dropped as noise. 5-day backtest: TRAIN correlation with 10/20-min forward return -0.15 to -0.17, TEST (2 held-out days) -0.26 to -0.31, with the top score quartile historically negative 60-80% of the time over the next 10-20 minutes vs. ~45-50% for the bottom quartile. Use it to decide how much to trim into strength, not whether to hold at all - it doesn't replace the exhaustion exit above, which still drives the actual paper signals.</div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">% change vs. prior close</div>
+            <div class="card-sub" id="chartSub">Regular session, 1-minute bars</div>
+          </div>
+          <div class="card-sub">Hover to inspect a moment</div>
+        </div>
+        <div class="chart-wrap" id="chartWrap">
+          <svg class="chart" id="chartSvg" viewBox="0 0 900 320" preserveAspectRatio="none"></svg>
+          <div class="tooltip" id="tooltip"></div>
+        </div>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Price vs. VWAP</div>
+            <div class="card-sub">% distance above/below the day-anchored, volume-weighted average price &middot; the more reliable trend read &mdash; above = net buying pressure since the open, below = net selling</div>
+          </div>
+          <div class="card-sub">Hover to inspect a moment</div>
+        </div>
+        <div class="chart-wrap" id="vwapWrap">
+          <svg class="chart" id="vwapSvg" viewBox="0 0 900 320" preserveAspectRatio="none"></svg>
+          <div class="tooltip" id="tooltipVwap"></div>
+        </div>
+        <div class="legend" id="legendVwap"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">MACD histogram</div>
+            <div class="card-sub">12/26/9 EMA histogram as % of price &middot; already smoothed &mdash; above zero and rising = upward momentum building, below zero and falling = downward momentum building</div>
+          </div>
+          <div class="card-sub">Hover to inspect a moment</div>
+        </div>
+        <div class="chart-wrap" id="macdWrap">
+          <svg class="chart" id="macdSvg" viewBox="0 0 900 320" preserveAspectRatio="none"></svg>
+          <div class="tooltip" id="tooltipMacd"></div>
+        </div>
+        <div class="legend" id="legendMacd"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">ATR (volatility)</div>
+            <div class="card-sub">Average True Range (14-bar, Wilder's), as % of price &middot; typical bar-to-bar range right now &mdash; use it to size stops to how much a stock is actually moving, not a flat %</div>
+          </div>
+          <div class="card-sub">Hover to inspect a moment</div>
+        </div>
+        <div class="chart-wrap" id="atrWrap">
+          <svg class="chart" id="atrSvg" viewBox="0 0 900 320" preserveAspectRatio="none"></svg>
+          <div class="tooltip" id="tooltipAtr"></div>
+        </div>
+        <div class="legend" id="legendAtr"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Basket breadth</div>
+            <div class="card-sub">Net # of symbols above vs. below yesterday's close, over time &middot; a wide green or red wedge = a basket-wide move worth trading; a line stuck near zero = gains and losses canceling out, no group edge today</div>
+          </div>
+        </div>
+        <div id="breadthSummary" style="margin-bottom:8px"></div>
+        <svg class="chart" id="breadthSvg" viewBox="0 0 900 320" preserveAspectRatio="none"></svg>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Momentum acceleration by symbol</div>
+            <div class="card-sub">15-min rate now vs. prior 15-min rate, in percentage points</div>
+          </div>
+        </div>
+        <svg class="chart" id="accelSvg" viewBox="0 0 900 300" preserveAspectRatio="none"></svg>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Momentum acceleration over time</div>
+            <div class="card-sub">Same measure as the bar chart above &middot; trailing 30 minutes &middot; 5-min buckets</div>
+          </div>
+          <div class="card-sub">Hover to inspect a moment</div>
+        </div>
+        <div class="chart-wrap" id="accelTimeWrap">
+          <svg class="chart" id="accelTimeSvg" viewBox="0 0 900 380" preserveAspectRatio="none"></svg>
+          <div class="tooltip" id="tooltipAccelTime"></div>
+        </div>
+        <div class="legend" id="legendAccelTime"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Volume traded</div>
+            <div class="card-sub">Last 30 minutes only · 5-min buckets vs. that symbol\'s own trailing 20-minute average (1.0x = normal pace)</div>
+          </div>
+          <div class="card-sub">Hover to inspect a moment</div>
+        </div>
+        <div class="chart-wrap" id="volumeWrap">
+          <svg class="chart" id="volumeSvg" viewBox="0 0 900 320" preserveAspectRatio="none"></svg>
+          <div class="tooltip" id="tooltipVolume"></div>
+        </div>
+        <div class="legend" id="legendVolume"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Rate of volume traded</div>
+            <div class="card-sub">How fast relative volume is ramping &middot; recent 15-min rate vs. the 15 min before it &middot; trailing 15 minutes</div>
+          </div>
+          <div class="card-sub">Hover to inspect a moment</div>
+        </div>
+        <div class="chart-wrap" id="volAccelWrap">
+          <svg class="chart" id="volAccelSvg" viewBox="0 0 900 320" preserveAspectRatio="none"></svg>
+          <div class="tooltip" id="tooltipVolAccel"></div>
+        </div>
+        <div class="legend" id="legendVolAccel"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Buy/Sell Volume</div>
+            <div class="card-sub">Tick rule classification &middot; last 30 minutes only &middot; green = buy volume (close > prior), red = sell volume (close < prior)</div>
+          </div>
+          <div class="card-sub">Hover to inspect a moment</div>
+        </div>
+        <div class="chart-wrap" id="buySellWrap">
+          <svg class="chart" id="buySellSvg" viewBox="0 0 900 320" preserveAspectRatio="none"></svg>
+          <div class="tooltip" id="tooltipBuySell"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Buy/Sell Volume (Semis Breakdown)</div>
+            <div class="card-sub">Tick rule classification by symbol &middot; last 30 minutes &middot; green = buy volume, red = sell volume</div>
+          </div>
+          <div class="card-sub">Hover to inspect</div>
+        </div>
+        <div class="chart-wrap" id="buySellBreakdownWrap">
+          <svg class="chart" id="buySellBreakdownSvg" viewBox="0 0 900 600" preserveAspectRatio="none"></svg>
+          <div class="tooltip" id="tooltipBuySellBreakdown"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Buy/Sell Ratio</div>
+            <div class="card-sub">Buy volume / (Buy + Sell) — values above 0.5 show net buying pressure &middot; trailing 30 minutes</div>
+          </div>
+          <div class="card-sub">Hover to inspect a moment</div>
+        </div>
+        <div class="chart-wrap" id="ratioWrap">
+          <svg class="chart" id="ratioSvg" viewBox="0 0 900 320" preserveAspectRatio="none"></svg>
+          <div class="tooltip" id="tooltipRatio"></div>
+        </div>
+        <div class="legend" id="legendRatio"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-hd">
+          <div class="card-title">Momentum acceleration</div>
+          <div class="card-sub">15-min rate now vs. prior 15-min rate &middot; sorted fastest-accelerating-up first</div>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th>Symbol</th><th>Last</th><th>Today</th><th>Accel (pp/15m)</th>
+            </tr></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <footer class="note">Momentum acceleration compares the most recent 15-minute % move to the 15 minutes before it &mdash; positive means the move is speeding up to the upside, negative means it's slowing or reversing. This reflects short-term price action only; it is not a trade recommendation.</footer>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+// Universe is exactly the eight semis CLAUDE.md documents. "SPCX" and "NVIDIA"
+// were removed 2026-09-22 after checking them against the API: NVIDIA is not a
+// ticker and is silently dropped (10 symbols requested, 9 returned), while SPCX
+// resolves to a live NON-semiconductor instrument. Both were entering every
+// basket-level card -- breadth, Efficiency Ratio, regime -- and the v3 signals
+// themselves, since V3_SYMBOLS = SYMBOLS.
+const SYMBOLS = ["AMD","MU","WDC","SNDK","TSM","INTC","LRCX","STX"];
+// Benchmark only: fetched, never traded, never included in basket math.
+const BENCH_SYM = "SPY";
+const FETCH_SYMBOLS = [...SYMBOLS, BENCH_SYM];
+const SLOT = { AMD:1, MU:2, WDC:3, SNDK:4, TSM:5, INTC:6, LRCX:7, STX:8 };
+const root = document.querySelector('.viz-root');
+const cssColor = (sym) => getComputedStyle(root).getPropertyValue('--s' + SLOT[sym]).trim();
+const goodColor = () => getComputedStyle(root).getPropertyValue('--good').trim();
+const criticalColor = () => getComputedStyle(root).getPropertyValue('--critical').trim();
+const mutedColor = () => getComputedStyle(root).getPropertyValue('--muted').trim();
+
+const state = {
+  quotes: {},      // sym -> { last, prevClose, ts }
+  bars: {},        // sym -> [{t, close}]
+  quotesTs: null,
+  barsTs: null,
+  hoverSym: null,
+};
+
+const $ = (id) => document.getElementById(id);
+const fmtPct = (v) => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+const fmtPP = (v) => (v >= 0 ? '+' : '') + v.toFixed(2);
+const fmtMoney = (v) => v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtTime = (ms) => new Date(ms).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+
+function relTime(ms) {
+  const s = Math.max(0, Math.round((Date.now() - ms) / 1000));
+  if (s < 5) return 'just now';
+  if (s < 60) return s + 's ago';
+  const m = Math.round(s / 60);
+  return m + 'm ago';
+}
+
+function setConn(kind, text) {
+  $('connDot').className = 'dot ' + kind;
+  $('connText').textContent = text;
+}
+
+function showEmpty(html) {
+  $('emptyState').style.display = 'block';
+  $('emptyState').innerHTML = html;
+  $('mainContent').style.display = 'none';
+}
+
+function showBanner(html) {
+  const b = $('errBanner');
+  b.innerHTML = html;
+  b.classList.add('show');
+}
+function hideBanner() { $('errBanner').classList.remove('show'); }
+
+// ---------- acceleration math ----------
+function computeAccelFromValues(points) {
+  // points: ascending [{t, v}] of ANY metric (price %, relative volume, ...).
+  // At each point i, compares the most recent 15-min % move in v to the 15
+  // min before it, by walking back to the nearest point at/before each
+  // 15-min and 30-min mark (time-based, not a fixed point count) so this
+  // works at any sampling interval. (Session history: 15/30 -> 5/10 -> 10/20
+  // -> reverted back to the original 15/30 per explicit user request - the
+  // 5-min-leg version was too choppy/noisy, and 10/20 was a compromise that
+  // has now been reverted too.)
+  if (!points || points.length < 2) return [];
+  const FIFTEEN = 15 * 60 * 1000, THIRTY = 30 * 60 * 1000;
+  const out = [];
+  for (let i = 0; i < points.length; i++) {
+    const tNow = points[i].t;
+    let midIdx = -1, earlyIdx = -1;
+    for (let j = i; j >= 0; j--) {
+      if (midIdx === -1 && tNow - points[j].t >= FIFTEEN) midIdx = j;
+      if (midIdx !== -1 && tNow - points[j].t >= THIRTY) { earlyIdx = j; break; }
+    }
+    if (midIdx === -1 || earlyIdx === -1) continue;
+    const last = points[i].v, mid = points[midIdx].v, early = points[earlyIdx].v;
+    if (!(early > 0) || !(mid > 0)) continue; // guard against zero/negative bases (e.g. no volume yet)
+    const rPrior = (mid - early) / early * 100;
+    const rRecent = (last - mid) / mid * 100;
+    out.push({ t: tNow, v: rRecent - rPrior });
+  }
+  return out;
+}
+function computeAccelSeries(barArr) {
+  if (!barArr || !barArr.length) return [];
+  return computeAccelFromValues(barArr.map(b => ({ t: b.t, v: b.close })));
+}
+function computeAccel(barArr) {
+  const s = computeAccelSeries(barArr);
+  return s.length ? s[s.length - 1].v : null;
+}
+
+// ---------- volume math ----------
+const VOL_AVG_WINDOW = 20; // trailing bars for the "normal" volume baseline
+function computeRelVolumeSeries(barArr, windowSize) {
+  // barArr: ascending [{t, volume}]. Each point = this bar's volume divided
+  // by the trailing `windowSize` bars' average volume (excluding itself) -
+  // "1.0x" means trading at its own recent normal pace, "2.5x" means volume
+  // is running two and a half times heavier than that recent normal.
+  windowSize = windowSize || VOL_AVG_WINDOW;
+  if (!barArr || barArr.length <= windowSize) return [];
+  const out = [];
+  for (let i = windowSize; i < barArr.length; i++) {
+    let sum = 0;
+    for (let j = i - windowSize; j < i; j++) sum += barArr[j].volume;
+    const avg = sum / windowSize;
+    if (avg <= 0) continue;
+    out.push({ t: barArr[i].t, v: barArr[i].volume / avg });
+  }
+  return out;
+}
+
+function aggregateVolumeBuckets(barArr, bucketMs) {
+  // Sums volume into fixed-width, wall-clock-aligned buckets (e.g. 15 min)
+  // so the "Volume traded" chart reads as a trend, not 1-min noise.
+  if (!barArr || !barArr.length) return [];
+  const buckets = new Map();
+  for (const b of barArr) {
+    const bucketT = Math.floor(b.t / bucketMs) * bucketMs;
+    buckets.set(bucketT, (buckets.get(bucketT) || 0) + b.volume);
+  }
+  return Array.from(buckets.entries()).sort((a, b) => a[0] - b[0]).map(([t, volume]) => ({ t, volume }));
+}
+
+const VOL_BUCKET_MS = 5 * 60 * 1000;
+const VOL_BUCKET_AVG_WINDOW = 4; // trailing 4 x 5-min buckets = 20 minutes, for the "normal" baseline
+                                  // (was 8/2hr - too slow to populate early in the session; halved
+                                  // so it starts showing data ~1hr after open instead of ~2hr)
+function computeRelVolumeSeriesBucketed(barArr) {
+  const buckets = aggregateVolumeBuckets(barArr, VOL_BUCKET_MS);
+  return computeRelVolumeSeries(buckets, VOL_BUCKET_AVG_WINDOW); // same ratio logic, coarser input
+}
+
+// ---------- Exit Confidence: "how stretched is this move, right now" ----------
+// Answers "when do I sell during an upward move" with a continuous 0-100
+// score instead of the binary exhaustion-exit trigger below (which only
+// fires AFTER RSI has already rolled over or MACD has already flipped -
+// by design a confirmation, not a warning). Backtested on 5 real trading
+// days of 1-min bars across this basket (2026-08-28 to 2026-09-03),
+// restricted to bars where price > VWAP and RSI(14) >= 55 ("in an upward
+// move"), against subsequent 10/20-min forward returns. Five candidate
+// leading-exhaustion signals were tested individually first: RSI level,
+// MACD-histogram deceleration, and price-momentum deceleration were all
+// near-zero correlation with what happens next (|r| < 0.05 - noise, despite
+// being the textbook picks). Two were real: how far price has stretched
+// above VWAP relative to today's own range, and a volume-climax ratio
+// (current bar vs. trailing-20-bar average volume) - both around -0.08 to
+// -0.19 individually. This score combines only those two.
+// Walk-forward check (3 train days / 2 held-out test days, params fixed
+// before looking at test): TRAIN corr -0.15 to -0.17, TEST corr -0.26 to
+// -0.31 with a cleaner monotonic bucket gradient than train (bottom
+// quartile ~45-50% negative next 10-20min, top quartile ~70-80% negative) -
+// reassuring since it got STRONGER out of sample rather than decaying, but
+// this is still only 2 held-out days on one regime, not a real walk-forward
+// history. Treat this as a directional profit-taking-risk gauge to size
+// trims by, not a hard sell signal - the exhaustion exit still owns the
+// actual paper-trading logic below.
+const EXIT_CONF_VOL_WINDOW = 20;
+function exitConfidenceForSymbol(sym) {
+  const bars = state.bars[sym];
+  if (!bars || bars.length < EXIT_CONF_VOL_WINDOW + 5) return { score: null, reason: 'Warming up' };
+  const closes = bars.map(b => b.close);
+  const vw = dayAnchoredVwapSeries(bars);
+  const i = bars.length - 1;
+  const price = closes[i];
+  if (vw[i] === null) return { score: null, reason: 'Warming up' };
+  if (price <= vw[i]) return { score: null, reason: 'Not above VWAP' };
+
+  const todayDate = new Date(bars[i].t).toISOString().slice(0, 10);
+  let todayStart = i;
+  while (todayStart > 0 && new Date(bars[todayStart - 1].t).toISOString().slice(0, 10) === todayDate) todayStart--;
+  const todayCloses = closes.slice(todayStart, i + 1);
+  const todayRange = todayCloses.length > 3 ? Math.max(...todayCloses) - Math.min(...todayCloses) : price * 0.01;
+  const vwapExt = (price - vw[i]) / (todayRange > 0 ? todayRange : price * 0.01);
+
+  const lo = Math.max(0, i - EXIT_CONF_VOL_WINDOW);
+  const base = bars.slice(lo, i);
+  const avgVol = base.length >= 5 ? base.reduce((s, b) => s + b.volume, 0) / base.length : null;
+  const relVol = avgVol && avgVol > 0 ? bars[i].volume / avgVol : 1.0;
+
+  const sExt = Math.max(0, Math.min(100, vwapExt * 100));
+  const sVol = Math.max(0, Math.min(100, (relVol - 1.0) / 2.0 * 100));
+  const score = 0.45 * sExt + 0.55 * sVol;
+  return { score, vwapExt, relVol };
+}
+function exitConfidenceTier(score) {
+  // Bucket cutoffs are the observed quartile boundaries from the backtest
+  // above, not an arbitrary even split - the score's real distribution is
+  // right-skewed, so an even 0/25/50/75 split would rarely show anything
+  // above "low" in practice.
+  if (score === null) return { label: '&mdash;', cls: 'flat' };
+  if (score < 10) return { label: 'Low', cls: 'flat' };
+  if (score < 20) return { label: 'Elevated', cls: 'warn' };
+  if (score < 30) return { label: 'High', cls: 'warn' };
+  return { label: 'Very high', cls: 'down' };
+}
+function renderExitConfidence() {
+  const rows = V3_SYMBOLS.map(sym => {
+    const r = exitConfidenceForSymbol(sym);
+    const tier = exitConfidenceTier(r.score);
+    return { sym, ...r, tier };
+  });
+  $('exitConfBody').innerHTML = rows.map(r => {
+    const scoreCell = r.score === null
+      ? `<span style="color:var(--muted)">${r.reason || '&mdash;'}</span>`
+      : `<span class="num" style="font-weight:700">${r.score.toFixed(1)}</span>`;
+    const detail = r.score === null ? '&mdash;'
+      : `VWAP ext ${(r.vwapExt * 100).toFixed(0)}% of today's range &middot; volume ${r.relVol.toFixed(2)}x recent avg`;
+    return `<tr>
+      <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(r.sym)}"></span>${r.sym}</span></td>
+      <td class="num">${scoreCell}</td>
+      <td style="text-align:left"><span class="badge ${r.tier.cls}">${r.tier.label}</span></td>
+      <td style="text-align:left; color:var(--text-secondary); font-size:12px">${detail}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ---------- v3 (tightened) OPTIMIZED signal engine ----------
+// Grid-searched parameters (entry_rsi=55, add_gain=0.003, cooldown_min=1,
+// exhaustion_peak_rsi=70, trim_pct=0.7). A 2-day fit initially looked
+// overfit vs. baseline on a narrow 5-day out-of-sample check, but a fuller
+// 22-day (full-month) day-by-day comparison showed this config actually
+// beats baseline overall (+11.54% vs +8.86%), including with the original
+// derivation day excluded - so this is the config currently favored by the
+// broader evidence, not just the two days it was searched on. Still a
+// higher-beta config than baseline (bigger wins on SNDK up-days, bigger
+// losses on down/flat days) - re-verify against baseline if live behavior
+// diverges from this month's pattern. Informational/paper signals only -
+// this page never places real orders.
+const V3_SYMBOLS = SYMBOLS; // all 8 semis, not just the original WDC/MU/SNDK derivation set
+const V3 = { ENTRY_RSI: 55, MAX_TRANCHES: 3, ADD_GAIN: 0.003, COOLDOWN_MIN: 1,
+             MAX_ENTRY_CYCLES: 2, EXHAUSTION_PEAK_RSI: 70, TRIM_PCT: 0.7, EOD_HHMM: "19:30" };
+// v3 Baseline (production version, pre-grid-search tightening): the original
+// validated setup before the 22-day full-month optimization. Less aggressive
+// than v3 tightened (0.6% add-gate vs 0.3%, 2-min cooldown vs 1-min, 65/90%
+// exhaustion vs 70/70%) but historically more consistent on mixed-sentiment days.
+const V3_BASELINE = { ENTRY_RSI: 55, MAX_TRANCHES: 3, ADD_GAIN: 0.006, COOLDOWN_MIN: 2,
+                      MAX_ENTRY_CYCLES: 2, EXHAUSTION_PEAK_RSI: 65, TRIM_PCT: 0.9, EOD_HHMM: "19:30" };
+// Paper P&L sizing - a simulated $30,000 split evenly across the 8-symbol
+// universe, each symbol split into up to 3 tranches - mirrors the Python
+// backtest harness's run_v3_family convention. Resets to fresh state every
+// page load/render since it only replays whatever's in the fetched trailing
+// window (no persistence across days) - this is today's live paper P&L,
+// not a running ledger across sessions.
+const SIGNAL_CAPITAL = 30000;
+const SIGNAL_PER_SYMBOL_SLICE = SIGNAL_CAPITAL / V3_SYMBOLS.length;
+const SIGNAL_TRANCHE_SIZE = SIGNAL_PER_SYMBOL_SLICE / V3.MAX_TRANCHES;
+
+function rsiSeries(closes, period = 14) {
+  const out = new Array(closes.length).fill(null);
+  let avgGain = null, avgLoss = null;
+  const gains = [], losses = [];
+  for (let i = 1; i < closes.length; i++) {
+    const chg = closes[i] - closes[i - 1];
+    gains.push(Math.max(chg, 0)); losses.push(Math.max(-chg, 0));
+    if (i >= period) {
+      if (i === period) {
+        avgGain = gains.slice(0, period).reduce((a, b) => a + b, 0) / period;
+        avgLoss = losses.slice(0, period).reduce((a, b) => a + b, 0) / period;
+      } else {
+        avgGain = (avgGain * (period - 1) + gains[gains.length - 1]) / period;
+        avgLoss = (avgLoss * (period - 1) + losses[losses.length - 1]) / period;
+      }
+      const rs = avgLoss > 0 ? avgGain / avgLoss : Infinity;
+      out[i] = avgLoss > 0 ? 100 - 100 / (1 + rs) : 100.0;
+    }
+  }
+  return out;
+}
+function emaSeries(vals, period) {
+  const out = new Array(vals.length).fill(null);
+  const k = 2 / (period + 1);
+  let e = null;
+  for (let i = 0; i < vals.length; i++) {
+    if (vals[i] === null || vals[i] === undefined) continue;
+    e = e === null ? vals[i] : vals[i] * k + e * (1 - k);
+    out[i] = e;
+  }
+  return out;
+}
+function macdHistSeries(closes, fast = 12, slow = 26, signal = 9) {
+  const ef = emaSeries(closes, fast), es = emaSeries(closes, slow);
+  const macdLine = closes.map((_, i) => (ef[i] === null || es[i] === null) ? null : ef[i] - es[i]);
+  const sig = emaSeries(macdLine, signal);
+  return closes.map((_, i) => (macdLine[i] === null || sig[i] === null) ? null : macdLine[i] - sig[i]);
+}
+function dayAnchoredVwapSeries(bars) {
+  const out = new Array(bars.length).fill(null);
+  let cumPV = 0, cumV = 0, curDate = null;
+  for (let i = 0; i < bars.length; i++) {
+    const date = new Date(bars[i].t).toISOString().slice(0, 10);
+    if (date !== curDate) { curDate = date; cumPV = 0; cumV = 0; }
+    const tp = (bars[i].high + bars[i].low + bars[i].close) / 3;
+    cumPV += tp * bars[i].volume; cumV += bars[i].volume;
+    out[i] = cumV > 0 ? cumPV / cumV : null;
+  }
+  return out;
+}
+
+// ---------- Efficiency Ratio: "is there an edge to trade today" ----------
+// Kaufman's Efficiency Ratio = net move / sum of bar-to-bar absolute moves,
+// over today's first N minutes since the open. Near 1 = price moved cleanly
+// in one direction (worth trading); near 0 = it whipsawed back and forth
+// covering distance but going nowhere (day-trading strategies bleed on this).
+// Backtested against 22 days of real 1-min data + v3-optimized's actual
+// daily P&L: high-ER mornings won 6-7/11 days vs 2-3/11 for low-ER mornings,
+// but the correlation (+0.13 to +0.23 depending on window) is not strong
+// enough with this little history to be a hard rule - treat it as a sizing
+// dial, not an on/off switch. Historical median basket ER (30-min window)
+// was ~0.24; the best day in that sample (Aug 13, +$2,095) had ER 0.40.
+const ER_WINDOWS = [15, 30, 45, 60];
+function efficiencyRatio(bars, nMinutes) {
+  if (!bars || !bars.length) return null;
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayBars = bars.filter(b => new Date(b.t).toISOString().slice(0, 10) === todayStr);
+  if (todayBars.length < 5) return null;
+  const windowBars = todayBars.slice(0, nMinutes);
+  if (windowBars.length < Math.min(5, nMinutes)) return null;
+  const closes = windowBars.map(b => b.close);
+  const net = Math.abs(closes[closes.length - 1] - closes[0]);
+  let path = 0;
+  for (let i = 1; i < closes.length; i++) path += Math.abs(closes[i] - closes[i - 1]);
+  return { er: path > 0 ? net / path : 0, complete: todayBars.length >= nMinutes };
+}
+function erStatus(basketEr) {
+  if (basketEr === null) return { label: 'Warming up', cls: 'flat' };
+  if (basketEr >= 0.30) return { label: 'Trending — likely edge today', cls: 'up' };
+  if (basketEr >= 0.18) return { label: 'Mixed — uncertain edge', cls: 'warn' };
+  return { label: 'Choppy — thin edge, trade smaller', cls: 'down' };
+}
+function renderEfficiencyRatio() {
+  const rows = SYMBOLS.map(sym => {
+    const bars = state.bars[sym];
+    const byWindow = ER_WINDOWS.map(w => efficiencyRatio(bars, w));
+    return { sym, byWindow };
+  });
+  $('erBody').innerHTML = rows.map(r => {
+    const cells = r.byWindow.map(res => {
+      if (res === null) return '<td class="num">&mdash;</td>';
+      const partial = !res.complete ? ' <span style="color:var(--muted)">(so far)</span>' : '';
+      return `<td class="num">${res.er.toFixed(3)}${partial}</td>`;
+    }).join('');
+    return `<tr>
+      <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(r.sym)}"></span>${r.sym}</span></td>
+      ${cells}
+    </tr>`;
+  }).join('');
+
+  // basket summary uses the widest complete window available (60 -> 45 -> 30 -> 15)
+  let summaryWindow = null, basketEr = null;
+  for (let wi = ER_WINDOWS.length - 1; wi >= 0; wi--) {
+    const vals = rows.map(r => r.byWindow[wi]).filter(v => v !== null && v.complete).map(v => v.er);
+    if (vals.length >= Math.ceil(SYMBOLS.length / 2)) {
+      summaryWindow = ER_WINDOWS[wi];
+      basketEr = vals.reduce((a, b) => a + b, 0) / vals.length;
+      break;
+    }
+  }
+  const status = erStatus(basketEr);
+  $('erSummary').innerHTML = basketEr === null
+    ? `<span class="badge flat">Warming up</span> <span style="color:var(--muted); font-size:12.5px">need at least 15 minutes since today's open across half the basket</span>`
+    : `<span class="badge ${status.cls}" style="font-size:13px">${status.label}</span> <span class="num" style="margin-left:8px">basket avg ER ${basketEr.toFixed(3)}</span> <span style="color:var(--muted); font-size:12.5px; margin-left:6px">(first ${summaryWindow} min, historical median ~0.24)</span>`;
+}
+
+// ---------- Signed Efficiency Ratio: the Trend-Gated Trail (TGT) gate ----------
+// Same net-move / total-distance-traveled ratio as efficiencyRatio() above,
+// but the numerator keeps its sign instead of taking Math.abs() - this is
+// the fix for the plain Efficiency Ratio's core flaw (it can't tell a
+// cleanly-up morning from a cleanly-down one, and backtesting showed it was
+// only 42% accurate predicting the day's direction, worse than a coin
+// flip). Checked once per symbol per day, at the TGT_GATE_WINDOW_MIN mark:
+// if signed ER >= TGT_GATE_THRESHOLD (0 - i.e. net up, however choppy),
+// that symbol is "open" for TGT entries for the rest of the day.
+function signedEfficiencyRatio(bars, nMinutes) {
+  if (!bars || !bars.length) return null;
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayBars = bars.filter(b => new Date(b.t).toISOString().slice(0, 10) === todayStr);
+  if (todayBars.length < 5) return null;
+  const windowBars = todayBars.slice(0, nMinutes);
+  if (windowBars.length < Math.min(5, nMinutes)) return null;
+  const closes = windowBars.map(b => b.close);
+  const net = closes[closes.length - 1] - closes[0];
+  let path = 0;
+  for (let i = 1; i < closes.length; i++) path += Math.abs(closes[i] - closes[i - 1]);
+  return { ser: path > 0 ? net / path : 0, complete: todayBars.length >= nMinutes };
+}
+function renderSignedEfficiencyRatio() {
+  const rows = TGT_SYMBOLS.map(sym => {
+    const bars = state.bars[sym];
+    const byWindow = ER_WINDOWS.map(w => signedEfficiencyRatio(bars, w));
+    return { sym, byWindow };
+  });
+  const gateWindowIdx = ER_WINDOWS.indexOf(TGT_GATE_WINDOW_MIN);
+  $('serBody').innerHTML = rows.map(r => {
+    const cells = r.byWindow.map((res, wi) => {
+      if (res === null) return '<td class="num">&mdash;</td>';
+      const partial = !res.complete ? ' <span style="color:var(--muted)">(so far)</span>' : '';
+      const isGateCol = wi === gateWindowIdx;
+      const cls = isGateCol ? (res.ser >= TGT_GATE_THRESHOLD ? 'up' : 'down') : '';
+      return `<td class="num ${cls}" style="${isGateCol ? 'font-weight:700' : ''}">${res.ser >= 0 ? '+' : ''}${res.ser.toFixed(3)}${partial}</td>`;
+    }).join('');
+    return `<tr>
+      <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(r.sym)}"></span>${r.sym}</span></td>
+      ${cells}
+    </tr>`;
+  }).join('');
+
+  const gate30 = rows.map(r => r.byWindow[gateWindowIdx]).filter(v => v !== null && v.complete);
+  const openCount = gate30.filter(v => v.ser >= TGT_GATE_THRESHOLD).length;
+  $('serSummary').innerHTML = gate30.length === 0
+    ? `<span class="badge flat">Warming up</span> <span style="color:var(--muted); font-size:12.5px">need ${TGT_GATE_WINDOW_MIN}+ minutes since today's open</span>`
+    : `<span class="num" style="font-weight:700">${openCount}/${gate30.length}</span> <span style="color:var(--muted); font-size:12.5px; margin-left:6px">TGT symbols currently gate-OPEN (signed ER &ge; ${TGT_GATE_THRESHOLD} over the first ${TGT_GATE_WINDOW_MIN}m)</span>`;
+}
+
+// ---------- Basket Breadth Gate (experimental, not yet validated) ----------
+// % of the 8 semis whose own return-from-open agrees with the basket's own
+// net direction so far, averaged over every elapsed minute since open -
+// same definition used in the Aug 2026 backtest. That backtest evaluated
+// each day's FULL-SESSION average with hindsight; this live version can
+// only average over elapsed minutes so far, so an early-morning reading is
+// noisier and may not match what the same day's number will read at 4pm.
+const BREADTH_GATE_THRESHOLD = 70;
+const BREADTH_GATE_MIN_BARS = 15; // don't trust the running average before this
+const BREADTH_GATE_LS_KEY = 'semisMomentum_breadthGateEnabled';
+function loadBreadthGateEnabled() {
+  try { return localStorage.getItem(BREADTH_GATE_LS_KEY) === '1'; } catch { return false; }
+}
+function saveBreadthGateEnabled(on) {
+  try { localStorage.setItem(BREADTH_GATE_LS_KEY, on ? '1' : '0'); } catch {}
+}
+function computeLiveBreadth() {
+  const syms = V3_SYMBOLS;
+  let n = Infinity;
+  const series = {};
+  for (const sym of syms) {
+    const bars = state.bars[sym];
+    if (!bars || bars.length < 2) return null;
+    series[sym] = bars;
+    n = Math.min(n, bars.length);
+  }
+  if (!isFinite(n) || n < BREADTH_GATE_MIN_BARS) return null;
+  const retFromOpen = (sym, i) => series[sym][i].close / series[sym][0].close - 1;
+  let basketNow = 0;
+  for (const sym of syms) basketNow += retFromOpen(sym, n - 1);
+  basketNow /= syms.length;
+  const dayDir = basketNow >= 0 ? 1 : -1;
+  let agreeSum = 0;
+  for (let i = 1; i < n; i++) {
+    let agree = 0;
+    for (const sym of syms) { if ((retFromOpen(sym, i) >= 0) === (dayDir > 0)) agree++; }
+    agreeSum += agree / syms.length;
+  }
+  return 100 * agreeSum / (n - 1);
+}
+function renderBreadthGateCard() {
+  const toggle = $('breadthGateToggle');
+  if (!toggle.dataset.wired) {
+    toggle.checked = loadBreadthGateEnabled();
+    toggle.addEventListener('change', () => { saveBreadthGateEnabled(toggle.checked); renderAll(); });
+    toggle.dataset.wired = '1';
+  }
+  const breadth = computeLiveBreadth();
+  const statusEl = $('breadthGateStatus');
+  if (!toggle.checked) {
+    statusEl.innerHTML = breadth === null
+      ? `<span class="badge flat">Off</span> <span style="color:var(--muted); font-size:12.5px">warming up (need ${BREADTH_GATE_MIN_BARS}+ min since open)</span>`
+      : `<span class="badge flat">Off</span> <span class="num" style="margin-left:6px">current breadth ${breadth.toFixed(0)}%</span>`;
+    return { blocked: false, breadth };
+  }
+  if (breadth === null) {
+    statusEl.innerHTML = `<span class="badge flat">Warming up</span> <span style="color:var(--muted); font-size:12.5px">need ${BREADTH_GATE_MIN_BARS}+ minutes since open before the gate can arm &mdash; trading allowed until then</span>`;
+    return { blocked: false, breadth: null };
+  }
+  const blocked = breadth < BREADTH_GATE_THRESHOLD;
+  statusEl.innerHTML = blocked
+    ? `<span class="badge down">Gate ACTIVE</span> <span class="num" style="margin-left:6px">breadth ${breadth.toFixed(0)}% &lt; ${BREADTH_GATE_THRESHOLD}%</span> <span style="color:var(--muted); font-size:12.5px; margin-left:6px">no new entries/adds today (open positions still exit normally)</span>`
+    : `<span class="badge up">Armed &mdash; trading</span> <span class="num" style="margin-left:6px">breadth ${breadth.toFixed(0)}% &ge; ${BREADTH_GATE_THRESHOLD}%</span>`;
+  return { blocked, breadth };
+}
+
+// ---------- Good-Day Indicator: breadth + direction (experimental, thin sample) ----------
+// SNDK/WDC/MU/TSM only - the exact 4-symbol universe this was backtested on. Unlike
+// computeLiveBreadth() above (which is a continuously-updating running average over
+// all elapsed bars, gating live v3 entries), this signal is DECIDED ONCE, frozen at
+// the GOOD_DAY_WINDOW_MIN mark, exactly matching the backtested methodology: breadth
+// (running agreement average over the first 30 minutes) >= 70% AND the basket's own
+// average return-from-open at minute 30 is positive. Backtested on two disjoint real
+// windows (Aug4-Sep4 1-min bars where it was developed, and Jul6-Aug3 5-min bars it
+// never touched during development) - held up on both (82% and 86% hit-rate
+// respectively) but 45 total days is still a thin sample. Informational only.
+const GOOD_DAY_SYMBOLS = ["SNDK", "WDC", "MU", "TSM"]; // same universe as TGT_SYMBOLS below
+const GOOD_DAY_WINDOW_MIN = 30;
+const GOOD_DAY_BREADTH_THRESHOLD = 70;
+function computeGoodDaySignal() {
+  const syms = GOOD_DAY_SYMBOLS;
+  const n = GOOD_DAY_WINDOW_MIN;
+  const series = {};
+  for (const sym of syms) {
+    const bars = state.bars[sym];
+    if (!bars || bars.length < n) return null;
+    series[sym] = bars;
+  }
+  const retFromOpen = (sym, i) => series[sym][i].close / series[sym][0].close - 1;
+  const basketNow = syms.reduce((s, sym) => s + retFromOpen(sym, n - 1), 0) / syms.length;
+  const dayDir = basketNow >= 0 ? 1 : -1;
+  let agreeSum = 0;
+  for (let i = 1; i < n; i++) {
+    let agree = 0;
+    for (const sym of syms) { if ((retFromOpen(sym, i) >= 0) === (dayDir > 0)) agree++; }
+    agreeSum += agree / syms.length;
+  }
+  const breadth = 100 * agreeSum / (n - 1);
+  return { breadth, dayDir, good: breadth >= GOOD_DAY_BREADTH_THRESHOLD && dayDir > 0 };
+}
+function renderGoodDaySignal() {
+  const sig = computeGoodDaySignal();
+  const el = $('goodDayStatus');
+  if (!sig) {
+    el.innerHTML = `<span class="badge flat">Warming up</span> <span style="color:var(--muted); font-size:12.5px">need ${GOOD_DAY_WINDOW_MIN}+ minutes since today's open across SNDK/WDC/MU/TSM &mdash; decided once, at that mark</span>`;
+    return;
+  }
+  el.innerHTML = sig.good
+    ? `<span class="badge up">GOOD DAY</span> <span class="num" style="margin-left:6px">breadth ${sig.breadth.toFixed(0)}% &ge; ${GOOD_DAY_BREADTH_THRESHOLD}%, basket up at the ${GOOD_DAY_WINDOW_MIN}-min mark</span> <span style="color:var(--muted); font-size:12.5px; margin-left:6px">informational only &mdash; not proven enough to act on</span>`
+    : `<span class="badge down">Not flagged</span> <span class="num" style="margin-left:6px">breadth ${sig.breadth.toFixed(0)}%, basket ${sig.dayDir > 0 ? 'up' : 'down'} at the ${GOOD_DAY_WINDOW_MIN}-min mark</span>`;
+}
+
+// Entry-filter settings for the v3 signal cards. costBps is PER SIDE and defaults
+// to 2.5, the mean top-of-book half-spread measured across WDC/MU/SNDK on
+// 2026-09-22 (WDC 3.24, MU 1.39, SNDK 2.80). Single snapshot, not a distribution,
+// and spreads widen at the open -- which is when v3 trades -- so treat it as a
+// floor. v3 breaks even near 5.7 bps/side ungated, so this is not a rounding error:
+// it is roughly 44% of the gross edge.
+const V3_SETTINGS = { rsRequired: true, costBps: 2.5 };
+
+let _benchCache = { key: null, map: null };
+function benchReturnByT() {
+  const bb = state.bars[BENCH_SYM];
+  if (!bb || !bb.length) return null;
+  const key = bb.length + ':' + bb[bb.length - 1].t;
+  if (_benchCache.key === key) return _benchCache.map;
+  const m = new Map();
+  let base = null, curDate = null, last = 0;
+  for (const b of bb) {
+    const d = b.t.slice(0, 10);
+    if (d !== curDate) { curDate = d; base = b.close; last = 0; }
+    if (base) last = b.close / base - 1;
+    m.set(b.t, last);
+  }
+  _benchCache = { key, map: m };
+  return m;
+}
+function renderV3FilterBar() {
+  const note = $('v3FilterNote'), strip = $('v3RsStrip');
+  if (note) {
+    note.innerHTML = V3_SETTINGS.rsRequired
+      ? 'MEASURED: RS&gt;0 vs SPY took v3 from +3.08% to +4.98% at zero cost, and from '
+        + '&minus;2.32% to +1.12% at 10bps/side, over 30 days &mdash; positive in both halves. '
+        + 'One regime; direction, not decimals.'
+      : 'Filter off &mdash; showing raw v3 signals. Ungated, v3 breaks even near 5.7 bps/side.';
+  }
+  if (!strip) return;
+  const br = benchReturnByT();
+  if (!br) { strip.innerHTML = '<span style="font-size:12px;opacity:.6">Waiting for SPY bars&hellip;</span>'; return; }
+  strip.innerHTML = SYMBOLS.map(sym => {
+    const bars = state.bars[sym];
+    if (!bars || !bars.length) return '';
+    const last = bars[bars.length - 1];
+    const d = last.t.slice(0, 10);
+    let base = null;
+    for (let i = bars.length - 1; i >= 0; i--) { if (bars[i].t.slice(0, 10) === d) base = bars[i].close; else break; }
+    const b = br.get(last.t);
+    if (base === null || b === undefined) return '';
+    const rs = (last.close / base - 1) - b;
+    const ok = rs > 0;
+    const col = ok ? 'var(--good, #16a34a)' : 'var(--bad, #dc2626)';
+    return `<span title="${sym} since open vs SPY since open" style="font-size:12px;border:1px solid var(--line);`
+      + `border-left:3px solid ${col};border-radius:4px;padding:2px 8px;${ok ? '' : 'opacity:.55;'}">`
+      + `<strong>${sym}</strong> ${(rs * 100 >= 0 ? '+' : '')}${(rs * 100).toFixed(2)}%`
+      + `${V3_SETTINGS.rsRequired && !ok ? ' &middot; blocked' : ''}</span>`;
+  }).join('');
+}
+
+function v3Opts() {
+  return { benchRet: benchReturnByT(), rsRequired: V3_SETTINGS.rsRequired,
+           costBps: V3_SETTINGS.costBps };
+}
+
+function runV3SignalReplay(bars, gateBlockedDate, config = V3, opts = {}) {
+  // Full in-memory replay of state.bars[sym] (the fetched trailing window)
+  // through v3 rules (baseline or tightened), from scratch every call - same
+  // deterministic-recompute pattern as the rest of this page's charts.
+  // config: parameter set (V3 for tightened, V3_BASELINE for production)
+  // gateBlockedDate (optional, 'YYYY-MM-DD'): when the experimental Basket
+  // Breadth Gate is armed and has tripped for that date, no NEW entries or
+  // adds fire on it - existing positions still exit normally (exhaustion /
+  // EOD-close untouched). Only ever set for today, never past days.
+  if (!bars || bars.length < 2) return { events: [], pos: null, latest: null, realizedPnl: 0, unrealizedPnl: 0 };
+  // --- relative strength vs benchmark, and execution cost ---
+  // MEASURED 2026-09-22, 30 trading days of real 1-minute bars, replaying the real
+  // engine (scripts/v3_replay.py --rs-sweep). Requiring RS > 0 vs SPY moved v3 from
+  // +3.08% to +4.98% at zero cost, and from -2.32% to +1.12% at 10bps/side. It was
+  // positive in BOTH half-windows and beat no-filter in both. A sector benchmark
+  // (SMH) did worse; "SMH up on day" won the first half then lost the second, so it
+  // failed walk-forward. Raising the threshold above 0 also did worse -- the untuned
+  // rule is what ships. Caveat: one 6-week regime, and that replay ran the engine's
+  // own WDC/MU/SNDK universe, not all eight.
+  // RS reads only bars at or before the current bar, so it is decidable when acted on.
+  const COST_C = (opts.costBps ?? 0) / 10000;
+  const benchRet = opts.benchRet || null;
+  const rsRequired = !!opts.rsRequired;
+  const closes = bars.map(b => b.close);
+  const dayOpen = [];
+  { let cd = null, base = null;
+    for (let i = 0; i < bars.length; i++) {
+      const d = bars[i].t.slice(0, 10);
+      if (d !== cd) { cd = d; base = bars[i].close; }
+      dayOpen[i] = base;
+    } }
+  const rsAt = (gi) => {
+    if (!benchRet || !dayOpen[gi]) return null;
+    const br = benchRet.get(bars[gi].t);
+    if (br === undefined) return null;
+    return (closes[gi] / dayOpen[gi] - 1) - br;
+  };
+  const r = rsiSeries(closes), h = macdHistSeries(closes), vw = dayAnchoredVwapSeries(bars);
+  let pos = null;
+  const entryCycles = {}; // date -> count
+  const events = [];
+  let realizedPnl = 0;
+
+  for (let gi = 1; gi < bars.length; gi++) {
+    const bar = bars[gi];
+    const date = new Date(bar.t).toISOString().slice(0, 10);
+    const hhmm = new Date(bar.t).toISOString().slice(11, 16);
+    const isEod = hhmm >= config.EOD_HHMM;
+    const price = bar.close;
+
+    if (pos) {
+      pos.sinceEntryHigh = Math.max(pos.sinceEntryHigh, price);
+      if (r[gi] !== null) pos.entryPeakRsi = Math.max(pos.entryPeakRsi, r[gi]);
+      const cooling = pos.lastActionT !== null && (bar.t - pos.lastActionT) < config.COOLDOWN_MIN * 60000;
+
+      let exhaustion = null;
+      if (!cooling && pos.entryPeakRsi >= config.EXHAUSTION_PEAK_RSI) {
+        if (r[gi] !== null && r[gi - 1] !== null && r[gi - 1] >= 60 && r[gi] < 60) exhaustion = 'RSI-ROLLOVER';
+        else if (h[gi] !== null && h[gi - 1] !== null && h[gi - 1] >= 0 && h[gi] < 0) exhaustion = 'MACD-FLIP';
+      }
+
+      if (isEod) {
+        const proceeds = pos.shares * price * (1 - COST_C), pnl = proceeds - pos.cost;
+        realizedPnl += pnl;
+        events.push({ t: bar.t, action: 'SELL', reason: 'EOD-CLOSE', pnl, shares: pos.shares, amount: proceeds,
+          detail: `time-of-day ${hhmm} UTC reached the ${config.EOD_HHMM} UTC close cutoff` });
+        pos = null; continue;
+      }
+      if (exhaustion) {
+        const sellShares = pos.shares * config.TRIM_PCT;
+        const avgCost = pos.cost / pos.shares;
+        const proceeds = sellShares * price * (1 - COST_C), pnl = proceeds - sellShares * avgCost;
+        realizedPnl += pnl;
+        pos.shares -= sellShares; pos.cost -= sellShares * avgCost;
+        events.push({ t: bar.t, action: 'SELL', reason: exhaustion, pnl, shares: sellShares, amount: proceeds,
+          detail: `peak RSI since entry ${pos.entryPeakRsi.toFixed(1)} >= ${config.EXHAUSTION_PEAK_RSI} - then ` +
+                  (exhaustion === 'RSI-ROLLOVER' ? `RSI crossed down through 60 (${r[gi-1].toFixed(1)}→${r[gi].toFixed(1)})`
+                                                  : `MACD hist flipped negative (${h[gi-1].toFixed(3)}→${h[gi].toFixed(3)})`) });
+        pos.tranches = 0; pos.entryPeakRsi = r[gi] ?? 0; pos.sinceEntryHigh = price;
+        pos.lastTranchePrice = price; pos.lastActionT = bar.t;
+        continue;
+      }
+      if (cooling) continue;
+      if (date === gateBlockedDate) continue;
+
+      const addOk = pos.tranches < config.MAX_TRANCHES && pos.lastTranchePrice !== null
+        && price >= pos.lastTranchePrice * (1 + config.ADD_GAIN) && r[gi] !== null && r[gi] >= config.ENTRY_RSI;
+      if (addOk) {
+        const sh = SIGNAL_TRANCHE_SIZE / (price * (1 + COST_C));
+        pos.shares += sh; pos.cost += SIGNAL_TRANCHE_SIZE;
+        events.push({ t: bar.t, action: 'BUY', reason: `ADD (t${pos.tranches + 1}/${config.MAX_TRANCHES})`, pnl: null, shares: sh, amount: SIGNAL_TRANCHE_SIZE,
+          detail: `price ${price.toFixed(4)} >= last tranche ${pos.lastTranchePrice.toFixed(4)} x${(1+config.ADD_GAIN).toFixed(4)}, RSI ${r[gi].toFixed(1)} >= ${config.ENTRY_RSI}` });
+        pos.tranches += 1; pos.lastTranchePrice = price; pos.lastActionT = bar.t;
+      }
+      continue;
+    }
+
+    if (isEod) continue;
+    if (date === gateBlockedDate) continue;
+    entryCycles[date] = entryCycles[date] || 0;
+    if (entryCycles[date] >= config.MAX_ENTRY_CYCLES) continue;
+
+    const rsNow = rsAt(gi);
+    const rsOk = !rsRequired || (rsNow !== null && rsNow > 0);
+    const entryOk = rsOk && vw[gi] !== null && price > vw[gi] && r[gi] !== null && r[gi - 1] !== null
+      && r[gi - 1] < config.ENTRY_RSI && r[gi] >= config.ENTRY_RSI && h[gi] !== null && h[gi] > 0;
+    if (entryOk) {
+      const sh = SIGNAL_TRANCHE_SIZE / (price * (1 + COST_C));
+      events.push({ t: bar.t, action: 'BUY', reason: 'ENTRY', pnl: null, shares: sh, amount: SIGNAL_TRANCHE_SIZE,
+        detail: `price ${price.toFixed(4)} > VWAP ${vw[gi].toFixed(4)}, RSI crossed up through ${config.ENTRY_RSI} (${r[gi-1].toFixed(1)}→${r[gi].toFixed(1)}), MACD hist +${h[gi].toFixed(3)}` });
+      pos = { tranches: 1, entryPeakRsi: r[gi], sinceEntryHigh: price, lastTranchePrice: price, lastActionT: bar.t,
+              shares: sh, cost: SIGNAL_TRANCHE_SIZE };
+      entryCycles[date] += 1;
+    }
+  }
+  const lastGi = bars.length - 1;
+  const latest = { price: closes[lastGi], rsi: r[lastGi], prevRsi: r[lastGi - 1], macdHist: h[lastGi], vwap: vw[lastGi], t: bars[lastGi].t, rs: rsAt(lastGi) };
+  const unrealizedPnl = pos ? pos.shares * latest.price - pos.cost : 0;
+  return { events, pos, latest, realizedPnl, unrealizedPnl };
+}
+
+function computeSignalProximity(sym, replay, config = V3) {
+  const { pos, latest } = replay;
+  if (!latest || latest.rsi === null || latest.vwap === null || latest.macdHist === null) {
+    return { status: 'Warming up', watching: '&mdash;', threshold: '&mdash;', current: '&mdash;', distance: '&mdash;',
+             desc: 'Not enough bars yet for RSI(14)/MACD(12,26,9) to be defined.' };
+  }
+  const { price, rsi, macdHist, vwap } = latest;
+
+  if (!pos) {
+    const vwapOk = price > vwap, macdOk = macdHist > 0;
+    const rsiGap = config.ENTRY_RSI - rsi;
+    return {
+      status: 'Flat',
+      watching: 'Entry',
+      threshold: `RSI crosses up through ${config.ENTRY_RSI}`,
+      current: `RSI ${rsi.toFixed(1)}`,
+      distance: rsi >= config.ENTRY_RSI ? 'RSI condition met' : `${rsiGap.toFixed(1)} pts below`,
+      extra: `VWAP ${vwapOk ? '&check; above' : '&cross; below'} ($${price.toFixed(2)} vs $${vwap.toFixed(2)}) &middot; MACD ${macdOk ? '&check; positive' : '&cross; negative'} (${macdHist >= 0 ? '+' : ''}${macdHist.toFixed(3)})`,
+      desc: `Needs price above VWAP, RSI to cross up through ${config.ENTRY_RSI}, and a positive MACD histogram - all on the same bar.`,
+    };
+  }
+  if (pos.entryPeakRsi < config.EXHAUSTION_PEAK_RSI) {
+    const gap = config.EXHAUSTION_PEAK_RSI - pos.entryPeakRsi;
+    const addPriceNeeded = pos.lastTranchePrice * (1 + config.ADD_GAIN);
+    const addGap = addPriceNeeded - price;
+    const canAdd = pos.tranches < config.MAX_TRANCHES;
+    return {
+      status: `Holding (t${pos.tranches}/${config.MAX_TRANCHES})`,
+      watching: 'Exit not armed yet',
+      threshold: `Peak RSI reaches ${config.EXHAUSTION_PEAK_RSI}`,
+      current: `Peak so far ${pos.entryPeakRsi.toFixed(1)} (now ${rsi.toFixed(1)})`,
+      distance: `${gap.toFixed(1)} pts to arm exit`,
+      extra: canAdd
+        ? `Next add needs price &ge; $${addPriceNeeded.toFixed(2)} (now $${price.toFixed(2)}, ${addGap > 0 ? '$' + addGap.toFixed(2) + ' away' : 'met'}) + RSI &ge; ${config.ENTRY_RSI} (now ${rsi.toFixed(1)})`
+        : 'Max tranches reached &mdash; no more adds this cycle',
+      desc: `The exhaustion exit only arms once RSI has spiked to ${config.EXHAUSTION_PEAK_RSI}+ at some point since entry; until then this position can still add on strength.`,
+    };
+  }
+  const rsiGap = rsi - 60;
+  return {
+    status: `Holding (t${pos.tranches}/${config.MAX_TRANCHES}) &mdash; EXIT ARMED`,
+    watching: 'Exhaustion exit',
+    threshold: 'RSI drops below 60, or MACD hist flips negative',
+    current: `RSI ${rsi.toFixed(1)}, MACD hist ${macdHist >= 0 ? '+' : ''}${macdHist.toFixed(3)}`,
+    distance: rsi < 60 ? 'RSI already below 60 (confirming)' : `RSI ${rsiGap.toFixed(1)} pts above 60`,
+    extra: macdHist < 0 ? 'MACD already negative (confirming)' : `MACD ${macdHist.toFixed(3)} (needs to flip negative)`,
+    desc: `Peak RSI already hit ${config.EXHAUSTION_PEAK_RSI}+ since entry, so either trigger can fire on the very next qualifying bar.`,
+  };
+}
+
+// ---------- Trend-Gated Trail (TGT) — EXPERIMENTAL, NOT VALIDATED ----------
+// Long-only, one position per symbol, no scale-in tranches. Morning gate at
+// TGT_GATE_WINDOW_MIN (signed ER >= TGT_GATE_THRESHOLD), full-slice entry,
+// TGT_TRAIL_PCT trailing stop off the since-entry high, re-entry only on a
+// day-anchored-VWAP reclaim after a same-day stop-out, forced close at
+// TGT_EOD_HHMM UTC. Mirrors scripts/trend_gated_trail_paper_engine.py
+// exactly (same thresholds) - see that script's docstring: an initial
+// "12/12 split-half" validation claim rested on a look-ahead backtest bug
+// (gated trades entered at the day's open, before the gate could actually
+// be confirmed); corrected, it's 5/12, and a follow-up grid search came
+// back 6/10 with no signal beyond shared calendar regime timing. No
+// validated edge - paper-tracked for observation only.
+const TGT_SYMBOLS = ["SNDK", "WDC", "MU", "TSM"];
+const TGT_CAPITAL = 5000;
+const TGT_PER_SYMBOL_SLICE = TGT_CAPITAL / TGT_SYMBOLS.length;
+const TGT_TRAIL_PCT = 0.03;
+const TGT_GATE_WINDOW_MIN = 30;
+const TGT_GATE_THRESHOLD = 0.0;
+const TGT_EOD_HHMM = "19:55";
+
+function runTGTSignalReplay(bars) {
+  // Full in-memory replay of state.bars[sym], from scratch every call - same
+  // deterministic-recompute pattern as runV3SignalReplay(). This is a live
+  // illustrative view of the TGT rules against whatever window this page has
+  // fetched; the actual persisted paper ledger lives in
+  // docs/trend_gated_trail_paper_state.json / _log.json, updated by the
+  // separate Python engine, not by this page.
+  if (!bars || bars.length < 2) return { events: [], pos: null, latest: null, realizedPnl: 0, unrealizedPnl: 0, stoppedToday: false };
+  const vw = dayAnchoredVwapSeries(bars);
+  const dates = bars.map(b => new Date(b.t).toISOString().slice(0, 10));
+  let pos = null;
+  let stoppedTodayDate = null;
+  let enteredTodayDate = null;
+  const gateResult = {}; // date -> true/false, decided once
+  const events = [];
+  let realizedPnl = 0;
+
+  for (let gi = 0; gi < bars.length; gi++) {
+    const bar = bars[gi];
+    const date = dates[gi];
+    const hhmm = new Date(bar.t).toISOString().slice(11, 16);
+    const isEod = hhmm >= TGT_EOD_HHMM;
+    const price = bar.close;
+
+    if (pos) {
+      pos.sinceEntryHigh = Math.max(pos.sinceEntryHigh, price);
+      if (isEod) {
+        const proceeds = pos.shares * price, pnl = proceeds - pos.cost;
+        realizedPnl += pnl;
+        events.push({ t: bar.t, action: 'SELL', reason: 'EOD-CLOSE', pnl, shares: pos.shares, amount: proceeds,
+          detail: `time-of-day ${hhmm} UTC reached the ${TGT_EOD_HHMM} UTC close cutoff` });
+        pos = null;
+        continue;
+      }
+      const stopLevel = pos.sinceEntryHigh * (1 - TGT_TRAIL_PCT);
+      if (bar.low <= stopLevel) {
+        const exitPrice = stopLevel;
+        const proceeds = pos.shares * exitPrice, pnl = proceeds - pos.cost;
+        realizedPnl += pnl;
+        events.push({ t: bar.t, action: 'SELL', reason: 'TRAIL-STOP', pnl, shares: pos.shares, amount: proceeds,
+          detail: `price fell ${(TGT_TRAIL_PCT * 100).toFixed(0)}% below since-entry high $${pos.sinceEntryHigh.toFixed(2)} — waiting for a VWAP reclaim to re-enter` });
+        pos = null;
+        stoppedTodayDate = date;
+        continue;
+      }
+      continue;
+    }
+
+    if (isEod) continue;
+
+    if (!(date in gateResult)) {
+      let dayStartGi = gi;
+      while (dayStartGi > 0 && dates[dayStartGi - 1] === date) dayStartGi--;
+      const elapsed = gi - dayStartGi + 1;
+      if (elapsed < TGT_GATE_WINDOW_MIN) continue;
+      const windowCloses = bars.slice(dayStartGi, dayStartGi + TGT_GATE_WINDOW_MIN).map(b => b.close);
+      const net = windowCloses[windowCloses.length - 1] - windowCloses[0];
+      let path = 0;
+      for (let i = 1; i < windowCloses.length; i++) path += Math.abs(windowCloses[i] - windowCloses[i - 1]);
+      const ser = path > 0 ? net / path : 0;
+      gateResult[date] = ser >= TGT_GATE_THRESHOLD;
+      if (!gateResult[date]) continue;
+      // gate just opened on this bar - fall through to the entry check below
+    }
+    if (!gateResult[date]) continue;
+
+    if (enteredTodayDate !== date) {
+      const sh = TGT_PER_SYMBOL_SLICE / price;
+      pos = { shares: sh, cost: TGT_PER_SYMBOL_SLICE, sinceEntryHigh: price };
+      enteredTodayDate = date;
+      events.push({ t: bar.t, action: 'BUY', reason: 'GATE-ENTRY', pnl: null, shares: sh, amount: TGT_PER_SYMBOL_SLICE,
+        detail: `signed ER over the first ${TGT_GATE_WINDOW_MIN}m &ge; ${TGT_GATE_THRESHOLD} — morning gate open` });
+    } else if (stoppedTodayDate === date && vw[gi] !== null && price > vw[gi]) {
+      const sh = TGT_PER_SYMBOL_SLICE / price;
+      pos = { shares: sh, cost: TGT_PER_SYMBOL_SLICE, sinceEntryHigh: price };
+      stoppedTodayDate = null;
+      events.push({ t: bar.t, action: 'BUY', reason: 'VWAP-RECLAIM', pnl: null, shares: sh, amount: TGT_PER_SYMBOL_SLICE,
+        detail: `price $${price.toFixed(2)} reclaimed today's VWAP $${vw[gi].toFixed(2)} after today's trailing stop` });
+    }
+  }
+
+  const lastGi = bars.length - 1;
+  const lastDate = dates[lastGi];
+  const latest = { price: bars[lastGi].close, vwap: vw[lastGi], t: bars[lastGi].t,
+                    gate: (lastDate in gateResult) ? gateResult[lastDate] : undefined };
+  const unrealizedPnl = pos ? pos.shares * latest.price - pos.cost : 0;
+  return { events, pos, latest, realizedPnl, unrealizedPnl, stoppedToday: stoppedTodayDate === lastDate };
+}
+
+function computeTGTProximity(replay) {
+  const { pos, latest, stoppedToday } = replay;
+  if (!latest) {
+    return { status: 'Warming up', watching: '&mdash;', threshold: '&mdash;', current: '&mdash;', distance: '&mdash;',
+             desc: 'Not enough bars yet today.' };
+  }
+  if (pos) {
+    const stopLevel = pos.sinceEntryHigh * (1 - TGT_TRAIL_PCT);
+    const distPct = (latest.price - stopLevel) / latest.price * 100;
+    return {
+      status: 'Holding',
+      watching: 'Trailing stop',
+      threshold: `Price falls ${(TGT_TRAIL_PCT * 100).toFixed(0)}% below since-entry high`,
+      current: `High $${pos.sinceEntryHigh.toFixed(2)}, now $${latest.price.toFixed(2)}`,
+      distance: `${distPct.toFixed(2)}% above stop ($${stopLevel.toFixed(2)})`,
+      desc: 'One full-slice position, no scale-in — exits entirely on the 3% trail or the forced EOD close.',
+    };
+  }
+  if (stoppedToday) {
+    const vwapGap = latest.vwap !== null ? ((latest.vwap - latest.price) / latest.price * 100) : null;
+    return {
+      status: 'Flat (stopped out today)',
+      watching: 'VWAP reclaim',
+      threshold: 'Price closes back above today\'s VWAP',
+      current: latest.vwap !== null ? `$${latest.price.toFixed(2)} vs VWAP $${latest.vwap.toFixed(2)}` : '&mdash;',
+      distance: vwapGap !== null ? (vwapGap <= 0 ? 'VWAP reclaimed' : `${vwapGap.toFixed(2)}% below VWAP`) : '&mdash;',
+      desc: 'Already stopped out once today — only re-enters on a VWAP reclaim, no blind immediate re-buy.',
+    };
+  }
+  if (latest.gate === undefined) {
+    return { status: 'Gate pending', watching: `First ${TGT_GATE_WINDOW_MIN} minutes`, threshold: `Signed ER &ge; ${TGT_GATE_THRESHOLD}`,
+             current: 'Warming up', distance: `Decided at bar ${TGT_GATE_WINDOW_MIN}`,
+             desc: 'The morning gate is decided once, as soon as enough bars exist since today\'s open.' };
+  }
+  if (latest.gate === false) {
+    return { status: 'Gate CLOSED for today', watching: 'Nothing — no entry today', threshold: `Signed ER &ge; ${TGT_GATE_THRESHOLD}`,
+             current: 'Morning was net down/flat', distance: 'Gate stays closed all day',
+             desc: 'This symbol failed the morning gate today — skipped entirely regardless of what happens later.' };
+  }
+  return {
+    status: 'Gate OPEN — flat',
+    watching: 'Entry',
+    threshold: 'Immediate, at the current price',
+    current: `$${latest.price.toFixed(2)}`,
+    distance: 'Entry fires on the same bar the gate opens',
+    desc: 'Gate passed for today; refresh if this still shows flat right after the gate opened.',
+  };
+}
+
+function renderTGTSignals() {
+  const rows = [];
+  const allEvents = [];
+  for (const sym of TGT_SYMBOLS) {
+    const replay = runTGTSignalReplay(state.bars[sym]);
+    for (const e of replay.events) allEvents.push({ ...e, symbol: sym });
+    rows.push({ sym, proximity: computeTGTProximity(replay), holding: !!replay.pos,
+                realizedPnl: replay.realizedPnl, unrealizedPnl: replay.unrealizedPnl,
+                trades: replay.events.length });
+  }
+
+  const fmtSignedMoney = (v) => (v >= 0 ? '+$' : '-$') + Math.abs(v).toFixed(2);
+  const pnlClass = (v) => v > 0.005 ? 'up' : (v < -0.005 ? 'down' : '');
+  $('tgtPnlBody').innerHTML = rows.map(({ sym, realizedPnl, unrealizedPnl, trades }) => {
+    const total = realizedPnl + unrealizedPnl;
+    return `<tr>
+      <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(sym)}"></span>${sym}</span></td>
+      <td class="num ${pnlClass(realizedPnl)}">${fmtSignedMoney(realizedPnl)}</td>
+      <td class="num ${pnlClass(unrealizedPnl)}">${fmtSignedMoney(unrealizedPnl)}</td>
+      <td class="num ${pnlClass(total)}" style="font-weight:700">${fmtSignedMoney(total)}</td>
+      <td class="num">${trades}</td>
+    </tr>`;
+  }).join('');
+  const totRealized = rows.reduce((s, r) => s + r.realizedPnl, 0);
+  const totUnrealized = rows.reduce((s, r) => s + r.unrealizedPnl, 0);
+  const totTrades = rows.reduce((s, r) => s + r.trades, 0);
+  const grandTotal = totRealized + totUnrealized;
+  $('tgtPnlFoot').innerHTML = `<tr style="border-top:2px solid var(--baseline)">
+    <td style="text-align:left; font-weight:700">Total</td>
+    <td class="num ${pnlClass(totRealized)}" style="font-weight:700">${fmtSignedMoney(totRealized)}</td>
+    <td class="num ${pnlClass(totUnrealized)}" style="font-weight:700">${fmtSignedMoney(totUnrealized)}</td>
+    <td class="num ${pnlClass(grandTotal)}" style="font-weight:700">${fmtSignedMoney(grandTotal)}</td>
+    <td class="num" style="font-weight:700">${totTrades}</td>
+  </tr>`;
+
+  $('tgtProximityBody').innerHTML = rows.map(({ sym, proximity: p, holding }) => `<tr>
+    <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(sym)}"></span>${sym}</span></td>
+    <td style="text-align:left"><span class="badge ${holding ? 'up' : 'down'}">${p.status}</span></td>
+    <td style="text-align:left">${p.watching}</td>
+    <td style="text-align:left; font-family:'IBM Plex Mono',monospace; font-size:12px">${p.threshold}</td>
+    <td style="text-align:left; font-family:'IBM Plex Mono',monospace; font-size:12px">${p.current}</td>
+    <td style="text-align:left; font-weight:600">${p.distance}</td>
+    <td style="text-align:left; color:var(--text-secondary); font-size:12px; max-width:220px">${p.desc}</td>
+  </tr>`).join('');
+
+  allEvents.sort((a, b) => b.t - a.t);
+  if (!allEvents.length) {
+    $('tgtLogBody').innerHTML = `<tr><td colspan="5" class="signal-log-empty">No entry/stop/reclaim/close signals yet today &mdash; still watching.</td></tr>`;
+  } else {
+    $('tgtLogBody').innerHTML = allEvents.map(e => {
+      const cls = e.action === 'BUY' ? 'up' : 'down';
+      return `<tr>
+        <td style="text-align:left" class="num">${fmtTime(e.t)}</td>
+        <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(e.symbol)}"></span>${e.symbol}</span></td>
+        <td style="text-align:left"><span class="badge ${cls}">${e.action}</span></td>
+        <td style="text-align:left">${e.reason}</td>
+        <td style="text-align:left; color:var(--text-secondary); font-size:12px">${e.detail}</td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+// ---------- render: signal timeline ----------
+// One horizontal lane per symbol, buy/sell events plotted as triangle markers
+// at their actual fire time - lets a day trader see at a glance which symbol
+// just fired and how recently, instead of scanning the log table by eye.
+const SIG_CHART_W = 900, SIG_ROW_H = 32, SIG_PAD_T = 10, SIG_PAD_B = 24, SIG_LABEL_W = 62, SIG_PAD_R = 14;
+
+function buildSignalTimelineDomain() {
+  let tMin = Infinity, tMax = -Infinity;
+  for (const sym of V3_SYMBOLS) {
+    const bars = state.bars[sym];
+    if (bars && bars.length) {
+      tMin = Math.min(tMin, bars[0].t);
+      tMax = Math.max(tMax, bars[bars.length - 1].t);
+    }
+  }
+  if (!isFinite(tMin)) return null;
+  tMax = Math.max(tMax, Date.now());
+  return { tMin, tMax };
+}
+
+function renderSignalTimelineChart(events) {
+  const svg = $('signalTimelineSvg');
+  const domain = buildSignalTimelineDomain();
+  if (!domain) { svg.innerHTML = ''; return; }
+  const { tMin, tMax } = domain;
+  const rowsN = V3_SYMBOLS.length;
+  const chartH = SIG_PAD_T + rowsN * SIG_ROW_H + SIG_PAD_B;
+  svg.setAttribute('viewBox', `0 0 ${SIG_CHART_W} ${chartH}`);
+  const plotL = SIG_LABEL_W, plotR = SIG_CHART_W - SIG_PAD_R;
+  const xt = (t) => plotL + (t - tMin) / Math.max(1, tMax - tMin) * (plotR - plotL);
+
+  let grid = '';
+  const ticks = 5;
+  for (let i = 0; i <= ticks; i++) {
+    const t = tMin + (tMax - tMin) * (i / ticks);
+    const x = xt(t);
+    grid += `<line x1="${x}" y1="${SIG_PAD_T}" x2="${x}" y2="${chartH - SIG_PAD_B}" class="gridline"/>`;
+    grid += `<text x="${x}" y="${chartH - 6}" text-anchor="middle" class="axis-label">${fmtTime(t)}</text>`;
+  }
+  const nowX = xt(Date.now());
+  grid += `<line x1="${nowX.toFixed(2)}" y1="${SIG_PAD_T}" x2="${nowX.toFixed(2)}" y2="${chartH - SIG_PAD_B}" class="baseline" stroke-dasharray="3 3"/>`;
+
+  let lanes = '';
+  V3_SYMBOLS.forEach((sym, i) => {
+    const cy = SIG_PAD_T + i * SIG_ROW_H + SIG_ROW_H / 2;
+    lanes += `<line x1="${plotL}" y1="${cy}" x2="${plotR}" y2="${cy}" class="gridline"/>`;
+    lanes += `<text x="${plotL - 10}" y="${cy + 4}" text-anchor="end" class="accel-row-label"><tspan fill="${cssColor(sym)}">&#9679;</tspan> ${sym}</text>`;
+  });
+
+  let markers = '';
+  events.forEach((e, idx) => {
+    const rowIdx = V3_SYMBOLS.indexOf(e.symbol);
+    if (rowIdx < 0) return;
+    const cx = xt(e.t);
+    const cy = SIG_PAD_T + rowIdx * SIG_ROW_H + SIG_ROW_H / 2;
+    const isBuy = e.action === 'BUY';
+    const isAdd = isBuy && e.reason && e.reason.startsWith('ADD');
+    const isForced = !isBuy && e.reason === 'EOD-CLOSE';
+    const fill = isBuy ? goodColor() : (isForced ? mutedColor() : criticalColor());
+    const size = (isAdd || isForced) ? 5 : 7;
+    const opacity = (isAdd || isForced) ? 0.55 : 0.95;
+    const path = isBuy
+      ? `M ${cx.toFixed(2)} ${(cy - size).toFixed(2)} L ${(cx - size).toFixed(2)} ${(cy + size).toFixed(2)} L ${(cx + size).toFixed(2)} ${(cy + size).toFixed(2)} Z`
+      : `M ${cx.toFixed(2)} ${(cy + size).toFixed(2)} L ${(cx - size).toFixed(2)} ${(cy - size).toFixed(2)} L ${(cx + size).toFixed(2)} ${(cy - size).toFixed(2)} Z`;
+    markers += `<path d="${path}" fill="${fill}" fill-opacity="${opacity}" stroke="${fill}" stroke-width="1" data-idx="${idx}" class="sig-marker"/>`;
+  });
+
+  const empty = events.length ? '' :
+    `<text x="${(plotL + plotR) / 2}" y="${chartH / 2}" text-anchor="middle" class="accel-nodata">No entry/add/exit signals yet in the current window</text>`;
+
+  svg.innerHTML = `<g>${grid}</g><g>${lanes}</g><g>${markers}</g>${empty}`;
+  wireSignalTimelineTooltip(svg, events);
+}
+
+function wireSignalTimelineTooltip(svg, events) {
+  const wrap = $('signalTimelineWrap');
+  const tooltip = $('tooltipSignalTimeline');
+  svg.querySelectorAll('.sig-marker').forEach(el => {
+    const e = events[Number(el.dataset.idx)];
+    if (!e) return;
+    el.addEventListener('mouseenter', () => {
+      const qtyLine = (e.shares !== undefined && e.amount !== undefined)
+        ? `<div class="tooltip-row"><span class="sym">Qty</span><span class="val">${e.shares.toFixed(4)} sh &middot; $${e.amount.toFixed(2)}</span></div>`
+        : '';
+      const pnlLine = (e.pnl !== null && e.pnl !== undefined)
+        ? `<div class="tooltip-row"><span class="sym">P&amp;L</span><span class="val" style="color:${e.pnl >= 0 ? goodColor() : criticalColor()}">${e.pnl >= 0 ? '+' : ''}$${e.pnl.toFixed(2)}</span></div>`
+        : '';
+      tooltip.innerHTML = `<div style="max-width:240px">
+        <div class="tooltip-time">${fmtTime(e.t)} &middot; ${e.symbol}</div>
+        <div class="tooltip-row"><span class="val" style="font-weight:700">${e.action} &mdash; ${e.reason}</span></div>
+        ${qtyLine}${pnlLine}
+        <div class="tooltip-row"><span class="sym" style="white-space:normal">${e.detail}</span></div>
+      </div>`;
+      tooltip.classList.add('show');
+    });
+    el.addEventListener('mousemove', (evt) => {
+      const wrapBox = wrap.getBoundingClientRect();
+      const px = evt.clientX - wrapBox.left, py = evt.clientY - wrapBox.top;
+      tooltip.style.left = Math.min(Math.max(px, 90), wrapBox.width - 90) + 'px';
+      tooltip.style.top = Math.max(py - 10, 90) + 'px';
+    });
+    el.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+}
+
+// ---------- render: table ----------
+function renderTable() {
+  const rows = SYMBOLS.map(sym => {
+    const q = state.quotes[sym];
+    const b = state.bars[sym];
+    if (!q) return null;
+    const dailyPct = (q.last - q.prevClose) / q.prevClose * 100;
+    const accel = computeAccel(b);
+    return { sym, last: q.last, dailyPct, accel };
+  }).filter(Boolean);
+
+  rows.sort((a, b) => {
+    const av = a.accel === null ? -Infinity : a.accel;
+    const bv = b.accel === null ? -Infinity : b.accel;
+    return bv - av;
+  });
+
+  $('tableBody').innerHTML = rows.map(r => {
+    const dailyCls = r.dailyPct >= 0 ? 'up' : 'down';
+    let accelHtml = '<span class="badge accel-flat">warming up</span>';
+    if (r.accel !== null) {
+      const cls = r.accel > 0.05 ? 'accel-up' : (r.accel < -0.05 ? 'accel-down' : 'accel-flat');
+      const arrow = r.accel > 0.05 ? '&#9650;' : (r.accel < -0.05 ? '&#9660;' : '&#9679;');
+      accelHtml = `<span class="badge ${cls}">${arrow} ${fmtPP(r.accel)}</span>`;
+    }
+    return `<tr>
+      <td><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(r.sym)}"></span>${r.sym}</span></td>
+      <td class="num">$${fmtMoney(r.last)}</td>
+      <td><span class="badge ${dailyCls}">${fmtPct(r.dailyPct)}</span></td>
+      <td>${accelHtml}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ---------- render: chart ----------
+const CHART_W = 900, CHART_H = 320, PAD_L = 44, PAD_R = 14, PAD_T = 14, PAD_B = 24;
+
+function buildSeries() {
+  const series = {};
+  let tMin = Infinity, tMax = -Infinity, vMin = Infinity, vMax = -Infinity;
+  for (const sym of SYMBOLS) {
+    const q = state.quotes[sym];
+    const bars = state.bars[sym];
+    if (!q || !bars || !bars.length) continue;
+    const pts = bars.map(b => ({ t: b.t, v: (b.close - q.prevClose) / q.prevClose * 100 }));
+    if (q.ts) pts.push({ t: q.ts, v: (q.last - q.prevClose) / q.prevClose * 100 });
+    series[sym] = pts;
+    for (const p of pts) {
+      tMin = Math.min(tMin, p.t); tMax = Math.max(tMax, p.t);
+      vMin = Math.min(vMin, p.v); vMax = Math.max(vMax, p.v);
+    }
+  }
+  if (!isFinite(tMin)) return null;
+  const vPad = Math.max(0.4, (vMax - vMin) * 0.12);
+  vMin -= vPad; vMax += vPad;
+  if (vMin > 0) vMin = -0.2;
+  if (vMax < 0) vMax = 0.2;
+  return { series, tMin, tMax, vMin, vMax };
+}
+
+// Full-session trend read: price vs. day-anchored VWAP (volume-weighted, so
+// it doesn't whip around with every 1-min print the way raw price or the
+// acceleration metric do - above VWAP reads as net buying pressure since the
+// open, below as net selling) and the MACD histogram (12/26/9 EMA-based, so
+// it's already smoothed) expressed as % of price so differently-priced
+// symbols plot on one shared, comparable scale. These are the same two
+// conditions the v3 signal engine itself uses to gate entries - reused here
+// as a standalone, more reliable direction read than a fast/noisy 2nd
+// derivative.
+function buildVwapDistModel() {
+  const series = {};
+  let tMin = Infinity, tMax = -Infinity, vMin = Infinity, vMax = -Infinity;
+  for (const sym of SYMBOLS) {
+    const bars = state.bars[sym];
+    if (!bars || !bars.length) continue;
+    const vw = dayAnchoredVwapSeries(bars);
+    const pts = bars.map((b, i) => vw[i] !== null ? { t: b.t, v: (b.close - vw[i]) / vw[i] * 100 } : null).filter(Boolean);
+    if (!pts.length) continue;
+    series[sym] = pts;
+    for (const p of pts) {
+      tMin = Math.min(tMin, p.t); tMax = Math.max(tMax, p.t);
+      vMin = Math.min(vMin, p.v); vMax = Math.max(vMax, p.v);
+    }
+  }
+  if (!isFinite(tMin)) return null;
+  const vPad = Math.max(0.15, (vMax - vMin) * 0.12);
+  vMin -= vPad; vMax += vPad;
+  if (vMin > 0) vMin = -0.1;
+  if (vMax < 0) vMax = 0.1;
+  return { series, tMin, tMax, vMin, vMax };
+}
+
+function buildMacdHistModel() {
+  const series = {};
+  let tMin = Infinity, tMax = -Infinity, vMin = Infinity, vMax = -Infinity;
+  for (const sym of SYMBOLS) {
+    const bars = state.bars[sym];
+    if (!bars || !bars.length) continue;
+    const closes = bars.map(b => b.close);
+    const hist = macdHistSeries(closes);
+    const pts = bars.map((b, i) => hist[i] !== null ? { t: b.t, v: hist[i] / closes[i] * 100 } : null).filter(Boolean);
+    if (!pts.length) continue;
+    series[sym] = pts;
+    for (const p of pts) {
+      tMin = Math.min(tMin, p.t); tMax = Math.max(tMax, p.t);
+      vMin = Math.min(vMin, p.v); vMax = Math.max(vMax, p.v);
+    }
+  }
+  if (!isFinite(tMin)) return null;
+  const vPad = Math.max(0.02, (vMax - vMin) * 0.12);
+  vMin -= vPad; vMax += vPad;
+  if (vMin > 0) vMin = -0.02;
+  if (vMax < 0) vMax = 0.02;
+  return { series, tMin, tMax, vMin, vMax };
+}
+
+// ---------- ATR: typical bar-to-bar range, for sizing stops to volatility ----------
+// True Range = the largest of (high-low), |high - prior close|, |low - prior
+// close| - the middle two terms catch gaps between bars that a plain
+// high-low would miss. ATR is Wilder's smoothed average of that, period 14.
+// Expressed as % of price (not raw $) so differently-priced symbols share
+// one scale, same convention as the VWAP/MACD charts above.
+function trueRangeSeries(bars) {
+  const out = new Array(bars.length).fill(null);
+  for (let i = 1; i < bars.length; i++) {
+    out[i] = Math.max(bars[i].high - bars[i].low,
+                       Math.abs(bars[i].high - bars[i - 1].close),
+                       Math.abs(bars[i].low - bars[i - 1].close));
+  }
+  return out;
+}
+function atrSeries(bars, period = 14) {
+  const tr = trueRangeSeries(bars);
+  const out = new Array(bars.length).fill(null);
+  let atr = null;
+  for (let i = 1; i < bars.length; i++) {
+    if (atr === null) {
+      if (i >= period) {
+        let sum = 0;
+        for (let j = i - period + 1; j <= i; j++) sum += tr[j];
+        atr = sum / period;
+      }
+    } else {
+      atr = (atr * (period - 1) + tr[i]) / period;
+    }
+    out[i] = atr;
+  }
+  return out;
+}
+function buildAtrPctModel() {
+  const series = {};
+  let tMin = Infinity, tMax = -Infinity, vMin = Infinity, vMax = -Infinity;
+  for (const sym of SYMBOLS) {
+    const bars = state.bars[sym];
+    if (!bars || !bars.length) continue;
+    const atr = atrSeries(bars);
+    const pts = bars.map((b, i) => atr[i] !== null ? { t: b.t, v: atr[i] / b.close * 100 } : null).filter(Boolean);
+    if (!pts.length) continue;
+    series[sym] = pts;
+    for (const p of pts) {
+      tMin = Math.min(tMin, p.t); tMax = Math.max(tMax, p.t);
+      vMin = Math.min(vMin, p.v); vMax = Math.max(vMax, p.v);
+    }
+  }
+  if (!isFinite(tMin)) return null;
+  vMin = 0; // ATR is never negative
+  const vPad = Math.max(0.01, (vMax - vMin) * 0.12);
+  vMax += vPad;
+  return { series, tMin, tMax, vMin, vMax };
+}
+
+// ---------- Basket breadth: is this a basket-wide move or one stock? ----------
+// Net breadth = (# symbols above their own prior close) - (# symbols below),
+// at each point through the session. A steady climb toward +8 (or -8) means
+// the whole basket is moving together - a real sector/market move worth
+// trading; a line that oscillates near zero means gains and losses are
+// canceling out across symbols - no basket-wide edge, just individual noise.
+function buildBreadthModel() {
+  const perSym = {};
+  for (const sym of SYMBOLS) {
+    const bars = state.bars[sym], q = state.quotes[sym];
+    if (!bars || !bars.length || !q || !q.prevClose) continue;
+    perSym[sym] = bars.map(b => ({ t: b.t, sign: b.close > q.prevClose ? 1 : (b.close < q.prevClose ? -1 : 0) }));
+  }
+  const syms = Object.keys(perSym);
+  if (!syms.length) return null;
+  const allT = new Set();
+  for (const sym of syms) for (const p of perSym[sym]) allT.add(p.t);
+  const times = Array.from(allT).sort((a, b) => a - b);
+  const ptr = {}; for (const sym of syms) ptr[sym] = -1;
+  const pts = [];
+  for (const t of times) {
+    let net = 0, counted = 0;
+    for (const sym of syms) {
+      const arr = perSym[sym];
+      while (ptr[sym] + 1 < arr.length && arr[ptr[sym] + 1].t <= t) ptr[sym]++;
+      if (ptr[sym] >= 0) { net += arr[ptr[sym]].sign; counted++; }
+    }
+    if (counted >= Math.ceil(syms.length / 2)) pts.push({ t, v: net });
+  }
+  if (!pts.length) return null;
+  return { pts, tMin: times[0], tMax: times[times.length - 1], vMax: syms.length };
+}
+
+const ACCEL_TIME_WINDOW_MS = 30 * 60 * 1000; // chart shows only the trailing 30 minutes
+
+function buildAccelModel() {
+  // Compute each symbol's full accel series first (so early points in the
+  // trailing window still have their full 30-min lookback available), then
+  // trim the OUTPUT to the trailing window. Anchored to wall-clock NOW, not
+  // to whichever symbol happens to have the freshest data point - anchoring
+  // to the max-across-symbols timestamp silently dropped an entire symbol
+  // whenever its data lagged the others by even a few minutes (normal
+  // network jitter across an 8-symbol fetch), since none of its points
+  // would clear a cutoff set by a fresher sibling.
+  const full = {};
+  for (const sym of SYMBOLS) {
+    const pts = computeAccelSeries(state.bars[sym]);
+    if (pts.length) full[sym] = pts;
+  }
+  if (!Object.keys(full).length) return null;
+  const cutoff = Date.now() - ACCEL_TIME_WINDOW_MS;
+
+  const series = {};
+  let tMin = Infinity, tMax = -Infinity, vMin = Infinity, vMax = -Infinity;
+  for (const sym of SYMBOLS) {
+    const pts = (full[sym] || []).filter(p => p.t >= cutoff);
+    if (!pts.length) continue;
+    series[sym] = pts;
+    for (const p of pts) {
+      tMin = Math.min(tMin, p.t); tMax = Math.max(tMax, p.t);
+      vMin = Math.min(vMin, p.v); vMax = Math.max(vMax, p.v);
+    }
+  }
+  if (!isFinite(tMin)) return null;
+  const vPad = Math.max(0.15, (vMax - vMin) * 0.15);
+  vMin -= vPad; vMax += vPad;
+  if (vMin > 0) vMin = -0.1;
+  if (vMax < 0) vMax = 0.1;
+  return { series, tMin, tMax, vMin, vMax };
+}
+
+function buildVolumeModel() {
+  // Full session, 15-min-bucketed relative volume (this bucket vs. this
+  // symbol's own trailing 1-hour average) so wildly different share counts
+  // across symbols (INTC's millions vs. STX's thousands) plot on one shared,
+  // comparable scale, and the line reads as a trend instead of 1-min noise.
+  const series = {};
+  let tMin = Infinity, tMax = -Infinity, vMin = Infinity, vMax = -Infinity;
+  for (const sym of SYMBOLS) {
+    const pts = computeRelVolumeSeriesBucketed(state.bars[sym]);
+    if (!pts.length) continue;
+    series[sym] = pts;
+    for (const p of pts) {
+      tMin = Math.min(tMin, p.t); tMax = Math.max(tMax, p.t);
+      vMin = Math.min(vMin, p.v); vMax = Math.max(vMax, p.v);
+    }
+  }
+  if (!isFinite(tMin)) return null;
+  vMin = 0; // volume ratio is never negative
+  vMax = Math.max(1.5, vMax * 1.1);
+  return { series, tMin, tMax, vMin, vMax };
+}
+
+function buildVolAccelModel() {
+  // Rate of change of relative volume - 15-min-now-vs-15-min-prior, same construction
+  // as buildAccelModel but sourced from each symbol's relative-volume series
+  // instead of its price series. Anchored to wall-clock NOW (see the same
+  // fix/note in buildAccelModel above) so one symbol's data lagging the
+  // others slightly doesn't make it vanish from the chart entirely.
+  const full = {};
+  for (const sym of SYMBOLS) {
+    const relVol = computeRelVolumeSeries(state.bars[sym]);
+    const pts = computeAccelFromValues(relVol);
+    if (pts.length) full[sym] = pts;
+  }
+  if (!Object.keys(full).length) return null;
+  const cutoff = Date.now() - ACCEL_TIME_WINDOW_MS;
+
+  const series = {};
+  let tMin = Infinity, tMax = -Infinity, vMin = Infinity, vMax = -Infinity;
+  for (const sym of SYMBOLS) {
+    const pts = (full[sym] || []).filter(p => p.t >= cutoff);
+    if (!pts.length) continue;
+    series[sym] = pts;
+    for (const p of pts) {
+      tMin = Math.min(tMin, p.t); tMax = Math.max(tMax, p.t);
+      vMin = Math.min(vMin, p.v); vMax = Math.max(vMax, p.v);
+    }
+  }
+  if (!isFinite(tMin)) return null;
+  const vPad = Math.max(15, (vMax - vMin) * 0.15);
+  vMin -= vPad; vMax += vPad;
+  if (vMin > 0) vMin = -10;
+  if (vMax < 0) vMax = 10;
+  return { series, tMin, tMax, vMin, vMax };
+}
+
+function xScale(t, tMin, tMax) {
+  const span = Math.max(1, tMax - tMin);
+  return PAD_L + (t - tMin) / span * (CHART_W - PAD_L - PAD_R);
+}
+function yScale(v, vMin, vMax) {
+  const span = Math.max(0.001, vMax - vMin);
+  return PAD_T + (1 - (v - vMin) / span) * (CHART_H - PAD_T - PAD_B);
+}
+
+function renderLineChart(svgEl, model, valFmt) {
+  if (!model) { svgEl.innerHTML = ''; return; }
+  const { series, tMin, tMax, vMin, vMax } = model;
+
+  let grid = '';
+  const rawStep = (vMax - vMin) / 5;
+  const mag = Math.pow(10, Math.floor(Math.log10(rawStep || 1)));
+  const step = Math.max(vMax - vMin > 3 ? 0.25 : 0.05, Math.round(rawStep / mag) * mag);
+  for (let v = Math.ceil(vMin / step) * step; v <= vMax; v += step) {
+    const y = yScale(v, vMin, vMax);
+    const isZero = Math.abs(v) < step / 2;
+    grid += `<line x1="${PAD_L}" y1="${y}" x2="${CHART_W - PAD_R}" y2="${y}" class="${isZero ? 'baseline' : 'gridline'}"/>`;
+    grid += `<text x="${PAD_L - 8}" y="${y + 3}" text-anchor="end" class="axis-label">${valFmt(v)}</text>`;
+  }
+  const ticks = 5;
+  for (let i = 0; i <= ticks; i++) {
+    const t = tMin + (tMax - tMin) * (i / ticks);
+    const x = xScale(t, tMin, tMax);
+    grid += `<text x="${x}" y="${CHART_H - 6}" text-anchor="middle" class="axis-label">${fmtTime(t)}</text>`;
+  }
+
+  let lines = '';
+  let ends = '';
+  for (const sym of SYMBOLS) {
+    const pts = series[sym];
+    if (!pts || !pts.length) continue;
+    const color = cssColor(sym);
+    const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${xScale(p.t, tMin, tMax).toFixed(2)} ${yScale(p.v, vMin, vMax).toFixed(2)}`).join(' ');
+    const dim = state.hoverSym && state.hoverSym !== sym ? ' dim' : '';
+    lines += `<path d="${d}" class="series-line${dim}" stroke="${color}" data-sym="${sym}"/>`;
+    const last = pts[pts.length - 1];
+    ends += `<circle cx="${xScale(last.t, tMin, tMax).toFixed(2)}" cy="${yScale(last.v, vMin, vMax).toFixed(2)}" r="3.5" fill="${color}" class="series-end${dim}" data-sym="${sym}"/>`;
+  }
+
+  svgEl.innerHTML = `<g>${grid}</g><g>${lines}</g><g>${ends}</g>
+    <line class="crosshair" x1="0" y1="${PAD_T}" x2="0" y2="${CHART_H - PAD_B}"/>
+    <rect class="hover-capture" x="${PAD_L}" y="${PAD_T}" width="${CHART_W - PAD_L - PAD_R}" height="${CHART_H - PAD_T - PAD_B}"/>`;
+
+  wireHover(svgEl, model, valFmt);
+}
+
+function renderChart() {
+  renderLineChart($('chartSvg'), buildSeries(), (v) => (v >= 0 ? '+' : '') + v.toFixed(1) + '%');
+  wireTooltip('chartSvg', 'chartWrap', 'tooltip', fmtPct);
+}
+
+const fmtVwapPct = (v) => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+const fmtMacdPct = (v) => (v >= 0 ? '+' : '') + v.toFixed(3) + '%';
+
+function renderVwapChart() {
+  renderLineChart($('vwapSvg'), buildVwapDistModel(), fmtVwapPct);
+  wireTooltip('vwapSvg', 'vwapWrap', 'tooltipVwap', fmtVwapPct);
+}
+
+function renderMacdChart() {
+  renderLineChart($('macdSvg'), buildMacdHistModel(), fmtMacdPct);
+  wireTooltip('macdSvg', 'macdWrap', 'tooltipMacd', fmtMacdPct);
+}
+
+const fmtAtrPct = (v) => v.toFixed(3) + '%';
+function renderAtrChart() {
+  renderLineChart($('atrSvg'), buildAtrPctModel(), fmtAtrPct);
+  wireTooltip('atrSvg', 'atrWrap', 'tooltipAtr', fmtAtrPct);
+}
+
+// Single-series step-area chart (not per-symbol, so it doesn't reuse
+// renderLineChart) - green fill above zero, red fill below, so a basket-
+// wide trend day reads as a solid green (or red) wedge instead of a line
+// bouncing near the baseline.
+function renderBreadthChart() {
+  const svg = $('breadthSvg');
+  const model = buildBreadthModel();
+  if (!model) { svg.innerHTML = ''; return; }
+  const { pts, tMin, tMax, vMax } = model;
+  const vMin = -vMax;
+  const plotL = PAD_L, plotR = CHART_W - PAD_R, plotT = PAD_T, plotB = CHART_H - PAD_B;
+  const zeroY = yScale(0, vMin, vMax);
+
+  let grid = `<line x1="${plotL}" y1="${zeroY.toFixed(2)}" x2="${plotR}" y2="${zeroY.toFixed(2)}" class="baseline"/>`;
+  const step = Math.max(1, Math.round(vMax / 4));
+  for (let v = -vMax; v <= vMax; v += step) {
+    if (v === 0) continue;
+    const y = yScale(v, vMin, vMax);
+    grid += `<line x1="${plotL}" y1="${y.toFixed(2)}" x2="${plotR}" y2="${y.toFixed(2)}" class="gridline"/>`;
+    grid += `<text x="${plotL - 8}" y="${(y + 3).toFixed(2)}" text-anchor="end" class="axis-label">${v >= 0 ? '+' : ''}${v}</text>`;
+  }
+  const ticks = 5;
+  for (let i = 0; i <= ticks; i++) {
+    const t = tMin + (tMax - tMin) * (i / ticks);
+    const x = xScale(t, tMin, tMax);
+    grid += `<text x="${x.toFixed(2)}" y="${CHART_H - 6}" text-anchor="middle" class="axis-label">${fmtTime(t)}</text>`;
+  }
+
+  const toStepArea = (clip) => {
+    let d = '';
+    pts.forEach((p, i) => {
+      const v = clip(p.v);
+      const x = xScale(p.t, tMin, tMax);
+      if (i === 0) { d += `M ${x.toFixed(2)} ${zeroY.toFixed(2)} L ${x.toFixed(2)} ${yScale(v, vMin, vMax).toFixed(2)}`; return; }
+      const prevV = clip(pts[i - 1].v);
+      d += ` L ${x.toFixed(2)} ${yScale(prevV, vMin, vMax).toFixed(2)} L ${x.toFixed(2)} ${yScale(v, vMin, vMax).toFixed(2)}`;
+    });
+    const lastX = xScale(pts[pts.length - 1].t, tMin, tMax);
+    d += ` L ${lastX.toFixed(2)} ${zeroY.toFixed(2)} Z`;
+    return d;
+  };
+  const posD = toStepArea(v => Math.max(0, v));
+  const negD = toStepArea(v => Math.min(0, v));
+
+  svg.innerHTML = `<g>${grid}</g>
+    <path d="${posD}" fill="${goodColor()}" fill-opacity="0.35" stroke="${goodColor()}" stroke-width="1"/>
+    <path d="${negD}" fill="${criticalColor()}" fill-opacity="0.35" stroke="${criticalColor()}" stroke-width="1"/>`;
+}
+
+function computeMarketRegime() {
+  let upCount = 0, downCount = 0;
+  for (const sym of SYMBOLS) {
+    const q = state.quotes[sym];
+    if (!q || !q.prevClose) continue;
+    const pct = (q.last - q.prevClose) / q.prevClose;
+    if (pct > 0.0005) upCount++; else if (pct < -0.0005) downCount++;
+  }
+  const total = upCount + downCount;
+  const breadthScore = total ? (upCount - downCount) / total : 0;
+
+  let macdSum = 0, macdCount = 0;
+  for (const sym of SYMBOLS) {
+    const bars = state.bars[sym];
+    if (!bars || bars.length < 27) continue;
+    const closes = bars.map(b => b.close);
+    const hist = macdHistSeries(closes);
+    if (hist && hist.length > 0 && hist[hist.length - 1] !== null) {
+      const latestHist = hist[hist.length - 1];
+      macdSum += latestHist > 0 ? 1 : (latestHist < 0 ? -1 : 0);
+      macdCount++;
+    }
+  }
+  const macdScore = macdCount ? (macdSum / macdCount) : 0;
+
+  let volumeSum = 0, volumeCount = 0;
+  for (const sym of SYMBOLS) {
+    const bars = state.bars[sym];
+    if (!bars || bars.length < 30) continue;
+    const recentBars = bars.slice(-30);
+    let buyVol = 0, sellVol = 0;
+    for (let i = 1; i < recentBars.length; i++) {
+      const prevClose = recentBars[i - 1].close;
+      const currClose = recentBars[i].close;
+      if (currClose > prevClose) buyVol += recentBars[i].volume;
+      else if (currClose < prevClose) sellVol += recentBars[i].volume;
+    }
+    if (buyVol + sellVol > 0) {
+      const ratio = (buyVol - sellVol) / (buyVol + sellVol);
+      volumeSum += ratio;
+      volumeCount++;
+    }
+  }
+  const volumeScore = volumeCount ? (volumeSum / volumeCount) : 0;
+
+  let accelSum = 0, accelCount = 0;
+  for (const sym of SYMBOLS) {
+    const bars = state.bars[sym];
+    if (!bars || bars.length < 30) continue;
+    const full = computeAccelSeries(bars);
+    if (full.length > 0) {
+      const latest = full[full.length - 1].v;
+      accelSum += latest > 0 ? Math.min(1, latest / 2) : Math.max(-1, latest / 2);
+      accelCount++;
+    }
+  }
+  const accelScore = accelCount ? (accelSum / accelCount) : 0;
+
+  const rawScore = breadthScore * 0.40 + macdScore * 0.30 + volumeScore * 0.20 + accelScore * 0.10;
+  const absScore = Math.abs(rawScore);
+  const confidence = Math.min(100, absScore * 120);
+  let regime, upProb, downProb, chopProb;
+  
+  if (rawScore > 0.15) {
+    regime = 'up';
+    upProb = 50 + confidence * 0.5;
+    downProb = Math.max(5, 25 - confidence * 0.25);
+    chopProb = 100 - upProb - downProb;
+  } else if (rawScore < -0.15) {
+    regime = 'down';
+    downProb = 50 + confidence * 0.5;
+    upProb = Math.max(5, 25 - confidence * 0.25);
+    chopProb = 100 - upProb - downProb;
+  } else {
+    regime = 'chop';
+    chopProb = 50 + confidence * 0.4;
+    upProb = (100 - chopProb) / 2;
+    downProb = upProb;
+  }
+
+  return {
+    regime, upProb: Math.round(upProb), downProb: Math.round(downProb), chopProb: Math.round(chopProb),
+    signals: { upCount, downCount, total, macdScore: macdScore.toFixed(2), volumeScore: volumeScore.toFixed(2), accelScore: accelScore.toFixed(2) }
+  };
+}
+
+function renderMarketRegime() {
+  const container = $('regimeGaugeContainer');
+  const historyContainer = $('regimeHistoryContainer');
+  const regime = computeMarketRegime();
+  if (!regime) { container.innerHTML = ''; return; }
+
+  const { upProb, downProb, chopProb, signals } = regime;
+  const arrow = regime.regime === 'up' ? '↑' : (regime.regime === 'down' ? '↓' : '↔');
+  const label = regime.regime === 'up' ? 'UP' : (regime.regime === 'down' ? 'DOWN' : 'CHOP');
+
+  container.innerHTML = `
+    <div class="regime-visual">
+      <div class="regime-arrow ${regime.regime}">${arrow}</div>
+      <div class="regime-label ${regime.regime}">${label}</div>
+    </div>
+    <div class="regime-info">
+      <div class="regime-detail-row">
+        <span class="regime-detail-label">↑ UP probability</span>
+        <span class="regime-detail-value">${upProb}%</span>
+      </div>
+      <div class="regime-detail-row">
+        <span class="regime-detail-label">↓ DOWN probability</span>
+        <span class="regime-detail-value">${downProb}%</span>
+      </div>
+      <div class="regime-detail-row">
+        <span class="regime-detail-label">↔ CHOP probability</span>
+        <span class="regime-detail-value">${chopProb}%</span>
+      </div>
+      <div class="regime-detail-row">
+        <span class="regime-detail-label">Breadth (up/down)</span>
+        <span class="regime-detail-value">${signals.upCount}/${signals.downCount} of ${signals.total}</span>
+      </div>
+      <div class="regime-detail-row">
+        <span class="regime-detail-label">Volume pressure</span>
+        <span class="regime-detail-value" style="${parseFloat(signals.volumeScore) > 0 ? 'color:var(--good)' : 'color:var(--critical)'}">
+          ${parseFloat(signals.volumeScore) > 0 ? '+' : ''}${signals.volumeScore}
+        </span>
+      </div>
+    </div>
+  `;
+
+  historyContainer.innerHTML = `
+    <div class="regime-detail-row">
+      <span class="regime-detail-label">Current regime:</span>
+      <span class="regime-detail-value" style="color:${regime.regime === 'up' ? 'var(--good)' : (regime.regime === 'down' ? 'var(--critical)' : 'var(--warning)')}">${upProb}% UP · ${downProb}% DOWN · ${chopProb}% CHOP</span>
+    </div>
+    <div style="display:flex; gap:3px; margin-top:4px">
+      <div style="flex:${upProb}; height:20px; border-radius:4px; background:var(--good); display:flex; align-items:center; justify-content:flex-end; padding-right:6px">
+        ${upProb > 20 ? `<span style="font-size:11px; font-weight:600; color:var(--text-primary)">${upProb}%</span>` : ''}
+      </div>
+      <div style="flex:${chopProb}; height:20px; border-radius:4px; background:var(--warning); display:flex; align-items:center; justify-content:flex-end; padding-right:6px">
+        ${chopProb > 20 ? `<span style="font-size:11px; font-weight:600; color:var(--text-primary)">${chopProb}%</span>` : ''}
+      </div>
+      <div style="flex:${downProb}; height:20px; border-radius:4px; background:var(--critical); display:flex; align-items:center; justify-content:flex-end; padding-right:6px">
+        ${downProb > 20 ? `<span style="font-size:11px; font-weight:600; color:var(--text-primary)">${downProb}%</span>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+
+function renderBreadthSummary() {
+  let up = 0, down = 0, flat = 0;
+  for (const sym of SYMBOLS) {
+    const q = state.quotes[sym];
+    if (!q || !q.prevClose) continue;
+    const pct = (q.last - q.prevClose) / q.prevClose;
+    if (pct > 0.0005) up++; else if (pct < -0.0005) down++; else flat++;
+  }
+  const total = up + down + flat;
+  if (!total) { $('breadthSummary').innerHTML = ''; return; }
+  $('breadthSummary').innerHTML =
+    `<span class="badge up">${up} up</span> <span class="badge down">${down} down</span>` +
+    (flat ? ` <span class="badge flat">${flat} flat</span>` : '') +
+    ` <span style="color:var(--muted); font-size:12.5px; margin-left:8px">of ${total} symbols, vs. yesterday's close</span>`;
+}
+
+function wireHover(svg, model) {
+  svg.__model = model;
+}
+
+function wireTooltip(svgId, wrapId, tooltipId, valFmt) {
+  const svg = $(svgId);
+  const model = svg.__model;
+  if (!model) return;
+  const rect = svg.querySelector('.hover-capture');
+  const crosshair = svg.querySelector('.crosshair');
+  const tooltip = $(tooltipId);
+  const wrap = $(wrapId);
+  if (!rect) return;
+
+  function onMove(evt) {
+    const bbox = svg.getBoundingClientRect();
+    const svgX = (evt.clientX - bbox.left) / bbox.width * CHART_W;
+    const frac = (svgX - PAD_L) / (CHART_W - PAD_L - PAD_R);
+    const t = model.tMin + frac * (model.tMax - model.tMin);
+
+    let nearestT = null, best = Infinity;
+    for (const sym of SYMBOLS) {
+      const pts = model.series[sym];
+      if (!pts) continue;
+      for (const p of pts) {
+        const diff = Math.abs(p.t - t);
+        if (diff < best) { best = diff; nearestT = p.t; }
+      }
+    }
+    if (nearestT === null) return;
+    const x = xScale(nearestT, model.tMin, model.tMax);
+    crosshair.setAttribute('x1', x); crosshair.setAttribute('x2', x);
+    crosshair.style.opacity = 1;
+
+    const rows = SYMBOLS.map(sym => {
+      const pts = model.series[sym];
+      if (!pts) return null;
+      let closest = pts[0], bd = Infinity;
+      for (const p of pts) { const d = Math.abs(p.t - nearestT); if (d < bd) { bd = d; closest = p; } }
+      return { sym, v: closest.v };
+    }).filter(Boolean).sort((a, b) => b.v - a.v);
+
+    tooltip.innerHTML = `<div class="tooltip-time">${fmtTime(nearestT)}</div>` +
+      rows.map(r => `<div class="tooltip-row"><span class="swatch" style="background:${cssColor(r.sym)}"></span><span class="sym">${r.sym}</span><span class="val">${valFmt(r.v)}</span></div>`).join('');
+
+    const wrapBox = wrap.getBoundingClientRect();
+    const px = (evt.clientX - wrapBox.left);
+    const py = (evt.clientY - wrapBox.top);
+    tooltip.style.left = Math.min(Math.max(px, 80), wrapBox.width - 80) + 'px';
+    tooltip.style.top = Math.max(py, 110) + 'px';
+    tooltip.classList.add('show');
+  }
+  function onLeave() {
+    crosshair.style.opacity = 0;
+    tooltip.classList.remove('show');
+  }
+  rect.addEventListener('mousemove', onMove);
+  rect.addEventListener('mouseleave', onLeave);
+}
+
+function buildAccelBucketedModel() {
+  // Bucket momentum acceleration into 5-minute intervals over the trailing 30 minutes
+  const full = {};
+  for (const sym of SYMBOLS) {
+    const pts = computeAccelSeries(state.bars[sym]);
+    if (pts.length) full[sym] = pts;
+  }
+  if (!Object.keys(full).length) return null;
+
+  const THIRTY_MIN_MS = 30 * 60 * 1000;
+  const FIVE_MIN_MS = 5 * 60 * 1000;
+  const cutoff = Date.now() - THIRTY_MIN_MS;
+
+  // Create 6 buckets: 0-5, 5-10, 10-15, 15-20, 20-25, 25-30 minutes ago
+  const buckets = new Map();
+  for (let i = 0; i < 6; i++) {
+    const bucketStart = Date.now() - THIRTY_MIN_MS + (i * FIVE_MIN_MS);
+    const bucketEnd = bucketStart + FIVE_MIN_MS;
+    buckets.set(i, { start: bucketStart, end: bucketEnd, data: {} });
+    for (const sym of SYMBOLS) buckets.get(i).data[sym] = [];
+  }
+
+  // Distribute acceleration points into 5-min buckets
+  for (const sym of SYMBOLS) {
+    const pts = (full[sym] || []).filter(p => p.t >= cutoff);
+    for (const pt of pts) {
+      const bucketIdx = Math.floor((pt.t - (Date.now() - THIRTY_MIN_MS)) / FIVE_MIN_MS);
+      if (bucketIdx >= 0 && bucketIdx < 6) {
+        buckets.get(bucketIdx).data[sym].push(pt.v);
+      }
+    }
+  }
+
+  // Average each symbol's acceleration within each bucket
+  const series = {};
+  let vMin = Infinity, vMax = -Infinity;
+  for (const sym of SYMBOLS) series[sym] = [];
+
+  for (let i = 0; i < 6; i++) {
+    const bucket = buckets.get(i);
+    for (const sym of SYMBOLS) {
+      const vals = bucket.data[sym];
+      const avg = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+      if (avg !== null) {
+        series[sym].push({ t: bucket.start, v: avg });
+        vMin = Math.min(vMin, avg);
+        vMax = Math.max(vMax, avg);
+      }
+    }
+  }
+
+  if (!isFinite(vMin)) return null;
+  const vPad = Math.max(0.15, (vMax - vMin) * 0.15);
+  vMin -= vPad; vMax += vPad;
+  if (vMin > 0) vMin = -0.1;
+  if (vMax < 0) vMax = 0.1;
+
+  return { series, buckets, vMin, vMax };
+}
+
+function renderAccelTimeChart() {
+  const svg = $('accelTimeSvg');
+  const model = buildAccelBucketedModel();
+  if (!model) { svg.innerHTML = ''; return; }
+
+  const { series, buckets, vMin, vMax } = model;
+  const W = 900, H = 380, PAD_T = 10, PAD_B = 40, PAD_L = 50, PAD_R = 20;
+  const PLOT_W = W - PAD_L - PAD_R;
+  const PLOT_H = H - PAD_T - PAD_B;
+  const BUCKET_W = PLOT_W / 6;
+
+  const yScale = PLOT_H / (vMax - vMin);
+  const zeroY = PAD_T + PLOT_H - (0 - vMin) * yScale;
+
+  // Grid
+  let grid = `<line x1="${PAD_L}" y1="${zeroY}" x2="${W - PAD_R}" y2="${zeroY}" class="baseline"/>`;
+  const step = Math.max(0.1, Math.round((vMax - vMin) / 4 * 10) / 10);
+  for (let v = Math.ceil(vMin / step) * step; v <= vMax; v += step) {
+    const py = PAD_T + PLOT_H - (v - vMin) * yScale;
+    grid += `<line x1="${PAD_L}" y1="${py}" x2="${W - PAD_R}" y2="${py}" class="gridline"/>`;
+    grid += `<text x="${PAD_L - 8}" y="${py + 4}" text-anchor="end" class="axis-label">${v.toFixed(1)}</text>`;
+  }
+
+  // Time labels (bucket midpoints)
+  let timeLabels = '';
+  for (let i = 0; i < 6; i++) {
+    const minAgo = 30 - (i + 0.5) * 5;
+    const px = PAD_L + i * BUCKET_W + BUCKET_W / 2;
+    timeLabels += `<text x="${px}" y="${H - 4}" text-anchor="middle" class="axis-label">${Math.round(minAgo)}m</text>`;
+  }
+
+  // Lines (one per symbol)
+  let lines = '';
+  let markers = '';
+  for (const sym of SYMBOLS) {
+    const pts = series[sym];
+    if (!pts || !pts.length) continue;
+
+    // Build path data
+    let pathData = '';
+    for (let i = 0; i < pts.length; i++) {
+      const px = PAD_L + i * BUCKET_W + BUCKET_W / 2;
+      const py = zeroY - (pts[i].v - vMin) * yScale;
+      pathData += (i === 0 ? 'M' : 'L') + px.toFixed(1) + ' ' + py.toFixed(1) + ' ';
+    }
+
+    const color = cssColor(sym);
+    lines += `<path d="${pathData}" stroke="${color}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="series-line" data-sym="${sym}"/>`;
+
+    // Add markers (circles) for hover detection - visible with semi-transparent fill
+    for (let i = 0; i < pts.length; i++) {
+      const px = PAD_L + i * BUCKET_W + BUCKET_W / 2;
+      const py = zeroY - (pts[i].v - vMin) * yScale;
+      const minAgo = 30 - (i + 0.5) * 5;
+      markers += `<circle cx="${px}" cy="${py}" r="5" fill="${color}" opacity="0.3" class="accel-marker" data-sym="${sym}" data-val="${pts[i].v.toFixed(2)}" data-bucket="${i}" data-min-ago="${minAgo}" style="cursor:pointer"/>`;
+    }
+  }
+
+  svg.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:auto;display:block;overflow:visible">
+    ${grid}
+    ${timeLabels}
+    ${lines}
+    ${markers}
+  </svg>`;
+
+  const tooltip = $('tooltipAccelTime');
+  svg.querySelectorAll('.accel-marker').forEach(marker => {
+    marker.addEventListener('mouseenter', () => {
+      const sym = marker.getAttribute('data-sym');
+      const val = marker.getAttribute('data-val');
+      const minAgo = marker.getAttribute('data-min-ago');
+      tooltip.innerHTML = `<div class="tooltip-time">${Math.round(minAgo)}m ago</div><div class="tooltip-row"><span class="swatch" style="background:${cssColor(sym)}"></span><span class="sym">${sym}</span><span class="val">${val}pp</span></div>`;
+      tooltip.classList.add('show');
+    });
+    marker.addEventListener('mousemove', (e) => {
+      const rect = svg.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = (y - 20) + 'px';
+    });
+    marker.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('show');
+    });
+  });
+}
+
+const fmtVolX = (v) => v.toFixed(1) + 'x';
+const fmtVolPP = (v) => (v >= 0 ? '+' : '') + v.toFixed(1) + 'pp';
+
+function renderVolumeChart() {
+  const svg = $('volumeSvg');
+  const model = buildVolumeModel();
+  if (!model) { svg.innerHTML = ''; return; }
+
+  const { series, vMin, vMax } = model;
+  const THIRTY_MIN_MS = 30 * 60 * 1000;
+  const tNow = Date.now();
+  const tMin30 = tNow - THIRTY_MIN_MS;
+
+  const series30 = {};
+  let hasData = false;
+  for (const sym of SYMBOLS) {
+    const pts = series[sym];
+    if (!pts) continue;
+    const filtered = pts.filter(p => p.t >= tMin30);
+    if (filtered.length) {
+      series30[sym] = filtered;
+      hasData = true;
+    }
+  }
+
+  if (!hasData) { svg.innerHTML = ''; return; }
+
+  const VOL_BUCKET_MS = 5 * 60 * 1000;
+  const bucketMap = new Map();
+  const allTimes = new Set();
+  
+  for (const sym of SYMBOLS) {
+    if (!series30[sym]) continue;
+    for (const pt of series30[sym]) {
+      const bucketT = Math.floor(pt.t / VOL_BUCKET_MS) * VOL_BUCKET_MS;
+      allTimes.add(bucketT);
+      if (!bucketMap.has(bucketT)) bucketMap.set(bucketT, {});
+      bucketMap.get(bucketT)[sym] = pt.v;
+    }
+  }
+
+  const bucketTimes = Array.from(allTimes).sort((a, b) => a - b);
+  if (!bucketTimes.length) { svg.innerHTML = ''; return; }
+
+  const W = 900, H = 320, PAD_T = 10, PAD_B = 40, PAD_L = 50, PAD_R = 20;
+  const PLOT_W = W - PAD_L - PAD_R;
+  const PLOT_H = H - PAD_T - PAD_B;
+  const BAR_GROUP_W = PLOT_W / bucketTimes.length;
+  const BAR_W = Math.min(6, BAR_GROUP_W / (SYMBOLS.length + 1));
+  const BAR_START_X = BAR_GROUP_W / 2 - (SYMBOLS.length * BAR_W) / 2;
+
+  const yMin = Math.min(0.2, vMin || 0.5);
+  const yMax = Math.max(2.5, vMax || 2.0);
+  const yScale = PLOT_H / (yMax - yMin);
+  const yZero = PAD_T + yScale * (yMax - 1.0);
+
+  let grid = `<line x1="${PAD_L}" y1="${yZero}" x2="${W - PAD_R}" y2="${yZero}" class="baseline"/>`;
+  for (let y = 0.5; y <= 3; y += 0.5) {
+    const py = PAD_T + yScale * (yMax - y);
+    grid += `<line x1="${PAD_L}" y1="${py}" x2="${W - PAD_R}" y2="${py}" class="gridline"/>`;
+    grid += `<text x="${PAD_L - 8}" y="${py + 4}" text-anchor="end" class="axis-label">${y.toFixed(1)}x</text>`;
+  }
+
+  let timeLabels = '';
+  for (let i = 0; i < bucketTimes.length; i++) {
+    const t = bucketTimes[i];
+    const dateObj = new Date(t);
+    const h = dateObj.getUTCHours();
+    const m = dateObj.getUTCMinutes();
+    const label = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+    const px = PAD_L + i * BAR_GROUP_W + BAR_GROUP_W / 2;
+    timeLabels += `<text x="${px}" y="${H - 4}" text-anchor="middle" class="axis-label">${label}</text>`;
+  }
+
+  let bars = '';
+  bucketTimes.forEach((t, i) => {
+    const bucketData = bucketMap.get(t);
+    const xBase = PAD_L + i * BAR_GROUP_W + BAR_START_X;
+    SYMBOLS.forEach((sym, si) => {
+      const v = bucketData[sym];
+      if (v === undefined) return;
+      const barH = (v - yMin) * yScale;
+      const x = xBase + si * BAR_W;
+      const y = yZero - barH;
+      const color = cssColor(sym);
+      bars += `<rect x="${x.toFixed(1)}" y="${Math.max(PAD_T, y).toFixed(1)}" width="${BAR_W}" height="${Math.max(1, barH).toFixed(1)}" fill="${color}" opacity="0.8" class="vol-bar" data-sym="${sym}" data-val="${v.toFixed(2)}" data-time="${new Date(t).toLocaleTimeString()}"/>`;
+    });
+  });
+
+  svg.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:auto;display:block;overflow:visible">
+    ${grid}
+    ${timeLabels}
+    ${bars}
+  </svg>`;
+
+  const bars_els = svg.querySelectorAll('.vol-bar');
+  const tooltip = $('tooltipVolume');
+  bars_els.forEach(bar => {
+    bar.addEventListener('mouseenter', (e) => {
+      const sym = bar.getAttribute('data-sym');
+      const val = bar.getAttribute('data-val');
+      const time = bar.getAttribute('data-time');
+      tooltip.innerHTML = `<div class="tooltip-time">${time}</div><div class="tooltip-row"><span class="swatch" style="background:${cssColor(sym)}"></span><span class="sym">${sym}</span><span class="val">${val}x</span></div>`;
+      tooltip.classList.add('show');
+    });
+    bar.addEventListener('mousemove', (e) => {
+      const rect = svg.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = (y - 20) + 'px';
+    });
+    bar.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('show');
+    });
+  });
+}
+
+function renderVolAccelChart() {
+  renderLineChart($('volAccelSvg'), buildVolAccelModel(), fmtVolPP);
+  wireTooltip('volAccelSvg', 'volAccelWrap', 'tooltipVolAccel', fmtVolPP);
+}
+
+// ---------- render: buy/sell volume chart ----------
+function buildBuySellModel() {
+  // Classify each bar as buy or sell using tick rule: close > prior close = buy, close < prior close = sell
+  const full = {};
+  for (const sym of SYMBOLS) {
+    const bars = state.bars[sym];
+    if (!bars || bars.length < 2) continue;
+    const buyBars = [], sellBars = [];
+    for (let i = 1; i < bars.length; i++) {
+      if (bars[i].close > bars[i-1].close) {
+        buyBars.push(bars[i]);
+      } else if (bars[i].close < bars[i-1].close) {
+        sellBars.push(bars[i]);
+      }
+    }
+    full[sym] = { buyBars, sellBars };
+  }
+
+  const cutoff = Date.now() - 30 * 60 * 1000; // last 30 min
+  const VOL_BUCKET_MS = 5 * 60 * 1000; // 5-min buckets
+  const buckets = new Map();
+  let hasData = false;
+
+  for (const sym of SYMBOLS) {
+    if (!full[sym]) continue;
+    const { buyBars, sellBars } = full[sym];
+
+    for (const bar of buyBars) {
+      if (bar.t < cutoff) continue;
+      const bucketT = Math.floor(bar.t / VOL_BUCKET_MS) * VOL_BUCKET_MS;
+      if (!buckets.has(bucketT)) buckets.set(bucketT, { buy: 0, sell: 0 });
+      buckets.get(bucketT).buy += bar.volume;
+      hasData = true;
+    }
+    for (const bar of sellBars) {
+      if (bar.t < cutoff) continue;
+      const bucketT = Math.floor(bar.t / VOL_BUCKET_MS) * VOL_BUCKET_MS;
+      if (!buckets.has(bucketT)) buckets.set(bucketT, { buy: 0, sell: 0 });
+      buckets.get(bucketT).sell += bar.volume;
+      hasData = true;
+    }
+  }
+
+  if (!hasData) return null;
+
+  const times = Array.from(buckets.keys()).sort((a, b) => a - b);
+  const maxVol = Math.max(...Array.from(buckets.values()).map(v => Math.max(v.buy, v.sell) || 1), 100000);
+
+  return { buckets, times, maxVol };
+}
+
+function renderBuySellChart() {
+  const svg = $('buySellSvg');
+  const model = buildBuySellModel();
+  if (!model) { svg.innerHTML = ''; return; }
+
+  const { buckets, times, maxVol } = model;
+  const W = 900, H = 320, PAD_T = 10, PAD_B = 40, PAD_L = 50, PAD_R = 20;
+  const PLOT_W = W - PAD_L - PAD_R;
+  const PLOT_H = H - PAD_T - PAD_B;
+  const BAR_GROUP_W = PLOT_W / times.length;
+  const BAR_W = Math.min(8, BAR_GROUP_W / 2.2);
+
+  const yScale = PLOT_H / maxVol;
+
+  let grid = '';
+  const steps = [100000, 500000, 1000000, 5000000, 10000000];
+  const maxStep = steps.find(s => s <= maxVol) || 100000;
+  for (let y = maxStep; y <= maxVol; y += maxStep) {
+    const py = PAD_T + PLOT_H - (y * yScale);
+    grid += `<line x1="${PAD_L}" y1="${py}" x2="${W - PAD_R}" y2="${py}" class="gridline"/>`;
+    grid += `<text x="${PAD_L - 8}" y="${py + 4}" text-anchor="end" class="axis-label">${(y / 1000000).toFixed(1)}M</text>`;
+  }
+
+  let timeLabels = '';
+  for (let i = 0; i < times.length; i++) {
+    const t = times[i];
+    const dateObj = new Date(t);
+    const h = dateObj.getUTCHours();
+    const m = dateObj.getUTCMinutes();
+    const label = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+    const px = PAD_L + i * BAR_GROUP_W + BAR_GROUP_W / 2;
+    timeLabels += `<text x="${px}" y="${H - 4}" text-anchor="middle" class="axis-label">${label}</text>`;
+  }
+
+  let bars = '';
+  times.forEach((t, i) => {
+    const data = buckets.get(t);
+    const xBase = PAD_L + i * BAR_GROUP_W + (BAR_GROUP_W / 2) - BAR_W;
+    const yBase = PAD_T + PLOT_H;
+
+    if (data.buy > 0) {
+      const barH = (data.buy * yScale);
+      bars += `<rect x="${(xBase - BAR_W / 2).toFixed(1)}" y="${(yBase - barH).toFixed(1)}" width="${BAR_W}" height="${Math.max(1, barH).toFixed(1)}" fill="#22c55e" opacity="0.8" class="bs-bar" data-type="buy" data-val="${data.buy}" data-time="${new Date(t).toLocaleTimeString()}"/>`;
+    }
+
+    if (data.sell > 0) {
+      const barH = (data.sell * yScale);
+      bars += `<rect x="${(xBase + BAR_W / 2).toFixed(1)}" y="${(yBase - barH).toFixed(1)}" width="${BAR_W}" height="${Math.max(1, barH).toFixed(1)}" fill="#ef4444" opacity="0.8" class="bs-bar" data-type="sell" data-val="${data.sell}" data-time="${new Date(t).toLocaleTimeString()}"/>`;
+    }
+  });
+
+  svg.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:auto;display:block;overflow:visible">
+    ${grid}
+    ${timeLabels}
+    ${bars}
+  </svg>`;
+
+  const tooltip = $('tooltipBuySell');
+  svg.querySelectorAll('.bs-bar').forEach(bar => {
+    bar.addEventListener('mouseenter', (e) => {
+      const type = bar.getAttribute('data-type');
+      const val = bar.getAttribute('data-val');
+      const time = bar.getAttribute('data-time');
+      const color = type === 'buy' ? '#22c55e' : '#ef4444';
+      const label = type === 'buy' ? 'Buy' : 'Sell';
+      tooltip.innerHTML = `<div class="tooltip-time">${time}</div><div class="tooltip-row"><span class="swatch" style="background:${color}"></span><span class="sym">${label}</span><span class="val">${(val / 1000000).toFixed(2)}M</span></div>`;
+      tooltip.classList.add('show');
+    });
+    bar.addEventListener('mousemove', (e) => {
+      const rect = svg.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = (y - 20) + 'px';
+    });
+    bar.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('show');
+    });
+  });
+}
+
+// ---------- render: buy/sell volume breakdown by symbol ----------
+function buildBuySellBreakdownModel() {
+  // Track buy/sell volumes per symbol in 5-minute buckets
+  const full = {};
+  for (const sym of SYMBOLS) {
+    const bars = state.bars[sym];
+    if (!bars || bars.length < 2) continue;
+    const buyBars = [], sellBars = [];
+    for (let i = 1; i < bars.length; i++) {
+      if (bars[i].close > bars[i-1].close) {
+        buyBars.push(bars[i]);
+      } else if (bars[i].close < bars[i-1].close) {
+        sellBars.push(bars[i]);
+      }
+    }
+    full[sym] = { buyBars, sellBars };
+  }
+
+  const cutoff = Date.now() - 30 * 60 * 1000; // last 30 min
+  const VOL_BUCKET_MS = 5 * 60 * 1000; // 5-min buckets
+  const buckets = new Map();
+  let hasData = false;
+
+  // Initialize buckets for each symbol
+  for (const sym of SYMBOLS) {
+    for (const sym2 of SYMBOLS) {
+      if (!full[sym2]) continue;
+      const { buyBars, sellBars } = full[sym2];
+      for (const bar of buyBars.concat(sellBars)) {
+        if (bar.t < cutoff) continue;
+        const bucketT = Math.floor(bar.t / VOL_BUCKET_MS) * VOL_BUCKET_MS;
+        if (!buckets.has(bucketT)) {
+          buckets.set(bucketT, {});
+          for (const s of SYMBOLS) buckets.get(bucketT)[s] = { buy: 0, sell: 0 };
+        }
+        break;
+      }
+    }
+    break;
+  }
+
+  // Populate per-symbol volumes
+  for (const sym of SYMBOLS) {
+    if (!full[sym]) continue;
+    const { buyBars, sellBars } = full[sym];
+
+    for (const bar of buyBars) {
+      if (bar.t < cutoff) continue;
+      const bucketT = Math.floor(bar.t / VOL_BUCKET_MS) * VOL_BUCKET_MS;
+      if (buckets.has(bucketT)) {
+        buckets.get(bucketT)[sym].buy += bar.volume;
+        hasData = true;
+      }
+    }
+    for (const bar of sellBars) {
+      if (bar.t < cutoff) continue;
+      const bucketT = Math.floor(bar.t / VOL_BUCKET_MS) * VOL_BUCKET_MS;
+      if (buckets.has(bucketT)) {
+        buckets.get(bucketT)[sym].sell += bar.volume;
+        hasData = true;
+      }
+    }
+  }
+
+  if (!hasData) return null;
+
+  const times = Array.from(buckets.keys()).sort((a, b) => a - b);
+  let maxVol = 0;
+  for (const bucket of buckets.values()) {
+    for (const sym of SYMBOLS) {
+      maxVol = Math.max(maxVol, bucket[sym].buy, bucket[sym].sell);
+    }
+  }
+  maxVol = Math.max(maxVol, 100000);
+
+  return { buckets, times, maxVol };
+}
+
+function renderBuySellBreakdownChart() {
+  const svg = $('buySellBreakdownSvg');
+  const model = buildBuySellBreakdownModel();
+  if (!model) { svg.innerHTML = ''; return; }
+
+  const { buckets, times, maxVol } = model;
+  const W = 900, H = 600, PAD_T = 10, PAD_B = 40, PAD_L = 50, PAD_R = 20;
+  const PLOT_W = W - PAD_L - PAD_R;
+  const PLOT_H = H - PAD_T - PAD_B;
+  const ROW_H = PLOT_H / SYMBOLS.length;
+  const BAR_GROUP_W = PLOT_W / times.length;
+  const BAR_W = Math.min(4, BAR_GROUP_W / 2.2);
+
+  const yScale = (PLOT_H / SYMBOLS.length) / maxVol;
+
+  let grid = '';
+  const steps = [100000, 500000, 1000000];
+  const maxStep = steps.find(s => s <= maxVol) || 100000;
+  for (let y = maxStep; y <= maxVol; y += maxStep) {
+    const py = PAD_T + (y * yScale);
+    grid += `<line x1="${PAD_L}" y1="${py}" x2="${W - PAD_R}" y2="${py}" class="gridline" opacity="0.3"/>`;
+  }
+
+  // Symbol labels on left
+  let labels = '';
+  SYMBOLS.forEach((sym, idx) => {
+    const py = PAD_T + (idx + 0.5) * ROW_H;
+    labels += `<text x="${PAD_L - 8}" y="${py + 4}" text-anchor="end" class="axis-label" font-size="11">${sym}</text>`;
+  });
+
+  let timeLabels = '';
+  for (let i = 0; i < times.length; i++) {
+    const t = times[i];
+    const dateObj = new Date(t);
+    const h = dateObj.getUTCHours();
+    const m = dateObj.getUTCMinutes();
+    const label = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+    const px = PAD_L + i * BAR_GROUP_W + BAR_GROUP_W / 2;
+    timeLabels += `<text x="${px}" y="${H - 4}" text-anchor="middle" class="axis-label" font-size="10">${label}</text>`;
+  }
+
+  let bars = '';
+  times.forEach((t, i) => {
+    const timeData = buckets.get(t);
+    const xBase = PAD_L + i * BAR_GROUP_W + (BAR_GROUP_W / 2);
+
+    SYMBOLS.forEach((sym, symIdx) => {
+      const yBase = PAD_T + (symIdx + 1) * ROW_H;
+      const data = timeData[sym];
+
+      if (data.buy > 0) {
+        const barH = Math.min(ROW_H - 2, data.buy * yScale);
+        bars += `<rect x="${(xBase - BAR_W - 1).toFixed(1)}" y="${(yBase - barH).toFixed(1)}" width="${BAR_W}" height="${Math.max(1, barH).toFixed(1)}" fill="#22c55e" opacity="0.8" class="bs-bar" data-sym="${sym}" data-type="buy" data-val="${data.buy}" data-time="${new Date(t).toLocaleTimeString()}"/>`;
+      }
+
+      if (data.sell > 0) {
+        const barH = Math.min(ROW_H - 2, data.sell * yScale);
+        bars += `<rect x="${(xBase + 1).toFixed(1)}" y="${(yBase - barH).toFixed(1)}" width="${BAR_W}" height="${Math.max(1, barH).toFixed(1)}" fill="#ef4444" opacity="0.8" class="bs-bar" data-sym="${sym}" data-type="sell" data-val="${data.sell}" data-time="${new Date(t).toLocaleTimeString()}"/>`;
+      }
+    });
+  });
+
+  svg.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:auto;display:block;overflow:visible">
+    ${grid}
+    ${labels}
+    ${timeLabels}
+    ${bars}
+  </svg>`;
+
+  const tooltip = $('tooltipBuySellBreakdown');
+  svg.querySelectorAll('.bs-bar').forEach(bar => {
+    bar.addEventListener('mouseenter', (e) => {
+      const sym = bar.getAttribute('data-sym');
+      const type = bar.getAttribute('data-type');
+      const val = bar.getAttribute('data-val');
+      const time = bar.getAttribute('data-time');
+      const color = type === 'buy' ? '#22c55e' : '#ef4444';
+      const label = type === 'buy' ? 'Buy' : 'Sell';
+      tooltip.innerHTML = `<div class="tooltip-time">${time}</div><div class="tooltip-row"><span class="swatch" style="background:${color}"></span><span class="sym">${sym}</span><span class="val">${label} ${(val / 1000000).toFixed(2)}M</span></div>`;
+      tooltip.classList.add('show');
+    });
+    bar.addEventListener('mousemove', (e) => {
+      const rect = svg.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = (y - 20) + 'px';
+    });
+    bar.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('show');
+    });
+  });
+}
+
+// ---------- render: buy/sell ratio chart ----------
+function buildRatioModel() {
+  const model = buildBuySellModel();
+  if (!model) return null;
+
+  const { buckets, times } = model;
+  const series = {};
+  for (const sym of SYMBOLS) series[sym] = [];
+
+  let tMin = Infinity, tMax = -Infinity;
+  for (const t of times) {
+    const data = buckets.get(t);
+    const total = data.buy + data.sell;
+    const ratio = total > 0 ? data.buy / total : 0.5;
+    tMin = Math.min(tMin, t);
+    tMax = Math.max(tMax, t);
+    // Store ratio as dummy series for all symbols (unified ratio display)
+    SYMBOLS[0] && series[SYMBOLS[0]].push({ t, v: ratio * 100 });
+  }
+
+  if (!series[SYMBOLS[0]] || !series[SYMBOLS[0]].length) return null;
+  return { series: { ratio: series[SYMBOLS[0]] }, tMin, tMax, vMin: 0, vMax: 100 };
+}
+
+function renderRatioChart() {
+  const svg = $('ratioSvg');
+  const model = buildRatioModel();
+  if (!model) { svg.innerHTML = ''; return; }
+
+  const { series, tMin, tMax, vMin, vMax } = model;
+  const pts = series.ratio || [];
+  if (!pts.length) { svg.innerHTML = ''; return; }
+
+  const W = 900, H = 320, PAD_T = 10, PAD_B = 40, PAD_L = 50, PAD_R = 20;
+  const PLOT_W = W - PAD_L - PAD_R;
+  const PLOT_H = H - PAD_T - PAD_B;
+
+  // Grid at 25%, 50%, 75%
+  let grid = `<line x1="${PAD_L}" y1="${PAD_T + PLOT_H / 2}" x2="${W - PAD_R}" y2="${PAD_T + PLOT_H / 2}" class="baseline" stroke-dasharray="4,4"/>`;
+  for (let pct of [25, 50, 75]) {
+    const py = PAD_T + PLOT_H * (1 - pct / 100);
+    grid += `<line x1="${PAD_L}" y1="${py}" x2="${W - PAD_R}" y2="${py}" class="gridline"/>`;
+    grid += `<text x="${PAD_L - 8}" y="${py + 4}" text-anchor="end" class="axis-label">${pct}%</text>`;
+  }
+
+  let pathD = '';
+  for (let i = 0; i < pts.length; i++) {
+    const p = pts[i];
+    const x = PAD_L + (p.t - tMin) / (tMax - tMin) * PLOT_W;
+    const y = PAD_T + PLOT_H * (1 - p.v / 100);
+    pathD += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ' ' + y.toFixed(2);
+  }
+
+  // Color by value: <40% red, 40-60% gray, >60% green
+  let pathColor = '#ef4444'; // default red
+  if (pts.length > 0) {
+    const lastRatio = pts[pts.length - 1].v;
+    if (lastRatio > 60) pathColor = '#22c55e';
+    else if (lastRatio >= 40) pathColor = '#888888';
+  }
+
+  let path = `<path d="${pathD}" fill="none" stroke="${pathColor}" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
+
+  // Add dots at each point
+  let dots = '';
+  for (const p of pts) {
+    const x = PAD_L + (p.t - tMin) / (tMax - tMin) * PLOT_W;
+    const y = PAD_T + PLOT_H * (1 - p.v / 100);
+    const dotColor = p.v > 60 ? '#22c55e' : (p.v >= 40 ? '#888888' : '#ef4444');
+    dots += `<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="3" fill="${dotColor}" opacity="0.8" class="ratio-dot" data-val="${p.v.toFixed(1)}" data-time="${new Date(p.t).toLocaleTimeString()}"/>`;
+  }
+
+  // Time labels
+  let timeLabels = '';
+  const step = Math.ceil(pts.length / 6);
+  for (let i = 0; i < pts.length; i += step) {
+    const p = pts[i];
+    const x = PAD_L + (p.t - tMin) / (tMax - tMin) * PLOT_W;
+    const dateObj = new Date(p.t);
+    const h = dateObj.getUTCHours();
+    const m = dateObj.getUTCMinutes();
+    const label = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+    timeLabels += `<text x="${x}" y="${H - 4}" text-anchor="middle" class="axis-label">${label}</text>`;
+  }
+
+  svg.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:auto;display:block;overflow:visible">
+    ${grid}
+    ${timeLabels}
+    ${path}
+    ${dots}
+  </svg>`;
+
+  const tooltip = $('tooltipRatio');
+  svg.querySelectorAll('.ratio-dot').forEach(dot => {
+    dot.addEventListener('mouseenter', () => {
+      const val = dot.getAttribute('data-val');
+      const time = dot.getAttribute('data-time');
+      const numVal = parseFloat(val);
+      const status = numVal > 60 ? 'Strong Buy' : (numVal >= 40 ? 'Neutral' : 'Strong Sell');
+      tooltip.innerHTML = `<div class="tooltip-time">${time}</div><div class="tooltip-row"><span class="sym">Buy Ratio</span><span class="val">${val}%</span></div><div class="tooltip-row" style="font-size:11px; color:var(--muted)">${status}</div>`;
+      tooltip.classList.add('show');
+    });
+    dot.addEventListener('mousemove', (e) => {
+      const rect = svg.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = (y - 20) + 'px';
+    });
+    dot.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('show');
+    });
+  });
+}
+
+// ---------- render: acceleration bar chart ----------
+const ACCEL_W = 900, ACCEL_H = 300, ACCEL_PAD_T = 10, ACCEL_PAD_B = 20, ACCEL_LABEL_W = 66, ACCEL_PAD_R = 54;
+
+function renderAccelChart() {
+  const svg = $('accelSvg');
+  const rows = SYMBOLS.map(sym => ({ sym, accel: computeAccel(state.bars[sym]) }));
+  const haveAny = rows.some(r => r.accel !== null);
+  if (!haveAny) { svg.innerHTML = ''; return; }
+
+  rows.sort((a, b) => {
+    const av = a.accel === null ? -Infinity : a.accel;
+    const bv = b.accel === null ? -Infinity : b.accel;
+    return bv - av;
+  });
+
+  const maxAbs = Math.max(0.3, ...rows.map(r => Math.abs(r.accel || 0)));
+  const plotL = ACCEL_LABEL_W, plotR = ACCEL_W - ACCEL_PAD_R;
+  const plotW = plotR - plotL;
+  const zeroX = plotL + plotW / 2;
+  const usableHalf = plotW / 2 - 6;
+  const px = (v) => zeroX + (v / maxAbs) * usableHalf;
+
+  const rowH = (ACCEL_H - ACCEL_PAD_T - ACCEL_PAD_B) / rows.length;
+  const barH = Math.min(16, rowH * 0.5);
+
+  let grid = `<line x1="${zeroX}" y1="${ACCEL_PAD_T - 2}" x2="${zeroX}" y2="${ACCEL_H - ACCEL_PAD_B + 2}" class="baseline"/>`;
+  // light tick marks at +/- step
+  const rawStep = maxAbs / 2;
+  const mag = Math.pow(10, Math.floor(Math.log10(rawStep || 1)));
+  const step = Math.max(0.1, Math.round(rawStep / mag) * mag);
+  for (let v = step; v <= maxAbs; v += step) {
+    for (const sign of [1, -1]) {
+      const x = px(v * sign);
+      grid += `<line x1="${x}" y1="${ACCEL_PAD_T}" x2="${x}" y2="${ACCEL_H - ACCEL_PAD_B}" class="gridline"/>`;
+      grid += `<text x="${x}" y="${ACCEL_H - ACCEL_PAD_B + 14}" text-anchor="middle" class="axis-label">${sign > 0 ? '+' : ''}${(v * sign).toFixed(1)}</text>`;
+    }
+  }
+  grid += `<text x="${zeroX}" y="${ACCEL_H - ACCEL_PAD_B + 14}" text-anchor="middle" class="axis-label">0</text>`;
+
+  let bars = '';
+  rows.forEach((r, i) => {
+    const cy = ACCEL_PAD_T + rowH * i + rowH / 2;
+    bars += `<text x="${ACCEL_LABEL_W - 10}" y="${cy + 4}" text-anchor="end" class="accel-row-label">
+      <tspan fill="${cssColor(r.sym)}">&#9679;</tspan> ${r.sym}</text>`;
+    if (r.accel === null) {
+      bars += `<text x="${zeroX}" y="${cy + 4}" text-anchor="middle" class="accel-nodata">warming up</text>`;
+      return;
+    }
+    const x0 = px(Math.min(0, r.accel));
+    const x1 = px(Math.max(0, r.accel));
+    const color = r.accel >= 0 ? goodColor() : criticalColor();
+    bars += `<rect class="accel-bar" x="${x0.toFixed(2)}" y="${(cy - barH / 2).toFixed(2)}" width="${Math.max(1, x1 - x0).toFixed(2)}" height="${barH}" rx="3" fill="${color}"/>`;
+    const labelX = r.accel >= 0 ? x1 + 6 : x1 - 6;
+    const anchor = r.accel >= 0 ? 'start' : 'end';
+    bars += `<text x="${labelX.toFixed(2)}" y="${cy + 4}" text-anchor="${anchor}" class="accel-val-label ${r.accel >= 0 ? 'pos' : 'neg'}">${fmtPP(r.accel)}</text>`;
+  });
+
+  svg.innerHTML = `<g>${grid}</g><g>${bars}</g>`;
+}
+
+function renderLegendInto(containerId, valueFn) {
+  const el = $(containerId);
+  el.innerHTML = SYMBOLS.map(sym => {
+    const val = valueFn(sym);
+    return `<span class="legend-item${state.hoverSym && state.hoverSym !== sym ? ' dim' : ''}" data-sym="${sym}">
+      <span class="legend-swatch" style="background:${cssColor(sym)}"></span>${sym}<span class="num">${val}</span>
+    </span>`;
+  }).join('');
+  el.querySelectorAll('.legend-item').forEach(item => {
+    item.addEventListener('mouseenter', () => { state.hoverSym = item.dataset.sym; rerenderCharts(); renderLegend(); });
+    item.addEventListener('mouseleave', () => { state.hoverSym = null; rerenderCharts(); renderLegend(); });
+  });
+}
+
+function rerenderCharts() {
+  renderChart(); renderVwapChart(); renderMacdChart(); renderAtrChart(); renderBreadthChart();
+  renderAccelChart(); renderAccelTimeChart(); renderVolumeChart(); renderVolAccelChart(); renderBuySellChart(); renderBuySellBreakdownChart(); renderRatioChart();
+}
+
+function renderLegend() {
+  renderLegendInto('legend', (sym) => {
+    const q = state.quotes[sym];
+    return q ? fmtPct((q.last - q.prevClose) / q.prevClose * 100) : '&mdash;';
+  });
+  renderLegendInto('legendVwap', (sym) => {
+    const bars = state.bars[sym];
+    if (!bars || !bars.length) return '&mdash;';
+    const vw = dayAnchoredVwapSeries(bars);
+    const last = vw[vw.length - 1];
+    return last !== null ? fmtVwapPct((bars[bars.length - 1].close - last) / last * 100) : '&mdash;';
+  });
+  renderLegendInto('legendMacd', (sym) => {
+    const bars = state.bars[sym];
+    if (!bars || !bars.length) return '&mdash;';
+    const closes = bars.map(b => b.close);
+    const hist = macdHistSeries(closes);
+    const last = hist[hist.length - 1];
+    return last !== null ? fmtMacdPct(last / closes[closes.length - 1] * 100) : '&mdash;';
+  });
+  renderLegendInto('legendAtr', (sym) => {
+    const bars = state.bars[sym];
+    if (!bars || !bars.length) return '&mdash;';
+    const atr = atrSeries(bars);
+    const last = atr[atr.length - 1];
+    return last !== null ? fmtAtrPct(last / bars[bars.length - 1].close * 100) : '&mdash;';
+  });
+  renderLegendInto('legendAccelTime', (sym) => {
+    const a = computeAccel(state.bars[sym]);
+    return a === null ? '&mdash;' : fmtPP(a);
+  });
+  renderLegendInto('legendVolume', (sym) => {
+    const pts = computeRelVolumeSeriesBucketed(state.bars[sym]);
+    return pts.length ? fmtVolX(pts[pts.length - 1].v) : '&mdash;';
+  });
+  renderLegendInto('legendVolAccel', (sym) => {
+    const pts = computeAccelFromValues(computeRelVolumeSeries(state.bars[sym]));
+    return pts.length ? fmtVolPP(pts[pts.length - 1].v) : '&mdash;';
+  });
+}
+
+// ---------- persisted running P&L (this browser, resets at US market midnight) ----------
+// state.bars only holds a rolling ~4h trailing window, so a full in-window
+// replay alone loses any realized P&L once its closing trade scrolls out of
+// that window. This banks each closed trade (by its unique exit timestamp)
+// into localStorage exactly once, so today's total survives page reloads
+// even after the window has moved past an earlier trade. Per-viewer only -
+// never shared, never read back by Claude - see the artifact's browser-
+// storage caveats (private windows / blocked storage silently means no
+// persistence, so every access is wrapped and degrades to in-memory-only).
+const PNL_LS_KEY = 'semisMomentum_v3PnlLedger';
+// Calendar date in US Eastern time (DST-aware via the IANA zone), not raw
+// UTC - so the ledger flips over at US market midnight (well after the 4pm
+// ET close, well before the next 9:30am ET open) instead of at whatever
+// wall-clock moment UTC happens to roll over, which could land mid-evening
+// or even during premarket depending on the time of year.
+const todayET = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York' }).format(new Date());
+function loadPnlLedger() {
+  try {
+    const raw = localStorage.getItem(PNL_LS_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if (parsed && parsed.date === todayET() && parsed.bySymbol) return parsed;
+  } catch {}
+  return { date: todayET(), bySymbol: {} };
+}
+function savePnlLedger(ledger) {
+  try { localStorage.setItem(PNL_LS_KEY, JSON.stringify(ledger)); } catch {}
+}
+function bankRealizedEvents(ledger, sym, events) {
+  const entry = ledger.bySymbol[sym] || (ledger.bySymbol[sym] = { banked: 0, seenT: [] });
+  const seen = new Set(entry.seenT);
+  for (const e of events) {
+    if (e.pnl === null || e.pnl === undefined || seen.has(e.t)) continue;
+    entry.banked += e.pnl;
+    seen.add(e.t);
+  }
+  entry.seenT = Array.from(seen);
+  return entry;
+}
+
+function renderSignals() {
+  const rows = [];
+  const allEvents = [];
+  const pnlLedger = loadPnlLedger();
+  const gate = renderBreadthGateCard();
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const gateBlockedDate = gate.blocked ? todayStr : null;
+  for (const sym of V3_SYMBOLS) {
+    const replay = runV3SignalReplay(state.bars[sym], gateBlockedDate, V3, v3Opts());
+    for (const e of replay.events) allEvents.push({ ...e, symbol: sym });
+    const banked = bankRealizedEvents(pnlLedger, sym, replay.events);
+    rows.push({ sym, proximity: computeSignalProximity(sym, replay), holding: !!replay.pos,
+                realizedPnl: banked.banked, unrealizedPnl: replay.unrealizedPnl,
+                trades: banked.seenT.length });
+  }
+  savePnlLedger(pnlLedger);
+
+  const fmtSignedMoney = (v) => (v >= 0 ? '+$' : '-$') + Math.abs(v).toFixed(2);
+  const pnlClass = (v) => v > 0.005 ? 'up' : (v < -0.005 ? 'down' : '');
+  $('signalPnlBody').innerHTML = rows.map(({ sym, realizedPnl, unrealizedPnl, trades }) => {
+    const total = realizedPnl + unrealizedPnl;
+    return `<tr>
+      <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(sym)}"></span>${sym}</span></td>
+      <td class="num ${pnlClass(realizedPnl)}">${fmtSignedMoney(realizedPnl)}</td>
+      <td class="num ${pnlClass(unrealizedPnl)}">${fmtSignedMoney(unrealizedPnl)}</td>
+      <td class="num ${pnlClass(total)}" style="font-weight:700">${fmtSignedMoney(total)}</td>
+      <td class="num">${trades}</td>
+    </tr>`;
+  }).join('');
+  const totRealized = rows.reduce((s, r) => s + r.realizedPnl, 0);
+  const totUnrealized = rows.reduce((s, r) => s + r.unrealizedPnl, 0);
+  const totTrades = rows.reduce((s, r) => s + r.trades, 0);
+  const grandTotal = totRealized + totUnrealized;
+  $('signalPnlFoot').innerHTML = `<tr style="border-top:2px solid var(--baseline)">
+    <td style="text-align:left; font-weight:700">Total</td>
+    <td class="num ${pnlClass(totRealized)}" style="font-weight:700">${fmtSignedMoney(totRealized)}</td>
+    <td class="num ${pnlClass(totUnrealized)}" style="font-weight:700">${fmtSignedMoney(totUnrealized)}</td>
+    <td class="num ${pnlClass(grandTotal)}" style="font-weight:700">${fmtSignedMoney(grandTotal)}</td>
+    <td class="num" style="font-weight:700">${totTrades}</td>
+  </tr>`;
+
+  $('signalProximityBody').innerHTML = rows.map(({ sym, proximity: p, holding }) => `<tr>
+    <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(sym)}"></span>${sym}</span></td>
+    <td style="text-align:left"><span class="badge ${holding ? 'up' : 'down'}">${p.status}</span></td>
+    <td style="text-align:left">${p.watching}</td>
+    <td style="text-align:left; font-family:'IBM Plex Mono',monospace; font-size:12px">${p.threshold}</td>
+    <td style="text-align:left; font-family:'IBM Plex Mono',monospace; font-size:12px">${p.current}${p.extra ? `<br><span style="color:var(--muted); font-size:11px">${p.extra}</span>` : ''}</td>
+    <td style="text-align:left; font-weight:600">${p.distance}</td>
+    <td style="text-align:left; color:var(--text-secondary); font-size:12px; max-width:220px">${p.desc}</td>
+  </tr>`).join('');
+
+  renderSignalTimelineChart(allEvents);
+
+  allEvents.sort((a, b) => b.t - a.t); // newest first
+
+  const ALERT_WINDOW_MS = 5 * 60 * 1000;
+  const now = Date.now();
+  const recent = allEvents.filter(e => now - e.t <= ALERT_WINDOW_MS);
+  if (!recent.length) {
+    $('signalAlertBanner').innerHTML = `<div class="alert-quiet">No new signals in the last 5 minutes &mdash; nothing to act on right now.</div>`;
+  } else {
+    $('signalAlertBanner').innerHTML = recent.map(e => {
+      const isBuy = e.action === 'BUY';
+      return `<div class="alert-card ${isBuy ? 'buy' : 'sell'}">
+        <span class="alert-dot"></span>
+        <div class="alert-main">
+          <div class="alert-title">${isBuy ? 'BUY' : 'SELL'} &mdash; ${e.symbol} (${e.reason})</div>
+          <div class="alert-sub">${e.detail}</div>
+        </div>
+        <span class="alert-time">${fmtTime(e.t)}</span>
+      </div>`;
+    }).join('');
+  }
+
+  if (!allEvents.length) {
+    $('signalLogBody').innerHTML = `<tr><td colspan="5" class="signal-log-empty">No entry/add/exit signals yet in the fetched window &mdash; still watching.</td></tr>`;
+  } else {
+    $('signalLogBody').innerHTML = allEvents.map(e => {
+      const cls = e.action === 'BUY' ? 'up' : 'down';
+      return `<tr>
+        <td style="text-align:left" class="num">${fmtTime(e.t)}</td>
+        <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(e.symbol)}"></span>${e.symbol}</span></td>
+        <td style="text-align:left"><span class="badge ${cls}">${e.action}</span></td>
+        <td style="text-align:left">${e.reason}</td>
+        <td style="text-align:left; color:var(--text-secondary); font-size:12px">${e.detail}</td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+function renderV3BaselineSignals() {
+  const rows = [];
+  const allEvents = [];
+  const gate = renderBreadthGateCard();
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const gateBlockedDate = gate.blocked ? todayStr : null;
+  for (const sym of V3_SYMBOLS) {
+    const replay = runV3SignalReplay(state.bars[sym], gateBlockedDate, V3_BASELINE, v3Opts());
+    for (const e of replay.events) allEvents.push({ ...e, symbol: sym });
+    rows.push({ sym, proximity: computeSignalProximity(sym, replay, V3_BASELINE), holding: !!replay.pos,
+                realizedPnl: replay.realizedPnl, unrealizedPnl: replay.unrealizedPnl,
+                trades: replay.events.length });
+  }
+
+  const fmtSignedMoney = (v) => (v >= 0 ? '+$' : '-$') + Math.abs(v).toFixed(2);
+  const pnlClass = (v) => v > 0.005 ? 'up' : (v < -0.005 ? 'down' : '');
+  $('v3baselinePnlBody').innerHTML = rows.map(({ sym, realizedPnl, unrealizedPnl, trades }) => {
+    const total = realizedPnl + unrealizedPnl;
+    return `<tr>
+      <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(sym)}"></span>${sym}</span></td>
+      <td class="num ${pnlClass(realizedPnl)}">${fmtSignedMoney(realizedPnl)}</td>
+      <td class="num ${pnlClass(unrealizedPnl)}">${fmtSignedMoney(unrealizedPnl)}</td>
+      <td class="num ${pnlClass(total)}" style="font-weight:700">${fmtSignedMoney(total)}</td>
+      <td class="num">${trades}</td>
+    </tr>`;
+  }).join('');
+  const totRealized = rows.reduce((s, r) => s + r.realizedPnl, 0);
+  const totUnrealized = rows.reduce((s, r) => s + r.unrealizedPnl, 0);
+  const totTrades = rows.reduce((s, r) => s + r.trades, 0);
+  const grandTotal = totRealized + totUnrealized;
+  $('v3baselinePnlFoot').innerHTML = `<tr style="border-top:2px solid var(--baseline)">
+    <td style="text-align:left; font-weight:700">Total</td>
+    <td class="num ${pnlClass(totRealized)}" style="font-weight:700">${fmtSignedMoney(totRealized)}</td>
+    <td class="num ${pnlClass(totUnrealized)}" style="font-weight:700">${fmtSignedMoney(totUnrealized)}</td>
+    <td class="num ${pnlClass(grandTotal)}" style="font-weight:700">${fmtSignedMoney(grandTotal)}</td>
+    <td class="num" style="font-weight:700">${totTrades}</td>
+  </tr>`;
+
+  $('v3baselineProximityBody').innerHTML = rows.map(({ sym, proximity: p, holding }) => `<tr>
+    <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(sym)}"></span>${sym}</span></td>
+    <td style="text-align:left"><span class="badge ${holding ? 'up' : 'down'}">${p.status}</span></td>
+    <td style="text-align:left">${p.watching}</td>
+    <td style="text-align:left; font-family:'IBM Plex Mono',monospace; font-size:12px">${p.threshold}</td>
+    <td style="text-align:left; font-family:'IBM Plex Mono',monospace; font-size:12px">${p.current}${p.extra ? `<br><span style="color:var(--muted); font-size:11px">${p.extra}</span>` : ''}</td>
+    <td style="text-align:left; font-weight:600">${p.distance}</td>
+    <td style="text-align:left; color:var(--text-secondary); font-size:12px; max-width:220px">${p.desc}</td>
+  </tr>`).join('');
+
+  allEvents.sort((a, b) => b.t - a.t);
+  if (!allEvents.length) {
+    $('v3baselineLogBody').innerHTML = `<tr><td colspan="5" class="signal-log-empty">No entry/add/exit signals yet in the fetched window &mdash; still watching.</td></tr>`;
+  } else {
+    $('v3baselineLogBody').innerHTML = allEvents.map(e => {
+      const cls = e.action === 'BUY' ? 'up' : 'down';
+      return `<tr>
+        <td style="text-align:left" class="num">${fmtTime(e.t)}</td>
+        <td style="text-align:left"><span class="sym-cell"><span class="sym-swatch" style="background:${cssColor(e.symbol)}"></span>${e.symbol}</span></td>
+        <td style="text-align:left"><span class="badge ${cls}">${e.action}</span></td>
+        <td style="text-align:left">${e.reason}</td>
+        <td style="text-align:left; color:var(--text-secondary); font-size:12px">${e.detail}</td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+function renderAll() {
+  renderV3FilterBar();
+  const haveQuotes = Object.keys(state.quotes).length > 0;
+  const haveBars = Object.keys(state.bars).length > 0;
+  if (!haveQuotes && !haveBars) return;
+  $('mainContent').style.display = 'block';
+  $('emptyState').style.display = 'none';
+  renderMarketRegime();
+  renderEfficiencyRatio();
+  renderSignedEfficiencyRatio();
+  renderGoodDaySignal();
+  renderSignals();
+  renderV3BaselineSignals();
+  renderTGTSignals();
+  renderExitConfidence();
+  renderTable();
+  renderChart();
+  renderVwapChart();
+  renderMacdChart();
+  renderAtrChart();
+  renderBreadthSummary();
+  renderBreadthChart();
+  renderAccelChart();
+  renderAccelTimeChart();
+  renderVolumeChart();
+  renderVolAccelChart();
+  renderBuySellChart();
+  renderBuySellBreakdownChart();
+  renderRatioChart();
+  renderLegend();
+  const ts = state.quotesTs || state.barsTs;
+  if (ts) {
+    $('updatedPill').style.display = 'inline-flex';
+    $('updatedText').textContent = relTime(ts);
+  }
+}
+
+setInterval(() => { if (state.quotesTs || state.barsTs) $('updatedText').textContent = relTime(state.quotesTs || state.barsTs); }, 5000);
+
+// ---------- data ingestion ----------
+function ingestQuotes(payload) {
+  const results = payload?.data?.results || [];
+  for (const r of results) {
+    const q = r.quote;
+    if (!q) continue;
+    const price = Number(q.last_trade_price ?? q.last_non_reg_trade_price);
+    const prev = Number(q.adjusted_previous_close ?? q.previous_close);
+    if (!isFinite(price) || !isFinite(prev)) continue;
+    state.quotes[q.symbol] = { last: price, prevClose: prev, ts: Date.parse(q.venue_last_trade_time) || Date.now() };
+  }
+}
+function ingestBars(payload) {
+  const results = payload?.data?.results || [];
+  for (const r of results) {
+    const bars = (r.bars || []).filter(b => !b.interpolated).map(b => ({ t: Date.parse(b.begins_at), close: Number(b.close_price), volume: Number(b.volume) || 0, high: Number(b.high_price ?? b.close_price), low: Number(b.low_price ?? b.close_price) }));
+    if (bars.length) state.bars[r.symbol] = bars;
+  }
+}
+
+// ---------- error handling ----------
+function describeError(err) {
+  switch (err.code) {
+    case 'needs_reauth': return { retract: true, msg: `<strong>Robinhood connection needs reauth.</strong> Reconnect it in claude.ai Settings &rarr; Connectors.` };
+    case 'server_not_connected': return { retract: true, msg: `<strong>Robinhood isn't connected.</strong> Add it in claude.ai Settings &rarr; Connectors.` };
+    case 'selection_required': return { retract: true, msg: `<strong>Choose a Robinhood account</strong> to continue &mdash; check the connector picker.` };
+    case 'blocked_by_policy': return { retract: true, msg: `<strong>This data is blocked by workspace policy</strong> for this view.` };
+    case 'approval_required': return { retract: true, msg: `<strong>This call needs manual approval</strong> and can't run automatically here.` };
+    case 'server_unavailable': return { retract: false, msg: `Robinhood is temporarily unreachable &mdash; showing last known data, retrying automatically.` };
+    case 'rate_limited': return { retract: false, msg: `Refreshing a bit too fast &mdash; backing off, showing last known data.` };
+    default: return { retract: false, msg: `Live update hiccup (${err.code}) &mdash; showing last known data.` };
+  }
+}
+
+async function init() {
+  let mcp;
+  try { mcp = await window.claude.use('mcp'); } catch { mcp = null; }
+  if (!mcp) {
+    setConn('bad', 'Unavailable');
+    showEmpty(`<strong>Live data isn't available in this view.</strong>Open this page directly in claude.ai with the Robinhood connector enabled to see live quotes.`);
+    return;
+  }
+
+  // Fetch from today's UTC midnight, not a trailing N-hour window - a rolling
+  // window would silently lose the actual market-open bars a few hours into
+  // the session, which breaks anything that needs "since the open" (the
+  // VWAP chart's day-anchoring, and the Efficiency Ratio's first-N-minutes
+  // read below). bounds:'regular' still filters to the real session only.
+  const startTime = (() => { const d = new Date(); d.setUTCHours(0, 0, 0, 0); return d.toISOString(); })();
+  let quotesLoaded = false, barsLoaded = false;
+  let hadFatal = false;
+
+  function markLoaded() {
+    if (quotesLoaded || barsLoaded) {
+      if (!hadFatal) setConn('live', 'Live');
+    }
+  }
+
+  mcp.watchTool('RobinhoodClaude', 'get_equity_quotes', { symbols: FETCH_SYMBOLS }, (ev) => {
+    if (ev.type === 'data') {
+      hadFatal = false; hideBanner();
+      ingestQuotes(ev.result.payload);
+      state.quotesTs = ev.result.cache?.storedAt ?? Date.now();
+      quotesLoaded = true; markLoaded();
+      renderAll();
+    } else {
+      const d = describeError(ev.error);
+      if (d.retract) { hadFatal = true; setConn('bad', 'Reconnect needed'); state.quotes = {}; }
+      showBanner(d.msg);
+      renderAll();
+    }
+  }, { refetchInterval: 30000 });
+
+  mcp.watchTool('RobinhoodClaude', 'get_equity_historicals',
+    { symbols: FETCH_SYMBOLS, start_time: startTime, interval: 'minute', bounds: 'regular' },
+    (ev) => {
+      if (ev.type === 'data') {
+        hadFatal = false; hideBanner();
+        ingestBars(ev.result.payload);
+        state.barsTs = ev.result.cache?.storedAt ?? Date.now();
+        barsLoaded = true; markLoaded();
+        renderAll();
+      } else {
+        const d = describeError(ev.error);
+        if (d.retract) { hadFatal = true; setConn('bad', 'Reconnect needed'); state.bars = {}; }
+        showBanner(d.msg);
+        renderAll();
+      }
+    }, { refetchInterval: 30000 });
+
+  const rsToggle = $('v3RsToggle');
+  if (rsToggle) rsToggle.addEventListener('change', (e) => {
+    V3_SETTINGS.rsRequired = e.target.checked;
+    renderAll();
+  });
+  const costInput = $('v3CostBps');
+  if (costInput) costInput.addEventListener('change', (e) => {
+    const v = parseFloat(e.target.value);
+    V3_SETTINGS.costBps = Number.isFinite(v) && v >= 0 ? v : 0;
+    renderAll();
+  });
+
+  $('refreshBtn').addEventListener('click', async () => {
+    const btn = $('refreshBtn');
+    btn.classList.add('spinning');
+    try { await mcp.invalidate('RobinhoodClaude'); } catch {}
+    setTimeout(() => btn.classList.remove('spinning'), 700);
+  });
+}
+
+// Test hook: lets the Node DOM-mock harness drive the real render/replay functions
+// with cached market data (see CLAUDE.md, "Dashboard testing before publish").
+// Assigned before init() so a harness still gets it if init throws without a
+// live connector. Inert in the browser.
+globalThis.__test = { runV3SignalReplay, benchReturnByT, renderV3FilterBar, v3Opts,
+                      state, SYMBOLS, BENCH_SYM, V3, V3_BASELINE, V3_SETTINGS };
+
+init();
+</script>
+
+
+</body></html>

@@ -1,0 +1,604 @@
+<title>Margin-Style Rule Trials</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --ground:   #f1f3f6;
+    --surface:  #ffffff;
+    --sunken:   #e9edf1;
+    --ink:      #131820;
+    --ink-2:    #545e6c;
+    --ink-3:    #8892a0;
+    --rule:     #dce1e8;
+    --rule-2:   #c2cad4;
+    --accent:   #0f6b70;
+    --accent-w: #e0efef;
+    --good:     #15704a;
+    --good-w:   #e2f0e9;
+    --bad:      #ab3226;
+    --bad-w:    #f8e9e7;
+    --warn:     #8f5a14;
+    --warn-w:   #f9efdf;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground:   #0d1014;
+      --surface:  #161b21;
+      --sunken:   #1e242c;
+      --ink:      #e9eef4;
+      --ink-2:    #9ca7b5;
+      --ink-3:    #6e7886;
+      --rule:     #242b34;
+      --rule-2:   #363f4a;
+      --accent:   #4cb0b2;
+      --accent-w: #12292b;
+      --good:     #4cb583;
+      --good-w:   #12271e;
+      --bad:      #e2796c;
+      --bad-w:    #2a1815;
+      --warn:     #d09a4e;
+      --warn-w:   #2a2113;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ground:   #0d1014;
+    --surface:  #161b21;
+    --sunken:   #1e242c;
+    --ink:      #e9eef4;
+    --ink-2:    #9ca7b5;
+    --ink-3:    #6e7886;
+    --rule:     #242b34;
+    --rule-2:   #363f4a;
+    --accent:   #4cb0b2;
+    --accent-w: #12292b;
+    --good:     #4cb583;
+    --good-w:   #12271e;
+    --bad:      #e2796c;
+    --bad-w:    #2a1815;
+    --warn:     #d09a4e;
+    --warn-w:   #2a2113;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding-block: 36px 72px;
+    padding-left: 18px; padding-right: 18px;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Public Sans", system-ui, -apple-system, sans-serif;
+    font-size: 15.5px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
+  .num { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  /* ---------- masthead ---------- */
+  .eyebrow {
+    font-size: 11px; letter-spacing: .13em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 700;
+    font-family: "JetBrains Mono", monospace;
+  }
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-optical-sizing: auto;
+    font-size: clamp(32px, 6vw, 50px); line-height: 1.05; font-weight: 600;
+    margin: 10px 0 0; letter-spacing: -0.02em; text-wrap: balance;
+  }
+  .deck {
+    font-size: 18px; line-height: 1.55; color: var(--ink-2);
+    max-width: 62ch; margin: 14px 0 0;
+  }
+
+  /* ---------- verdict ---------- */
+  .verdict {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 5px solid var(--accent);
+    border-radius: 3px;
+    padding: 22px 24px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .verdict h2 {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 23px; font-weight: 600; margin: 0; letter-spacing: -0.01em;
+  }
+  .verdict p { margin: 0; color: var(--ink-2); max-width: 70ch; font-size: 15px; }
+  .verdict strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- ledger ---------- */
+  section > h2.head {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 27px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  .sub { margin: 0 0 20px; color: var(--ink-2); font-size: 14.5px; max-width: 70ch; }
+
+  .ledger { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; }
+  .lrow { background: var(--surface); padding: 15px 18px; display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; align-items: start; }
+  .lq { font-weight: 600; font-size: 15px; }
+  .la { grid-column: 1; color: var(--ink-2); font-size: 14px; }
+  .la b { color: var(--ink); font-weight: 600; }
+  .chip {
+    grid-column: 2; grid-row: 1 / span 2;
+    font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; font-weight: 700;
+    padding: 4px 9px; border-radius: 2px; white-space: nowrap; align-self: center;
+    font-family: "JetBrains Mono", monospace;
+  }
+  .c-no  { background: var(--bad-w);  color: var(--bad); }
+  .c-yes { background: var(--good-w); color: var(--good); }
+  .c-na  { background: var(--warn-w); color: var(--warn); }
+
+  /* ---------- cards & charts ---------- */
+  .card {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 3px;
+    padding: 20px 22px;
+  }
+  .card h3 {
+    font-size: 16px; font-weight: 700; margin: 0 0 3px;
+  }
+  .card .note { font-size: 13.5px; color: var(--ink-2); margin: 0 0 16px; max-width: 74ch; }
+  .chart-scroll { overflow-x: auto; }
+  svg.chart { display: block; width: 100%; height: auto; min-width: 460px; }
+  .ax { fill: var(--ink-3); font-family: "JetBrains Mono", monospace; font-size: 10.5px; }
+  .vl { fill: var(--ink); font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700; }
+  .lbl { fill: var(--ink-2); font-family: "Public Sans", sans-serif; font-size: 11.5px; }
+  .grid { stroke: var(--rule); stroke-width: 1; }
+  .zero { stroke: var(--rule-2); stroke-width: 1.5; }
+
+  /* ---------- tables ---------- */
+  .tw { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 520px; }
+  th {
+    text-align: right; font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 700; padding: 0 8px 9px; border-bottom: 1px solid var(--rule-2);
+    font-family: "JetBrains Mono", monospace;
+  }
+  th:first-child, td:first-child { text-align: left; }
+  td { padding: 8px; border-bottom: 1px solid var(--rule); text-align: right; }
+  tbody tr:last-child td { border-bottom: none; }
+  tr.hl td { background: var(--accent-w); font-weight: 600; }
+  td.pos { color: var(--good); } td.neg { color: var(--bad); }
+
+  /* ---------- repro ---------- */
+  code, .mono { font-family: "JetBrains Mono", monospace; font-size: .88em; }
+  .repro {
+    background: var(--sunken); border: 1px solid var(--rule); border-radius: 3px;
+    padding: 13px 15px; font-family: "JetBrains Mono", monospace; font-size: 12.5px;
+    color: var(--ink-2); overflow-x: auto; white-space: pre; line-height: 1.7;
+  }
+  .repro b { color: var(--ink); font-weight: 500; }
+
+  .callout {
+    border: 1px solid var(--rule); border-left: 4px solid var(--warn);
+    background: var(--warn-w); color: var(--ink); border-radius: 3px;
+    padding: 16px 18px; font-size: 14.5px;
+  }
+  .callout h3 { margin: 0 0 7px; font-size: 15px; font-weight: 700; }
+  .callout p { margin: 0 0 9px; color: var(--ink-2); max-width: 72ch; }
+  .callout p:last-child { margin: 0; }
+  .callout strong { color: var(--ink); }
+
+  footer {
+    border-top: 1px solid var(--rule); padding-top: 20px;
+    font-size: 12.5px; color: var(--ink-3); line-height: 1.65; max-width: 78ch;
+  }
+  footer p { margin: 0 0 9px; }
+  footer p:last-child { margin: 0; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  @media (max-width: 560px) {
+    .lrow { grid-template-columns: 1fr; }
+    .chip { grid-column: 1; grid-row: auto; justify-self: start; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Replay study &middot; 22 September 2026 &middot; engine origin/main</div>
+    <h1>Margin-Style Rule Trials</h1>
+    <p class="deck">
+      Six questions about the live trading rules, each re-tested by replaying the
+      production engine day by day over real market data. Five of the six answers
+      say <em>leave it alone</em>. One question the data cannot answer, and that is
+      recorded as unanswered rather than estimated.
+    </p>
+  </header>
+
+  <div class="verdict">
+    <h2>Nothing changed, and that is the result</h2>
+    <p>
+      A <strong>500-configuration grid search</strong> under 3-fold walk-forward validation
+      found no parameter set that generalizes. The best-performing tuned configuration returns
+      <strong class="num">+96.7%</strong> over the full window against the untouched baseline's
+      <strong class="num">+155.4%</strong> &mdash; worse Sharpe, nearly double the drawdown.
+      Every structural variant tested was neutral or harmful.
+    </p>
+    <p>
+      <strong>No production parameter is recommended for change.</strong> The value of this
+      study is the five things it rules out, and the two prior claims it corrects &mdash; both of
+      which had the sign backwards.
+    </p>
+  </div>
+
+  <section>
+    <h2 class="head">What was asked, and what the replay said</h2>
+    <p class="sub">
+      Every answer below is MEASURED by full engine replay at 5&nbsp;bps per-side cost.
+      No figure on this page is derived by scaling a P&amp;L series.
+    </p>
+    <div class="ledger">
+
+      <div class="lrow">
+        <div class="lq">Can tuning the thresholds beat the current ones?</div>
+        <div class="la">500 configs &times; 3 anchored folds. <b>1 of 3</b> test folds won; all three lost on test Sharpe; each fold picked a <b>different</b> optimum. Bootstrap CI on the daily difference straddles zero.</div>
+        <span class="chip c-no">Not supported</span>
+      </div>
+
+      <div class="lrow">
+        <div class="lq">Does an entry quality filter help?</div>
+        <div class="la">First valid measurement of the 3+&nbsp;consecutive-down-days filter. Every threshold is <b>harmful</b>: 3+ down days returns <b class="num">+40.5%</b> against the baseline's <b class="num">+155.4%</b>.</div>
+        <span class="chip c-no">Harmful</span>
+      </div>
+
+      <div class="lrow">
+        <div class="lq">Can overnight risk be reduced by closing early?</div>
+        <div class="la">The overnight leg <b>earns</b> 40.9% of all held-position P&amp;L. Forced exits at every 30-minute mark lose money; 2:30&nbsp;PM&nbsp;CDT returns <b class="num">&minus;4.9%</b> against <b class="num">+38.3%</b> for holding.</div>
+        <span class="chip c-no">Backwards</span>
+      </div>
+
+      <div class="lrow">
+        <div class="lq">Does checking more than once a day help?</div>
+        <div class="la">Seven schedules from 2&times; to 7&times; daily. <b>All lose money</b> (&minus;10% to &minus;18%) against +38.3% for the single midday check, under both settlement models.</div>
+        <span class="chip c-no">Harmful</span>
+      </div>
+
+      <div class="lrow">
+        <div class="lq">Is the &minus;1.51% intraday stop the right one?</div>
+        <div class="la">Removing it entirely gives <b class="num">&minus;11.6%</b>. Tightening to &minus;1.0% costs <b class="num">$14,943</b>. Loosening to &minus;2.5% gains $2,772 on P&amp;L but loses on <em>both</em> Sharpe and drawdown.</div>
+        <span class="chip c-yes">Keep as is</span>
+      </div>
+
+      <div class="lrow">
+        <div class="lq">Would 2:45&nbsp;PM&nbsp;CDT specifically be better?</div>
+        <div class="la">19:45&nbsp;UTC falls <b>inside</b> a 30-minute bar and is not priced by the available data. The bracketing marks are shown; nothing is interpolated to reach it.</div>
+        <span class="chip c-na">Unanswerable</span>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">Two published claims had the sign backwards</h2>
+    <p class="sub">
+      Both were produced by multiplying a frozen daily P&amp;L series by an assumed factor.
+      Replayed properly against real 30-minute bars, both reverse.
+    </p>
+
+    <div class="card" style="margin-bottom:16px">
+      <h3>Closing early vs holding overnight</h3>
+      <p class="note">
+        Realized return over 64 trading days, by forced-exit time. The earlier claim put an
+        early close near +100%; the closest measurable point to it returns &minus;4.9%.
+      </p>
+      <div class="chart-scroll"><svg class="chart" id="exitChart" viewBox="0 0 900 250" role="img" aria-label="Return by forced exit time: holding overnight returns +38.3%, every early exit is at or below zero"></svg></div>
+    </div>
+
+    <div class="card">
+      <h3>Checking more often</h3>
+      <p class="note">
+        Realized return by check schedule, same window. The earlier claim put 3&times;/day at
+        +2.7 percentage points; replayed, it costs about 50.
+      </p>
+      <div class="chart-scroll"><svg class="chart" id="freqChart" viewBox="0 0 900 270" role="img" aria-label="Return by check frequency: once daily returns +38.3%, every intraday schedule is negative"></svg></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">Why closing early cannot work here</h2>
+    <p class="sub">
+      A position held from one midday check to the next passes through three legs. Measuring
+      each one separately, on 295 position-nights, explains the result above.
+    </p>
+    <div class="card">
+      <h3>Where held-position P&amp;L is actually earned</h3>
+      <p class="note">
+        The strategy buys weakness and is paid on the bounce &mdash; which arrives overnight and
+        in the following morning. Only the stretch after the check is negative.
+      </p>
+      <div class="chart-scroll"><svg class="chart" id="legChart" viewBox="0 0 900 200" role="img" aria-label="Post-check leg loses $4,707; overnight leg earns $28,699; morning leg earns $46,117"></svg></div>
+      <p class="note" style="margin:16px 0 0">
+        Overnight gaps are genuinely violent &mdash; <span class="num">&minus;$91,084</span> gross down
+        against <span class="num">+$119,783</span> gross up, with a single night costing
+        <span class="num">$8,187</span> on WDC. But an early close forgoes the up-gaps too, and the
+        up-gaps are larger. Cutting overnight exposure cuts the edge, not the risk-adjusted loss.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">The grid search, and why its winner was rejected</h2>
+    <p class="sub">
+      Searching 500 configurations guarantees a good-looking winner even on pure noise. Three
+      independent checks decide whether this one is real. It fails all three.
+    </p>
+    <div class="card">
+      <div class="tw">
+        <table>
+          <thead><tr>
+            <th>Walk-forward fold</th><th>Tuned</th><th>Baseline</th><th>&Delta; P&amp;L</th><th>&Delta; Sharpe</th>
+          </tr></thead>
+          <tbody>
+            <tr><td>1 &middot; test Apr 30 &ndash; Jun 16</td><td class="num">$19,645</td><td class="num">$17,371</td><td class="num pos">+$2,274</td><td class="num neg">&minus;0.646</td></tr>
+            <tr><td>2 &middot; test Jun 17 &ndash; Aug 4</td><td class="num">$27,786</td><td class="num">$40,626</td><td class="num neg">&minus;$12,840</td><td class="num neg">&minus;0.730</td></tr>
+            <tr><td>3 &middot; test Aug 5 &ndash; Sep 21</td><td class="num">$1,781</td><td class="num">$4,347</td><td class="num neg">&minus;$2,566</td><td class="num neg">&minus;0.850</td></tr>
+            <tr class="hl"><td>Full window, best config</td><td class="num">$77,393</td><td class="num">$124,290</td><td class="num neg">&minus;$46,897</td><td class="num neg">&minus;0.812</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0">
+        <strong>Each fold selected a different optimum</strong> &mdash; stop off / stop &minus;2% / stop &minus;3%,
+        hold 8 / 12 / 6 days. An optimum that moves every fold is fitting noise, not finding structure.
+      </p>
+      <div class="repro" style="margin-top:14px">expected max Sharpe from 500 trials on pure noise  <b>0.83</b>
+variant annualized Sharpe                          <b>3.02</b>
+deflated Sharpe (selection + non-normality)        <b>0.953</b>
+bootstrap 95% CI, mean daily difference     <b>[-0.69%, +0.29%]</b>   <span style="color:var(--bad)">straddles zero</span>
+P(variant better than baseline)                   <b>0.247</b></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">Structural variants</h2>
+    <p class="sub">
+      Each is a single anchored source patch against the production engine, asserted to be an
+      exact no-op when disabled. Full window, 132 trading days, 5&nbsp;bps per side.
+    </p>
+    <div class="card">
+      <div class="tw">
+        <table>
+          <thead><tr><th>Variant</th><th>Realized</th><th>Return</th><th>Sharpe</th><th>Max DD</th><th>Trades</th></tr></thead>
+          <tbody id="varBody"></tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0">
+        Trailing stops at 5%, 8% and 12% are <strong>exact no-ops</strong> &mdash; the flat &minus;1.51%
+        stop always fires first, so they never bind. That is a finding about the existing stop, not
+        an absence of effect.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">Does the edge survive real trading costs?</h2>
+    <p class="sub">
+      The original harness modelled zero friction across 771 trades. This applies a per-side cost
+      to executions &mdash; not to signals, since slippage does not move a signal.
+    </p>
+    <div class="card">
+      <h3>Realized return by per-side cost</h3>
+      <p class="note">
+        This is the one genuinely reassuring result on the page: the edge is not a friction artifact.
+      </p>
+      <div class="chart-scroll"><svg class="chart" id="costChart" viewBox="0 0 900 230" role="img" aria-label="Return falls from +165.7% at zero cost to +109.3% at 30 basis points per side"></svg></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">Two things found along the way</h2>
+
+    <div class="callout" style="margin-bottom:14px">
+      <h3>A latent defect in the production engine</h3>
+      <p>
+        Guardrail 4 validates a sell with <code>s['shares'] &gt; pos['shares']</code>, comparing a
+        quantity rounded to 6 decimals against an unrounded holding. Selling a whole position
+        therefore aborts the commit on floating-point dust &mdash; AMD <span class="num">155.404388</span>
+        against <span class="num">155.40438799999998</span>, off by 2&times;10<sup>&minus;14</sup>.
+        Its own mutation four lines later already tolerates exactly this.
+      </p>
+      <p>
+        <strong>Not live today:</strong> production trims 74.3% on a peak, never 100%, and the
+        whole-position exits pass their share count through unrounded. It surfaced only because it
+        blocks <code>PEAK_SELL_PCT &ge; 1.0</code> from being tested at all.
+      </p>
+    </div>
+
+    <div class="callout">
+      <h3>Vendor history is not immutable</h3>
+      <p>
+        Re-fetching the 6,096 hourly bars underneath the reference result returned <strong>one
+        revised bar</strong> &mdash; INTC 2026-09-04 15:00, <span class="num">94.91</span> &rarr;
+        <span class="num">94.78</span>. Harmless here, since the engine prices off the 17:00 bar,
+        but a blind overwrite would have silently moved a result the project treats as ground truth.
+        The committed bars stay authoritative on overlap; only strictly-newer bars are appended.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">Reproduce any of it</h2>
+    <p class="sub">
+      Every harness refuses to emit a number until it reproduces the known
+      <span class="num">$124,080.90</span> anchor. Data is committed under <code>data/</code>, never
+      in a temporary directory.
+    </p>
+    <div class="repro"><b>python3 scripts/margin_style_17h_backtest.py --validate</b>      <span style="color:var(--ink-3)"># gate: must print PASS</span>
+<b>python3 scripts/margin_style_research.py baselines</b>            <span style="color:var(--ink-3)"># anchor + research baseline</span>
+<b>python3 scripts/margin_style_research.py costs</b>                <span style="color:var(--ink-3)"># cost sensitivity</span>
+<b>python3 scripts/margin_style_research.py gaps</b>                 <span style="color:var(--ink-3)"># overnight decomposition</span>
+<b>python3 scripts/margin_style_research.py variants</b>             <span style="color:var(--ink-3)"># quality filter, stops, caps</span>
+<b>python3 scripts/margin_style_research.py grid --folds 3</b>       <span style="color:var(--ink-3)"># 1,503 replays, ~9 min</span>
+<b>python3 scripts/margin_style_research.py stats</b>                <span style="color:var(--ink-3)"># DSR + bootstrap verdict</span>
+<b>python3 scripts/margin_style_intraday_study.py validate</b>       <span style="color:var(--ink-3)"># gate for the two below</span>
+<b>python3 scripts/margin_style_intraday_study.py exits</b>
+<b>python3 scripts/margin_style_intraday_study.py frequency</b></div>
+  </section>
+
+  <footer>
+    <p>
+      <strong>Scope and limits.</strong> The replay window is 132 trading days
+      (2026-03-13 &rarr; 2026-09-21) for daily-cadence tests and 64 days
+      (2026-06-22 &rarr; 2026-09-21) for intraday tests, bounded by how far back
+      non-interpolated 30-minute bars reach. That sample detects large effects and would
+      miss small ones; a marginal result here means &ldquo;not detectable&rdquo;, not &ldquo;zero&rdquo;.
+    </p>
+    <p>
+      All figures are MEASURED by replaying <code>origin/main</code> &mdash; the revision that
+      trades real money &mdash; on $80,000 starting capital, priced at the actual 17:00&nbsp;UTC bar
+      the live trigger fires on. The engine was never modified; variants patch a copy in memory.
+      Backtested returns describe the rules over one specific window and are not a forecast.
+    </p>
+  </footer>
+
+</div>
+
+<script type="module">
+const $ = (id) => document.getElementById(id);
+const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+const EXITS = [
+  { label: 'Hold overnight', sub: 'production', pct: 38.28 },
+  { label: '12:30 PM CDT', sub: '17:30 UTC', pct: 0.78 },
+  { label: '1:00 PM CDT', sub: '18:00 UTC', pct: -4.30 },
+  { label: '1:30 PM CDT', sub: '18:30 UTC', pct: -4.81 },
+  { label: '2:00 PM CDT', sub: '19:00 UTC', pct: -5.59 },
+  { label: '2:30 PM CDT', sub: '19:30 UTC', pct: -4.94 },
+];
+const FREQ = [
+  { label: '1×/day midday', sub: 'production', pct: 38.28 },
+  { label: '4×/day', sub: '14,16,18,19:30', pct: -10.22 },
+  { label: '3×/day', sub: '14,17,19', pct: -11.99 },
+  { label: '7×/day hourly', sub: '13:30–19:30', pct: -14.92 },
+  { label: '2×/day', sub: '14,17', pct: -16.18 },
+  { label: '2×/day', sub: '15,19', pct: -16.86 },
+  { label: '3×/day', sub: '15,17,19:30', pct: -17.55 },
+];
+const LEGS = [
+  { label: 'After the check', sub: '17:00 → 20:00 UTC', v: -4707.38 },
+  { label: 'Overnight', sub: '20:00 → 13:30 UTC', v: 28698.85 },
+  { label: 'Morning', sub: '13:30 → 17:00 UTC', v: 46116.82 },
+];
+const COSTS = [
+  { bps: 0, pct: 165.70 }, { bps: 1, pct: 163.60 }, { bps: 2.5, pct: 160.48 },
+  { bps: 5, pct: 155.36 }, { bps: 10, pct: 145.42 }, { bps: 20, pct: 126.65 },
+  { bps: 30, pct: 109.30 },
+];
+const VARIANTS = [
+  ['Baseline — production rules', 124290, 155.4, 3.83, -8.8, 771, 'hl'],
+  ['Quality filter: 1+ down days', 114353, 142.9, 3.67, -8.8, 771, ''],
+  ['Quality filter: 2+ down days', 34398, 43.0, 2.04, -11.9, 440, ''],
+  ['Quality filter: 3+ down days', 32403, 40.5, 2.51, -6.4, 233, ''],
+  ['Quality filter: 4+ down days', 15054, 18.8, 2.05, -8.4, 115, ''],
+  ['Trailing stop 3% below peak', 123965, 155.0, 3.83, -8.8, 771, ''],
+  ['Trailing stop 5 / 8 / 12% below peak', 124290, 155.4, 3.83, -8.8, 771, ''],
+  ['No intraday stop', -9274, -11.6, -0.63, -15.7, 96, ''],
+  ['Intraday stop −1.0% (tighter)', 109347, 136.7, 3.51, -9.7, 758, ''],
+  ['Intraday stop −2.5% (looser)', 127062, 158.8, 3.77, -9.8, 785, ''],
+  ['Max 1 tranche per symbol', 79471, 99.3, 3.00, -10.0, 767, ''],
+  ['Symbol cap 25% (was 50%)', 117667, 147.1, 3.73, -8.8, 770, ''],
+  ['Trade cap 10% (was 25%)', 119507, 149.4, 3.86, -8.8, 796, ''],
+];
+
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+function diverging(svg, rows, fmt, W, rowH, padL) {
+  const padR = 92, padT = 16, padB = 26;
+  const H = padT + rows.length * rowH + padB;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const vals = rows.map(r => r.v);
+  const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals);
+  const span = (hi - lo) || 1;
+  const x = (v) => padL + ((v - lo) / span) * (W - padL - padR);
+  const zx = x(0);
+  const good = css('--good'), bad = css('--bad'), accent = css('--accent');
+  let s = '';
+  // gridlines at rounded steps
+  const step = span / 4;
+  for (let i = 0; i <= 4; i++) {
+    const v = lo + step * i, gx = x(v);
+    s += `<line class="grid" x1="${gx.toFixed(1)}" y1="${padT}" x2="${gx.toFixed(1)}" y2="${H - padB}"/>`;
+    s += `<text class="ax" x="${gx.toFixed(1)}" y="${H - padB + 15}" text-anchor="middle">${fmt(v, true)}</text>`;
+  }
+  rows.forEach((r, i) => {
+    const y = padT + i * rowH, h = rowH - 12;
+    const bx = Math.min(zx, x(r.v)), bw = Math.max(2, Math.abs(x(r.v) - zx));
+    const fill = r.hl ? accent : (r.v >= 0 ? good : bad);
+    const rad = 3;
+    s += `<rect class="bar" x="${bx.toFixed(1)}" y="${(y + 6).toFixed(1)}" width="${bw.toFixed(1)}" height="${h}" rx="${rad}" fill="${fill}"/>`;
+    s += `<text class="lbl" x="${padL - 10}" y="${(y + 6 + h * 0.45).toFixed(1)}" text-anchor="end" font-weight="600" fill="${css('--ink')}">${esc(r.label)}</text>`;
+    s += `<text class="ax" x="${padL - 10}" y="${(y + 6 + h * 0.92).toFixed(1)}" text-anchor="end">${esc(r.sub)}</text>`;
+    const ty = (y + 6 + h * 0.68).toFixed(1);
+    const outsideOk = r.v >= 0 ? true : (x(r.v) - 8 > padL + 52);
+    if (outsideOk) {
+      const tx = r.v >= 0 ? x(r.v) + 8 : x(r.v) - 8;
+      s += `<text class="vl" x="${tx.toFixed(1)}" y="${ty}" text-anchor="${r.v >= 0 ? 'start' : 'end'}">${fmt(r.v)}</text>`;
+    } else {
+      // no room outside without colliding with the row label -- set it inside the bar
+      s += `<text class="vl" x="${(x(r.v) + 9).toFixed(1)}" y="${ty}" text-anchor="start" fill="${css('--surface')}">${fmt(r.v)}</text>`;
+    }
+  });
+  s += `<line class="zero" x1="${zx.toFixed(1)}" y1="${padT}" x2="${zx.toFixed(1)}" y2="${H - padB}"/>`;
+  svg.innerHTML = s;
+}
+
+const pctFmt = (v, terse) => (terse ? `${v.toFixed(0)}%` : `${v > 0 ? '+' : ''}${v.toFixed(1)}%`);
+const usdFmt = (v, terse) => terse
+  ? `${v < 0 ? '−' : ''}$${Math.abs(Math.round(v / 1000))}k`
+  : `${v > 0 ? '+' : '−'}$${Math.abs(v).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+function costChart(svg) {
+  const W = 900, H = 230, padL = 62, padR = 24, padT = 18, padB = 46;
+  const xs = COSTS.map(c => c.bps), ys = COSTS.map(c => c.pct);
+  const xmax = Math.max(...xs), ymin = 100, ymax = 172;
+  const X = (v) => padL + (v / xmax) * (W - padL - padR);
+  const Y = (v) => padT + (1 - (v - ymin) / (ymax - ymin)) * (H - padT - padB);
+  const accent = css('--accent');
+  let s = '';
+  [100, 120, 140, 160].forEach(v => {
+    s += `<line class="grid" x1="${padL}" y1="${Y(v).toFixed(1)}" x2="${W - padR}" y2="${Y(v).toFixed(1)}"/>`;
+    s += `<text class="ax" x="${padL - 10}" y="${(Y(v) + 4).toFixed(1)}" text-anchor="end">+${v}%</text>`;
+  });
+  const pts = COSTS.map(c => `${X(c.bps).toFixed(1)},${Y(c.pct).toFixed(1)}`).join(' ');
+  s += `<polyline points="${pts}" fill="none" stroke="${accent}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  COSTS.forEach(c => {
+    const cx = X(c.bps), cy = Y(c.pct);
+    s += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="5" fill="${accent}" stroke="${css('--surface')}" stroke-width="2"/>`;
+    if ([0, 5, 10, 20, 30].includes(c.bps)) {
+      s += `<text class="vl" x="${cx.toFixed(1)}" y="${(cy - 13).toFixed(1)}" text-anchor="middle">+${c.pct.toFixed(0)}%</text>`;
+    }
+    s += `<text class="ax" x="${cx.toFixed(1)}" y="${H - padB + 18}" text-anchor="middle">${c.bps}</text>`;
+  });
+  s += `<text class="ax" x="${((padL + W - padR) / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle">basis points per side</text>`;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.innerHTML = s;
+}
+
+function renderVariants() {
+  $('varBody').innerHTML = VARIANTS.map(([n, r, p, sh, dd, t, cls]) => `<tr class="${cls}">
+    <td>${esc(n)}</td>
+    <td class="num ${r < 0 ? 'neg' : ''}">${r < 0 ? '−' : ''}$${Math.abs(r).toLocaleString()}</td>
+    <td class="num ${p < 0 ? 'neg' : 'pos'}">${p > 0 ? '+' : '−'}${Math.abs(p).toFixed(1)}%</td>
+    <td class="num">${sh.toFixed(2)}</td>
+    <td class="num">${dd.toFixed(1)}%</td>
+    <td class="num">${t}</td></tr>`).join('');
+}
+
+function drawAll() {
+  diverging($('exitChart'), EXITS.map((e, i) => ({ ...e, v: e.pct, hl: i === 0 })), pctFmt, 900, 36, 150);
+  diverging($('freqChart'), FREQ.map((f, i) => ({ ...f, v: f.pct, hl: i === 0 })), pctFmt, 900, 34, 168);
+  diverging($('legChart'), LEGS.map(l => ({ ...l, v: l.v })), usdFmt, 900, 46, 168);
+  costChart($('costChart'));
+}
+
+renderVariants();
+drawAll();
+if (window.matchMedia) {
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  if (mq.addEventListener) mq.addEventListener('change', drawAll);
+}
+</script>

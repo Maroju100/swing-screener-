@@ -1,0 +1,108 @@
+{
+ "rows": [
+  {
+   "cost_bps": 0.0,
+   "realized": 132562.32,
+   "total": 134070.84,
+   "realized_pct": 165.7,
+   "total_pct": 167.59,
+   "trades": 771,
+   "days": 132,
+   "days_with_pnl": 110,
+   "sharpe": 3.983,
+   "max_dd_pct": -8.68,
+   "seconds": 0.82,
+   "pct_of_zero_cost": 100.0
+  },
+  {
+   "cost_bps": 1.0,
+   "realized": 130881.9,
+   "total": 132374.98,
+   "realized_pct": 163.6,
+   "total_pct": 165.47,
+   "trades": 771,
+   "days": 132,
+   "days_with_pnl": 110,
+   "sharpe": 3.953,
+   "max_dd_pct": -8.72,
+   "seconds": 0.9,
+   "pct_of_zero_cost": 98.7
+  },
+  {
+   "cost_bps": 2.5,
+   "realized": 128385.72,
+   "total": 129855.93,
+   "realized_pct": 160.48,
+   "total_pct": 162.32,
+   "trades": 771,
+   "days": 132,
+   "days_with_pnl": 110,
+   "sharpe": 3.909,
+   "max_dd_pct": -8.76,
+   "seconds": 0.88,
+   "pct_of_zero_cost": 96.8
+  },
+  {
+   "cost_bps": 5.0,
+   "realized": 124289.71,
+   "total": 125722.53,
+   "realized_pct": 155.36,
+   "total_pct": 157.15,
+   "trades": 771,
+   "days": 132,
+   "days_with_pnl": 110,
+   "sharpe": 3.834,
+   "max_dd_pct": -8.84,
+   "seconds": 0.88,
+   "pct_of_zero_cost": 93.8
+  },
+  {
+   "cost_bps": 10.0,
+   "realized": 116333.02,
+   "total": 117693.69,
+   "realized_pct": 145.42,
+   "total_pct": 147.12,
+   "trades": 771,
+   "days": 132,
+   "days_with_pnl": 110,
+   "sharpe": 3.684,
+   "max_dd_pct": -8.99,
+   "seconds": 0.81,
+   "pct_of_zero_cost": 87.8
+  },
+  {
+   "cost_bps": 20.0,
+   "realized": 101320.42,
+   "total": 102546.88,
+   "realized_pct": 126.65,
+   "total_pct": 128.18,
+   "trades": 771,
+   "days": 132,
+   "days_with_pnl": 110,
+   "sharpe": 3.384,
+   "max_dd_pct": -9.3,
+   "seconds": 0.8,
+   "pct_of_zero_cost": 76.4
+  },
+  {
+   "cost_bps": 30.0,
+   "realized": 87437.02,
+   "total": 88541.71,
+   "realized_pct": 109.3,
+   "total_pct": 110.68,
+   "trades": 771,
+   "days": 132,
+   "days_with_pnl": 110,
+   "sharpe": 3.084,
+   "max_dd_pct": -9.6,
+   "seconds": 0.91,
+   "pct_of_zero_cost": 66.0
+  }
+ ],
+ "engine": "origin/main",
+ "window": [
+  "2026-03-13",
+  "2026-09-21"
+ ],
+ "note": "MEASURED by full replay at each cost level"
+}

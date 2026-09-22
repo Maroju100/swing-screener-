@@ -1,0 +1,83 @@
+{
+ "trials": 500,
+ "folds": [
+  {
+   "fold": 1,
+   "delta": 2273.9,
+   "delta_sharpe": -0.646,
+   "top5_train_sharpes": [
+    6.3,
+    6.227,
+    6.19,
+    5.925,
+    5.913
+   ]
+  },
+  {
+   "fold": 2,
+   "delta": -12839.66,
+   "delta_sharpe": -0.73,
+   "top5_train_sharpes": [
+    5.603,
+    5.527,
+    5.46,
+    5.442,
+    5.396
+   ]
+  },
+  {
+   "fold": 3,
+   "delta": -2565.58,
+   "delta_sharpe": -0.85,
+   "top5_train_sharpes": [
+    5.08,
+    5.08,
+    5.08,
+    4.983,
+    4.983
+   ]
+  }
+ ],
+ "config": {
+  "INTRADAY_STOP": -9.99,
+  "MAX_HOLD_DAYS": 8,
+  "NORMAL_DIP_THRESHOLD": 0.002,
+  "PEAK_SELL_PCT": 0.5
+ },
+ "dsr": 0.9531,
+ "expected_max_sharpe_noise": 0.827,
+ "variant_sharpe": 3.022,
+ "bootstrap_ci_daily": [
+  -0.006921112633508495,
+  0.0029027236263062983
+ ],
+ "p_variant_better": 0.2474,
+ "ci_straddles_zero": true,
+ "verdict": "NOT SUPPORTED",
+ "variant_full": {
+  "realized": 77392.73,
+  "total": 77392.73,
+  "realized_pct": 96.74,
+  "total_pct": 96.74,
+  "trades": 403,
+  "days": 132,
+  "days_with_pnl": 66,
+  "sharpe": 3.022,
+  "max_dd_pct": -16.27,
+  "cost_bps": 5.0,
+  "seconds": 0.83
+ },
+ "baseline_full": {
+  "realized": 124289.71,
+  "total": 125722.53,
+  "realized_pct": 155.36,
+  "total_pct": 157.15,
+  "trades": 771,
+  "days": 132,
+  "days_with_pnl": 110,
+  "sharpe": 3.834,
+  "max_dd_pct": -8.84,
+  "cost_bps": 5.0,
+  "seconds": 0.87
+ }
+}

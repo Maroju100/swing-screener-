@@ -1,0 +1,78 @@
+{
+ "window": [
+  "2026-06-22",
+  "2026-09-21"
+ ],
+ "engine": "origin/main",
+ "cost_bps": 5.0,
+ "rows": [
+  {
+   "exit": "none (hold overnight) = PRODUCTION",
+   "exit_utc": null,
+   "realized": 30622.59,
+   "realized_pct": 38.28,
+   "total": 31439.58,
+   "trades": 371,
+   "sharpe": 2.458,
+   "max_dd_pct": -12.45,
+   "vol_ann_pct": 61.34
+  },
+  {
+   "exit": "close at 17:30 UTC",
+   "exit_utc": "17:30",
+   "realized": 623.88,
+   "realized_pct": 0.78,
+   "total": 623.88,
+   "trades": 460,
+   "sharpe": 0.471,
+   "max_dd_pct": -4.38,
+   "vol_ann_pct": 7.12
+  },
+  {
+   "exit": "close at 18:00 UTC",
+   "exit_utc": "18:00",
+   "realized": -3438.38,
+   "realized_pct": -4.3,
+   "total": -3438.38,
+   "trades": 460,
+   "sharpe": -9.602,
+   "max_dd_pct": -4.3,
+   "vol_ann_pct": 1.83
+  },
+  {
+   "exit": "close at 18:30 UTC",
+   "exit_utc": "18:30",
+   "realized": -3846.76,
+   "realized_pct": -4.81,
+   "total": -3846.76,
+   "trades": 460,
+   "sharpe": -3.286,
+   "max_dd_pct": -8.11,
+   "vol_ann_pct": 5.94
+  },
+  {
+   "exit": "close at 19:00 UTC",
+   "exit_utc": "19:00",
+   "realized": -4470.5,
+   "realized_pct": -5.59,
+   "total": -4470.5,
+   "trades": 460,
+   "sharpe": -2.241,
+   "max_dd_pct": -7.85,
+   "vol_ann_pct": 10.04
+  },
+  {
+   "exit": "close at 19:30 UTC",
+   "exit_utc": "19:30",
+   "realized": -3952.86,
+   "realized_pct": -4.94,
+   "total": -3952.86,
+   "trades": 460,
+   "sharpe": -1.723,
+   "max_dd_pct": -7.94,
+   "vol_ann_pct": 11.39
+  }
+ ],
+ "unanswerable": "2:45 PM CDT exactly (19:45 UTC is mid-bar)",
+ "method": "MEASURED by full engine replay on 30-minute bars"
+}

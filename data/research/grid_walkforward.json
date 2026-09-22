@@ -1,0 +1,276 @@
+{
+ "trials": 500,
+ "folds": [
+  {
+   "fold": 1,
+   "train": [
+    "2026-03-13",
+    "2026-04-29"
+   ],
+   "test": [
+    "2026-04-30",
+    "2026-06-16"
+   ],
+   "best_params": {
+    "INTRADAY_STOP": -9.99,
+    "PEAK_SELL_PCT": 0.5,
+    "MAX_HOLD_DAYS": 8,
+    "NORMAL_DIP_THRESHOLD": 0.002
+   },
+   "train_sharpe": 6.3,
+   "train_realized": 35984.08,
+   "test_variant": {
+    "realized": 19644.62,
+    "total": 21582.59,
+    "realized_pct": 24.56,
+    "total_pct": 26.98,
+    "trades": 192,
+    "days": 33,
+    "days_with_pnl": 30,
+    "sharpe": 4.033,
+    "max_dd_pct": -8.14,
+    "cost_bps": 5.0,
+    "seconds": 0.22
+   },
+   "test_baseline": {
+    "realized": 17370.72,
+    "total": 17438.84,
+    "realized_pct": 21.71,
+    "total_pct": 21.8,
+    "trades": 177,
+    "days": 33,
+    "days_with_pnl": 27,
+    "sharpe": 4.679,
+    "max_dd_pct": -6.78,
+    "cost_bps": 5.0,
+    "seconds": 0.2
+   },
+   "test_delta_realized": 2273.9,
+   "test_delta_sharpe": -0.646,
+   "top5_train": [
+    {
+     "sharpe": 6.3,
+     "realized": 35984.08,
+     "INTRADAY_STOP": -9.99,
+     "PEAK_SELL_PCT": 0.5,
+     "MAX_HOLD_DAYS": 8,
+     "NORMAL_DIP_THRESHOLD": 0.002
+    },
+    {
+     "sharpe": 6.227,
+     "realized": 34166.84,
+     "INTRADAY_STOP": -9.99,
+     "PEAK_SELL_PCT": 0.65,
+     "MAX_HOLD_DAYS": 8,
+     "NORMAL_DIP_THRESHOLD": 0.002
+    },
+    {
+     "sharpe": 6.19,
+     "realized": 35151.0,
+     "INTRADAY_STOP": -9.99,
+     "PEAK_SELL_PCT": 0.5,
+     "MAX_HOLD_DAYS": 8,
+     "NORMAL_DIP_THRESHOLD": 0.004
+    },
+    {
+     "sharpe": 5.925,
+     "realized": 31984.38,
+     "INTRADAY_STOP": -9.99,
+     "PEAK_SELL_PCT": 0.65,
+     "MAX_HOLD_DAYS": 8,
+     "NORMAL_DIP_THRESHOLD": 0.004
+    },
+    {
+     "sharpe": 5.913,
+     "realized": 32220.77,
+     "INTRADAY_STOP": -9.99,
+     "PEAK_SELL_PCT": 0.743,
+     "MAX_HOLD_DAYS": 8,
+     "NORMAL_DIP_THRESHOLD": 0.002
+    }
+   ]
+  },
+  {
+   "fold": 2,
+   "train": [
+    "2026-03-13",
+    "2026-06-16"
+   ],
+   "test": [
+    "2026-06-17",
+    "2026-08-04"
+   ],
+   "best_params": {
+    "INTRADAY_STOP": -0.02,
+    "PEAK_SELL_PCT": 0.5,
+    "MAX_HOLD_DAYS": 12,
+    "NORMAL_DIP_THRESHOLD": 0.008
+   },
+   "train_sharpe": 5.603,
+   "train_realized": 56737.99,
+   "test_variant": {
+    "realized": 27785.93,
+    "total": 34540.67,
+    "realized_pct": 34.73,
+    "total_pct": 43.18,
+    "trades": 203,
+    "days": 33,
+    "days_with_pnl": 25,
+    "sharpe": 3.843,
+    "max_dd_pct": -10.3,
+    "cost_bps": 5.0,
+    "seconds": 0.21
+   },
+   "test_baseline": {
+    "realized": 40625.59,
+    "total": 41363.72,
+    "realized_pct": 50.78,
+    "total_pct": 51.7,
+    "trades": 203,
+    "days": 33,
+    "days_with_pnl": 24,
+    "sharpe": 4.573,
+    "max_dd_pct": -8.84,
+    "cost_bps": 5.0,
+    "seconds": 0.19
+   },
+   "test_delta_realized": -12839.66,
+   "test_delta_sharpe": -0.73,
+   "top5_train": [
+    {
+     "sharpe": 5.603,
+     "realized": 56737.99,
+     "INTRADAY_STOP": -0.02,
+     "PEAK_SELL_PCT": 0.5,
+     "MAX_HOLD_DAYS": 12,
+     "NORMAL_DIP_THRESHOLD": 0.008
+    },
+    {
+     "sharpe": 5.527,
+     "realized": 71641.16,
+     "INTRADAY_STOP": -9.99,
+     "PEAK_SELL_PCT": 0.5,
+     "MAX_HOLD_DAYS": 8,
+     "NORMAL_DIP_THRESHOLD": 0.004
+    },
+    {
+     "sharpe": 5.46,
+     "realized": 72395.8,
+     "INTRADAY_STOP": -9.99,
+     "PEAK_SELL_PCT": 0.5,
+     "MAX_HOLD_DAYS": 8,
+     "NORMAL_DIP_THRESHOLD": 0.002
+    },
+    {
+     "sharpe": 5.442,
+     "realized": 70649.44,
+     "INTRADAY_STOP": -9.99,
+     "PEAK_SELL_PCT": 0.65,
+     "MAX_HOLD_DAYS": 8,
+     "NORMAL_DIP_THRESHOLD": 0.002
+    },
+    {
+     "sharpe": 5.396,
+     "realized": 57928.68,
+     "INTRADAY_STOP": -9.99,
+     "PEAK_SELL_PCT": 0.65,
+     "MAX_HOLD_DAYS": 12,
+     "NORMAL_DIP_THRESHOLD": 0.002
+    }
+   ]
+  },
+  {
+   "fold": 3,
+   "train": [
+    "2026-03-13",
+    "2026-08-04"
+   ],
+   "test": [
+    "2026-08-05",
+    "2026-09-21"
+   ],
+   "best_params": {
+    "INTRADAY_STOP": -0.03,
+    "PEAK_SELL_PCT": 1.0,
+    "MAX_HOLD_DAYS": 6,
+    "NORMAL_DIP_THRESHOLD": 0.002
+   },
+   "train_sharpe": 5.08,
+   "train_realized": 122716.76,
+   "test_variant": {
+    "realized": 1781.29,
+    "total": 1781.29,
+    "realized_pct": 2.23,
+    "total_pct": 2.23,
+    "trades": 136,
+    "days": 33,
+    "days_with_pnl": 27,
+    "sharpe": 0.641,
+    "max_dd_pct": -8.89,
+    "cost_bps": 5.0,
+    "seconds": 0.26
+   },
+   "test_baseline": {
+    "realized": 4346.87,
+    "total": 4938.45,
+    "realized_pct": 5.43,
+    "total_pct": 6.17,
+    "trades": 183,
+    "days": 33,
+    "days_with_pnl": 26,
+    "sharpe": 1.491,
+    "max_dd_pct": -8.01,
+    "cost_bps": 5.0,
+    "seconds": 0.29
+   },
+   "test_delta_realized": -2565.58,
+   "test_delta_sharpe": -0.85,
+   "top5_train": [
+    {
+     "sharpe": 5.08,
+     "realized": 122716.76,
+     "INTRADAY_STOP": -0.03,
+     "PEAK_SELL_PCT": 1.0,
+     "MAX_HOLD_DAYS": 6,
+     "NORMAL_DIP_THRESHOLD": 0.002
+    },
+    {
+     "sharpe": 5.08,
+     "realized": 122716.76,
+     "INTRADAY_STOP": -0.03,
+     "PEAK_SELL_PCT": 1.0,
+     "MAX_HOLD_DAYS": 8,
+     "NORMAL_DIP_THRESHOLD": 0.002
+    },
+    {
+     "sharpe": 5.08,
+     "realized": 122716.76,
+     "INTRADAY_STOP": -0.03,
+     "PEAK_SELL_PCT": 1.0,
+     "MAX_HOLD_DAYS": 12,
+     "NORMAL_DIP_THRESHOLD": 0.002
+    },
+    {
+     "sharpe": 4.983,
+     "realized": 116746.06,
+     "INTRADAY_STOP": -0.03,
+     "PEAK_SELL_PCT": 1.0,
+     "MAX_HOLD_DAYS": 6,
+     "NORMAL_DIP_THRESHOLD": 0.004
+    },
+    {
+     "sharpe": 4.983,
+     "realized": 116746.06,
+     "INTRADAY_STOP": -0.03,
+     "PEAK_SELL_PCT": 1.0,
+     "MAX_HOLD_DAYS": 8,
+     "NORMAL_DIP_THRESHOLD": 0.004
+    }
+   ]
+  }
+ ],
+ "cost_bps": 5.0,
+ "engine": "origin/main",
+ "test_folds_won": 1,
+ "verdict": "tuning did NOT generalize"
+}
