@@ -2548,6 +2548,82 @@
     "detail": "On 2026-09-18 the owner bought STX 5.887547 sh ($5,000.00 @ 849.2501, order 6aad73ae) and WDC 2.276165 sh ($1,000.00 @ 439.3354, order 6aad73c3). The engine's state knew only its own STX 0.016842 and WDC 9.672491. The daily procedure tells the run to reconcile each sell against the REAL broker share count, so on 2026-09-21 it sold the full broker balances - STX 5.904389 (= 0.016842 + 5.887547) and WDC 11.948656 (= 9.672491 + 2.276165), both exact to the share. Proceeds on the owner's portion were $6,147.55 against $6,000.00 paid, so +$147.55, but they were not the system's shares to trade. The cross-system symbol-safety rule did not catch this because it only excludes symbols absent from state; here the symbols WERE in state with a smaller quantity. Open question for the user - see CLAUDE.md."
    },
    "notes": "Only 2 of the log's state-derived equity figures are wrong, and only one of those was caused by the engine. real_cash_* fields throughout the log come straight from get_portfolio and are broker-sourced inputs, so they are not affected. No dashboard embedded either wrong figure; the live dashboard's own equity_peak snapshot was corrected separately in the same session."
+  },
+  {
+   "timestamp": "2026-09-22T17:16:41Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "sizing_input": {
+    "buying_power_used": 17693.63,
+    "cash": 17693.63,
+    "note": "sized off buying_power per 2026-09-22 change; equal to cash today because unsettled_funds=0"
+   },
+   "orders_placed": [
+    {
+     "side": "buy",
+     "symbol": "SNDK",
+     "shares": 2.34988,
+     "price": 1884.3999,
+     "notional": 4428.11,
+     "reason": "NORMAL_DIP",
+     "order_id": "6ab2b7f9-c233-4c5c-b42c-e669cda23a2f",
+     "state": "filled",
+     "fees": 0.0,
+     "capped_by_trade_notional_limit": true
+    }
+   ],
+   "orders_skipped": [],
+   "netted_trades": [],
+   "unowned_excess": {},
+   "state_reconciliation": "none needed; broker held only CGC 2.0 (excluded), state had 0 positions",
+   "pending_settlement_before": [
+    {
+     "symbol": "WDC",
+     "amount": 5290.27,
+     "settle_date": "2026-09-22"
+    },
+    {
+     "symbol": "SNDK",
+     "amount": 1262.51,
+     "settle_date": "2026-09-22"
+    },
+    {
+     "symbol": "LRCX",
+     "amount": 1259.0,
+     "settle_date": "2026-09-22"
+    },
+    {
+     "symbol": "STX",
+     "amount": 5160.5,
+     "settle_date": "2026-09-22"
+    }
+   ],
+   "pending_settlement_note": "all four settled today (settle_date 2026-09-22 <= today), pruned to []; matches broker unsettled_funds=0",
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "data_freshness": "PASS (last bar 2026-09-21, quotes 17:15-17:16 UTC)",
+    "pre_commit": "PASS (no sells to validate)"
+   },
+   "risk_state": {
+    "equity_peak": 17696.92,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false,
+    "total_equity_at_plan": 17693.63,
+    "drawdown_from_peak": -0.00019
+   },
+   "open_positions_after": {
+    "SNDK": {
+     "shares": 2.34988,
+     "entry": 1884.3999,
+     "peak": 1884.3999,
+     "tranches": 1,
+     "opened": "2026-09-22"
+    }
+   },
+   "notes": "First run after the account was converted back to CASH (confirmed type=cash, unsettled_funds=0). Live-quote proxy used for 'today' price, as always at this once-daily cadence."
   }
  ]
 }

@@ -1,27 +1,14 @@
 {
- "pending_settlement": [
-  {
-   "amount": 5290.27,
-   "settle_date": "2026-09-22",
-   "symbol": "WDC"
-  },
-  {
-   "amount": 1262.51,
-   "settle_date": "2026-09-22",
-   "symbol": "SNDK"
-  },
-  {
-   "amount": 1259.0,
-   "settle_date": "2026-09-22",
-   "symbol": "LRCX"
-  },
-  {
-   "amount": 5160.5,
-   "settle_date": "2026-09-22",
-   "symbol": "STX"
+ "pending_settlement": [],
+ "open_positions": {
+  "SNDK": {
+   "shares": 2.34988,
+   "entry": 1884.3999,
+   "peak": 1884.3999,
+   "tranches": 1,
+   "opened": "2026-09-22"
   }
- ],
- "open_positions": {},
+ },
  "equity_peak": 17696.92,
  "kill_switch_active": false,
  "kill_switch_triggered_date": null,
