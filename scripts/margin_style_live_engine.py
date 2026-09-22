@@ -607,6 +607,9 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols, actual_holding
     # Validate positions against actual holdings if provided
     position_validation = {}
     actual_holdings = {}
+    # Shares the broker holds beyond what state records: not this system's to trade.
+    # Surfaced in the plan output so the run reports them instead of silently selling.
+    unowned_excess = {}
     if actual_holdings_json:
         try:
             actual_holdings = json.loads(actual_holdings_json)
@@ -623,12 +626,38 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols, actual_holding
                         if sym in state['open_positions'] and validation['actual_shares'] < 1e-6:
                             print(f"  -> Removing phantom position {sym} from state", file=sys.stderr)
                             del state['open_positions'][sym]
-                        # Correct position share count if actual is more up-to-date
+                        # Reconcile the share count -- but ONLY DOWNWARDS.
+                        #
+                        # This used to assign actual_shares unconditionally, which is
+                        # how the 2026-09-21 run came to sell $6,147.55 of the account
+                        # owner's own manual purchases. On 2026-09-18 the owner bought
+                        # STX 5.887547 and WDC 2.276165 directly; the broker then held
+                        # MORE than state, so the engine ADOPTED those shares into its
+                        # own positions and every downstream rule -- PEAK, STOP,
+                        # MAX_HOLD -- treated them as its to sell.
+                        #
+                        # Correcting DOWN is always right: state claimed shares that do
+                        # not exist, and an order for them would be rejected anyway.
+                        # Correcting UP is never right here: the excess is either the
+                        # owner's own trade or an engine buy whose state commit did not
+                        # land, and this function cannot tell which. Neither is a
+                        # licence to sell shares this system has no record of buying.
+                        # Guardrail 2 (`reconcile`) is what stops the run on an
+                        # unexplained excess; this block just refuses to absorb it.
                         elif sym in state['open_positions'] and validation['actual_shares'] > 0:
                             old_shares = state['open_positions'][sym]['shares']
-                            state['open_positions'][sym]['shares'] = validation['actual_shares']
-                            print(f"  -> Correcting {sym} shares {old_shares} -> {validation['actual_shares']}",
-                                  file=sys.stderr)
+                            if validation['actual_shares'] < old_shares:
+                                state['open_positions'][sym]['shares'] = validation['actual_shares']
+                                print(f"  -> Correcting {sym} shares DOWN {old_shares} -> "
+                                      f"{validation['actual_shares']} (broker holds fewer)",
+                                      file=sys.stderr)
+                            else:
+                                excess = validation['actual_shares'] - old_shares
+                                unowned_excess[sym] = round(excess, 6)
+                                print(f"  -> NOT ADOPTING {sym}: broker holds "
+                                      f"{validation['actual_shares']} vs state {old_shares}. "
+                                      f"The {excess:.6f} excess is NOT this system's and will "
+                                      f"not be sold.", file=sys.stderr)
         except Exception as e:
             print(f"WARNING: Failed to parse actual_holdings_json: {e}", file=sys.stderr)
 
@@ -869,7 +898,10 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols, actual_holding
                       'stop_count_this_run': stop_count,
                       'risk_state': risk_state,
                       'open_positions': state['open_positions'], 'sells': sells, 'buys': buys,
-                      'peak_updates': peak_updates}, indent=1))
+                      'peak_updates': peak_updates,
+                      # Broker shares beyond what state records. NOT sold by this plan -
+                      # see the reconciliation block above. Report these; do not trade them.
+                      'unowned_excess': unowned_excess}, indent=1))
 
 
 def cmd_commit(actions_path):
