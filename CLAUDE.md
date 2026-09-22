@@ -130,25 +130,56 @@ below are what makes a claim checkable.
 - ✅ **RESOLVED 2026-09-22 — the Sep 21 run was ported to `main` (`01b484e`).**
   `main` now correctly shows the account flat with $12,972.28 settling
   2026-09-22, and both real-money files are back in sync across the branches.
-  Two judgement calls are recorded in that commit: **`equity_peak` was kept at
-  `main`'s 20,873.33**, not lowered to the branch's 17,696.92 (a high-water mark
-  must never be lowered, and the run did not change it), and the branch's
-  **corrupted log was not copied** — commit `dbae2ba` had concatenated a second
-  JSON document after the closing brace, so the entry was extracted and appended
-  properly instead. That entry's `total_proceeds` also read 13972.28 against an
-  actual order sum of 12972.27; corrected, original kept as
+  Two judgement calls are recorded in that commit. One was **wrong and has since
+  been reversed** — see the `equity_peak` correction below. The other stands: the
+  branch's **corrupted log was not copied** — commit `dbae2ba` had concatenated a
+  second JSON document after the closing brace, so the entry was extracted and
+  appended properly instead. That entry's `total_proceeds` also read 13972.28
+  against an actual order sum of 12972.27; corrected, original kept as
   `total_proceeds_as_logged`.
-  - ✅ **KILL-SWITCH FIRING ACCEPTED by the user, 2026-09-22.** At $17,695.48
-    against `equity_peak` 20,873.33 the drawdown is **−15.22%**, past
-    `KILL_SWITCH_DD` (−15%), so the kill-switch is expected to fire on the next
-    run: liquidate (nothing is open), then block new entries for
-    `KILL_SWITCH_RESUME_DAYS` (20 trading days), after which the **permanent**
-    SMA-50 trend gate applies to every future entry. This is the control working
-    as designed on a real drawdown — `main`'s Sep 18 log records `total_equity`
-    **21,612.74**, a −18.12% fall. **Do not "fix" this by lowering
-    `equity_peak`.** A future session seeing a quiet, gated system should
-    read this note first: it is expected, it was chosen, and the resume is
-    time-based (20 trading days), not recovery-based.
+- 🚨 **`equity_peak` 20,873.33 WAS A PHANTOM. CORRECTED TO 17,696.92 on
+  2026-09-22 at the user's direction — and the kill-switch therefore does NOT
+  fire.** The previous note here (kill-switch accepted, "do not lower
+  `equity_peak`") rested on a premise that turned out to be false, and is
+  withdrawn. `equity_peak` is **not** the broker's portfolio value — the engine
+  computes it from its own state file
+  (`total_equity = safe_cash + pending_total + Σ shares × quote`, running max,
+  never lowered), so it is only as accurate as that file. That file was wrong.
+  - **Diagnosis (MEASURED).** On 2026-09-16 the engine sold **LRCX 14.755994 sh
+    @ 266.12** (order `6aaaed30`, status `placed`), but that run's state commit
+    left the position in `open_positions` **and** recorded no
+    `pending_settlement` (`pend = 0`). From the 2026-09-17 run onward the engine
+    counted those shares **twice** — once as cash that had arrived from the sale,
+    once as a position it still believed it held. `equity_peak` jumped
+    **16,508.13 → 20,873.33 (+4,365.20)** on that single run; the phantom LRCX
+    was worth `14.755994 × 269.09 = 3,970.69` at the run's 17:00 UTC price —
+    **91% of the jump**. The residual **394.51** is genuine appreciation
+    (WDC/INTC/STX all set new PEAKs that day).
+  - **Confirmation is exact.** The 2026-09-18 reconcile cut LRCX from
+    18.934412 → 4.178 sh, removing precisely the 14.755994 sold on Sep 16, and
+    `4.178418 = 3.600952` (Sep 17 buy) `+ 0.577466` (Sep 18 buy) — the broker
+    held *only* the post-Sep-16 purchases. Sep 18's logged `total_equity`
+    **21,612.74** is inflated the same way: `21,612.74 − 14.755994 × 288.11 =
+    17,361.39`, consistent with the **17,695.48** the broker reported on Sep 21.
+    So the earlier "−18.12% fall" was also phantom.
+  - **Why 17,696.92 is the right value.** It is what the 2026-09-21 run computed
+    from a flat state, and it matches the broker's real `total_value`
+    (17,695.48) to within **$1.44**. The true running max of real equity was
+    ~16,902 (Sep 17) → ~17,361 (Sep 18) → 17,695.48 (Sep 21), so 17,696.92 *is*
+    the honest high-water mark.
+  - **Effect:** drawdown at 17,695.48 goes from **−15.22%** to **−0.01%**. No
+    kill-switch, no 20-day entry block, no permanent SMA-50 trend gate.
+  - **The "never lower a high-water mark" rule still holds** — it simply did not
+    apply. 20,873.33 was not a high-water mark but a double-count, and
+    correcting an arithmetic error is not lowering a peak. A future session must
+    still not lower `equity_peak` to un-gate a genuinely drawn-down system; the
+    distinction is whether the peak is *reachable in broker reality*. Check it
+    against `get_portfolio`'s `total_value` history before touching it.
+  - **Process lesson:** the Sep 17 run **committed state but wrote no log
+    entry** — the only run of 63 to do so — which is why a $4.4k phantom jump
+    sat unexamined for five days. Step 13 of the trigger prompt (append to the
+    `runs` array every run) is what prevents a recurrence; it is not optional
+    bookkeeping.
 - ✅ **THE FOUR GUARDRAILS ARE NOW REAL IN PRODUCTION (`294328d`,
   2026-09-22).** They had been documented since 2026-09-16 but existed only on
   the development branch — `main` supported just `plan` and `commit`, which is
@@ -183,8 +214,10 @@ below are what makes a claim checkable.
     guardrail's result.
   - The prompt also now carries the corrected baseline (+155.10%, with the
     withdrawn +248.36% / +60.1% claims named as withdrawn and "do not add the
-    daily stop"), and the accepted kill-switch state with "do not fix a gated
-    system by lowering `equity_peak`".
+    daily stop"). ⚠️ Its kill-switch paragraph was **rewritten on 2026-09-22**
+    once `equity_peak` was found to be a phantom — it no longer says the
+    kill-switch is expected to fire, and no longer forbids lowering
+    `equity_peak` unconditionally.
 - 🎯 **DECISION 2026-09-22: reverting to a CASH account.** The user chose cash
   over limited margin at current capital (~$17.7k), because the limited-margin
   benefit is small and unquantifiable while the PDT exposure is real and
