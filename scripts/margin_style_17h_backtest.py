@@ -134,9 +134,37 @@ def extract_plan(text):
     return json.loads(text)
 
 
-def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False):
+def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False,
+        params=None, src_patches=None, tag='17h', daily_path=None, hourly_path=None,
+        cost_bps=0.0):
+    """Replay the engine day-by-day at its real ~17:00 UTC check price.
+
+    The four research hooks below were added 2026-09-22. All of them default to
+    off, and `--validate` is re-run after any change to this file to prove the
+    default path still reproduces $124,080.90 to the cent.
+
+    params        -- {GLOBAL_NAME: value} applied to the engine's module namespace
+                     AFTER exec. Every documented threshold (INTRADAY_STOP,
+                     PEAK_SELL_PCT, GAIN_TIERS, MAX_HOLD_DAYS, ...) is a module
+                     global, so a parameter sweep needs NO source surgery -- which
+                     removes the whole class of "the anchor line moved" errors.
+                     Structural rule changes still go through src_patches.
+    src_patches   -- [fn(src) -> src] for changes that are not just a constant.
+                     Each must assert its own anchor matched exactly once.
+    tag           -- distinct scratch state file per variant, so concurrent or
+                     successive variants can never share state (skill rule).
+    daily/hourly  -- dataset overrides, for windows past the anchor file's end.
+    cost_bps      -- round-trip friction, PER SIDE, in basis points. The engine
+                     still SIGNALS off true prices (slippage does not move a
+                     signal); cost is applied to the EXECUTION, so a buy fills at
+                     price*(1+c) and a sell at price*(1-c), and the stored entry
+                     is re-costed the same way when realized P&L is taken. This
+                     changes cash, which changes the next day's sizing, so the
+                     whole path diverges -- which is the point. Default 0.0
+                     reproduces the anchor exactly.
+    """
     os.makedirs(SCRATCH, exist_ok=True)
-    state_path = os.path.join(SCRATCH, 'state_17h.json')
+    state_path = os.path.join(SCRATCH, f'state_{tag}.json')
     if os.path.exists(state_path):
         os.remove(state_path)
 
@@ -145,28 +173,40 @@ def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False):
         src = apply_daily_stop_patch(src)
     if no_lockup:
         src = apply_no_settlement_lockup_patch(src)
+    for patch in (src_patches or []):
+        src = patch(src)
 
     ns = {'__file__': os.path.join(ROOT, 'scripts', 'margin_style_live_engine.py')}
     exec(compile(src, 'margin_style_live_engine.py', 'exec'), ns)
     ns['SYMBOLS'] = UNIVERSE
     ns['STATE_PATH'] = state_path
     ns['datetime'] = FakeDatetime
+    for k, v in (params or {}).items():
+        if k not in ns:
+            raise SystemExit(f'param {k!r} is not a global in engine {engine_rev} -- '
+                             'refusing to set it, since it would be silently ignored.')
+        ns[k] = v
     cmd_plan, cmd_commit = ns['cmd_plan'], ns['cmd_commit']
 
-    daily = json.load(open(DAILY))
+    daily = json.load(open(daily_path or DAILY))
     daily_by_sym = {r['symbol']: {b['begins_at'][:10]: float(b['close_price']) for b in r['bars']}
                     for r in daily['data']['results']}
     all_dates = sorted(next(iter(daily_by_sym.values())).keys())
 
-    hourly = json.load(open(HOURLY))
+    hourly = json.load(open(hourly_path or HOURLY))
     q1700 = {}
     for r in hourly['data']['results']:
         q1700[r['symbol']] = {b['begins_at'][:10]: float(b['close_price'])
                               for b in r['bars'] if b['begins_at'][11:19] == '17:00:00'}
 
-    hist_path = os.path.join(SCRATCH, 'h17_hist.json')
-    quotes_path = os.path.join(SCRATCH, 'h17_quotes.json')
-    actions_path = os.path.join(SCRATCH, 'h17_actions.json')
+    # Tag-scoped, NOT fixed names. These were shared filenames until 2026-09-22,
+    # when a grid search running alongside another replay read a half-written
+    # hist file and died with a JSONDecodeError. `tag` already isolated the state
+    # file; the skill's "never share state between variant runs" rule applies to
+    # every scratch input, not just state.json.
+    hist_path = os.path.join(SCRATCH, f'h17_hist_{tag}.json')
+    quotes_path = os.path.join(SCRATCH, f'h17_quotes_{tag}.json')
+    actions_path = os.path.join(SCRATCH, f'h17_actions_{tag}.json')
 
     cash = capital
     realized_total = 0.0
@@ -204,16 +244,18 @@ def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False):
         actions = {'sells': [], 'buys': [],
                    'peak_updates': plan.get('peak_updates', {}),
                    'risk_state': plan['risk_state']}
+        c = cost_bps / 10000.0
         for s in plan['sells']:
             actions['sells'].append({k: s[k] for k in ('symbol', 'shares', 'price', 'reason', 'entry')})
-            day_realized += s['shares'] * (s['price'] - s['entry'])
-            cash += s['shares'] * s['price']
+            # effective fill on the way out, against the effective cost of entry
+            day_realized += s['shares'] * (s['price'] * (1 - c) - s['entry'] * (1 + c))
+            cash += s['shares'] * s['price'] * (1 - c)
             trades.append({'date': D, 'side': 'sell', **{k: s[k] for k in ('symbol', 'shares', 'price', 'reason')}})
             if s['reason'] == 'DAILY_STOP' and D not in stop_days:
                 stop_days.append(D)
         for b in plan['buys']:
             actions['buys'].append({k: b[k] for k in ('symbol', 'shares', 'price', 'reason')})
-            cash -= b['shares'] * b['price']
+            cash -= b['shares'] * b['price'] * (1 + c)
             trades.append({'date': D, 'side': 'buy', **{k: b[k] for k in ('symbol', 'shares', 'price', 'reason')}})
 
         json.dump(actions, open(actions_path, 'w'))
@@ -232,15 +274,17 @@ def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False):
     open_val = open_cost = 0.0
     for sym, p in state['open_positions'].items():
         px = q1700.get(sym, {}).get(last_traded, daily_by_sym[sym].get(last_traded, p['entry']))
-        open_val += p['shares'] * px
-        open_cost += p['shares'] * p['entry']
+        open_val += p['shares'] * px * (1 - cost_bps / 10000.0)
+        open_cost += p['shares'] * p['entry'] * (1 + cost_bps / 10000.0)
     unrealized = open_val - open_cost
     total = realized_total + unrealized
 
     return {
         'start': start, 'end': end, 'trading_days': traded_days,
         'engine_rev': engine_rev, 'daily_stop_bug_patched': patch_bug,
+        'params': dict(params or {}),
         'settlement_lockup_removed': no_lockup,
+        'cost_bps': cost_bps,
         'capital': capital,
         'realized': round(realized_total, 2),
         'unrealized': round(unrealized, 2),

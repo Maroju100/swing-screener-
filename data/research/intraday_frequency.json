@@ -1,0 +1,117 @@
+{
+ "window": [
+  "2026-06-22",
+  "2026-09-21"
+ ],
+ "engine": "origin/main",
+ "cost_bps": 5.0,
+ "rows": [
+  {
+   "schedule": "1x/day 17:00 (PRODUCTION)",
+   "checks": [
+    "17:00"
+   ],
+   "realized": 30622.59,
+   "realized_pct": 38.28,
+   "total": 31439.58,
+   "trades": 371,
+   "sharpe": 2.458,
+   "max_dd_pct": -12.45,
+   "vol_ann_pct": 61.34
+  },
+  {
+   "schedule": "2x/day 15:00,19:00",
+   "checks": [
+    "15:00",
+    "19:00"
+   ],
+   "realized": -13491.27,
+   "realized_pct": -16.86,
+   "total": -13491.27,
+   "trades": 78,
+   "sharpe": -3.054,
+   "max_dd_pct": -17.11,
+   "vol_ann_pct": 23.27
+  },
+  {
+   "schedule": "2x/day 14:00,17:00",
+   "checks": [
+    "14:00",
+    "17:00"
+   ],
+   "realized": -12944.24,
+   "realized_pct": -16.18,
+   "total": -12944.24,
+   "trades": 82,
+   "sharpe": -1.936,
+   "max_dd_pct": -20.56,
+   "vol_ann_pct": 33.43
+  },
+  {
+   "schedule": "3x/day 14:00,17:00,19:00",
+   "checks": [
+    "14:00",
+    "17:00",
+    "19:00"
+   ],
+   "realized": -9594.16,
+   "realized_pct": -11.99,
+   "total": -9594.16,
+   "trades": 93,
+   "sharpe": -1.535,
+   "max_dd_pct": -16.32,
+   "vol_ann_pct": 30.19
+  },
+  {
+   "schedule": "3x/day 15:00,17:00,19:30",
+   "checks": [
+    "15:00",
+    "17:00",
+    "19:30"
+   ],
+   "realized": -14043.88,
+   "realized_pct": -17.55,
+   "total": -14043.88,
+   "trades": 90,
+   "sharpe": -2.929,
+   "max_dd_pct": -18.48,
+   "vol_ann_pct": 25.21
+  },
+  {
+   "schedule": "4x/day 14:00,16:00,18:00,19:30",
+   "checks": [
+    "14:00",
+    "16:00",
+    "18:00",
+    "19:30"
+   ],
+   "realized": -8175.85,
+   "realized_pct": -10.22,
+   "total": -8175.85,
+   "trades": 100,
+   "sharpe": -1.829,
+   "max_dd_pct": -15.17,
+   "vol_ann_pct": 22.2
+  },
+  {
+   "schedule": "7x/day hourly 13:30-19:30",
+   "checks": [
+    "13:30",
+    "14:30",
+    "15:30",
+    "16:30",
+    "17:30",
+    "18:30",
+    "19:30"
+   ],
+   "realized": -11938.14,
+   "realized_pct": -14.92,
+   "total": -11938.14,
+   "trades": 154,
+   "sharpe": -4.093,
+   "max_dd_pct": -15.05,
+   "vol_ann_pct": 15.48
+  }
+ ],
+ "method": "MEASURED by full engine replay; no multiplier used"
+}

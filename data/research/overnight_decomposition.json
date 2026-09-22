@@ -1,0 +1,102 @@
+{
+ "window": [
+  "2026-06-22",
+  "2026-09-22"
+ ],
+ "position_nights": 295,
+ "legs": {
+  "A_after_check": -4707.38,
+  "B_overnight": 28698.85,
+  "C_morning": 46116.82
+ },
+ "overnight_down": -91084.02,
+ "overnight_up": 119782.87,
+ "overnight_net": 28698.85,
+ "worst": [
+  {
+   "pnl": -8186.9,
+   "symbol": "WDC",
+   "from": "2026-08-05",
+   "to": "2026-08-06",
+   "gap_pct": -17.57
+  },
+  {
+   "pnl": -6275.0,
+   "symbol": "SNDK",
+   "from": "2026-08-05",
+   "to": "2026-08-06",
+   "gap_pct": -13.29
+  },
+  {
+   "pnl": -4101.21,
+   "symbol": "LRCX",
+   "from": "2026-09-11",
+   "to": "2026-09-14",
+   "gap_pct": -7.99
+  },
+  {
+   "pnl": -3994.69,
+   "symbol": "SNDK",
+   "from": "2026-07-27",
+   "to": "2026-07-28",
+   "gap_pct": -8.28
+  },
+  {
+   "pnl": -3615.86,
+   "symbol": "INTC",
+   "from": "2026-09-11",
+   "to": "2026-09-14",
+   "gap_pct": -7.02
+  },
+  {
+   "pnl": -3573.97,
+   "symbol": "WDC",
+   "from": "2026-09-11",
+   "to": "2026-09-14",
+   "gap_pct": -6.96
+  },
+  {
+   "pnl": -3379.99,
+   "symbol": "SNDK",
+   "from": "2026-09-11",
+   "to": "2026-09-14",
+   "gap_pct": -6.86
+  },
+  {
+   "pnl": -3083.76,
+   "symbol": "WDC",
+   "from": "2026-07-27",
+   "to": "2026-07-28",
+   "gap_pct": -6.39
+  },
+  {
+   "pnl": -2988.29,
+   "symbol": "LRCX",
+   "from": "2026-08-17",
+   "to": "2026-08-18",
+   "gap_pct": -5.72
+  },
+  {
+   "pnl": -2674.89,
+   "symbol": "INTC",
+   "from": "2026-07-27",
+   "to": "2026-07-28",
+   "gap_pct": -5.51
+  },
+  {
+   "pnl": -2642.18,
+   "symbol": "LRCX",
+   "from": "2026-07-27",
+   "to": "2026-07-28",
+   "gap_pct": -5.69
+  },
+  {
+   "pnl": -2235.43,
+   "symbol": "INTC",
+   "from": "2026-08-17",
+   "to": "2026-08-18",
+   "gap_pct": -4.27
+  }
+ ],
+ "method": "MEASURED. Baseline replay holdings marked on real 30-minute bars. Leg B is the only part an early close could avoid."
+}
