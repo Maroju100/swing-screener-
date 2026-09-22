@@ -689,6 +689,31 @@ below are what makes a claim checkable.
 > last one before the daily stop, which is exactly why "Baseline (no stop)" is
 > the right label.
 >
+> 📅 **Monthly decomposition of this same run:**
+> `python3 scripts/margin_style_monthly_breakdown.py` → committed output at
+> `data/margin_style_monthly_breakdown.json`, published as
+> [Margin-Style Monthly Ledger](https://claude.ai/artifact/FHThPEoahS5M2ynj5176Zm).
+> It aggregates the script above and **refuses to emit anything** unless both
+> anchors reproduce to the cent. June + July are 58% of the realized total;
+> March is the only losing month (−$1,558.10) and August is flat (+$657.21).
+> - ⚠️ **Two per-month percentages exist and are NOT interchangeable.** "Share
+>   of start" is `month realized ÷ 80,000` and the column **sums** to +155.10%;
+>   "month return" is `equity change ÷ equity at month start`, includes
+>   mark-to-market, and **compounds**. Conflating them is what made the old
+>   page's August row read "+0.66%" on a month whose equity actually fell.
+> - 🚨 **The page it replaced was wrong four ways (fixed 2026-09-22), and every
+>   dollar on it was exactly 20% low.** It was badged REAL MONEY for a backtest;
+>   it scaled by `0.30×` from a "$100k backtest" that was **$80,000** (so the
+>   correct factor to a $30k basis is **0.375×** — that one error is the whole
+>   20%); it printed **+124.08%**, which is `$124,080.90` *in dollars* read as a
+>   percent; and it gave the window as Mar 6 when the first traded day is
+>   **2026-03-13** (`START_IDX=5`). Cross-check that confirms the fix: the $30k
+>   rescale gives **$46,530.34** realized, which is exactly the "At $30,000
+>   Equivalent Capital" baseline recorded below, and **$77,526.39** ending
+>   equity, which is the baseline column of the $30k stop-comparison artifact —
+>   both derived independently of this script.
+>   **Do not cite the old +$37,224 / +124.08% / $67,224 figures.**
+>
 > ⚠️ **A RETRACTION POSTED HERE ON 2026-09-21 CLAIMING THESE DID NOT REPRODUCE
 > WAS ITSELF WRONG.** It reported +64.12% / +26.07% / −9.29% from
 > `scripts/margin_style_baseline_backtest.py`, which priced "today" off the
