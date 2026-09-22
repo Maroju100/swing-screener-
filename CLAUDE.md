@@ -138,28 +138,40 @@ below are what makes a claim checkable.
   properly instead. That entry's `total_proceeds` also read 13972.28 against an
   actual order sum of 12972.27; corrected, original kept as
   `total_proceeds_as_logged`.
-  - ⚠️ **LIVE CONSEQUENCE — the kill-switch is expected to fire on the next
-    run.** At $17,695.48 equity against `equity_peak` 20,873.33 the drawdown is
-    **−15.22%**, past `KILL_SWITCH_DD` (−15%). This looks like correct behaviour
-    rather than a false positive: `main`'s own Sep 18 log records
-    `total_equity` **21,612.74**, against which the drawdown is **−18.12%**.
-    Firing liquidates (nothing is open) and blocks new entries for
-    `KILL_SWITCH_RESUME_DAYS` (20 trading days), after which the permanent
-    SMA-50 trend gate also applies to every future entry. **If that is not
-    wanted, `equity_peak` must be revisited deliberately — do not tune it away
-    silently.**
-- 🚨 **THE FOUR "GUARDRAILS" BELOW DO NOT EXIST IN PRODUCTION (found
-  2026-09-22).** `main`'s engine supports only `plan` and `commit`. It has
-  **zero** occurrences of `cmd_verify`, `cmd_reconcile`,
-  `check_data_freshness`, or the pre-commit validation. The whole "Data
-  Freshness & State Sync Guardrails" section below describes development-branch
-  code. Verify:
-  `git show origin/main:scripts/margin_style_live_engine.py | grep -c cmd_verify` → `0`.
-  This is the same documentation-vs-reality gap as the daily stop, and it is why
-  nothing caught `main` carrying four phantom positions for four days. Porting
-  them to production is an open task — the engines have diverged ~430/175 lines,
-  so it is not a clean cherry-pick and needs its own verification before a live
-  run.
+  - ✅ **KILL-SWITCH FIRING ACCEPTED by the user, 2026-09-22.** At $17,695.48
+    against `equity_peak` 20,873.33 the drawdown is **−15.22%**, past
+    `KILL_SWITCH_DD` (−15%), so the kill-switch is expected to fire on the next
+    run: liquidate (nothing is open), then block new entries for
+    `KILL_SWITCH_RESUME_DAYS` (20 trading days), after which the **permanent**
+    SMA-50 trend gate applies to every future entry. This is the control working
+    as designed on a real drawdown — `main`'s Sep 18 log records `total_equity`
+    **21,612.74**, a −18.12% fall. **Do not "fix" this by lowering
+    `equity_peak`.** A future session seeing a quiet, gated system should
+    read this note first: it is expected, it was chosen, and the resume is
+    time-based (20 trading days), not recovery-based.
+- ✅ **THE FOUR GUARDRAILS ARE NOW REAL IN PRODUCTION (`294328d`,
+  2026-09-22).** They had been documented since 2026-09-16 but existed only on
+  the development branch — `main` supported just `plan` and `commit`, which is
+  why nothing caught the four phantom positions. `verify`, `reconcile`,
+  `check_data_freshness` and `cmd_commit`'s pre-commit validation are now in the
+  production engine. `DAILY_STOP` was deliberately **not** brought across (still
+  zero occurrences), and `main`'s own `validate_positions_against_holdings` was
+  kept — it auto-corrects phantom/mismatched shares inside `cmd_plan` and is
+  complementary to `reconcile`'s fail-fast check.
+  - **Trading behaviour is unchanged**, verified by replaying the 6-month window
+    against the engine before and after the port: identical to the cent — 122
+    days, 714 trades, $124,080.90 realized (+155.10%). The guardrails are purely
+    additive.
+  - `reconcile` was regression-tested by injecting a phantom WDC position; it
+    correctly exits 1.
+- ⚠️ **BUT THEY DO NOT RUN BY THEMSELVES — the trigger prompt still needs
+  updating.** The daily trigger's plan step passes **four** arguments and never
+  calls `verify` or `reconcile`, and it omits the optional
+  `actual_holdings_json` that activates the phantom auto-correction. Until the
+  trigger prompt (`trig_01VfH6Nhfbk7YLaTkzHWLG7E`, editable via
+  `update_trigger`) invokes them, a live run is no better protected than before.
+  Open task — changing the live automation's prompt was left for the account
+  owner to approve.
 - **Superseded, kept for the record — BROKER CHECK 2026-09-21:**
   `get_equity_positions` on 912291820 returns **only CGC (2 sh)** — zero
   universe symbols. `get_portfolio`: `equity_value` **$1.85**, `cash`
