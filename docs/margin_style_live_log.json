@@ -2503,6 +2503,51 @@
    "consequence": "Drawdown at 17695.48 goes from -15.22% (past KILL_SWITCH_DD -15%) to -0.01%. The kill-switch will NOT fire and no 20-day entry block or permanent SMA-50 trend gate applies. The drawdown it was about to act on never occurred.",
    "authorization": "User decision 2026-09-22 after the phantom-LRCX diagnosis was presented.",
    "notes": "Supersedes the 2026-09-22 port judgement that kept 20873.33 on the principle that a high-water mark must never be lowered. That principle stands, but did not apply: 20873.33 was a double-count, and correcting an error is not lowering a peak. Note also that the Sep 17 run committed state but wrote no log entry - the only run of 63 to do so, which is why the jump went unexamined for five days."
+  },
+  {
+   "timestamp": "2026-09-22T03:05:00Z",
+   "event": "LOG_AUDIT",
+   "scope": "every state-derived equity figure recorded in this log",
+   "method": "scripts/audit_phantom_equity.py, using the broker's own filled-order history (data/broker_fills_912291820_2026-09-08_2026-09-21.csv) as ground truth. Holdings are recovered by replaying fills BACKWARD from the account's known-flat universe position on 2026-09-22, then compared with the state file reconstructed from git history. The harness self-checks against two state commits known to have matched the broker and refuses to report if it cannot reproduce them. Reproduce: python3 scripts/audit_phantom_equity.py --rev origin/main",
+   "findings": [
+    {
+     "date": "2026-09-18",
+     "field": "total_equity",
+     "logged": 21612.74,
+     "corrected": 17430.89,
+     "overstated_by": 4181.85,
+     "cause": "engine defect",
+     "detail": "state carried LRCX 18.356946 sh against the broker's 3.600952 - the 14.755994 sh sold on 2026-09-16 whose state commit never removed them. Priced at that day's own LRCX fill, 283.3999."
+    },
+    {
+     "date": "2026-09-10",
+     "field": "total_equity",
+     "logged": 15234.17,
+     "corrected": 11387.97,
+     "overstated_by": 3846.2,
+     "cause": "owner's manual trades",
+     "detail": "NOT an engine defect. On 2026-09-09 the account owner sold WDC 4.131460 sh and MU 1.957520 sh directly (orders 6aa1ad90 / 6aa1add6, placed_agent=user, $3,998.18 total). The engine never learns about manual trades, so its state still held both. Cross-check: the next run's total_equity, computed from a clean flat state, was 11,396.38 - within $8.41 of the corrected figure."
+    }
+   ],
+   "verified_clean": [
+    {
+     "date": "2026-09-08",
+     "field": "equity_peak",
+     "value": 11536.58,
+     "detail": "state matched the broker exactly. Independently reconstructed from the run's own inputs: positions 5,641.62 + real_cash 5,896.75 = 11,538.37, within $1.79 of the logged peak (live quote vs fill price). It EXCEEDED the stored peak of 11,201.12, so equity_peak was re-set that day from clean data - which supersedes the entire earlier lineage. The twelve Aug-21..Sep-04 equity_peak values are not checkable from the committed fill window, but none of them propagated past this point."
+    },
+    {
+     "date": "2026-09-11",
+     "field": "total_equity/equity_peak/drawdown_from_peak",
+     "value": 11396.38,
+     "detail": "state was flat and matched the broker; nothing to inflate."
+    }
+   ],
+   "separate_finding_not_an_equity_error": {
+    "headline": "the 2026-09-21 run liquidated $6,147.55 of the owner's own manual purchases",
+    "detail": "On 2026-09-18 the owner bought STX 5.887547 sh ($5,000.00 @ 849.2501, order 6aad73ae) and WDC 2.276165 sh ($1,000.00 @ 439.3354, order 6aad73c3). The engine's state knew only its own STX 0.016842 and WDC 9.672491. The daily procedure tells the run to reconcile each sell against the REAL broker share count, so on 2026-09-21 it sold the full broker balances - STX 5.904389 (= 0.016842 + 5.887547) and WDC 11.948656 (= 9.672491 + 2.276165), both exact to the share. Proceeds on the owner's portion were $6,147.55 against $6,000.00 paid, so +$147.55, but they were not the system's shares to trade. The cross-system symbol-safety rule did not catch this because it only excludes symbols absent from state; here the symbols WERE in state with a smaller quantity. Open question for the user - see CLAUDE.md."
+   },
+   "notes": "Only 2 of the log's state-derived equity figures are wrong, and only one of those was caused by the engine. real_cash_* fields throughout the log come straight from get_portfolio and are broker-sourced inputs, so they are not affected. No dashboard embedded either wrong figure; the live dashboard's own equity_peak snapshot was corrected separately in the same session."
   }
  ]
 }

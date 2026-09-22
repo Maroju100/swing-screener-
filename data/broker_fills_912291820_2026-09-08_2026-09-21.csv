@@ -1,0 +1,60 @@
+# Filled equity orders on Robinhood account 912291820 ("Agentic 2"), 2026-09-08 .. 2026-09-21.
+# Fetched 2026-09-22 via get_equity_orders(account_number=912291820, state=filled,
+# created_at_gte=2026-09-08). Committed per CLAUDE.md Evidence Rule 2 so the audit in
+# scripts/audit_phantom_equity.py stays reproducible after the container recycles.
+#
+# This is BROKER GROUND TRUTH - it is what the account actually did, independent of
+# docs/margin_style_live_state.json. placed_agent distinguishes engine orders
+# ("agentic") from the account owner's own manual trades ("user"); the manual ones
+# matter because the engine never learns about them, so they silently desynchronise
+# state from reality.
+#
+# Verified complete: replaying these fills backward from the account's known-flat
+# universe holdings on 2026-09-22 reproduces docs/margin_style_live_state.json's
+# share counts at the 2026-09-16 and 2026-09-17 commits exactly (see the script's
+# self-check, which fails loudly if it does not).
+#
+# created_at (UTC),symbol,side,quantity,average_price,placed_agent,order_id
+2026-09-08T17:09:34Z,WDC,sell,5.264256,484.143100,agentic,6aa0414e
+2026-09-08T17:10:35Z,INTC,sell,2.528923,105.520100,agentic,6aa0418b
+2026-09-08T17:10:37Z,TSM,sell,0.028726,440.790100,agentic,6aa0418d
+2026-09-08T17:10:39Z,SNDK,sell,0.086016,1784.360100,agentic,6aa0418f
+2026-09-08T17:10:41Z,LRCX,sell,0.942589,320.510100,agentic,6aa04191
+2026-09-08T17:10:43Z,STX,sell,1.779998,916.600100,agentic,6aa04193
+2026-09-09T17:41:53Z,TSM,sell,0.009936,434.186300,agentic,6aa19a61
+2026-09-09T17:42:20Z,SNDK,sell,0.014876,1771.485100,agentic,6aa19a7c
+2026-09-09T17:42:23Z,LRCX,sell,0.163019,315.290000,agentic,6aa19a7f
+2026-09-09T17:42:26Z,STX,sell,0.123138,903.430100,agentic,6aa19a82
+2026-09-09T17:42:52Z,WDC,buy,6.038827,489.771300,agentic,6aa19a9c
+2026-09-09T17:43:17Z,MU,buy,2.881583,1022.530000,agentic,6aa19ab5
+2026-09-09T19:03:44Z,WDC,sell,4.131460,483.650000,user,6aa1ad90
+2026-09-09T19:04:54Z,MU,sell,1.957520,1021.700000,user,6aa1add6
+2026-09-10T18:21:50Z,SNDK,sell,0.014876,1713.850100,agentic,6aa2f53e
+2026-09-10T18:21:52Z,LRCX,sell,0.163018,300.191800,agentic,6aa2f540
+2026-09-10T18:21:54Z,STX,sell,0.492554,865.540100,agentic,6aa2f542
+2026-09-10T18:21:56Z,WDC,sell,1.907367,465.200100,agentic,6aa2f544
+2026-09-10T18:21:57Z,MU,sell,0.924063,983.000100,agentic,6aa2f545
+2026-09-15T17:08:50Z,LRCX,buy,15.324865,267.429900,agentic,6aa97ba2
+2026-09-15T17:08:54Z,WDC,buy,9.953850,411.659900,agentic,6aa97ba6
+2026-09-15T17:08:59Z,SNDK,buy,2.682303,1532.602600,agentic,6aa97bab
+2026-09-15T17:09:03Z,INTC,buy,39.797036,97.699900,agentic,6aa97baf
+2026-09-15T17:09:08Z,STX,buy,0.254996,763.344200,agentic,6aa97bb4
+2026-09-16T17:18:52Z,LRCX,sell,0.568871,270.855200,agentic,6aaacf7c
+2026-09-16T17:19:12Z,INTC,sell,29.569198,101.631600,agentic,6aaacf90
+2026-09-16T19:25:36Z,LRCX,sell,14.755994,265.890100,agentic,6aaaed30
+2026-09-17T17:17:13Z,WDC,sell,7.395711,424.250100,agentic,6aac2099
+2026-09-17T17:17:16Z,INTC,sell,7.599284,110.931600,agentic,6aac209c
+2026-09-17T17:17:19Z,STX,sell,0.189462,800.790100,agentic,6aac209f
+2026-09-17T17:17:22Z,LRCX,buy,3.600952,267.949900,agentic,6aac20a2
+2026-09-17T17:17:28Z,SNDK,buy,0.122520,1594.429900,agentic,6aac20a8
+2026-09-18T17:07:41Z,INTC,sell,2.628554,106.991600,agentic,6aad6fdd
+2026-09-18T17:07:44Z,SNDK,sell,2.083983,1740.640100,agentic,6aad6fe0
+2026-09-18T17:07:47Z,STX,sell,0.048692,844.450100,agentic,6aad6fe3
+2026-09-18T17:07:49Z,LRCX,buy,0.577466,283.399900,agentic,6aad6fe5
+2026-09-18T17:07:51Z,WDC,buy,7.114352,438.389000,agentic,6aad6fe7
+2026-09-18T17:23:58Z,STX,buy,5.887547,849.250100,user,6aad73ae
+2026-09-18T17:24:19Z,WDC,buy,2.276165,439.335400,user,6aad73c3
+2026-09-21T17:06:28Z,WDC,sell,11.948656,442.623800,agentic,6ab16414
+2026-09-21T17:06:31Z,SNDK,sell,0.720840,1752.237300,agentic,6ab16417
+2026-09-21T17:06:34Z,LRCX,sell,4.178418,301.250100,agentic,6ab1641a
+2026-09-21T17:06:41Z,STX,sell,5.904389,873.040100,agentic,6ab16421
