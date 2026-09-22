@@ -122,9 +122,19 @@ def basket_er(bars, days, window_min):
     return out
 
 
-def build_variant(params, er_open, er_window_min, cost_bps):
-    """Import the real engine, patch only what the variant changes, return its run()."""
+def build_variant(params, er_open, er_window_min, cost_bps, state_path, log_path):
+    """Import the real engine, patch only what the variant changes, return its run().
+
+    state_path/log_path MUST be passed in and baked into the variant's namespace.
+    An earlier version set V3.STATE_PATH after taking `ns = dict(V3.__dict__)`; the
+    copy still held the real docs/ paths, so replays wrote backtest runs into the
+    live paper ledger. The guard below makes that failure loud instead of silent.
+    """
     import daytrading_v3_paper_engine as V3
+
+    for p in (state_path, log_path):
+        if os.path.abspath(p).startswith(os.path.join(ROOT, 'docs')):
+            raise SystemExit(f'refusing to run: {p} is inside docs/ (the live paper ledger)')
 
     src = inspect.getsource(V3.run)
     c = cost_bps / 10000.0
@@ -154,6 +164,16 @@ def build_variant(params, er_open, er_window_min, cost_bps):
 
     ns = dict(V3.__dict__)
     ns.update(params)
+    # bake the scratch paths into the variant's own globals -- run_variant resolves
+    # STATE_PATH/LOG_PATH from here, not from the live module
+    ns['STATE_PATH'] = state_path
+    ns['LOG_PATH'] = log_path
+    # run_variant resolves these from ns too, so the live module is never mutated
+    ns['load_state'] = lambda: (json.load(open(state_path)) if os.path.exists(state_path)
+                                else {'cash': V3.CAPITAL, 'positions': {}, 'last_processed_dt': {}})
+    ns['load_log'] = lambda: (json.load(open(log_path)) if os.path.exists(log_path)
+                              else {'capital': V3.CAPITAL, 'symbols': V3.SYMBOLS,
+                                    'setup': 'replay', 'runs': []})
     ns['COST_C'] = c
     ns['ER_OPEN'] = er_open or {}
     # 13:30 UTC open + window; entries blocked until the gate is actually knowable
@@ -170,9 +190,8 @@ def replay(tag, params, days, bars, er_open=None, er_window_min=30, cost_bps=0):
         if os.path.exists(p):
             os.remove(p)
 
-    V3, run_variant = build_variant(params, er_open, er_window_min, cost_bps)
-    V3.STATE_PATH, V3.LOG_PATH = state_path, log_path
-
+    V3, run_variant = build_variant(params, er_open, er_window_min, cost_bps,
+                                    state_path, log_path)
     raw_path = os.path.join(SCRATCH, f'v3_{tag}_raw.json')
     json.dump(to_raw_payload(bars, set(days)), open(raw_path, 'w'))
 
