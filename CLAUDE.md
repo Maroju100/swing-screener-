@@ -595,6 +595,25 @@ below are what makes a claim checkable.
     question about what the account actually did, use the broker
     (`get_realized_pnl`, `get_pnl_trade_history`, `get_equity_orders`), which
     is also what `scripts/audit_phantom_equity.py` does.
+  - ⚠️ **ADDING A TOOL TO THE ARTIFACT'S `mcp` MANIFEST NEEDS A PAGE RELOAD,
+    and the first attempt at this silently showed nothing.** Consent is scoped
+    to the manifest the viewer approved, so a page already open keeps calling
+    with the old scope and the new tool rejects `not_in_manifest`. The first
+    version's handler routed that through `describeError`'s `default` branch
+    (`retract: false` → "keep last known data"), but there *was* no last known
+    data, so the tile sat on a "loading…" placeholder forever with nothing
+    explaining why. **Two rules for this page, both now implemented:**
+    1. Never let a live-data tile rest on a spinner. Every error code renders
+       a specific, actionable message — `not_in_manifest` now says to reload.
+    2. **Any figure that matters gets an embedded dated snapshot**
+       (`BROKER_PNL_SNAPSHOT`, alongside `MS_STATE`/`MS_DATA`), so the real
+       number is on the page before any connector call resolves and survives
+       a call that never resolves. The live watch overrides it and the tile
+       says which source it is showing.
+    - Remaining known gap: if the `mcp` capability is unavailable *entirely*,
+      `init()` still calls `showEmpty()` and hides all of `mainContent`,
+      snapshot included. That is the page's original design and was not
+      changed here.
 - **REMOVED (2026-09-21) — and NO valid measurement exists in either
   direction.** The Entry Signal Quality Filter (3+ consecutive down days)
   is **not** in `scripts/margin_style_live_engine.py`; production runs
