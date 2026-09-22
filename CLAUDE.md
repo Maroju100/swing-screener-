@@ -497,8 +497,22 @@ below are what makes a claim checkable.
     ⚠️ **Limitation**: Overnight gaps before 17:00 UTC check can exceed the cap; stop only protects intraday realized losses.
     Conservative estimate: 60–70% effectiveness. See section below for corrected figures accounting for gap risk.
 
-    🐞 **KNOWN DEFECT — UNFIXED as of 2026-09-21. Read before DAILY_STOP ever
-    fires.** PEAK/GAIN sells are decided early and parked in `pending_peak_gain`
+    ✅ **DEFECT FIXED 2026-09-22 on the development branch** (`f170602`) — two
+    lines added to the DAILY_STOP branch, mirroring what KILL_SWITCH always did:
+    `pending_peak_gain = {}` and `peak_updates = {}`. Verified by replay:
+    flag OFF reproduces the baseline to the cent ($124,080.90, 714 trades, **0**
+    duplicate-sell days); flag forced ON gives $63,771.34, 618 trades, **0**
+    duplicate-sell days; unfixed `bc814c4` for contrast gives $972,639.36 with
+    **17** duplicate-sell days, i.e. the defect was inflating results by an order
+    of magnitude. `DAILY_STOP_ENABLED` stays **False** and the fix does not touch
+    it — the flag is still the control, the code behind it is just no longer
+    broken. **Not on `main`, which has never contained DAILY_STOP.**
+    ⚠️ **Fixing it does NOT rehabilitate the stop.** The fixed version returns
+    $63,771.34 on $80,000 = **+79.71%** against the baseline's +155.10% — which
+    reproduces, by a completely different route, the +79.71% this file already
+    documents. It is still net harmful. Do not enable it.
+
+    🐞 **The defect, kept for the record — it was UNFIXED until 2026-09-22.** PEAK/GAIN sells are decided early and parked in `pending_peak_gain`
     (~line 560); they are not appended to `sells` until ~line 787. The
     DAILY_STOP block (~line 622) guards itself with
     `closed_symbols = {s['symbol'] for s in sells}`, which **cannot see the
@@ -690,6 +704,37 @@ below are what makes a claim checkable.
 
 ### Rule research, 2026-09-22 — six questions, five answers, one refusal
 
+> 🏆 **IS THE LIVE CONFIGURATION THE BEST TESTED? Yes, on a risk-adjusted basis
+> — and one thing beats it on raw P&L but fails significance.** Reproduce:
+> `python3 scripts/margin_style_research.py ranking`. Same window, $80k, 5 bps/side:
+>
+> | # | Configuration | Realized | Return | Sharpe | Max DD |
+> |---|---|---|---|---|---|
+> | 1 | Intraday stop −2.5% (looser) | $127,062 | +158.8% | 3.77 | −9.8% |
+> | **2** | **PRODUCTION — current rules** | **$124,290** | **+155.4%** | **3.83** | **−8.8%** |
+> | 3 | Trade cap 10% (was 25%) | $119,507 | +149.4% | 3.86 | −8.8% |
+> | 4 | Symbol cap 25% (was 50%) | $117,667 | +147.1% | 3.73 | −8.8% |
+> | 5 | Intraday stop −1.0% (tighter) | $109,347 | +136.7% | 3.51 | −9.7% |
+> | 6 | Max 1 tranche per symbol | $79,471 | +99.3% | 3.00 | −10.0% |
+> | 7 | Best grid-search config | $77,393 | +96.7% | 3.02 | −16.3% |
+> | 8 | Quality filter, 3+ down days | $32,403 | +40.5% | 2.51 | −6.4% |
+> | 9 | No intraday stop at all | −$9,274 | −11.6% | −0.63 | −15.7% |
+> | ref | Buy & hold, equal weight, same universe | $95,350 | +119.2% | — | — |
+>
+> - **The rank-1 config fails its significance test, so production stands.** The
+>   `ranking` command tests whatever outranks production rather than reporting it:
+>   bootstrap 95% CI on the mean daily difference **[−0.196%, +0.258%]** straddles
+>   zero, **P(better) = 0.512** — a coin flip — and it wins only **2 of 3**
+>   sub-windows, losing one by **$9,658**, which is 3.5× its entire full-window
+>   advantage. That is the same shape as the withdrawn daily-stop claim: a number
+>   that looks like an edge on one window and evaporates when split.
+> - **No configuration dominates.** Production has the best drawdown of anything
+>   returning over +140%, and both configs with a higher Sharpe return less. It
+>   sits on the efficient frontier — the honest statement is "nothing tested beats
+>   it on all three axes", not "it is the maximum".
+> - **Beats passive by +$28,939 (+36.2pp)** over the same window and universe,
+>   with roughly a quarter of buy-and-hold's drawdown.
+>
 > **Nothing here changes production.** The whole study is committed:
 > `scripts/margin_style_research.py`, `scripts/margin_style_intraday_study.py`,
 > results in `data/research/*.json`, dashboard
@@ -777,16 +822,24 @@ below are what makes a claim checkable.
   backtest artifacts of heavy compounding and should not be read as forward
   expectations.
 
-- 🐞 **LATENT ENGINE DEFECT found by this study (not live, fix before it can
-  be).** `cmd_commit`'s Guardrail 4 validates with
-  `s['shares'] > pos['shares']` — a sell rounded to 6dp against an **unrounded**
-  holding — so selling a whole position aborts the commit on floating-point dust
-  (AMD `155.404388` vs `155.40438799999998`, off by 2e-14). Its own mutation four
-  lines later already tolerates this (`remaining = round(...); if remaining <=
-  1e-6: del`). **Cannot fire today**: production `PEAK_SELL_PCT` is 0.743 so a
-  PEAK sell never reaches 100%, and STOP/MAX_HOLD/KILL_SWITCH pass `pos['shares']`
-  through unrounded. It surfaced because it blocks `PEAK_SELL_PCT >= 1.0` from
-  being tested at all. Fix: `> pos['shares'] + 1e-6`.
+- ✅ **LATENT ENGINE DEFECT found by this study — FIXED on `main` (`6343f5e`).**
+  `cmd_commit`'s Guardrail 4 validated with `s['shares'] > pos['shares']` — a sell
+  rounded to 6dp against an **unrounded** holding — so selling a whole position
+  aborted the commit on floating-point dust (AMD `155.404388` vs
+  `155.40438799999998`, off by 2e-14). Its own mutation four lines later already
+  tolerated this (`remaining = round(...); if remaining <= 1e-6: del`); only the
+  check lacked the tolerance, and that asymmetry was the entire defect. Now reads
+  `> pos['shares'] + 1e-6`.
+  - **Never live**: production `PEAK_SELL_PCT` is 0.743 so a PEAK sell never
+    reaches 100%, and STOP/MAX_HOLD/KILL_SWITCH pass `pos['shares']` through
+    unrounded. It surfaced only because it blocked `PEAK_SELL_PCT >= 1.0` from
+    being tested at all.
+  - **Verified**: 6-month replay before and after is identical to the cent —
+    122 days, 714 trades, $124,080.90 (+155.10%), $2,656.17 unrealized. Direct
+    regression on `cmd_commit`: float dust → exit 0 and the position closes; a
+    genuine 29% oversell (200 vs 155.4) → **exit 1, position untouched**; an exact
+    whole position → exit 0. 1e-6 of a share is far below the broker's 6dp order
+    precision, so a real oversell is still caught.
 - ⚠️ **VENDOR HISTORY IS NOT IMMUTABLE.** Refetching the 6,096 hourly bars under
   the anchor returned **one revised bar** (INTC 2026-09-04T15:00,
   `94.91` → `94.78`). Harmless — the engine prices off the 17:00 bar — but a
