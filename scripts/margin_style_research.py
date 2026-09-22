@@ -443,8 +443,6 @@ def main():
     a.fn(a)
 
 
-if __name__ == '__main__':
-    main()
 
 
 # ==========================================================================
@@ -487,7 +485,6 @@ def patch_trailing_stop(src):
     new = ("        if TRAIL_PCT and pos.get('peak') and live_price <= pos['peak'] * (1 - TRAIL_PCT):\n"
            "            sells.append({'symbol': sym, 'shares': pos['shares'], 'price': live_price,\n"
            "                          'reason': 'STOP', 'entry': pos['entry']})\n"
-           "            stop_count += 1\n"
            "            continue\n"
            "        if live_price <= prev_close * (1 + INTRADAY_STOP):")
     if src.count(old) != 1:
@@ -696,3 +693,6 @@ def cmd_stats(a):
                 'ci_straddles_zero': straddles, 'verdict': verdict,
                 'variant_full': vs, 'baseline_full': bs})
     save('statistics.json', out)
+
+if __name__ == '__main__':
+    main()
