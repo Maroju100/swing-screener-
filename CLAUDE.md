@@ -561,13 +561,40 @@ below are what makes a claim checkable.
   on universe-level criteria.
 - **Live dashboard**: `margin_live_dashboard.html`
   (`https://claude.ai/code/artifact/b22d0a38-624f-496b-a47c-f08d16703488`).
-  Live sections (positions, account/risk snapshot, distance-to-next-signal)
-  read the account live via the artifact `mcp` capability
+  Live sections (positions, account/risk snapshot, distance-to-next-signal,
+  **realized P&L**) read the account live via the artifact `mcp` capability
   (`get_accounts`, `get_portfolio`, `get_equity_quotes`,
-  `get_equity_historicals` — read-only tools only, never order-placement
-  tools). Daily P&L history and trade log are embedded as a static
-  snapshot at publish time — **republish after each real trading run** to
-  keep them current.
+  `get_equity_historicals`, `get_realized_pnl` — read-only tools only, never
+  order-placement tools). The daily-P&L chart and trade log are embedded as a
+  static snapshot at publish time — **republish after each real trading run**
+  to keep them current.
+  - 🚨 **THE EMBEDDED TRADE LOG UNDERSTATES THE ACCOUNT — do not quote it as
+    the account's P&L (found 2026-09-22).** It showed **$1,211.81** realized
+    while the broker's own books said **$2,674.92** (`get_realized_pnl`,
+    `span: all`, 156 closing trades, +2.62%). The $1,463.11 gap decomposes
+    **exactly**, from three separate defects:
+    1. **Six trading days of real fills are missing from
+       `docs/margin_style_live_log.json` altogether** — Sep 8, 9, 10, 16, 17,
+       18 (the Sep 17 run committed state but wrote no log entry at all).
+       Broker realized on those days: **+$1,131.79**.
+    2. **The headline `total_realized` was stale by exactly the Sep 21 run**
+       (+$539.71 broker / +$546.56 as the page computed it) — it excluded a
+       day its own table displayed. `1758.37 − 546.56 = 1211.81` to the cent.
+    3. The remaining reconstructed trades price against **state-derived entry
+       prices rather than the broker's cost basis**, over-counting by
+       **$208.39**. `1,131.79 + 539.71 − 208.39 = 1,463.11` ✅
+  - ✅ **FIXED by making the headline broker-sourced, not reconstructed.** The
+    page now watches `get_realized_pnl` and shows the broker's figure as the
+    authoritative number, with the run-log reconstruction and the gap beside
+    it, and a banner naming the six missing days. The rebuilt-from-log chart
+    and table are kept but explicitly labelled as the system's own view of its
+    trades, not the account's P&L.
+  - **The lesson generalises:** anything derived from the run log inherits the
+    log's gaps. The log is an append-only *record of runs*, not a ledger — it
+    is only as complete as step 13 of the trigger prompt makes it. For any
+    question about what the account actually did, use the broker
+    (`get_realized_pnl`, `get_pnl_trade_history`, `get_equity_orders`), which
+    is also what `scripts/audit_phantom_equity.py` does.
 - **REMOVED (2026-09-21) — and NO valid measurement exists in either
   direction.** The Entry Signal Quality Filter (3+ consecutive down days)
   is **not** in `scripts/margin_style_live_engine.py`; production runs
