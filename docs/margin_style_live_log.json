@@ -2489,6 +2489,20 @@
    "notes": "All 4 open positions closed. WDC, LRCX, STX hit MAX_HOLD threshold (9 days since opened on Sep 12, max hold is 6 days). SNDK hit INTRADAY_STOP trigger. No new entries evaluated due to historical data staleness (last bar Sep 18). State file was reconciled Sep 21 at run time to match broker holdings (positions were 95.7-272% off). System now flat, pending settlement of $13,972.28 for Sep 22. Risk state: kill_switch_active=false, trend_gate_active=false. Elevated-scrutiny caveat: this system has 9 days of real holdings on these 4 positions, showing realized P&L from entry prices at Sep 12.",
    "total_proceeds_as_logged": 13972.28,
    "ported_note": "Ported to main 2026-09-22 from development-branch commits ca55e21/dbae2ba. The original append corrupted the branch's log (a second JSON document concatenated after the closing brace); this entry was extracted and appended correctly here. total_proceeds as logged was 13972.28, which is $1,000 above the four orders' actual sum (12972.27); corrected, original kept in total_proceeds_as_logged. Verified against the broker 2026-09-22: zero universe positions held, unsettled_funds $12,965.08."
+  },
+  {
+   "timestamp": "2026-09-22T02:45:00Z",
+   "event": "STATE_CORRECTION",
+   "field": "equity_peak",
+   "from": 20873.33,
+   "to": 17696.92,
+   "orders_executed": [],
+   "diagnosis": "equity_peak 20873.33 was an arithmetic artifact, not a real high-water mark. On 2026-09-16 the engine sold LRCX 14.755994 sh @ 266.12 (order 6aaaed30, placed), but that run's state commit left the position in open_positions and recorded no pending_settlement. From the 2026-09-17 run onward the engine therefore counted those shares twice - once as arrived cash, once as a still-held position. equity_peak jumped 16508.13 -> 20873.33 (+4365.20) on 2026-09-17; the phantom LRCX was worth 14.755994 * 269.09 = 3970.69 at that run's 17:00 UTC price, i.e. 91% of the jump. The residual 394.51 is genuine appreciation (WDC/INTC/STX all set new PEAKs that day).",
+   "confirmation": "The 2026-09-18 reconcile cut LRCX from 18.934412 to 4.178 sh - removing exactly the 14.755994 sold on Sep 16 - and 4.178418 = 3.600952 (Sep 17 buy) + 0.577466 (Sep 18 buy), so the broker held only the post-Sep-16 purchases. The Sep 18 run's logged total_equity of 21612.74 is inflated the same way: 21612.74 - 14.755994*288.11 = 17361.39, consistent with the 17695.48 the broker reported on 2026-09-21.",
+   "corrected_value_basis": "17696.92 is the figure the 2026-09-21 run computed from a flat state; it matches the broker's actual total_value of 17695.48 to within 1.44. True running max of real equity: Sep 17 ~16902, Sep 18 ~17361, Sep 21 17695.48 - so 17696.92 is the honest peak.",
+   "consequence": "Drawdown at 17695.48 goes from -15.22% (past KILL_SWITCH_DD -15%) to -0.01%. The kill-switch will NOT fire and no 20-day entry block or permanent SMA-50 trend gate applies. The drawdown it was about to act on never occurred.",
+   "authorization": "User decision 2026-09-22 after the phantom-LRCX diagnosis was presented.",
+   "notes": "Supersedes the 2026-09-22 port judgement that kept 20873.33 on the principle that a high-water mark must never be lowered. That principle stands, but did not apply: 20873.33 was a double-count, and correcting an error is not lowering a peak. Note also that the Sep 17 run committed state but wrote no log entry - the only run of 63 to do so, which is why the jump went unexamined for five days."
   }
  ]
 }
