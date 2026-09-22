@@ -663,9 +663,143 @@ below are what makes a claim checkable.
     daily_pnl`. Internally self-contradictory besides: zero trading days
     cannot produce $1,449.
   All three share one defect — see **Rule 1** in the standing directives.
-  Re-testing the filter properly (replay via the `backtest-variant`
-  method) is an open, unstarted task; until then the honest status is
-  **unknown**, not "counterproductive."
+  - ✅ **RESOLVED 2026-09-22 BY REPLAY — the filter is HARMFUL, and production's
+    current state (no filter) is correct.** This is the first valid measurement
+    in either direction and it supersedes all three numbers above. Reproduce:
+    `python3 scripts/margin_style_research.py variants`. Full engine replay of
+    `origin/main`, 2026-03-13 → 2026-09-21, 132 trading days, $80k, 5 bps/side:
+
+    | Consecutive down days required | Realized | Return | Sharpe | Trades |
+    |---|---|---|---|---|
+    | 0 — **baseline, production** | **$124,289.71** | **+155.36%** | 3.83 | 771 |
+    | 1+ | $114,352.73 | +142.94% | 3.67 | 771 |
+    | 2+ | $34,397.66 | +43.00% | 2.04 | 440 |
+    | 3+ *(the filter as proposed)* | $32,403.22 | +40.50% | 2.51 | 233 |
+    | 4+ | $15,053.53 | +18.82% | 2.05 | 115 |
+
+    Monotonic: every increment costs more. The mechanism is plain in the trade
+    counts — the filter removes two thirds of all entries, and this strategy's
+    edge comes from *many* small tranche entries into shallow dips, not from a
+    few deep ones. Requiring a 3-day losing streak throws away the ordinary
+    −0.4% single-day dip that `NORMAL_DIP_THRESHOLD` is built around.
+    The 3+ variant does cut drawdown (−6.43% vs −8.84%), which is the only
+    thing it improves, and it costs **$91,886** to buy that.
+  - **Patch hygiene**: the filter is injected by a single anchored source patch
+    that is asserted to reproduce the baseline **exactly** when set to 0, so the
+    measured difference is the rule and nothing else.
+
+### Rule research, 2026-09-22 — six questions, five answers, one refusal
+
+> **Nothing here changes production.** The whole study is committed:
+> `scripts/margin_style_research.py`, `scripts/margin_style_intraday_study.py`,
+> results in `data/research/*.json`, dashboard
+> [Margin-Style Rule Trials](https://claude.ai/artifact/4H8w99Qw8ZwmSkpMKvf8qp).
+> Every harness reproduces the $124,080.90 anchor before emitting anything and
+> **exits rather than report** if it cannot. All figures MEASURED by full engine
+> replay of `origin/main` at **5 bps per side** — the first cost model this
+> project has applied; earlier work assumed zero friction across 771 trades.
+
+- ❌ **GRID SEARCH: no parameter set generalizes.** 500 configs
+  (`INTRADAY_STOP` × `PEAK_SELL_PCT` × `MAX_HOLD_DAYS` × `NORMAL_DIP_THRESHOLD`)
+  × 3 anchored walk-forward folds, each fold an independent flat-start replay so
+  no state leaks from train to test. Reproduce:
+  `python3 scripts/margin_style_research.py grid --folds 3` then `stats`.
+  - **1 of 3** test folds won on P&L; **all three lost on test Sharpe**
+    (−0.646, −0.730, −0.850).
+  - **Each fold selected a different optimum** (stop off / −2% / −3%; hold
+    8 / 12 / 6 days). An optimum that moves every fold is fitting noise.
+  - Best config over the full window: **$77,392.73 (+96.74%)** against the
+    baseline's **$124,289.71 (+155.36%)** — Sharpe 3.02 vs 3.83, max drawdown
+    **−16.27% vs −8.84%**. Worse on every axis.
+  - Deflated Sharpe **0.953** against an expected-max-Sharpe-on-noise of 0.83;
+    block-bootstrap 95% CI on the mean daily difference **[−0.69%, +0.29%]**,
+    straddling zero, P(variant better) = **0.247**. **VERDICT: NOT SUPPORTED.**
+- ✅ **`INTRADAY_STOP = -0.0151` IS LOAD-BEARING — the standing directive is now
+  backed by replay, not just by prior sessions.** Removing it entirely gives
+  **−$9,274 (−11.59%)** and collapses trade count 771 → 96. Tightening to −1.0%
+  costs **$14,943**. Loosening to −2.5% gains $2,772 on P&L but loses on **both**
+  Sharpe (3.77 vs 3.83) and drawdown (−9.84% vs −8.84%) — noise, not an
+  improvement. Do not change it.
+- ⚪ **Trailing stops are exact no-ops.** 5%, 8% and 12% below the tracked peak
+  reproduce the baseline **to the cent** (the flat stop always fires first); 3%
+  costs $325. This is a finding about the existing stop, not an absence of effect.
+- ❌ **Tighter position caps all cost money**: max 1 tranche $79,471; symbol cap
+  25% $117,667; trade cap 10% $119,507 — all against $124,290.
+- 🚨 **OVERNIGHT RISK: the premise was backwards.** Decomposing 295
+  position-nights on real 30-minute bars (`research.py gaps`), held-position P&L
+  splits into three legs between one midday check and the next:
+
+  | Leg | P&L | Share |
+  |---|---|---|
+  | A — 17:00 → 20:00 UTC (after the check) | **−$4,707** | −6.7% |
+  | B — 20:00 → next 13:30 UTC (**overnight**) | **+$28,699** | **+40.9%** |
+  | C — 13:30 → 17:00 UTC (morning) | **+$46,117** | +65.8% |
+
+  The strategy buys weakness and is paid on the bounce, which arrives overnight
+  and next morning. Overnight gaps *are* violent — **−$91,084 gross down against
+  +$119,783 gross up**, one night costing $8,187 on WDC — but the up-gaps are
+  larger. **Cutting overnight exposure cuts the edge.**
+- ❌ **"CLOSE AT 2:45 PM CDT" — retested by replay, and the sign is opposite.**
+  Forced exit at every 30-minute mark, 2026-06-22 → 2026-09-21 (64 days):
+
+  | Exit | Realized | Return | Sharpe | Max DD | Ann. vol |
+  |---|---|---|---|---|---|
+  | **hold overnight (production)** | **$30,622.59** | **+38.28%** | 2.46 | −12.45% | 61.3% |
+  | 17:30 UTC = 12:30 PM CDT | $623.88 | +0.78% | 0.47 | −4.38% | 7.1% |
+  | 18:00 UTC = 1:00 PM CDT | −$3,438.38 | −4.30% | −9.60 | −4.30% | 1.8% |
+  | 18:30 UTC = 1:30 PM CDT | −$3,846.76 | −4.81% | −3.29 | −8.11% | 5.9% |
+  | 19:00 UTC = 2:00 PM CDT | −$4,470.50 | −5.59% | −2.24 | −7.85% | 10.0% |
+  | 19:30 UTC = **2:30 PM CDT** | −$3,952.86 | **−4.94%** | −1.72 | −7.94% | 11.4% |
+
+  Early exit **does** cut risk — drawdown −12.45% → −4.30%, vol 61% → 2% — but
+  only by eliminating the strategy. Every variant is at or below zero.
+- ⚠️ **"2:45 PM CDT exactly" is UNANSWERABLE and is left unanswered (Rule 6).**
+  19:45 UTC falls *inside* the 19:30–20:00 bar. Real non-interpolated 30-minute
+  bars reach back only to 2026-06-22; 1-minute bars only ~6 weeks. The
+  bracketing marks are reported and **nothing is interpolated** to reach 2:45.
+- ❌ **CHECK FREQUENCY: every intraday schedule loses,** confirming the
+  2026-08-05 study by an independent method. Same window, replay, nothing scaled:
+  1×/day **+38.28%**; 4×/day −10.22%; 3×/day −11.99%; 7×/day −14.92%;
+  2×/day −16.18% and −16.86%; 3×/day(alt) −17.55%.
+  - **Not a cash-settlement artifact**: re-run with the settlement lockup
+    removed, intraday still loses (3×/day −$869, 2×/day −$2,828). The lockup
+    amplifies the loss; it does not cause it.
+  - **Independent confirmation of an existing claim**: at once-daily cadence the
+    lockup is a no-op **to the cent** ($30,622.59 with and without), exactly as
+    this file already stated.
+- ✅ **COST ROBUSTNESS — the one reassuring result.** The edge is not a friction
+  artifact: 0 bps $132,562 (+165.70%) · 2.5 bps 96.8% retained · 5 bps 93.8% ·
+  10 bps 87.8% · 20 bps 76.4% · **30 bps/side still +109.30%**.
+  Reproduce: `python3 scripts/margin_style_research.py costs`.
+- 📏 **Honest limits.** 132 trading days for daily-cadence tests, 64 for intraday.
+  That sample detects large effects and would miss small ones — a marginal
+  result here means "not detectable", not "zero". The Sharpe figures (~3.8) are
+  backtest artifacts of heavy compounding and should not be read as forward
+  expectations.
+
+- 🐞 **LATENT ENGINE DEFECT found by this study (not live, fix before it can
+  be).** `cmd_commit`'s Guardrail 4 validates with
+  `s['shares'] > pos['shares']` — a sell rounded to 6dp against an **unrounded**
+  holding — so selling a whole position aborts the commit on floating-point dust
+  (AMD `155.404388` vs `155.40438799999998`, off by 2e-14). Its own mutation four
+  lines later already tolerates this (`remaining = round(...); if remaining <=
+  1e-6: del`). **Cannot fire today**: production `PEAK_SELL_PCT` is 0.743 so a
+  PEAK sell never reaches 100%, and STOP/MAX_HOLD/KILL_SWITCH pass `pos['shares']`
+  through unrounded. It surfaced because it blocks `PEAK_SELL_PCT >= 1.0` from
+  being tested at all. Fix: `> pos['shares'] + 1e-6`.
+- ⚠️ **VENDOR HISTORY IS NOT IMMUTABLE.** Refetching the 6,096 hourly bars under
+  the anchor returned **one revised bar** (INTC 2026-09-04T15:00,
+  `94.91` → `94.78`). Harmless — the engine prices off the 17:00 bar — but a
+  blind overwrite would have silently moved a reference result. `scripts/
+  build_extended_datasets.py` keeps committed bars authoritative on overlap and
+  appends only strictly-newer ones.
+- 🚨 **REPO INTEGRITY: every backtest script this file cites lives ONLY on the
+  development branch.** `margin_style_original_6month_backtest.py`,
+  `margin_style_17h_backtest.py`, `margin_style_baseline_backtest.py`,
+  `margin_style_monthly_breakdown.py` and all of `data/margin_live_*` are absent
+  from `main`, which was given this CLAUDE.md in `c51d706`. So every
+  "Reproduce: …" instruction **fails on `main`**, the branch production runs
+  from. Either port them or note the branch in each instruction.
 
 ### 6-Month Backtest Results (Mar 6 - Sep 4, 2026) — With Overnight Gap Analysis
 
@@ -767,8 +901,15 @@ below are what makes a claim checkable.
 > money. It was disabled on the development branch on 2026-09-21 regardless.
 
 **Baseline (no stop)**: $80,000 → $206,737.04 = **+155.10% return**
-- Days traded: 32 of 127
-- Total trades: 136
+- ⚠️ **The two lines below are WRONG and are kept only so the error is not
+  re-derived (Evidence Rule 5).** The same run that produces $124,080.90 also
+  produces **714 trades over 122 trading days**, printed by both
+  `scripts/margin_style_original_6month_backtest.py` and
+  `margin_style_17h_backtest.py --validate`. "32 of 127 days / 136 trades" is
+  off by 5× on trades and cannot belong to this run; its origin is not
+  recoverable. **Cite 714 trades / 122 days.**
+- ~~Days traded: 32 of 127~~ → **122 trading days**
+- ~~Total trades: 136~~ → **714 trades**
 - Worst day: -$15,544.84 (Jul 28)
 - Best day: +$17,812.28 (Jul 30)
 
