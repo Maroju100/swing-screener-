@@ -1,0 +1,133 @@
+{
+ "engine": "origin/main",
+ "cost_bps": 5.0,
+ "window": [
+  "2026-03-13",
+  "2026-09-21"
+ ],
+ "capital": 80000.0,
+ "rows": [
+  {
+   "rank": 1,
+   "config": "Intraday stop -2.5% (looser)",
+   "realized": 127062.09,
+   "return_pct": 158.83,
+   "sharpe": 3.765,
+   "max_dd_pct": -9.84,
+   "live": false
+  },
+  {
+   "rank": 2,
+   "config": "PRODUCTION (current rules)",
+   "realized": 124289.71,
+   "return_pct": 155.36,
+   "sharpe": 3.834,
+   "max_dd_pct": -8.84,
+   "live": true
+  },
+  {
+   "rank": 3,
+   "config": "Trade cap 10% (was 25%)",
+   "realized": 119507.35,
+   "return_pct": 149.38,
+   "sharpe": 3.862,
+   "max_dd_pct": -8.84,
+   "live": false
+  },
+  {
+   "rank": 4,
+   "config": "Symbol cap 25% (was 50%)",
+   "realized": 117666.53,
+   "return_pct": 147.08,
+   "sharpe": 3.733,
+   "max_dd_pct": -8.84,
+   "live": false
+  },
+  {
+   "rank": 5,
+   "config": "Intraday stop -1.0% (tighter)",
+   "realized": 109346.95,
+   "return_pct": 136.68,
+   "sharpe": 3.51,
+   "max_dd_pct": -9.66,
+   "live": false
+  },
+  {
+   "rank": 6,
+   "config": "Max 1 tranche per symbol",
+   "realized": 79470.57,
+   "return_pct": 99.34,
+   "sharpe": 2.996,
+   "max_dd_pct": -9.99,
+   "live": false
+  },
+  {
+   "rank": 7,
+   "config": "Best grid-search config (rejected)",
+   "realized": 77392.73,
+   "return_pct": 96.74,
+   "sharpe": 3.022,
+   "max_dd_pct": -16.27,
+   "live": false
+  },
+  {
+   "rank": 8,
+   "config": "Quality filter 3+ down days",
+   "realized": 32403.22,
+   "return_pct": 40.5,
+   "sharpe": 2.513,
+   "max_dd_pct": -6.43,
+   "live": false
+  },
+  {
+   "rank": 9,
+   "config": "No intraday stop at all",
+   "realized": -9274.44,
+   "return_pct": -11.59,
+   "sharpe": -0.63,
+   "max_dd_pct": -15.72,
+   "live": false
+  }
+ ],
+ "buy_and_hold": 95350.39,
+ "production_rank": 2,
+ "verdict": "PRODUCTION IS RANK 2 of 9 on raw P&L, but the config above it fails significance -- production stands",
+ "rank1_significance": {
+  "winner": "Intraday stop -2.5% (looser)",
+  "params": {
+   "INTRADAY_STOP": -0.025
+  },
+  "ci_daily": [
+   -0.001958019646978346,
+   0.0025783142377318858
+  ],
+  "p_better": 0.5122,
+  "ci_straddles_zero": true,
+  "sub_windows_won": 2,
+  "sub_window_deltas": [
+   {
+    "window": [
+     "2026-04-30",
+     "2026-06-16"
+    ],
+    "delta": -9658.11
+   },
+   {
+    "window": [
+     "2026-06-17",
+     "2026-08-04"
+    ],
+    "delta": 4621.05
+   },
+   {
+    "window": [
+     "2026-08-05",
+     "2026-09-21"
+    ],
+    "delta": 1153.97
+   }
+  ],
+  "real": false
+ },
+ "method": "MEASURED by full engine replay; buy&hold priced at the same 17:00 bars and same cost"
+}

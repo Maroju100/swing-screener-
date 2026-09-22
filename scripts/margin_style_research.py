@@ -325,6 +325,12 @@ def patch_sell_epsilon(src):
     """
     old = "        if pos and s['shares'] > pos['shares']:"
     new = "        if pos and s['shares'] > pos['shares'] + 1e-6:"
+    if new in src:
+        # FIXED IN PRODUCTION 2026-09-22 (main commit 6343f5e). The engine now carries
+        # the tolerance, so this patch has nothing to do and returns the source
+        # untouched. Kept so older engine revisions stay testable, and so the history
+        # of the defect is not silently erased from the research code.
+        return src
     if src.count(old) != 1:
         raise SystemExit(f'sell-epsilon anchor matched {src.count(old)}x, expected 1')
     return src.replace(old, new)
@@ -439,6 +445,9 @@ def main():
     v.set_defaults(fn=cmd_variants)
     st = sub.add_parser('stats')
     st.set_defaults(fn=cmd_stats)
+    rk = sub.add_parser('ranking')
+    rk.add_argument('--cost', type=float, default=DEFAULT_COST)
+    rk.set_defaults(fn=cmd_ranking)
     a = ap.parse_args()
     a.fn(a)
 
@@ -693,6 +702,126 @@ def cmd_stats(a):
                 'ci_straddles_zero': straddles, 'verdict': verdict,
                 'variant_full': vs, 'baseline_full': bs})
     save('statistics.json', out)
+
+
+
+# ==========================================================================
+# RANKING -- "is what we run actually the best?" in one reproducible table
+# ==========================================================================
+def buy_and_hold(start, end, capital, cost_bps, daily=None, hourly=None):
+    """Equal-weight buy at the first 17:00 check, hold to the last. The honest
+    passive benchmark: same universe, same window, same friction."""
+    daily = daily or DAILY_EXT
+    hourly = hourly or HOURLY_EXT
+    h = json.load(open(hourly))
+    px = {r['symbol']: {b['begins_at'][:10]: float(b['close_price'])
+                        for b in r['bars'] if b['begins_at'][11:19] == '17:00:00'}
+          for r in h['data']['results']}
+    days = sorted(set.intersection(*[set(v) for v in px.values()]))
+    days = [d for d in days if start <= d <= end]
+    d0, d1 = days[0], days[-1]
+    c = cost_bps / 10000.0
+    per = capital / len(px)
+    tot = 0.0
+    for sym in px:
+        sh = per / (px[sym][d0] * (1 + c))
+        tot += sh * px[sym][d1] * (1 - c)
+    return tot - capital
+
+
+def cmd_ranking(a):
+    print('=' * 86)
+    print('IS THE PRODUCTION CONFIGURATION THE BEST TESTED?')
+    print(f'  engine {ENGINE} | {RESEARCH_START}..{RESEARCH_END} | $80,000 | {a.cost} bps/side')
+    print('=' * 86)
+    base = replay(tag='rkbase', cost_bps=a.cost)
+    bh = buy_and_hold(RESEARCH_START, RESEARCH_END, CAPITAL, a.cost)
+
+    rows = [('PRODUCTION (current rules)', base['realized'], summarize(base))]
+    for lbl, params, patches in [
+        ('Best grid-search config (rejected)',
+         {'INTRADAY_STOP': -9.99, 'PEAK_SELL_PCT': 0.5, 'MAX_HOLD_DAYS': 8,
+          'NORMAL_DIP_THRESHOLD': 0.002}, [patch_sell_epsilon]),
+        ('Intraday stop -2.5% (looser)', {'INTRADAY_STOP': -0.025}, None),
+        ('Intraday stop -1.0% (tighter)', {'INTRADAY_STOP': -0.010}, None),
+        ('Trade cap 10% (was 25%)', {'MAX_TRADE_NOTIONAL_PCT': 0.10}, None),
+        ('Symbol cap 25% (was 50%)', {'MAX_SYMBOL_ALLOCATION_PCT': 0.25}, None),
+        ('Max 1 tranche per symbol', {'MAX_TRANCHES': 1}, None),
+        ('Quality filter 3+ down days', {'QUALITY_MIN_DOWN_DAYS': 3}, [patch_quality_filter]),
+        ('No intraday stop at all', {'INTRADAY_STOP': -9.99}, None),
+    ]:
+        r = replay(tag='rk' + lbl[:7].replace(' ', ''), cost_bps=a.cost,
+                   params=params, src_patches=patches)
+        rows.append((lbl, r['realized'], summarize(r)))
+
+    rows.sort(key=lambda x: -x[1])
+    print(f"\n{'rank':>4}  {'configuration':<38}{'realized':>13}{'return':>9}{'sharpe':>8}{'maxDD':>8}")
+    out = []
+    for i, (lbl, rz, s) in enumerate(rows, 1):
+        mark = '  <-- LIVE' if lbl.startswith('PRODUCTION') else ''
+        print(f"{i:>4}  {lbl:<38}{rz:>13,.0f}{s['realized_pct']:>8.1f}%"
+              f"{s['sharpe']:>8.2f}{s['max_dd_pct']:>7.1f}%{mark}")
+        out.append({'rank': i, 'config': lbl, 'realized': rz, 'return_pct': s['realized_pct'],
+                    'sharpe': s['sharpe'], 'max_dd_pct': s['max_dd_pct'], 'live': mark != ''})
+    print(f"\n{'ref':>4}  {'Buy & hold, equal weight, same universe':<38}"
+          f"{bh:>13,.0f}{bh / CAPITAL * 100:>8.1f}%{'--':>8}{'--':>8}")
+
+    # If anything outranked production on raw P&L, that is NOT yet a finding --
+    # test it before reporting it as one. A rank-1 config whose daily-difference CI
+    # straddles zero is a coin flip that happened to land well on this window.
+    prod_rank = next(r['rank'] for r in out if r['live'])
+    sig = None
+    if prod_rank != 1:
+        winner = rows[0]
+        cfg = {'Intraday stop -2.5% (looser)': {'INTRADAY_STOP': -0.025},
+               'Intraday stop -1.0% (tighter)': {'INTRADAY_STOP': -0.010},
+               'Trade cap 10% (was 25%)': {'MAX_TRADE_NOTIONAL_PCT': 0.10},
+               'Symbol cap 25% (was 50%)': {'MAX_SYMBOL_ALLOCATION_PCT': 0.25}}.get(winner[0])
+        if cfg:
+            w = replay(tag='rksig', cost_bps=a.cost, params=cfg)
+            wr, br_ = daily_returns(w), daily_returns(base)
+            lo, hi, p = block_bootstrap_diff(wr, br_)
+            folds_won = 0
+            sub = [('2026-04-30', '2026-06-16'), ('2026-06-17', '2026-08-04'),
+                   ('2026-08-05', '2026-09-21')]
+            deltas = []
+            for i, (s0, e0) in enumerate(sub, 1):
+                bb = replay(start=s0, end=e0, tag=f'rkb{i}', cost_bps=a.cost)
+                ww = replay(start=s0, end=e0, tag=f'rkw{i}', cost_bps=a.cost, params=cfg)
+                d = ww['realized'] - bb['realized']
+                deltas.append({'window': [s0, e0], 'delta': round(d, 2)})
+                folds_won += d > 0
+            straddles = lo < 0 < hi
+            sig = {'winner': winner[0], 'params': cfg,
+                   'ci_daily': [lo, hi], 'p_better': p, 'ci_straddles_zero': straddles,
+                   'sub_windows_won': folds_won, 'sub_window_deltas': deltas,
+                   'real': (not straddles) and folds_won == len(sub)}
+            print(f"\n  RANK-1 SIGNIFICANCE TEST -- {winner[0]}")
+            print(f"    bootstrap 95% CI on mean daily difference [{lo*100:+.4f}%, {hi*100:+.4f}%]"
+                  f"  P(better)={p:.3f}")
+            for d in deltas:
+                print(f"    {d['window'][0]}..{d['window'][1]}  delta ${d['delta']:>+10,.0f}")
+            print(f"    sub-windows won {folds_won}/{len(sub)}"
+                  f"   -> {'REAL' if sig['real'] else 'NOISE -- production stands'}")
+    if prod_rank == 1:
+        verdict = 'PRODUCTION IS RANK 1 of %d -- nothing tested beats it' % len(out)
+    elif sig and not sig['real']:
+        verdict = ('PRODUCTION IS RANK %d of %d on raw P&L, but the config above it '
+                   'fails significance -- production stands' % (prod_rank, len(out)))
+    else:
+        verdict = ('PRODUCTION IS RANK %d of %d and the winner SURVIVED significance '
+                   '-- investigate' % (prod_rank, len(out)))
+    print('\n' + '=' * 86)
+    print(verdict)
+    print(f"vs passive buy & hold: {'+' if base['realized'] > bh else ''}"
+          f"${base['realized'] - bh:,.0f} "
+          f"({base['realized_pct'] - bh / CAPITAL * 100:+.1f}pp)")
+    print('=' * 86)
+    save('ranking.json', {'engine': ENGINE, 'cost_bps': a.cost,
+                          'window': [RESEARCH_START, RESEARCH_END], 'capital': CAPITAL,
+                          'rows': out, 'buy_and_hold': round(bh, 2),
+                          'production_rank': prod_rank, 'verdict': verdict, 'rank1_significance': sig,
+                          'method': 'MEASURED by full engine replay; buy&hold priced at the same 17:00 bars and same cost'})
 
 if __name__ == '__main__':
     main()
