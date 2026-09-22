@@ -123,16 +123,26 @@ def build_engine(tag, params=None, no_lockup=False):
 
 def replay_intraday(start, end, check_times=(CHECK,), exit_mark=None,
                     tag='x', params=None, cost_bps=COST_BPS, capital=CAPITAL,
-                    use_hourly_at_1700=True, no_lockup=False):
+                    use_hourly_at_1700=True, no_lockup=False,
+                    exit_frac=1.0, exit_at_bell=False):
     """Replay with N checks/day and an optional forced exit at a 30-minute mark.
 
     check_times  -- UTC marks at which cmd_plan runs. Quotes are that mark's
                     CLOSE for 17:00 (matching the shared harness, which uses the
                     hourly 17:00 bar close) and that mark's OPEN otherwise --
                     an order placed AT time T fills at T, not 30 minutes later.
-    exit_mark    -- UTC mark at which every open position is liquidated at that
-                    mark's OPEN price, booked through the engine's own
-                    cmd_commit so settlement/state bookkeeping stays honest.
+    exit_mark    -- UTC mark at which open positions are trimmed, at that mark's
+                    OPEN price, booked through the engine's own cmd_commit so
+                    settlement/state bookkeeping stays honest.
+    exit_at_bell -- price the exit at the 19:30 bar's CLOSE (= 20:00 UTC, the
+                    closing bell) instead of a mark's open. This isolates the
+                    OVERNIGHT GAP: the position keeps the entire session and gives
+                    up only the gap. Exiting at 19:30's open instead also forfeits
+                    the last 30 minutes, which is a different question.
+    exit_frac    -- fraction of each position sold at the exit. 1.0 removes 100%
+                    of overnight exposure, 0.5 halves it, 0.0 is production.
+                    Lets the risk/return trade-off be drawn as a curve rather
+                    than asserted at the endpoints.
     """
     ns, state_path = build_engine(tag, params, no_lockup=no_lockup)
     cmd_plan, cmd_commit = ns['cmd_plan'], ns['cmd_commit']
@@ -198,21 +208,26 @@ def replay_intraday(start, end, check_times=(CHECK,), exit_mark=None,
             with contextlib.redirect_stdout(io.StringIO()):
                 cmd_commit(act_path)
 
-        if exit_mark:
+        if (exit_mark or exit_at_bell) and exit_frac > 0:
             st = json.load(open(state_path))
             sells = []
+            mark = '19:30' if exit_at_bell else exit_mark
             for sym, p in list(st['open_positions'].items()):
-                ts = f'{D}T{exit_mark}:00Z'
-                px = op30.get(sym, {}).get(ts)
+                ts = f'{D}T{mark}:00Z'
+                px = (cl30 if exit_at_bell else op30).get(sym, {}).get(ts)
                 if px is None:
                     continue
-                sells.append({'symbol': sym, 'shares': p['shares'], 'price': px,
+                sh = round(p['shares'] * exit_frac, 6)
+                if sh <= 1e-6:
+                    continue
+                sh = min(sh, p['shares'])
+                sells.append({'symbol': sym, 'shares': sh, 'price': px,
                               'reason': 'EOD_EXIT', 'entry': p['entry']})
-                dr += p['shares'] * (px * (1 - c) - p['entry'] * (1 + c))
-                cash += p['shares'] * px * (1 - c)
-                trades.append({'date': D, 'time': exit_mark, 'side': 'sell',
+                dr += sh * (px * (1 - c) - p['entry'] * (1 + c))
+                cash += sh * px * (1 - c)
+                trades.append({'date': D, 'time': mark, 'side': 'sell',
                                'reason': 'EOD_EXIT', 'symbol': sym,
-                               'shares': p['shares'], 'price': px})
+                               'shares': sh, 'price': px})
             if sells:
                 json.dump({'sells': sells, 'buys': [], 'peak_updates': {},
                            'risk_state': last_risk}, open(act_path, 'w'))
