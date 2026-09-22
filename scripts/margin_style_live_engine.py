@@ -1190,30 +1190,6 @@ def cmd_reconcile(broker_positions_json_path=None):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("Usage:")
-        print("  plan <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json>")
-        print("  commit <actions.json>")
-        print("  verify")
-        print("  reconcile [broker_positions.json]")
-        sys.exit(1)
-    if sys.argv[1] == 'plan':
-        cmd_plan(sys.argv[2], sys.argv[3], float(sys.argv[4]), json.loads(sys.argv[5]))
-    elif sys.argv[1] == 'commit':
-        cmd_commit(sys.argv[2])
-    elif sys.argv[1] == 'verify':
-        exit_code = cmd_verify()
-        sys.exit(exit_code)
-    elif sys.argv[1] == 'reconcile':
-        broker_json = sys.argv[2] if len(sys.argv) > 2 else None
-        exit_code = cmd_reconcile(broker_json)
-        sys.exit(exit_code)
-    else:
-        print("Unknown mode:", sys.argv[1])
-        sys.exit(1)
-
-
-if __name__ == '__main__':
-    if len(sys.argv) < 2:
         print("Usage: plan <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json> [actual_holdings_json]\n"
               "   OR commit <actions.json>\n"
               "   OR verify\n"
