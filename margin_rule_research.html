@@ -150,6 +150,15 @@
   .grid { stroke: var(--rule); stroke-width: 1; }
   .zero { stroke: var(--rule-2); stroke-width: 1.5; }
 
+  /* ---------- account tiles ---------- */
+  .acct { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+  .tile { border: 1px solid var(--rule); background: var(--sunken); border-radius: 3px; padding: 14px 16px; }
+  .tile.hero { border-color: var(--accent); background: var(--accent-w); }
+  .tl { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); font-weight: 700; font-family: "JetBrains Mono", monospace; }
+  .tv { font-size: 25px; font-weight: 700; font-family: "JetBrains Mono", monospace; margin: 5px 0 3px; letter-spacing: -0.02em; }
+  .tv.pos { color: var(--good); }
+  .ts { font-size: 11.5px; color: var(--ink-2); line-height: 1.45; }
+
   /* ---------- tables ---------- */
   .tw { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 520px; }
@@ -206,7 +215,8 @@
       Six questions about the live trading rules, each re-tested by replaying the
       production engine day by day over real market data. Five of the six answers
       say <em>leave it alone</em>. One question the data cannot answer, and that is
-      recorded as unanswered rather than estimated.
+      recorded as unanswered rather than estimated. The live account&rsquo;s own P&amp;L is
+      below, kept separate from every backtest figure on this page.
     </p>
   </header>
 
@@ -225,6 +235,67 @@
       which had the sign backwards.
     </p>
   </div>
+
+  <section>
+    <h2 class="head">The real account &mdash; not a backtest</h2>
+    <p class="sub">
+      Everything else on this page is a replay on $80,000 of simulated capital. This
+      section is the actual money, taken from Robinhood&rsquo;s own books
+      (<span class="mono">get_realized_pnl</span>, span <span class="mono">all</span>),
+      at the close on 22&nbsp;September&nbsp;2026.
+    </p>
+    <div class="card">
+      <div class="acct">
+        <div class="tile">
+          <div class="tl">Realized P&amp;L, all time</div>
+          <div class="tv pos num">+$2,674.92</div>
+          <div class="ts">156 closing trades since 27 July</div>
+        </div>
+        <div class="tile hero">
+          <div class="tl">vs account value today</div>
+          <div class="tv pos num">+15.12%</div>
+          <div class="ts">$2,674.92 &divide; $17,693.66</div>
+        </div>
+        <div class="tile">
+          <div class="tl">Account value</div>
+          <div class="tv num">$17,693.66</div>
+          <div class="ts">cash $13,265.52 + equity $4,428.14</div>
+        </div>
+        <div class="tile">
+          <div class="tl">Open position</div>
+          <div class="tv num">+$4.02</div>
+          <div class="ts">SNDK 2.349880 @ $1,884.40, marked at the close</div>
+        </div>
+      </div>
+
+      <p class="note" style="margin:18px 0 10px">
+        <strong>The broker quotes a different percentage, and both are right.</strong>
+        Its <span class="num">+2.62%</span> divides by the cost basis of everything it
+        closed, not by your account. Solving for that denominator from the broker&rsquo;s
+        own buckets gives <span class="num">$102,103.37</span> &mdash; and the three
+        buckets sum to that total to the cent.
+      </p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>The same $2,674.92 divided by&hellip;</th><th>Amount</th><th>Gives</th><th style="text-align:left">Which answers</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>Account value today</td><td class="num">$17,693.66</td><td class="num pos">+15.12%</td><td style="text-align:left">How big is the profit against the account?</td></tr>
+            <tr><td>Cost basis of all closed trades</td><td class="num">$102,103.37</td><td class="num pos">+2.62%</td><td style="text-align:left">How profitable is each trade? <em>(broker&rsquo;s own rate)</em></td></tr>
+            <tr><td>Capital at work before the deposit</td><td class="num">$11,396.38</td><td class="num pos">+23.47%</td><td style="text-align:left">What did the working money earn?</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0">
+        The account cycled <span class="num">$102,103</span> of stock through a balance that
+        never exceeded <span class="num">$17.7k</span> &mdash; roughly six turns in two months.
+        That is why the per-trade rate looks small next to the account figure.
+        <strong>No single number here is a true time-weighted return</strong>: a
+        <span class="num">$5,000</span> deposit on 15&nbsp;September raises the account
+        without being a gain, and full contribution history is not available, so that
+        figure is not computed rather than estimated.
+      </p>
+    </div>
+  </section>
 
   <section>
     <h2 class="head">What was asked, and what the replay said</h2>
@@ -248,7 +319,7 @@
 
       <div class="lrow">
         <div class="lq">Can overnight risk be reduced by closing early?</div>
-        <div class="la">The overnight leg <b>earns</b> 40.9% of all held-position P&amp;L. Forced exits at every 30-minute mark lose money; 2:30&nbsp;PM&nbsp;CDT returns <b class="num">&minus;4.9%</b> against <b class="num">+38.3%</b> for holding.</div>
+        <div class="la">The overnight leg <b>earns</b> 40.9% of all held-position P&amp;L. Selling at the closing bell removes 100% of gap exposure and keeps the whole session &mdash; and still returns <b class="num">&minus;4.8%</b> against <b class="num">+38.3%</b>. Risk does fall (vol 61.3% &rarr; 16.7%); the return falls further.</div>
         <span class="chip c-no">Backwards</span>
       </div>
 
@@ -317,6 +388,62 @@
         against <span class="num">+$119,783</span> gross up, with a single night costing
         <span class="num">$8,187</span> on WDC. But an early close forgoes the up-gaps too, and the
         up-gaps are larger. Cutting overnight exposure cuts the edge, not the risk-adjusted loss.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">Gap reduction: how much risk comes off, and what it costs</h2>
+    <p class="sub">
+      The earlier exits above leave early, giving up the last of the session <em>and</em> the
+      overnight gap. This isolates the gap alone: sell at the <strong>closing bell</strong>
+      (20:00&nbsp;UTC), keeping the whole session, and hold nothing overnight. Partial exits
+      make the trade-off a curve instead of two endpoints.
+    </p>
+    <div class="card">
+      <h3>Selling a fraction of every position at the bell</h3>
+      <p class="note">
+        Realized return falls monotonically with every unit of overnight exposure removed.
+      </p>
+      <div class="chart-scroll"><svg class="chart" id="gapChart" viewBox="0 0 900 220" role="img" aria-label="Return falls from +38.3% holding all, through +27.4%, +19.3% and +9.6%, to -4.8% when everything is sold at the bell"></svg></div>
+      <div class="tw" style="margin-top:14px">
+        <table>
+          <thead><tr><th>Overnight exposure removed</th><th>Realized</th><th>Return</th><th>Sharpe</th><th>Max DD</th><th>Ann. vol</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>0% &mdash; production, hold all</td><td class="num">$30,623</td><td class="num pos">+38.3%</td><td class="num">2.46</td><td class="num">&minus;12.4%</td><td class="num">61.3%</td></tr>
+            <tr><td>25% sold at the bell</td><td class="num">$21,896</td><td class="num pos">+27.4%</td><td class="num">2.29</td><td class="num">&minus;10.2%</td><td class="num">48.1%</td></tr>
+            <tr><td>50% sold at the bell</td><td class="num">$15,439</td><td class="num pos">+19.3%</td><td class="num">2.25</td><td class="num">&minus;7.9%</td><td class="num">34.4%</td></tr>
+            <tr><td>75% sold at the bell</td><td class="num">$7,638</td><td class="num pos">+9.6%</td><td class="num">1.85</td><td class="num"><strong>&minus;5.9%</strong></td><td class="num">21.0%</td></tr>
+            <tr><td><strong>100% &mdash; zero overnight exposure</strong></td><td class="num neg">&minus;$3,879</td><td class="num neg">&minus;4.8%</td><td class="num neg">&minus;1.11</td><td class="num neg">&minus;14.9%</td><td class="num">16.7%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0">
+        <strong>Two things only this test could show.</strong> First, removing <em>only</em>
+        the gap &mdash; keeping every minute of the session &mdash; still turns
+        <span class="num">+38.3%</span> into <span class="num">&minus;4.8%</span>. The gap is
+        not incidental to the edge; it <em>is</em> the edge. Second, drawdown improves all the
+        way to 75% removal (&minus;12.4% &rarr; <strong>&minus;5.9%</strong>) and then gets
+        <strong>worse</strong> at 100% (&minus;14.9%) &mdash; with no overnight exposure the
+        system loses steadily and grinds a fresh drawdown out of a falling equity curve.
+        Full elimination is worse than partial on <em>both</em> axes.
+      </p>
+    </div>
+
+    <div class="callout" style="margin-top:14px; border-left-color: var(--accent); background: var(--accent-w)">
+      <h3>On the earlier &ldquo;100% gap reduction by closing at 2:45&nbsp;PM&rdquo;</h3>
+      <p>
+        <strong>The risk half was right.</strong> Hold nothing overnight and you carry exactly
+        zero overnight gap exposure &mdash; 100% removal, by construction. Measured here,
+        annualized volatility falls <span class="num">61.3% &rarr; 16.7%</span>.
+      </p>
+      <p>
+        <strong>The return half was backwards.</strong> That setup was presented as roughly
+        +100%. Replayed, closing at the bell returns <span class="num">&minus;4.8%</span> and
+        closing at 2:30&nbsp;PM&nbsp;CDT returns <span class="num">&minus;4.94%</span>. The
+        figure came from multiplying a stored daily-P&amp;L series by an assumed factor, which
+        cannot model an exit rule because closing early changes which positions exist the next
+        morning.
       </p>
     </div>
   </section>
@@ -483,6 +610,13 @@ const LEGS = [
   { label: 'Overnight', sub: '20:00 → 13:30 UTC', v: 28698.85 },
   { label: 'Morning', sub: '13:30 → 17:00 UTC', v: 46116.82 },
 ];
+const GAP = [
+  { label: 'Hold all', sub: 'production', pct: 38.28 },
+  { label: '25% removed', sub: 'at the bell', pct: 27.37 },
+  { label: '50% removed', sub: 'at the bell', pct: 19.30 },
+  { label: '75% removed', sub: 'at the bell', pct: 9.55 },
+  { label: '100% removed', sub: 'zero overnight', pct: -4.85 },
+];
 const COSTS = [
   { bps: 0, pct: 165.70 }, { bps: 1, pct: 163.60 }, { bps: 2.5, pct: 160.48 },
   { bps: 5, pct: 155.36 }, { bps: 10, pct: 145.42 }, { bps: 20, pct: 126.65 },
@@ -592,6 +726,7 @@ function drawAll() {
   diverging($('exitChart'), EXITS.map((e, i) => ({ ...e, v: e.pct, hl: i === 0 })), pctFmt, 900, 36, 150);
   diverging($('freqChart'), FREQ.map((f, i) => ({ ...f, v: f.pct, hl: i === 0 })), pctFmt, 900, 34, 168);
   diverging($('legChart'), LEGS.map(l => ({ ...l, v: l.v })), usdFmt, 900, 46, 168);
+  diverging($('gapChart'), GAP.map((g, i) => ({ ...g, v: g.pct, hl: i === 0 })), pctFmt, 900, 38, 150);
   costChart($('costChart'));
 }
 
