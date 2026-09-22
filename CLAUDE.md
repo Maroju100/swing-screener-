@@ -225,27 +225,57 @@ below are what makes a claim checkable.
     later *real* equity exceeded both paths — the corrected 17,696.92 is ≥ every
     true equity the account reached (Sep 17 ≈16,902, Sep 18 ≈17,431, Sep 21
     17,695.48, and 11,536.58 + 5,000 = 16,536.58).
-- 🚨 **OPEN QUESTION FOR THE USER — the 2026-09-21 run liquidated $6,147.55 of
-  the account owner's OWN manual purchases.** This is not an equity-reporting
-  error; it is real money moved.
-  - On 2026-09-18 the owner bought **STX 5.887547 sh ($5,000.00 @ 849.2501**,
-    order `6aad73ae`) and **WDC 2.276165 sh ($1,000.00 @ 439.3354**, order
-    `6aad73c3`). The engine's state knew only its own STX 0.016842 and WDC
-    9.672491.
-  - Step 8 of the daily procedure says to reconcile every sell against the **real
-    broker share count**. So on Sep 21 the run sold the full balances:
-    **STX 5.904389 = 0.016842 + 5.887547** and
-    **WDC 11.948656 = 9.672491 + 2.276165** — exact to the share.
-  - Proceeds on the owner's portion were $6,147.55 against $6,000.00 paid, i.e.
-    **+$147.55**, so no loss — but they were not this system's shares to trade.
-  - **The cross-system symbol-safety rule did not catch it** because that rule
+- ✅ **FIXED 2026-09-22 (`376fc44`) — the system now only trades shares it bought
+  itself.** The 2026-09-21 run had liquidated **$6,147.55 of the account owner's
+  own manual purchases**. On 2026-09-18 the owner bought **STX 5.887547 sh
+  ($5,000.00 @ 849.2501**, order `6aad73ae`) and **WDC 2.276165 sh ($1,000.00 @
+  439.3354**, order `6aad73c3`); the run sold the full broker balances —
+  **STX 5.904389 = 0.016842 + 5.887547** and
+  **WDC 11.948656 = 9.672491 + 2.276165**, exact to the share. Proceeds were
+  +$147.55 against what was paid, so nothing was lost, but they were not this
+  system's shares to trade.
+  - **The real cause was in the engine, not just the trigger prompt.** The
+    caller of `validate_positions_against_holdings` assigned `actual_shares`
+    unconditionally, so when the broker held *more* than state the engine
+    **adopted** the excess into its own position and PEAK/STOP/MAX_HOLD then
+    treated it as sellable. (Initial diagnosis blamed only step 8 of the daily
+    procedure; that was incomplete.)
+  - **The reconciliation is now DIRECTIONAL.** `broker < state` still corrects
+    **down** — state claimed shares that do not exist, and an order for them
+    would be rejected anyway. `broker > state` is **never adopted**: state's
+    count stands and the difference is recorded in a new **`unowned_excess`**
+    map, emitted in the plan JSON so the run reports it instead of trading it.
+  - **Why refusing the upward correction costs nothing.** Every sell is sized
+    from state's share count, so capping state at `min(state, broker)` makes
+    each sell ≤ broker by construction. The earlier framing — "protect the
+    owner's shares OR clear genuine engine drift" — was **wrong**: correcting
+    *down* still clears drift, so there is no trade-off to make.
+  - **Why the engine cannot just decide for itself.** An excess is either the
+    owner's own trade *or* an engine buy whose state commit did not land (the
+    2026-09-15 buys went to the development branch, so `main` showed zero) —
+    indistinguishable from share counts. `reconcile` (Guardrail 2) is what stops
+    the run on an unexplained excess; this block just refuses to absorb it.
+    `get_equity_orders`' `placed_agent` field ("user" vs "agentic") *can*
+    separate them and is the diagnostic to use when investigating — see
+    `scripts/audit_phantom_equity.py --divergence`.
+  - **The cross-system symbol-safety rule has a hole this closes.** That rule
     only excludes symbols **absent** from `margin_style_live_state.json`. Here
-    the symbols were present, just with a smaller quantity. The rule has a hole:
-    it is symbol-level, and this is a quantity-level problem.
-  - **Nothing was changed unilaterally.** Capping each sell at the *state*
-    quantity would prevent this, but it is a real-money behaviour change that
-    would also stop the run from clearing genuine engine drift — which is what
-    step 8 was added for. Ask the user before altering sell sizing.
+    the symbols were present with a smaller quantity — it is symbol-level, and
+    this is a quantity-level problem.
+  - **Trigger step 8 was inverted to match**: it previously said to use the real
+    broker quantity; it now says the plan's quantity is already capped and
+    **never to increase a sell to match a larger broker balance**.
+  - **Verified**: regression test on the exact Sep 21 state/holdings gives
+    `unowned_excess = {WDC 2.276165, STX 5.887547}` with the engine's own STX
+    0.016842 / WDC 9.672491 untouched; downward correction still works (phantom
+    LRCX 18.356946 → 3.600952, full phantoms still removed); and **trading
+    behaviour is unchanged** — the 6-month replay is identical to the cent
+    before and after (122 days, 714 trades, $124,080.90 / +155.10%), since the
+    changed path only runs when the optional `actual_holdings` argument is
+    passed, which backtests never do.
+  - **`main` only.** The development branch has no
+    `validate_positions_against_holdings`, so it never carried this defect and
+    needed no port.
 - ✅ **THE FOUR GUARDRAILS ARE NOW REAL IN PRODUCTION (`294328d`,
   2026-09-22).** They had been documented since 2026-09-16 but existed only on
   the development branch — `main` supported just `plan` and `commit`, which is
