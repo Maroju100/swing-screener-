@@ -164,14 +164,35 @@ below are what makes a claim checkable.
     additive.
   - `reconcile` was regression-tested by injecting a phantom WDC position; it
     correctly exits 1.
-- ⚠️ **BUT THEY DO NOT RUN BY THEMSELVES — the trigger prompt still needs
-  updating.** The daily trigger's plan step passes **four** arguments and never
-  calls `verify` or `reconcile`, and it omits the optional
-  `actual_holdings_json` that activates the phantom auto-correction. Until the
-  trigger prompt (`trig_01VfH6Nhfbk7YLaTkzHWLG7E`, editable via
-  `update_trigger`) invokes them, a live run is no better protected than before.
-  Open task — changing the live automation's prompt was left for the account
-  owner to approve.
+- ✅ **AND THE TRIGGER NOW INVOKES THEM (2026-09-22).** The daily prompt on
+  `trig_01VfH6Nhfbk7YLaTkzHWLG7E` was rewritten so the guardrails actually run,
+  as **lettered sub-steps** — the prompt cross-references step numbers in
+  several places, so renumbering would have broken it:
+  - **step 1b** — `verify`; stop on non-zero, do not auto-repair state.
+  - **step 3b** — write `/tmp/broker_positions.json` from
+    `get_equity_positions`, then `reconcile`; stop on non-zero, fix state to
+    broker reality, commit, and only then restart from 1b.
+  - **step 7** — `plan` now passes the **fifth** argument
+    (`{"SYM": shares}`), which activates the in-plan phantom/mismatch
+    auto-correction. Marked MANDATORY: omitting it is how the Sep-2026 phantom
+    incident went unnoticed.
+  - **steps 11–14** — pre-commit abort must not be hand-edited around; step 12
+    now says explicitly **push to `main`** ("a run committed to any other
+    branch is invisible to the next run"); step 13 says append *into* the
+    existing `runs` array and verify the file parses; step 14 reports each
+    guardrail's result.
+  - The prompt also now carries the corrected baseline (+155.10%, with the
+    withdrawn +248.36% / +60.1% claims named as withdrawn and "do not add the
+    daily stop"), and the accepted kill-switch state with "do not fix a gated
+    system by lowering `equity_peak`".
+- ⚠️ **Account type discrepancy, unresolved.** `get_accounts` reports 912291820
+  as **`type: limited_margin`** with non-zero `unsettled_funds` ($12,965.08 on
+  2026-09-22), but the trigger prompt and this file both describe it as a
+  **cash account** and apply strict cash/GFV settlement treatment. The
+  conservative treatment was deliberately kept (it can only under-deploy, never
+  over-deploy) and the prompt now tells each run to flag the discrepancy rather
+  than relax it. Worth resolving deliberately — if it really is limited margin,
+  the settlement-lockup modelling is more conservative than it needs to be.
 - **Superseded, kept for the record — BROKER CHECK 2026-09-21:**
   `get_equity_positions` on 912291820 returns **only CGC (2 sh)** — zero
   universe symbols. `get_portfolio`: `equity_value` **$1.85**, `cash`
