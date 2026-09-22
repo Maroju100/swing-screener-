@@ -524,6 +524,56 @@ def validate_positions_against_holdings(state, actual_holdings):
     return validation
 
 
+def check_data_freshness(hist_path, quotes_path, quotes_data=None):
+    """
+    SAFEGUARD 0: DATA FRESHNESS CHECK
+    Verifies that historical bars and quotes are recent enough for trading.
+    Returns (is_fresh, error_msg) tuple.
+    """
+    errors = []
+
+    try:
+        # Load historicals to check last bar date
+        with open(hist_path) as f:
+            hist_data = json.load(f)
+
+        if 'data' not in hist_data or 'results' not in hist_data['data']:
+            return False, "Historical data format invalid (missing data.results)"
+
+        last_dates = []
+        for result in hist_data['data']['results']:
+            if 'bars' in result and result['bars']:
+                last_bar = result['bars'][-1]
+                if 'begins_at' in last_bar:
+                    last_dates.append(last_bar['begins_at'])
+
+        if not last_dates:
+            return False, "No bars found in historical data"
+
+        last_date_str = max(last_dates)  # Get the most recent date
+        last_date = datetime.fromisoformat(last_date_str.replace('Z', '+00:00'))
+        days_old = (datetime.now(timezone.utc) - last_date).days
+
+        if days_old > 1:
+            errors.append(f"Historical data is {days_old} days old (last bar: {last_date_str})")
+
+        # Check quotes timestamp if provided as dict with timestamp
+        if quotes_data and isinstance(quotes_data, dict):
+            if '_timestamp' in quotes_data:
+                quote_time = datetime.fromisoformat(quotes_data['_timestamp'].replace('Z', '+00:00'))
+                minutes_old = (datetime.now(timezone.utc) - quote_time).total_seconds() / 60
+                if minutes_old > 5:
+                    errors.append(f"Quotes are {minutes_old:.0f} minutes old (max 5 min)")
+
+    except Exception as e:
+        return False, f"Error checking data freshness: {e}"
+
+    if errors:
+        return False, " | ".join(errors)
+
+    return True, None
+
+
 def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols, actual_holdings_json=None):
     """Plan trades for the day.
 
@@ -536,6 +586,16 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols, actual_holding
                             If provided, validates state file against actual holdings.
                             If not provided, uses state file as-is (backward compatible).
     """
+    # GUARDRAIL 3: data freshness. Warns, does not block - the operator decides.
+    try:
+        with open(quotes_path) as _qf:
+            _quotes_raw = json.load(_qf)
+        _fresh, _msg = check_data_freshness(hist_path, quotes_path, _quotes_raw)
+        if not _fresh:
+            print(f"DATA FRESHNESS WARNING: {_msg}", file=sys.stderr)
+    except Exception as _e:
+        print(f"WARNING: freshness check could not run: {_e}", file=sys.stderr)
+
     bars_by_sym, quotes = build(hist_path, quotes_path)
     state = load_state()
     today = datetime.now(timezone.utc).date().isoformat()
@@ -815,6 +875,27 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols, actual_holding
 def cmd_commit(actions_path):
     actions = json.load(open(actions_path))
     state = load_state()
+
+    # Validate all sells before committing
+    validation_errors = []
+    for s in actions.get('sells', []):
+        sym = s['symbol']
+        pos = state['open_positions'].get(sym)
+        if pos and s['shares'] > pos['shares']:
+            validation_errors.append(
+                f"ERROR: Attempting to sell {s['shares']:.6f} {sym} but only {pos['shares']:.6f} held. "
+                f"This should have been rejected at order placement. Position would go negative."
+            )
+        if s['shares'] < 0:
+            validation_errors.append(f"ERROR: Negative sell quantity for {sym}: {s['shares']}")
+
+    if validation_errors:
+        print("PRE-COMMIT VALIDATION FAILED:")
+        for err in validation_errors:
+            print(f"  {err}")
+        print("Aborting commit to prevent state corruption.")
+        sys.exit(1)
+
     today = datetime.now(timezone.utc).date()
     settle_date = next_business_day(today).isoformat()
 
@@ -879,15 +960,242 @@ def cmd_commit(actions_path):
           f"Open positions now: {list(state['open_positions'].keys())}")
 
 
+def cmd_verify():
+    """
+    SAFEGUARD 1: STATE AUDIT
+    Check state.json for logical inconsistencies without requiring broker data.
+    Returns exit code 0 if all checks pass, 1 if any errors found.
+    """
+    state = load_state()
+    errors = []
+    warnings = []
+
+    print("=" * 70)
+    print("STATE AUDIT (margin_style_live_state.json)")
+    print("=" * 70)
+
+    # Check 1: Negative or zero shares
+    for sym, pos in state['open_positions'].items():
+        if pos['shares'] <= 0:
+            errors.append(f"  ❌ {sym}: negative/zero shares {pos['shares']}")
+        if pos['shares'] > 1000:  # Sanity check for large positions
+            warnings.append(f"  ⚠️  {sym}: unusually large position {pos['shares']} shares")
+
+    # Check 2: Invalid entry/peak prices
+    for sym, pos in state['open_positions'].items():
+        if pos['entry'] <= 0:
+            errors.append(f"  ❌ {sym}: invalid entry price ${pos['entry']}")
+        if pos['peak'] <= 0:
+            errors.append(f"  ❌ {sym}: invalid peak price ${pos['peak']}")
+        if pos['peak'] < pos['entry'] * 0.95:  # Allow 5% below entry (unrealized loss)
+            warnings.append(f"  ⚠️  {sym}: peak ${pos['peak']} is 5%+ below entry ${pos['entry']}")
+
+    # Check 3: Invalid dates
+    for sym, pos in state['open_positions'].items():
+        opened = pos.get('opened', None)
+        if opened:
+            try:
+                # Handle both ISO date (YYYY-MM-DD) and ISO datetime formats
+                if 'T' in opened:
+                    opened_dt = datetime.fromisoformat(opened.replace('Z', '+00:00'))
+                else:
+                    # Parse as date and convert to datetime at midnight UTC
+                    from datetime import date as date_class
+                    opened_date = datetime.strptime(opened, '%Y-%m-%d').date()
+                    opened_dt = datetime.combine(opened_date, datetime.min.time()).replace(tzinfo=timezone.utc)
+
+                if opened_dt > datetime.now(timezone.utc):
+                    errors.append(f"  ❌ {sym}: opened date in future {opened}")
+            except Exception as e:
+                errors.append(f"  ❌ {sym}: invalid opened date format {opened} ({e})")
+
+    # Check 4: Duplicate positions (shouldn't happen but check)
+    seen = set()
+    for sym in state['open_positions'].keys():
+        if sym in seen:
+            errors.append(f"  ❌ {sym}: DUPLICATE position (data corruption)")
+        seen.add(sym)
+
+    # Check 5: Pending settlement validation
+    for p in state['pending_settlement']:
+        if p['amount'] <= 0:
+            errors.append(f"  ❌ Pending {p['symbol']}: negative amount ${p['amount']}")
+        if 'settle_date' not in p or not p['settle_date']:
+            errors.append(f"  ❌ Pending {p['symbol']}: missing settle_date")
+
+    # Check 6: Tranches
+    for sym, pos in state['open_positions'].items():
+        if pos['tranches'] < 1 or pos['tranches'] > 5:
+            errors.append(f"  ❌ {sym}: invalid tranche count {pos['tranches']} (must be 1-5)")
+
+    # Summary
+    print(f"\n✅ Positions checked: {len(state['open_positions'])}")
+    print(f"✅ Pending settlements: {len(state['pending_settlement'])}")
+
+    if errors:
+        print(f"\n❌ ERRORS FOUND ({len(errors)}):")
+        for e in errors:
+            print(e)
+        print("\n⚠️  State file has inconsistencies. Do not execute trades.")
+        return 1
+
+    if warnings:
+        print(f"\n⚠️  WARNINGS ({len(warnings)}):")
+        for w in warnings:
+            print(w)
+
+    print("\n✅ STATE AUDIT PASSED - no logical errors detected")
+    return 0
+
+
+def cmd_reconcile(broker_positions_json_path=None):
+    """
+    SAFEGUARD 2: RECONCILE STATE vs BROKER
+    Compare state.json against actual broker positions.
+    Takes broker positions as JSON file (from get_equity_positions API).
+    Returns exit code 0 if match, 1 if divergence found.
+
+    Usage:
+      python margin_style_live_engine.py reconcile <broker_positions.json>
+      where broker_positions.json = {symbol: {quantity: X, average_buy_price: Y}, ...}
+    """
+    state = load_state()
+
+    print("=" * 70)
+    print("RECONCILIATION: state.json vs broker positions")
+    print("=" * 70)
+
+    # If no broker data provided, tell user how to get it
+    if not broker_positions_json_path:
+        print("\n⚠️  Broker positions JSON required.")
+        print("\nTo reconcile, pass broker data:")
+        print("  python scripts/margin_style_live_engine.py reconcile <broker.json>")
+        print("\nGet broker positions from Robinhood API:")
+        print("  Call: get_equity_positions(account_number='912291820')")
+        print("  Format: {symbol: {quantity: float, average_buy_price: float}, ...}")
+        print("\nExample:")
+        print("  {'WDC': {'quantity': '9.95', 'average_buy_price': '411.66'}, ...}")
+        return 0
+
+    # Load broker positions
+    try:
+        with open(broker_positions_json_path) as f:
+            broker_raw = json.load(f)
+    except Exception as e:
+        print(f"❌ Failed to load broker positions from {broker_positions_json_path}: {e}")
+        return 1
+
+    # Normalize broker data (handle both API formats)
+    broker_positions = {}
+    for sym, data in broker_raw.items():
+        if isinstance(data, dict):
+            qty = float(data.get('quantity', 0))
+        else:
+            qty = float(data)
+        broker_positions[sym] = qty
+
+    # Get our symbols (excluding known other-system symbols)
+    excluded = {"CGC"}  # Known other-system positions
+    broker_syms = {s for s in broker_positions.keys() if s not in excluded}
+    state_syms = set(state['open_positions'].keys())
+
+    errors = []
+    warnings = []
+
+    # Check 1: Symbol mismatch
+    only_in_state = state_syms - broker_syms
+    only_in_broker = broker_syms - state_syms
+
+    if only_in_state:
+        errors.append(f"  ❌ Positions in state but NOT broker: {only_in_state}")
+    if only_in_broker:
+        errors.append(f"  ❌ Positions in broker but NOT state: {only_in_broker}")
+
+    # Check 2: Share quantity mismatch (allow 0.01% tolerance for rounding)
+    for sym in state_syms & broker_syms:
+        state_shares = state['open_positions'][sym]['shares']
+        broker_shares = broker_positions[sym]
+
+        if broker_shares == 0:
+            errors.append(f"  ❌ {sym}: broker shows 0 shares but state has {state_shares}")
+            continue
+
+        pct_diff = abs(broker_shares - state_shares) / broker_shares * 100
+        if pct_diff > 0.01:  # >0.01% mismatch = red flag
+            errors.append(
+                f"  ❌ {sym}: quantity mismatch - broker {broker_shares:.6f}, "
+                f"state {state_shares:.6f} ({pct_diff:.3f}% diff)"
+            )
+        elif pct_diff > 0:
+            warnings.append(
+                f"  ⚠️  {sym}: minor rounding difference {pct_diff:.4f}% "
+                f"(broker {broker_shares:.6f}, state {state_shares:.6f})"
+            )
+
+    # Summary
+    print(f"\nState positions: {len(state_syms)}")
+    print(f"Broker positions (excluding excluded): {len(broker_syms)}")
+
+    if errors:
+        print(f"\n❌ DIVERGENCE DETECTED ({len(errors)}):")
+        for e in errors:
+            print(e)
+        print("\n⚠️  State and broker are out of sync.")
+        print("Review the differences above and reconcile manually:")
+        print("  1. Edit docs/margin_style_live_state.json to match broker reality")
+        print("  2. Commit: git add docs/margin_style_live_state.json && git commit -m 'Reconcile state to broker'")
+        return 1
+
+    if warnings:
+        print(f"\n⚠️  MINOR WARNINGS ({len(warnings)}):")
+        for w in warnings:
+            print(w)
+        print("\nThese are minor rounding differences - state is consistent with broker.")
+
+    print("\n✅ RECONCILIATION PASSED - state matches broker")
+    return 0
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("Usage: plan <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json> [actual_holdings_json]  OR  commit <actions.json>")
+        print("Usage:")
+        print("  plan <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json>")
+        print("  commit <actions.json>")
+        print("  verify")
+        print("  reconcile [broker_positions.json]")
+        sys.exit(1)
+    if sys.argv[1] == 'plan':
+        cmd_plan(sys.argv[2], sys.argv[3], float(sys.argv[4]), json.loads(sys.argv[5]))
+    elif sys.argv[1] == 'commit':
+        cmd_commit(sys.argv[2])
+    elif sys.argv[1] == 'verify':
+        exit_code = cmd_verify()
+        sys.exit(exit_code)
+    elif sys.argv[1] == 'reconcile':
+        broker_json = sys.argv[2] if len(sys.argv) > 2 else None
+        exit_code = cmd_reconcile(broker_json)
+        sys.exit(exit_code)
+    else:
+        print("Unknown mode:", sys.argv[1])
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print("Usage: plan <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json> [actual_holdings_json]\n"
+              "   OR commit <actions.json>\n"
+              "   OR verify\n"
+              "   OR reconcile [broker_positions.json]")
         sys.exit(1)
     if sys.argv[1] == 'plan':
         actual_holdings = sys.argv[6] if len(sys.argv) > 6 else None
         cmd_plan(sys.argv[2], sys.argv[3], float(sys.argv[4]), sys.argv[5], actual_holdings)
     elif sys.argv[1] == 'commit':
         cmd_commit(sys.argv[2])
+    elif sys.argv[1] == 'verify':
+        sys.exit(cmd_verify())
+    elif sys.argv[1] == 'reconcile':
+        sys.exit(cmd_reconcile(sys.argv[2] if len(sys.argv) > 2 else None))
     else:
         print("Unknown mode:", sys.argv[1])
         sys.exit(1)
