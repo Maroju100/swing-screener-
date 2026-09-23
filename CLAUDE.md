@@ -449,9 +449,11 @@ below are what makes a claim checkable.
 - **Universe**: exactly `AMD, MU, WDC, SNDK, TSM, INTC, LRCX, STX` — do not
   add or remove symbols without being asked.
 - **Schedule**: runs once daily, ~17:00 UTC, via trigger
-  `trig_01VfH6Nhfbk7YLaTkzHWLG7E`. (A walk-forward-validated backtest
-  found switching the check-hour does not hold up out-of-sample — keep
-  17:00.)
+  `trig_01VfH6Nhfbk7YLaTkzHWLG7E`. (Check-time evidence was re-measured
+  2026-09-23 on admissible 30-minute data: 12:30–1:00 PM CDT beats exactly
+  noon but fails 2 of 4 validation checks — suggestive, not validated; a
+  decision on moving is pending with the user. See "CHECK TIME" under the
+  price-basis section. Never move the check before ~15:30 UTC.)
   - **Check *frequency* is settled too — do not add intraday runs.**
     The primary evidence is in this trigger's own prompt (CHECK-FREQUENCY
     CHANGE, 2026-08-05, readable via `list_triggers` on
@@ -786,61 +788,128 @@ so it is a subset, but 18–3 is not a close call.)
   A sweep across check times is only admissible on the series the 1-minute
   referee endorses.
 
-#### ❌ NO CHECK TIME BEATS THE INCUMBENT — full sweep, asked 2026-09-23
+#### ⚠️ CHECK TIME — later than noon is SUGGESTIVE, NOT VALIDATED (asked 2026-09-23, corrected same day)
 
 Asked directly: "rerun the backtests at 12:00pm, 1:00pm or any other time to
 validate the best time to fire that maximizes pl, and we will then use the same
-trigger time for the live trigger." Done properly this time — every 30-minute
-mark in the session, on the admissible series, with walk-forward and
-multiple-testing correction. Reproduce:
+trigger time for the live trigger." Every 30-minute mark in the session, on the
+admissible series, with walk-forward and multiple-testing correction. Reproduce:
 `python3 scripts/margin_style_check_time.py all` → `data/research/check_time.json`.
 
-**Admissible result — 13 × 30-minute marks, 2026-06-22 → 2026-09-21 (64 days),
-$80k, 5 bps/side, real non-interpolated bars:**
+🚨 **The first version of this section was WRONG and said "the incumbent is rank
+2 of 13; the mark above it fails every test".** Diagnosis (Evidence Rule 4):
+`replay_intraday` special-cased the `17:00` mark to read the 30-minute bar's
+**close** (`cl30`, ≈17:30 UTC) — a leftover from matching the shared harness —
+even with the hourly override off. So the row labelled "17:00 (LIVE)" at $28,131
+was really a ~17:30 price. Fixed with an explicit `exact_open=True` opt-in (the
+validated path is byte-identical, still $30,622.59 / 371 trades). The true
+17:00 is **$18,694**, which is also what `check_hour.json` had all along — the
+two files disagreeing on that one row is how it was caught. **Do not cite
+"rank 2 of 13" or "0/3 folds, P=0.562".**
 
-| UTC | CDT | Realized | Return | Sharpe |
-|---|---|---|---|---|
-| 17:30 | 12:30 PM | $28,548 | +35.7% | 2.70 |
-| **17:00** | **12:00 PM (LIVE)** | **$28,131** | **+35.2%** | **2.68** |
-| 18:00 | 1:00 PM | $27,914 | +34.9% | 2.60 |
-| 19:30 | 2:30 PM | $23,003 | +28.8% | 2.43 |
-| 16:00 | 11:00 AM | $21,391 | +26.7% | 2.20 |
-| 13:30–15:00 | 8:30–10:00 AM | −$1,874 … −$2,833 | negative | <0 |
+**Admissible result — 13 × 30-minute marks at each mark's OPEN (true clock
+instant), 2026-06-22 → 2026-09-21 (64 days), $80k, 5 bps/side:**
 
-**The incumbent is rank 2 of 13, and the mark above it fails every test:**
+| # | UTC | CDT | Realized | Return | Sharpe | Max DD |
+|---|---|---|---|---|---|---|
+| 1 | 17:30 | 12:30 PM | $28,548 | +35.7% | 2.70 | −11.5% |
+| 2 | 18:00 | 1:00 PM | $27,914 | +34.9% | 2.60 | −14.1% |
+| 3 | 19:30 | 2:30 PM | $23,003 | +28.8% | 2.43 | −16.1% |
+| 4 | 15:30 | 10:30 AM | $22,994 | +28.7% | 2.31 | −13.0% |
+| 5 | 18:30 | 1:30 PM | $21,442 | +26.8% | 2.15 | −15.3% |
+| 6 | 16:00 | 11:00 AM | $21,391 | +26.7% | 2.20 | −11.7% |
+| 7 | 16:30 | 11:30 AM | $19,859 | +24.8% | 1.96 | −14.6% |
+| **8** | **17:00** | **12:00 PM** | **$18,694** | **+23.4%** | **1.91** | −11.9% |
+| 9 | 19:00 | 2:00 PM | $18,029 | +22.5% | 1.96 | −14.6% |
+| 10–13 | 13:30–15:00 | 8:30–10:00 AM | −$1,874 … −$2,833 | negative | <0 | |
+
+**Validation of the argmax against 17:00 — 2 of 4 pass:**
 
 | Check | Result |
 |---|---|
-| argmax beats incumbent out-of-sample | ❌ **0 of 3** walk-forward folds |
-| same argmax in every fold | ❌ picks 17:00, 18:00 — it moves |
-| bootstrap 95% CI on daily diff excludes zero | ❌ **[−0.000438, +0.000819]**, P(better)=**0.562** |
-| observed max Sharpe clears expected-max-on-noise | ❌ **2.70 vs 3.38** |
+| argmax beats incumbent out-of-sample | ✅ **3 of 3** walk-forward folds |
+| same argmax in every fold | ❌ picks 18:00, 17:30, 17:30 — moves, but always *later* than 17:00 |
+| bootstrap 95% CI on daily diff excludes zero | ✅ **[+0.000456, +0.003479]**, P(better)=**0.994** |
+| observed max Sharpe clears expected-max-on-noise | ❌ **2.70 vs 3.38** — searching 13 marks of pure noise would be expected to produce a better-looking winner |
 
-Top three marks sit within **$634** of each other (0.8pp) — below the noise
-floor. Best-in-sub-window inverts (18:00 / 15:30 / 17:30).
+- **Reading:** there is real but unvalidated evidence that **12:30–1:00 PM CDT
+  beats exactly noon** (+$9,854 on 64 days). It fails the multiple-testing bar,
+  the winner moves between folds, and it rests on one 64-day window that was a
+  falling market for the basket. By this file's standard that is **suggestive,
+  not an improvement**.
+- **The live trigger is at neither instant.** It fires ~**17:14 UTC =
+  12:14 PM CDT**, between the 8th-ranked and 1st-ranked marks, 30 minutes
+  apart and $9,854 apart. Its own P&L is **unmeasured** — there are no 17:14
+  bars for the full universe. That gap is itself the strongest evidence of how
+  sensitive this engine is to the exact instant.
+- **DECISION PENDING — the user's call, not made here.** Options: (a) keep
+  `0 17 * * 1-5`; (b) move to `30 17 * * 1-5` (fires ~17:44 UTC = 12:44 PM CDT,
+  inside the 17:30–18:00 band that ranked 1st–2nd). Not validated either way.
+  Whatever is chosen, record it here and in the DST decision below.
+- 🚨 **The 132-day hourly sweep MUST NOT be used.** It ranks **16:00 UTC first
+  at $131,214 vs 17:00's $100,745**, and every validation passes — but it is
+  built on the series the 1-minute referee rejected, and on the admissible data
+  16:00 is 6th. *Passing validation does not rescue a bad input.*
+- **Sensitivity is measured, not asserted** (`noise` in the script): seeded
+  price noise *smaller than the vendor disagreement* moves 17:00 by up to
+  **$25,183** at 5 bps. A single mark's P&L is not a stable property of that mark
+  at this sample size.
+- ✅ **The one robust directional finding:** every mark before ~15:30 UTC
+  (10:30 AM CDT) loses money, on both series, by a wide margin. **Never move the
+  check earlier into the morning** — which is exactly what the unhandled DST
+  drift below would do in November.
 
-- 🚨 **The 132-day hourly sweep says something completely different and MUST NOT
-  be used.** It ranks **16:00 UTC first at $131,214 vs 17:00's $100,745
-  (+$30,470)**, with walk-forward **3/3**, the same pick every fold, bootstrap CI
-  excluding zero (P=0.983) and Sharpe 4.74 over an expected-max-on-noise of 1.92.
-  Every validation passes. **It is still wrong** — it is built on the series the
-  referee rejected, and on the overlapping window the 30-minute data inverts the
-  16:00-vs-17:00 ordering outright. This is the cleanest example yet that
-  *passing validation does not rescue a bad input*: the folds, the bootstrap and
-  the DSR all faithfully validated an artifact. It is kept here only so a future
-  session that rediscovers the 16:00 result knows why it was rejected.
-- **Sensitivity is measured, not asserted** (`noise` in the script): re-replaying
-  a mark with seeded noise *smaller than the vendor disagreement* moves 17:00 by
-  **$25,183** at 5 bps and 18:00 by **$11,503**. A single mark's P&L is not a
-  stable property of that mark at this sample size.
-- **Genuine signal that did survive:** every mark before ~15:30 UTC (10:30 AM
-  CDT) loses money, on both series, by a wide margin. That is a real constraint —
-  **do not move the check earlier into the morning** — and it is the only
-  directional finding here that is robust.
-- **DECISION: the trigger stays at `0 17 * * 1-5`.** Not because 17:00 was shown
-  to be optimal — it was not — but because nothing is distinguishable from it and
-  it is already rank 2 of 13. Moving it would trade 63 runs of live history for
-  an unmeasurable difference.
+#### 🔁 CONFIG RANKING RE-RUN ON ADMISSIBLE DATA — no config beats production robustly (2026-09-23)
+
+The committed 9-config ranking (`research.py ranking`) is on the hourly series
+the referee rejected, so it was re-run on real 30-minute bars at both instants
+bracketing the live fire. Reproduce:
+`python3 scripts/margin_style_rank_admissible.py` → `data/research/ranking_admissible.json`.
+64 days, $80k, 5 bps/side, 30-minute OPEN.
+
+| Config | @17:00 UTC | # | @17:30 UTC | # |
+|---|---|---|---|---|
+| **PRODUCTION** | **$18,694 (+23.4%)** | **4** | **$28,548 (+35.7%)** | **2** |
+| Stop −1.0% (tighter) | $21,886 | 2 | $32,345 | 1 |
+| Quality filter 3+ down days | $29,530 | 1 | $28,031 | 4 |
+| Symbol cap 25% | $19,106 | 3 | $28,150 | 3 |
+| Trade cap 10% | $15,545 | 5 | $26,529 | 5 |
+| Stop −2.5% (looser) | $13,819 | 6 | $26,386 | 6 |
+| Max 1 tranche | $11,748 | 7 | $15,180 | 7 |
+| No intraday stop | −$1,716 | 8 | $13,799 | 8 |
+| Grid-search best | −$5,840 | 9 | −$4,463 | 9 |
+| *Buy & hold* | *−$12,510 (−15.6%)* | | *−$13,011 (−16.3%)* | |
+
+Both rank-1 winners **fail significance**: quality filter CI straddles zero
+(P=0.73); tighter stop CI straddles zero (P=0.85).
+
+**This reverses two committed findings, so it was diagnosed (Evidence Rule 4)
+by holding the series fixed (hourly) and splitting the 132 days by regime:**
+
+| Config | EARLY Mar 13–Jun 19 (basket B&H **+154.8%**) | LATE Jun 22–Sep 21 (B&H **−16.2%**) |
+|---|---|---|
+| PRODUCTION | $54,191 — #2 | $30,623 — #2 |
+| Quality filter 3+ | **$1,930 — #8** | $29,755 — #5 |
+| Stop −1.0% | $44,396 — #5 | $30,605 — #3 |
+| Stop −2.5% | $43,685 — #6 | **$41,644 — #1** |
+| Grid-search best | **$79,183 — #1** | −$3,919 — #9 |
+
+- **Diagnosis: every challenger is a REGIME BET.** Each wins in one regime or
+  on one series and loses in another. The quality filter cuts entries ~60% —
+  worthless-to-harmful when the basket rises, roughly neutral-to-helpful when it
+  falls. The −2.5% stop wins on hourly-late and *loses* on 30-minute-late at both
+  marks — a pure series artifact.
+- **Production is the only config that is never worse than rank 4 in any
+  cell.** That consistency, not a maximum in any single cell, is the case for
+  keeping it. The earlier "filter harmful" and "tighter stop costs money"
+  findings stand for the full period; they are not overturned by one falling
+  64-day window.
+- 🚨 **Production underperformed buy & hold by ~2.3× in the up market**
+  (+67.7% vs +154.8%) and beat it by ~54pp in the down market. Its full-period
+  edge over passive comes from the falling half. Worth knowing before judging it
+  on a rising stretch.
+- Stop changes remain under the standing directive regardless — reported, not
+  proposed.
 
 #### ❌ DO NOT move the trigger to exactly noon (asked and measured 2026-09-23)
 
@@ -1221,6 +1290,36 @@ says the stop **costs** ~75pp. See the verified table at the top of this section
   parameters (0.6% add-gate vs 0.3%, 2-min cooldown vs 1-min, 65/90%
   exhaustion/trim vs 70/70%) and historically shows more consistency on
   mixed-sentiment trading days.
+- 📏 **REPLAYED (2026-09-23) — v3 has NO validated edge at realistic cost, and
+  "tightened" is WORSE than baseline.** Full replay of
+  `scripts/daytrading_v3_paper_engine.py` over real 1-minute bars. Reproduce:
+  `python3 scripts/v3_replay.py --params {baseline,tightened} {--sweep,--rs-sweep}`
+  → `data/v3_{replay,rs}_results[_tightened].json`. Baseline re-run reproduces
+  the committed files byte-for-byte.
+  - ⚠️ **What was replayed is NOT what the dashboard describes.** Real minute
+    bars exist only for **MU, SNDK, WDC**, 2026-08-10 → 09-21 (**30 days**),
+    $5,000. The "$30k across all 8 semis" figures have never been replayed.
+    Halves are 15 days each — direction only (Evidence Rule 3).
+
+  | Variant (5 bps/side) | Baseline full | H1 | H2 | Tightened full | H1 | H2 |
+  |---|---|---|---|---|---|---|
+  | no gate | +0.38% | +2.58% | **−2.15%** | **−1.98%** | +1.91% | −3.86% |
+  | ER ≥ 0.30 | +1.80% | +2.26% | −0.46% | +3.60% | +3.89% | −0.29% |
+  | SPY up on day | +3.47% | +3.91% | −0.44% | +3.57% | +4.85% | −1.28% |
+  | RS > 0 vs SPY | +3.05% | +3.17% | **+0.09%** | +0.06% | +2.12% | −1.89% |
+
+  - **Every variant but one loses in the second half at 5 bps**, and the one
+    exception (baseline + RS>0 vs SPY) is +0.09% on 15 days — indistinguishable
+    from zero. Edge is gone by ~10 bps ungated (baseline −2.32%, tightened −6.02%).
+  - **Tightened loses to baseline ungated at every cost level** (0 bp +2.06% vs
+    +3.08%) — the "grid-optimized" parameters were fitted, not better.
+  - Market gates (SPY/SMH up on day, ER ≥ 0.30) help in H1 and not in H2 — a
+    regime effect on 30 days, not a validated filter. **Do not take v3 live.**
+- **TGT paper ledger has recorded ZERO trades** (one run, 2026-09-05) — there is
+  no TGT number to cite beyond the NOT VALIDATED note in Strategy 3.
+- **Not citable (Evidence Rule 2):** the "v3 baseline +$7,128 / +23.8%",
+  "Good-Day gate +$788", "Buy & hold +$7,624" comparison figures from early
+  September came from `/tmp` scripts that no longer exist.
 - A conservative Efficiency-Ratio trading-day gate (Kaufman's ER: net move
   / sum of bar-to-bar absolute moves) was validated as a real, moderate
   improvement (similar/better P&L with materially fewer trading days) —

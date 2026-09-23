@@ -1,0 +1,365 @@
+{
+ "generated": "2026-09-23",
+ "engine": "origin/main",
+ "window": [
+  "2026-06-22",
+  "2026-09-21"
+ ],
+ "capital": 80000.0,
+ "cost_bps": 5.0,
+ "basis": "30-minute OPEN at each mark",
+ "marks": {
+  "17:00": {
+   "rows": [
+    {
+     "config": "Quality filter 3+ down days",
+     "realized": 29530.03,
+     "return_pct": 36.91,
+     "sharpe": 4.4,
+     "max_dd_pct": -6.1,
+     "trades": 154,
+     "rank": 1
+    },
+    {
+     "config": "Intraday stop -1.0% (tighter)",
+     "realized": 21885.82,
+     "return_pct": 27.36,
+     "sharpe": 2.2,
+     "max_dd_pct": -11.77,
+     "trades": 352,
+     "rank": 2
+    },
+    {
+     "config": "Symbol cap 25% (was 50%)",
+     "realized": 19105.86,
+     "return_pct": 23.88,
+     "sharpe": 1.95,
+     "max_dd_pct": -12.48,
+     "trades": 359,
+     "rank": 3
+    },
+    {
+     "config": "PRODUCTION (current rules)",
+     "realized": 18694.35,
+     "return_pct": 23.37,
+     "sharpe": 1.91,
+     "max_dd_pct": -11.9,
+     "trades": 359,
+     "rank": 4
+    },
+    {
+     "config": "Trade cap 10% (was 25%)",
+     "realized": 15544.54,
+     "return_pct": 19.43,
+     "sharpe": 1.75,
+     "max_dd_pct": -11.01,
+     "trades": 382,
+     "rank": 5
+    },
+    {
+     "config": "Intraday stop -2.5% (looser)",
+     "realized": 13818.74,
+     "return_pct": 17.27,
+     "sharpe": 1.48,
+     "max_dd_pct": -11.61,
+     "trades": 376,
+     "rank": 6
+    },
+    {
+     "config": "Max 1 tranche per symbol",
+     "realized": 11747.7,
+     "return_pct": 14.68,
+     "sharpe": 1.39,
+     "max_dd_pct": -11.92,
+     "trades": 353,
+     "rank": 7
+    },
+    {
+     "config": "No intraday stop at all",
+     "realized": -1716.42,
+     "return_pct": -2.15,
+     "sharpe": -0.2,
+     "max_dd_pct": -15.57,
+     "trades": 137,
+     "rank": 8
+    },
+    {
+     "config": "Best grid-search config (rejected)",
+     "realized": -5839.86,
+     "return_pct": -7.3,
+     "sharpe": -0.97,
+     "max_dd_pct": -16.54,
+     "trades": 142,
+     "rank": 9
+    }
+   ],
+   "production_rank": 4,
+   "rank1_significance": {
+    "winner": "Quality filter 3+ down days",
+    "ci_daily": [
+     -0.003977139111709711,
+     0.007651310468419571
+    ],
+    "p_better": 0.7308,
+    "straddles_zero": true
+   },
+   "buy_and_hold": -12509.84
+  },
+  "17:30": {
+   "rows": [
+    {
+     "config": "Intraday stop -1.0% (tighter)",
+     "realized": 32345.07,
+     "return_pct": 40.43,
+     "sharpe": 3.07,
+     "max_dd_pct": -11.53,
+     "trades": 355,
+     "rank": 1
+    },
+    {
+     "config": "PRODUCTION (current rules)",
+     "realized": 28548.21,
+     "return_pct": 35.69,
+     "sharpe": 2.7,
+     "max_dd_pct": -11.53,
+     "trades": 364,
+     "rank": 2
+    },
+    {
+     "config": "Symbol cap 25% (was 50%)",
+     "realized": 28149.64,
+     "return_pct": 35.19,
+     "sharpe": 2.65,
+     "max_dd_pct": -11.53,
+     "trades": 363,
+     "rank": 3
+    },
+    {
+     "config": "Quality filter 3+ down days",
+     "realized": 28030.65,
+     "return_pct": 35.04,
+     "sharpe": 4.32,
+     "max_dd_pct": -5.8,
+     "trades": 148,
+     "rank": 4
+    },
+    {
+     "config": "Trade cap 10% (was 25%)",
+     "realized": 26529.33,
+     "return_pct": 33.16,
+     "sharpe": 2.76,
+     "max_dd_pct": -11.01,
+     "trades": 388,
+     "rank": 5
+    },
+    {
+     "config": "Intraday stop -2.5% (looser)",
+     "realized": 26386.14,
+     "return_pct": 32.98,
+     "sharpe": 2.58,
+     "max_dd_pct": -11.78,
+     "trades": 378,
+     "rank": 6
+    },
+    {
+     "config": "Max 1 tranche per symbol",
+     "realized": 15180.35,
+     "return_pct": 18.98,
+     "sharpe": 1.7,
+     "max_dd_pct": -11.6,
+     "trades": 356,
+     "rank": 7
+    },
+    {
+     "config": "No intraday stop at all",
+     "realized": 13798.87,
+     "return_pct": 17.25,
+     "sharpe": 1.74,
+     "max_dd_pct": -17.2,
+     "trades": 346,
+     "rank": 8
+    },
+    {
+     "config": "Best grid-search config (rejected)",
+     "realized": -4462.91,
+     "return_pct": -5.58,
+     "sharpe": -0.73,
+     "max_dd_pct": -16.3,
+     "trades": 143,
+     "rank": 9
+    }
+   ],
+   "production_rank": 2,
+   "rank1_significance": {
+    "winner": "Intraday stop -1.0% (tighter)",
+    "ci_daily": [
+     -0.0004662676804164442,
+     0.0017322652563949183
+    ],
+    "p_better": 0.8536,
+    "straddles_zero": true
+   },
+   "buy_and_hold": -13010.57
+  }
+ },
+ "rank_shift": {
+  "Quality filter 3+ down days": 3,
+  "Intraday stop -1.0% (tighter)": -1,
+  "Symbol cap 25% (was 50%)": 0,
+  "PRODUCTION (current rules)": -2,
+  "Trade cap 10% (was 25%)": 0,
+  "Intraday stop -2.5% (looser)": 0,
+  "Max 1 tranche per symbol": 0,
+  "No intraday stop at all": 0,
+  "Best grid-search config (rejected)": 0
+ },
+ "max_rank_shift": 3,
+ "regime_diagnosis": {
+  "early_up_market": {
+   "window": [
+    "2026-03-13",
+    "2026-06-19"
+   ],
+   "series": "hourly 17:00 bar close",
+   "rows": [
+    {
+     "config": "Best grid-search config (rejected)",
+     "realized": 79182.69,
+     "return_pct": 98.98,
+     "trades": 357,
+     "rank": 1
+    },
+    {
+     "config": "PRODUCTION (current rules)",
+     "realized": 54190.63,
+     "return_pct": 67.74,
+     "trades": 388,
+     "rank": 2
+    },
+    {
+     "config": "Trade cap 10% (was 25%)",
+     "realized": 54190.63,
+     "return_pct": 67.74,
+     "trades": 388,
+     "rank": 3
+    },
+    {
+     "config": "Symbol cap 25% (was 50%)",
+     "realized": 52768.56,
+     "return_pct": 65.96,
+     "trades": 388,
+     "rank": 4
+    },
+    {
+     "config": "Intraday stop -1.0% (tighter)",
+     "realized": 44395.75,
+     "return_pct": 55.49,
+     "trades": 385,
+     "rank": 5
+    },
+    {
+     "config": "Intraday stop -2.5% (looser)",
+     "realized": 43685.04,
+     "return_pct": 54.61,
+     "trades": 383,
+     "rank": 6
+    },
+    {
+     "config": "Max 1 tranche per symbol",
+     "realized": 42423.93,
+     "return_pct": 53.03,
+     "trades": 392,
+     "rank": 7
+    },
+    {
+     "config": "Quality filter 3+ down days",
+     "realized": 1930.37,
+     "return_pct": 2.41,
+     "trades": 82,
+     "rank": 8
+    },
+    {
+     "config": "No intraday stop at all",
+     "realized": -9285.68,
+     "return_pct": -11.61,
+     "trades": 57,
+     "rank": 9
+    }
+   ],
+   "buy_and_hold": 123867.61
+  },
+  "late_down_market": {
+   "window": [
+    "2026-06-22",
+    "2026-09-21"
+   ],
+   "series": "hourly 17:00 bar close",
+   "rows": [
+    {
+     "config": "Intraday stop -2.5% (looser)",
+     "realized": 41643.55,
+     "return_pct": 52.05,
+     "trades": 391,
+     "rank": 1
+    },
+    {
+     "config": "PRODUCTION (current rules)",
+     "realized": 30622.59,
+     "return_pct": 38.28,
+     "trades": 371,
+     "rank": 2
+    },
+    {
+     "config": "Intraday stop -1.0% (tighter)",
+     "realized": 30605.49,
+     "return_pct": 38.26,
+     "trades": 361,
+     "rank": 3
+    },
+    {
+     "config": "Symbol cap 25% (was 50%)",
+     "realized": 30567.75,
+     "return_pct": 38.21,
+     "trades": 370,
+     "rank": 4
+    },
+    {
+     "config": "Quality filter 3+ down days",
+     "realized": 29754.87,
+     "return_pct": 37.19,
+     "trades": 151,
+     "rank": 5
+    },
+    {
+     "config": "Trade cap 10% (was 25%)",
+     "realized": 28032.95,
+     "return_pct": 35.04,
+     "trades": 396,
+     "rank": 6
+    },
+    {
+     "config": "Max 1 tranche per symbol",
+     "realized": 16852.07,
+     "return_pct": 21.07,
+     "trades": 366,
+     "rank": 7
+    },
+    {
+     "config": "No intraday stop at all",
+     "realized": 12893.64,
+     "return_pct": 16.12,
+     "trades": 333,
+     "rank": 8
+    },
+    {
+     "config": "Best grid-search config (rejected)",
+     "realized": -3918.53,
+     "return_pct": -4.9,
+     "trades": 39,
+     "rank": 9
+    }
+   ],
+   "buy_and_hold": -12932.03
+  }
+ }
+}

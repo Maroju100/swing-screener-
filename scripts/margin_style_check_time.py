@@ -141,7 +141,7 @@ def cmd_fine():
         r = I.replay_intraday(FINE[0], FINE[1], check_times=(mark,),
                               tag=f'ct_fine_{mark.replace(":", "")}',
                               cost_bps=COST_BPS, capital=CAPITAL,
-                              use_hourly_at_1700=False)
+                              use_hourly_at_1700=False, exact_open=True)
         rows.append({
             'mark_utc': mark, 'mark_local': cdt(mark),
             'realized': round(r['realized'], 2),

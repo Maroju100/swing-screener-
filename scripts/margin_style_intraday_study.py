@@ -101,7 +101,7 @@ def load_hourly_1700():
             for r in d['data']['results']}
 
 
-def build_engine(tag, params=None, no_lockup=False):
+def build_engine(tag, params=None, no_lockup=False, src_patches=None):
     os.makedirs(SCRATCH, exist_ok=True)
     state_path = os.path.join(SCRATCH, f'state_intraday_{tag}.json')
     if os.path.exists(state_path):
@@ -109,6 +109,8 @@ def build_engine(tag, params=None, no_lockup=False):
     src = H.load_engine_src(ENGINE)
     if no_lockup:
         src = H.apply_no_settlement_lockup_patch(src)
+    for patch in (src_patches or []):
+        src = patch(src)
     ns = {'__file__': os.path.join(ROOT, 'scripts', 'margin_style_live_engine.py')}
     exec(compile(src, 'margin_style_live_engine.py', 'exec'), ns)
     ns['SYMBOLS'] = UNIVERSE
@@ -124,7 +126,8 @@ def build_engine(tag, params=None, no_lockup=False):
 def replay_intraday(start, end, check_times=(CHECK,), exit_mark=None,
                     tag='x', params=None, cost_bps=COST_BPS, capital=CAPITAL,
                     use_hourly_at_1700=True, no_lockup=False,
-                    exit_frac=1.0, exit_at_bell=False):
+                    exit_frac=1.0, exit_at_bell=False, exact_open=False,
+                    src_patches=None):
     """Replay with N checks/day and an optional forced exit at a 30-minute mark.
 
     check_times  -- UTC marks at which cmd_plan runs. Quotes are that mark's
@@ -139,12 +142,21 @@ def replay_intraday(start, end, check_times=(CHECK,), exit_mark=None,
                     OVERNIGHT GAP: the position keeps the entire session and gives
                     up only the gap. Exiting at 19:30's open instead also forfeits
                     the last 30 minutes, which is a different question.
+    exact_open   -- price EVERY mark, including 17:00, at that mark's 30-minute
+                    OPEN, i.e. the true clock instant. ADDED 2026-09-23 after a
+                    defect: with use_hourly_at_1700=False the 17:00 mark still
+                    fell through to the 30-minute bar's CLOSE (~17:30 UTC), so a
+                    check-time sweep labelled a 17:30 price as "17:00". Default
+                    False leaves the validated path byte-identical.
+    src_patches  -- [fn(src) -> src] structural rule patches, as in the shared
+                    harness; each must assert its own anchor.
     exit_frac    -- fraction of each position sold at the exit. 1.0 removes 100%
                     of overnight exposure, 0.5 halves it, 0.0 is production.
                     Lets the risk/return trade-off be drawn as a curve rather
                     than asserted at the endpoints.
     """
-    ns, state_path = build_engine(tag, params, no_lockup=no_lockup)
+    ns, state_path = build_engine(tag, params, no_lockup=no_lockup,
+                                  src_patches=src_patches)
     cmd_plan, cmd_commit = ns['cmd_plan'], ns['cmd_commit']
 
     op30, cl30 = load_min30()
@@ -181,7 +193,7 @@ def replay_intraday(start, end, check_times=(CHECK,), exit_mark=None,
                 if T == CHECK and use_hourly_at_1700 and D in h1700.get(s, {}):
                     q[s] = h1700[s][D]
                 elif ts in op30.get(s, {}):
-                    q[s] = op30[s][ts] if T != CHECK else cl30[s][ts]
+                    q[s] = op30[s][ts] if (T != CHECK or exact_open) else cl30[s][ts]
             if not q:
                 continue
             json.dump(q, open(q_path, 'w'))

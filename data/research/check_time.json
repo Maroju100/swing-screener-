@@ -77,11 +77,11 @@
       {
         "mark_utc": "17:00",
         "mark_local": "12:00 PM CDT",
-        "realized": 28131.29,
-        "realized_pct": 35.16,
-        "trades": 367,
-        "sharpe": 2.68,
-        "max_dd": -11.53
+        "realized": 18694.35,
+        "realized_pct": 23.37,
+        "trades": 359,
+        "sharpe": 1.91,
+        "max_dd": -11.9
       },
       {
         "mark_utc": "17:30",
@@ -143,7 +143,7 @@
           "15:30": 11736.87,
           "16:00": 12540.01,
           "16:30": 11907.79,
-          "17:00": 15009.92,
+          "17:00": 10439.23,
           "17:30": 14559.94,
           "18:00": 18960.22,
           "18:30": 15206.57,
@@ -165,7 +165,7 @@
           "15:30": 12079.04,
           "16:00": 6688.91,
           "16:30": 4154.61,
-          "17:00": 8040.73,
+          "17:00": 4700.07,
           "17:30": 7823.58,
           "18:00": 2996.22,
           "18:30": 1488.96,
@@ -187,7 +187,7 @@
           "15:30": -821.79,
           "16:00": 2161.6,
           "16:30": 3796.92,
-          "17:00": 5080.64,
+          "17:00": 3555.05,
           "17:30": 6164.69,
           "18:00": 5957.33,
           "18:30": 4746.05,
@@ -201,20 +201,20 @@
       "window": "fine 64d",
       "incumbent": "17:00",
       "incumbent_local": "12:00 PM CDT",
-      "incumbent_realized": 28131.29,
+      "incumbent_realized": 18694.35,
       "best_mark": "17:30",
       "best_local": "12:30 PM CDT",
       "best_realized": 28548.21,
-      "gap_dollars": 416.92,
-      "gap_pp": 0.52,
+      "gap_dollars": 9853.86,
+      "gap_pp": 12.32,
       "spread_dollars": 31381.59,
       "n_marks": 13,
       "n_days": 64,
       "bootstrap_daily_diff": {
-        "mean": 8.1e-05,
-        "ci_lo": -0.000438,
-        "ci_hi": 0.000819,
-        "p_better": 0.562
+        "mean": 0.001925,
+        "ci_lo": 0.000456,
+        "ci_hi": 0.003479,
+        "p_better": 0.994
       },
       "observed_max_sharpe": 2.7,
       "expected_max_sharpe_on_noise": 3.38
@@ -418,8 +418,8 @@
         "mark_utc": "17:00",
         "mark_local": "12:00 PM CDT",
         "hourly_basis": 17810.8,
-        "min30_basis": 28131.29,
-        "diff": -10320.49
+        "min30_basis": 18694.35,
+        "diff": -883.55
       },
       {
         "mark_utc": "18:00",
@@ -436,10 +436,10 @@
         "diff": -16.32
       }
     ],
-    "spearman": 0.6,
+    "spearman": 0.886,
     "argmax_hourly": "18:00",
-    "argmax_min30": "17:00",
-    "argmax_agrees": false
+    "argmax_min30": "18:00",
+    "argmax_agrees": true
   },
   "referee": {
     "per_instant": [
@@ -874,10 +874,10 @@
         "picked_local": "1:00 PM CDT",
         "train_pnl_of_pick": 17270.84,
         "test_pnl_of_pick": 5690.91,
-        "test_pnl_of_incumbent": 10501.59,
-        "pick_beat_incumbent_on_test": false,
-        "test_rank_of_pick": 3,
-        "test_best_mark": "17:00",
+        "test_pnl_of_incumbent": 4241.61,
+        "pick_beat_incumbent_on_test": true,
+        "test_rank_of_pick": 2,
+        "test_best_mark": "17:30",
         "n_marks": 13
       },
       {
@@ -892,12 +892,12 @@
           "2026-08-27",
           16
         ],
-        "picked_on_train": "17:00",
-        "picked_local": "12:00 PM CDT",
-        "train_pnl_of_pick": 24176.49,
-        "test_pnl_of_pick": -1822.45,
-        "test_pnl_of_incumbent": -1822.45,
-        "pick_beat_incumbent_on_test": false,
+        "picked_on_train": "17:30",
+        "picked_local": "12:30 PM CDT",
+        "train_pnl_of_pick": 23461.85,
+        "test_pnl_of_pick": -1839.11,
+        "test_pnl_of_incumbent": -2919.64,
+        "pick_beat_incumbent_on_test": true,
         "test_rank_of_pick": 8,
         "test_best_mark": "19:30",
         "n_marks": 13
@@ -914,24 +914,24 @@
           "2026-09-21",
           16
         ],
-        "picked_on_train": "17:00",
-        "picked_local": "12:00 PM CDT",
-        "train_pnl_of_pick": 22354.04,
-        "test_pnl_of_pick": 5777.25,
-        "test_pnl_of_incumbent": 5777.25,
-        "pick_beat_incumbent_on_test": false,
-        "test_rank_of_pick": 4,
+        "picked_on_train": "17:30",
+        "picked_local": "12:30 PM CDT",
+        "train_pnl_of_pick": 21622.74,
+        "test_pnl_of_pick": 6925.47,
+        "test_pnl_of_incumbent": 5576.44,
+        "pick_beat_incumbent_on_test": true,
+        "test_rank_of_pick": 1,
         "test_best_mark": "17:30",
         "n_marks": 13
       }
     ],
     "n_folds": 3,
-    "picked_beat_incumbent": 0,
+    "picked_beat_incumbent": 3,
     "distinct_picks": [
-      "17:00",
+      "17:30",
       "18:00"
     ],
-    "mean_test_rank_of_pick": 5.0
+    "mean_test_rank_of_pick": 3.67
   },
   "admissible_sweep": "fine",
   "verdict": {
@@ -941,11 +941,11 @@
     "best_local": "12:30 PM CDT",
     "incumbent": "17:00",
     "incumbent_local": "12:00 PM CDT",
-    "gap_dollars": 416.92,
+    "gap_dollars": 9853.86,
     "checks": {
-      "argmax_beats_incumbent_out_of_sample": false,
+      "argmax_beats_incumbent_out_of_sample": true,
       "same_argmax_every_fold": false,
-      "bootstrap_ci_excludes_zero": false,
+      "bootstrap_ci_excludes_zero": true,
       "clears_expected_max_sharpe_on_noise": false
     },
     "all_checks_pass": false,
