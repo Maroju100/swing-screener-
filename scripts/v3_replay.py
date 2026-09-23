@@ -357,7 +357,10 @@ def main():
                     print(fmt(r))
                     report['results'].setdefault(wname, []).append(
                         {k: v for k, v in r.items() if k != 'trade_list'})
-        dest = os.path.join(ROOT, 'data', 'v3_rs_results.json')
+        # Suffixed for non-baseline params so a tightened run never overwrites the
+        # committed baseline evidence (both used to share one filename).
+        suffix = '' if args.params == 'baseline' else f'_{args.params}'
+        dest = os.path.join(ROOT, 'data', f'v3_rs_results{suffix}.json')
         json.dump(report, open(dest, 'w'), indent=1)
         print(f"\nwrote {os.path.relpath(dest, ROOT)}")
         return
@@ -385,7 +388,10 @@ def main():
                 report['results'].setdefault(wname, []).append(
                     {k: v for k, v in r.items() if k != 'trade_list'})
 
-    dest = os.path.join(ROOT, 'data', 'v3_replay_results.json')
+    # Suffixed for non-baseline params so a tightened run never overwrites the
+    # committed baseline evidence (both used to share one filename).
+    suffix = '' if args.params == 'baseline' else f'_{args.params}'
+    dest = os.path.join(ROOT, 'data', f'v3_replay_results{suffix}.json')
     json.dump(report, open(dest, 'w'), indent=1)
     print(f"\nwrote {os.path.relpath(dest, ROOT)}")
 
