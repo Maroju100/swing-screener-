@@ -136,7 +136,7 @@ def extract_plan(text):
 
 def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False,
         params=None, src_patches=None, tag='17h', daily_path=None, hourly_path=None,
-        cost_bps=0.0):
+        cost_bps=0.0, price_field='close_price'):
     """Replay the engine day-by-day at its real ~17:00 UTC check price.
 
     The four research hooks below were added 2026-09-22. All of them default to
@@ -154,6 +154,16 @@ def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False,
     tag           -- distinct scratch state file per variant, so concurrent or
                      successive variants can never share state (skill rule).
     daily/hourly  -- dataset overrides, for windows past the anchor file's end.
+    price_field   -- WHICH INSTANT "today" is priced at. MEASURED 2026-09-22: the
+                     hourly bar labelled 17:00 SPANS 17:00-18:00, so its
+                     close_price is the 18:00 UTC (1:00 PM CDT) price -- 46 minutes
+                     AFTER the live trigger fires at ~17:14 UTC. Its open_price is
+                     the 17:00 UTC (noon CDT) price, which is what the live system
+                     actually trades near.
+                     Default stays 'close_price' so the published $124,080.90
+                     anchor still reproduces; pass 'open_price' for a
+                     live-accurate basis. On the 64-day window the two differ by
+                     -39% ($30,623 -> $18,694), so this is NOT cosmetic.
     cost_bps      -- round-trip friction, PER SIDE, in basis points. The engine
                      still SIGNALS off true prices (slippage does not move a
                      signal); cost is applied to the EXECUTION, so a buy fills at
@@ -196,7 +206,7 @@ def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False,
     hourly = json.load(open(hourly_path or HOURLY))
     q1700 = {}
     for r in hourly['data']['results']:
-        q1700[r['symbol']] = {b['begins_at'][:10]: float(b['close_price'])
+        q1700[r['symbol']] = {b['begins_at'][:10]: float(b[price_field])
                               for b in r['bars'] if b['begins_at'][11:19] == '17:00:00'}
 
     # Tag-scoped, NOT fixed names. These were shared filenames until 2026-09-22,
@@ -285,6 +295,7 @@ def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False,
         'params': dict(params or {}),
         'settlement_lockup_removed': no_lockup,
         'cost_bps': cost_bps,
+        'price_field': price_field,
         'capital': capital,
         'realized': round(realized_total, 2),
         'unrealized': round(unrealized, 2),
