@@ -1,0 +1,76 @@
+{
+ "generated": "2026-09-23",
+ "stop_engine": "f170602",
+ "prod_engine": "origin/main",
+ "capital": 80000.0,
+ "cost_bps": 5.0,
+ "DAILY_STOP_PCT": 0.01,
+ "bases": {
+  "hourly_132d": {
+   "description": "hourly bars, 2026-03-13..09-21, priced ~1:00 PM CDT",
+   "production": {
+    "realized": 124289.71,
+    "return_pct": 155.36,
+    "trades": 771,
+    "daily_stop_sells": 0,
+    "daily_stop_days": 0
+   },
+   "stop_engine_flag_off": {
+    "realized": 124289.71,
+    "return_pct": 155.36,
+    "trades": 771,
+    "daily_stop_sells": 0,
+    "daily_stop_days": 0
+   },
+   "daily_stop_on": {
+    "realized": 78835.25,
+    "return_pct": 98.54,
+    "trades": 556,
+    "daily_stop_sells": 130,
+    "daily_stop_days": 28
+   },
+   "flag_off_matches_production": true,
+   "stop_delta_vs_production": -45454.46
+  },
+  "min30_64d_1700": {
+   "description": "30-min bars, 2026-06-22..09-21, 12:00 PM CDT",
+   "production": {
+    "realized": 18694.35,
+    "return_pct": 23.37,
+    "trades": 359
+   },
+   "stop_engine_flag_off": {
+    "realized": 18694.35,
+    "return_pct": 23.37,
+    "trades": 359
+   },
+   "daily_stop_on": {
+    "realized": 5553.75,
+    "return_pct": 6.94,
+    "trades": 267
+   },
+   "flag_off_matches_production": true,
+   "stop_delta_vs_production": -13140.6
+  },
+  "min30_64d_1730": {
+   "description": "30-min bars, 2026-06-22..09-21, 12:30 PM CDT",
+   "production": {
+    "realized": 28548.21,
+    "return_pct": 35.69,
+    "trades": 364
+   },
+   "stop_engine_flag_off": {
+    "realized": 28548.21,
+    "return_pct": 35.69,
+    "trades": 364
+   },
+   "daily_stop_on": {
+    "realized": 8365.02,
+    "return_pct": 10.46,
+    "trades": 267
+   },
+   "flag_off_matches_production": true,
+   "stop_delta_vs_production": -20183.19
+  }
+ }
+}
