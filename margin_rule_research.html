@@ -172,6 +172,7 @@
   tbody tr:last-child td { border-bottom: none; }
   tr.hl td { background: var(--accent-w); font-weight: 600; }
   td.pos { color: var(--good); } td.neg { color: var(--bad); }
+  span.pos { color: var(--good); font-weight: 700; } span.neg { color: var(--bad); font-weight: 700; }
 
   /* ---------- repro ---------- */
   code, .mono { font-family: "JetBrains Mono", monospace; font-size: .88em; }
@@ -209,32 +210,129 @@
 <div class="wrap">
 
   <header>
-    <div class="eyebrow">Replay study &middot; 22 September 2026 &middot; engine origin/main</div>
+    <div class="eyebrow">Replay study &middot; updated 23 September 2026 &middot; engine origin/main</div>
     <h1>Margin-Style Rule Trials</h1>
     <p class="deck">
-      Six questions about the live trading rules, each re-tested by replaying the
-      production engine day by day over real market data. Five of the six answers
-      say <em>leave it alone</em>. One question the data cannot answer, and that is
-      recorded as unanswered rather than estimated. The live account&rsquo;s own P&amp;L is
-      below, kept separate from every backtest figure on this page.
+      Every variation of the live rules tested so far &mdash; stops, the 1% daily stop,
+      overnight exits, entry filters, position caps, check time &mdash; each re-tested by
+      replaying the production engine day by day over real market data, and compared
+      against Margin-Style Live on the same basis. The live account&rsquo;s own P&amp;L is
+      kept separate from every backtest figure.
     </p>
   </header>
 
   <div class="verdict">
-    <h2>Nothing changed, and that is the result</h2>
+    <h2>Nothing beats the live rules consistently</h2>
     <p>
-      A <strong>500-configuration grid search</strong> under 3-fold walk-forward validation
-      found no parameter set that generalizes. The best-performing tuned configuration returns
-      <strong class="num">+96.7%</strong> over the full window against the untouched baseline's
-      <strong class="num">+155.4%</strong> &mdash; worse Sharpe, nearly double the drawdown.
-      Every structural variant tested was neutral or harmful.
+      Some variants beat Margin-Style Live on one window or one price series. <strong>None
+      beats it on every one</strong>, and none of the variants that top a column passes
+      significance testing. Only two setups never rank worse than 4th anywhere: the live
+      rules, and a 25% per-stock cap that beats them in just one column, by 0.5 points.
     </p>
     <p>
-      <strong>No production parameter is recommended for change.</strong> And at the
-      price basis the live system actually trades at &mdash; a timing defect this study also
-      found &mdash; production ranks <strong>first outright</strong> among everything tested.
+      <strong>The 1% daily stop loses on every basis tested</strong> &mdash; by
+      <span class="num">$45,454</span> over six months &mdash; and the earlier
+      &ldquo;+248%&rdquo; claim for it is withdrawn. <strong>Closing out overnight
+      positions loses too</strong>: the overnight bounce is where most of the edge is made.
     </p>
   </div>
+
+  <section>
+    <h2 class="head">Every variant against Margin-Style Live</h2>
+    <p class="sub">
+      Realized return on $80,000, 5&nbsp;bps cost per side, full engine replay. Three bases,
+      because the answer depends on which one you look at &mdash; that dependence is the finding.
+      <span class="mono">&#9650;</span> beats the live rules in that column,
+      <span class="mono">&#9660;</span> loses to them.
+    </p>
+    <div class="card">
+      <div class="tw">
+        <table id="cmpTable">
+          <thead>
+            <tr>
+              <th style="text-align:left">Setup</th>
+              <th>6 months<br><span style="font-weight:500;text-transform:none;letter-spacing:0">hourly bars &middot; ~1:00&nbsp;PM</span></th>
+              <th>64 days<br><span style="font-weight:500;text-transform:none;letter-spacing:0">30-min bars &middot; 12:00&nbsp;PM</span></th>
+              <th>64 days<br><span style="font-weight:500;text-transform:none;letter-spacing:0">30-min bars &middot; 12:30&nbsp;PM</span></th>
+            </tr>
+          </thead>
+          <tbody id="cmpBody"></tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0">
+        <strong>How to read it.</strong> The 6-month column is the longest window but uses hourly
+        bars, which disagree with 1-minute prints at about 7% of instants. The 64-day columns use
+        the more accurate 30-minute bars but cover one stretch in which the eight stocks fell 16%.
+        The live trigger fires at about <strong>12:14&nbsp;PM&nbsp;CDT</strong>, between the two
+        right-hand columns. All times Central daylight.
+      </p>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>Overnight exits, measured separately</h3>
+      <p class="note">
+        These need an exit at a clock time inside the session, so they exist only on the 64-day
+        window. Priced ~1:00&nbsp;PM&nbsp;CDT, the basis the intraday study validates against, where
+        Margin-Style Live returns <span class="num">+38.3%</span>. Details further down.
+      </p>
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Overnight setup</th><th>Return</th><th>vs Margin Live</th><th>Max DD</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>Margin-Style Live &mdash; hold overnight</td><td class="num pos">+38.3%</td><td class="num">&mdash;</td><td class="num">&minus;12.4%</td></tr>
+            <tr><td>Sell 25% of every position at the bell</td><td class="num pos">+27.4%</td><td class="num neg">&#9660; &minus;10.9 pts</td><td class="num">&minus;10.2%</td></tr>
+            <tr><td>Sell 50% at the bell</td><td class="num pos">+19.3%</td><td class="num neg">&#9660; &minus;19.0 pts</td><td class="num">&minus;7.9%</td></tr>
+            <tr><td>Sell 75% at the bell</td><td class="num pos">+9.6%</td><td class="num neg">&#9660; &minus;28.7 pts</td><td class="num">&minus;5.9%</td></tr>
+            <tr><td>Sell 100% at the bell (no overnight risk)</td><td class="num neg">&minus;4.8%</td><td class="num neg">&#9660; &minus;43.1 pts</td><td class="num">&minus;14.9%</td></tr>
+            <tr><td>Close everything at 2:30&nbsp;PM</td><td class="num neg">&minus;4.9%</td><td class="num neg">&#9660; &minus;43.2 pts</td><td class="num">&minus;7.9%</td></tr>
+            <tr><td>Close everything at 12:30&nbsp;PM</td><td class="num pos">+0.8%</td><td class="num neg">&#9660; &minus;37.5 pts</td><td class="num">&minus;4.4%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">The 1% daily stop</h2>
+    <p class="sub">
+      Liquidate everything and stop buying for the day once the day&rsquo;s loss reaches 1% of
+      capital. Replayed on the engine revision that carries it with its double-sell defect
+      fixed, switched on and off by a single flag. With the flag off, that engine reproduces
+      Margin-Style Live <strong>to the cent</strong> on all three bases, so the difference below
+      is the stop and nothing else.
+    </p>
+    <div class="card">
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Basis</th><th>Margin-Style Live</th><th>With 1% daily stop</th><th>Cost of the stop</th></tr></thead>
+          <tbody>
+            <tr><td>6 months &middot; hourly &middot; ~1:00&nbsp;PM</td><td class="num pos">+155.4%</td><td class="num pos">+98.5%</td><td class="num neg">&minus;$45,454</td></tr>
+            <tr><td>64 days &middot; 30-min &middot; 12:00&nbsp;PM</td><td class="num pos">+23.4%</td><td class="num pos">+6.9%</td><td class="num neg">&minus;$13,141</td></tr>
+            <tr><td>64 days &middot; 30-min &middot; 12:30&nbsp;PM</td><td class="num pos">+35.7%</td><td class="num pos">+10.5%</td><td class="num neg">&minus;$20,183</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0">
+        <strong>Why it loses:</strong> the stop sells into the day&rsquo;s weakness, which is exactly
+        when this strategy wants to be holding &mdash; the rebound it gives up arrives overnight
+        and the next morning.
+      </p>
+    </div>
+    <div class="callout" style="margin-top:14px; border-left-color: var(--bad); background: var(--bad-w)">
+      <h3>The earlier &ldquo;+248.36% with the daily stop&rdquo; is withdrawn</h3>
+      <p>
+        It came from taking the stored daily P&amp;L of a run <em>without</em> the stop and
+        capping each losing day at &minus;$300. That assumes the stop changes nothing except
+        the size of bad days. In reality it changes which positions exist the next morning, so
+        the whole path diverges. Its &ldquo;out-of-sample&rdquo; check was a slice of the same
+        run, and the $300 cap was 1% of $30,000 applied to an $80,000 backtest.
+      </p>
+      <p>
+        The stop was <strong>never on the live system</strong> &mdash; it existed only on a
+        development branch &mdash; so no real money was exposed to it.
+      </p>
+    </div>
+  </section>
 
   <section>
     <h2 class="head">The real account &mdash; not a backtest</h2>
@@ -316,52 +414,92 @@
       </p>
       <p>
         <strong>The published +155.10% is not withdrawn.</strong> It is the exact,
-        reproducible output of its stated method &mdash; just priced at 1:00&nbsp;PM&nbsp;CDT.
-        The live-accurate figure for the same rules and window is
-        <strong class="num">+125.9%</strong>.
+        reproducible output of its stated method &mdash; just priced at about 1:00&nbsp;PM&nbsp;CDT,
+        on hourly bars. What the same rules would have returned over six months at the live
+        check time is <strong>unknown</strong> &mdash; see below.
       </p>
     </div>
 
-    <div class="card" style="margin-top:14px">
-      <h3>Same rules, same window &mdash; only the priced instant differs</h3>
-      <p class="note">64-day window, 5&nbsp;bps per side.</p>
-      <div class="tw">
-        <table>
-          <thead><tr><th>Priced at</th><th>Realized</th><th>Return</th><th style="text-align:left">Note</th></tr></thead>
-          <tbody>
-            <tr><td>18:00 UTC &middot; 1:00 PM CDT</td><td class="num">$30,623</td><td class="num pos">+38.3%</td><td style="text-align:left">what every backtest used</td></tr>
-            <tr><td>17:30 UTC &middot; 12:30 PM CDT</td><td class="num">$28,131</td><td class="num pos">+35.2%</td><td style="text-align:left">&nbsp;</td></tr>
-            <tr class="hl"><td>17:00 UTC &middot; 12:00 PM CDT</td><td class="num">$18,694</td><td class="num pos">+23.4%</td><td style="text-align:left">nearest to the live fire</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <h3>Every conclusion gets stronger at the correct basis</h3>
-      <p class="note">
-        Full 132-day window repriced at 17:00&nbsp;UTC. Production goes from rank 2 to
-        <strong>rank 1 outright</strong>, so the significance caveat it needed before is
-        no longer needed at all.
+    <div class="callout" style="margin-top:14px">
+      <h3>&hellip;and the hourly series itself is wrong at about 7% of instants</h3>
+      <p>
+        Checked against 1-minute prints, the hourly and 30-minute series disagree on about 7% of
+        prices at the same nominal time, and the 30-minute series is right <strong>18 times out
+        of 21</strong>. Because the engine trades on 0.4% and &minus;1.51% thresholds, a tiny price
+        difference flips a rule and the whole path diverges: on the same 64 days and the same
+        instant, hourly bars give <span class="num">$17,811</span> and 30-minute bars
+        <span class="num">$28,131</span>.
       </p>
-      <div class="tw">
+      <p>
+        <strong>So the &ldquo;+125.9% live-accurate&rdquo; figure and the &ldquo;production ranks
+        first outright&rdquo; table previously shown here are withdrawn</strong> &mdash; both were
+        priced on hourly bars. An accurate six-month figure at the live check time cannot be
+        produced: real 30-minute bars start on 22&nbsp;June.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">When should the daily check fire?</h2>
+    <p class="sub">
+      Margin-Style Live replayed with its single daily check at every 30-minute mark in the
+      session. 64 days, 30-minute bars priced at the exact instant, 5&nbsp;bps per side.
+    </p>
+    <div class="card">
+      <div class="chart-scroll"><svg class="chart" id="checkChart" viewBox="0 0 900 480" role="img" aria-label="Return by check time: 12:30 PM +35.7% and 1:00 PM +34.9% lead; noon +23.4% ranks 8th; every mark before 10:30 AM loses money"></svg></div>
+      <div class="tw" style="margin-top:14px">
         <table>
-          <thead><tr><th>#</th><th style="text-align:left">Configuration</th><th>At live basis</th><th>Return</th><th>Sharpe</th></tr></thead>
+          <thead><tr><th style="text-align:left">Is 12:30&ndash;1:00&nbsp;PM genuinely better than noon?</th><th>Result</th></tr></thead>
           <tbody>
-            <tr class="hl"><td>1</td><td style="text-align:left"><strong>PRODUCTION &mdash; current rules</strong></td><td class="num">$100,745</td><td class="num pos">+125.9%</td><td class="num">3.38</td></tr>
-            <tr><td>2</td><td style="text-align:left">Trade cap 10%</td><td class="num">$96,337</td><td class="num pos">+120.4%</td><td class="num">3.40</td></tr>
-            <tr><td>3</td><td style="text-align:left">Intraday stop &minus;2.5%</td><td class="num">$87,855</td><td class="num pos">+109.8%</td><td class="num">3.11</td></tr>
-            <tr><td>4</td><td style="text-align:left">Best grid-search config</td><td class="num">$62,326</td><td class="num pos">+77.9%</td><td class="num">2.57</td></tr>
-            <tr><td>5</td><td style="text-align:left">Quality filter 3+ down days</td><td class="num">$33,504</td><td class="num pos">+41.9%</td><td class="num">2.54</td></tr>
-            <tr><td>6</td><td style="text-align:left">No intraday stop</td><td class="num neg">&minus;$9,956</td><td class="num neg">&minus;12.4%</td><td class="num neg">&minus;0.83</td></tr>
+            <tr><td>Best time on earlier data also wins on later, unseen data</td><td class="num pos">Yes &mdash; 3 of 3</td></tr>
+            <tr><td>The same time wins every time</td><td class="num neg">No &mdash; 1:00, 12:30, 12:30</td></tr>
+            <tr><td>Daily difference is statistically non-zero</td><td class="num pos">Yes &mdash; P = 0.994</td></tr>
+            <tr><td>Beats what searching 13 random times would produce</td><td class="num neg">No &mdash; Sharpe 2.70 vs 3.38</td></tr>
           </tbody>
         </table>
       </div>
       <p class="note" style="margin:16px 0 0">
-        The &minus;2.5% stop that ranked 1st at the wrong basis falls to <strong>3rd</strong>
-        and takes the <strong>largest</strong> hit of any configuration (&minus;31% against
-        &minus;19% for production) &mdash; independent corroboration of the bootstrap verdict
-        that its advantage was a timing artifact, not an edge.
+        The teal bar is noon, the nearest measured mark to the live check.
+        <strong>Two of four checks pass: suggestive, not proven.</strong> The live trigger fires at
+        about 12:14&nbsp;PM, between the 8th- and 1st-ranked marks, and that minute itself has never
+        been measured. The one robust result: <strong>every check before about 10:30&nbsp;AM loses
+        money</strong>, on both data series.
+      </p>
+      <p class="note" style="margin:10px 0 0">
+        A version of this chart published earlier on 23&nbsp;September ranked noon 2nd of 13. That was
+        a harness bug: the noon mark was being priced at about 12:30. Corrected here.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">Why the winners keep changing</h2>
+    <p class="sub">
+      Holding the price series fixed and splitting the six months at the turn in the market shows
+      what each challenger actually is: a bet on one kind of market.
+    </p>
+    <div class="card">
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Setup</th><th>Mar 13 &ndash; Jun 19<br><span style="font-weight:500;text-transform:none;letter-spacing:0">stocks +155%</span></th><th>Jun 22 &ndash; Sep 21<br><span style="font-weight:500;text-transform:none;letter-spacing:0">stocks &minus;16%</span></th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>Margin-Style Live</td><td class="num">+67.7% &middot; #2</td><td class="num">+38.3% &middot; #2</td></tr>
+            <tr><td>Quality filter 3+ down days</td><td class="num neg">+2.4% &middot; #8</td><td class="num">+37.2% &middot; #5</td></tr>
+            <tr><td>Intraday stop &minus;1.0%</td><td class="num">+55.5% &middot; #5</td><td class="num">+38.3% &middot; #3</td></tr>
+            <tr><td>Intraday stop &minus;2.5%</td><td class="num">+54.6% &middot; #6</td><td class="num pos">+52.1% &middot; #1</td></tr>
+            <tr><td>Best grid-search config</td><td class="num pos">+99.0% &middot; #1</td><td class="num neg">&minus;4.9% &middot; #9</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0">
+        The quality filter skips about 60% of entries: nearly worthless when prices are rising,
+        roughly neutral when they are falling. The grid-search winner is the opposite bet. Neither
+        holds up across both halves; Margin-Style Live is 2nd in both.
+      </p>
+      <p class="note" style="margin:10px 0 0">
+        <strong>Worth knowing:</strong> in the rising half, simply holding the eight stocks
+        (<span class="num">+155%</span>) beat Margin-Style Live (<span class="num">+68%</span>). Its
+        whole advantage over buying and holding came from the falling half.
       </p>
     </div>
   </section>
@@ -382,8 +520,20 @@
 
       <div class="lrow">
         <div class="lq">Does an entry quality filter help?</div>
-        <div class="la">First valid measurement of the 3+&nbsp;consecutive-down-days filter. Every threshold is <b>harmful</b>: 3+ down days returns <b class="num">+40.5%</b> against the baseline's <b class="num">+155.4%</b>.</div>
+        <div class="la">Over six months, every threshold is <b>harmful</b>: 3+ down days returns <b class="num">+40.5%</b> against <b class="num">+155.4%</b>. It tops the 64-day noon column only because those 64 days were a falling market &mdash; in the rising half it earned <b class="num">+2.4%</b>.</div>
         <span class="chip c-no">Harmful</span>
+      </div>
+
+      <div class="lrow">
+        <div class="lq">Does a 1% daily loss stop help?</div>
+        <div class="la">Loses on every basis: <b class="num">+98.5%</b> vs <b class="num">+155.4%</b> over six months, and <b class="num">+6.9%</b> vs <b class="num">+23.4%</b> at noon on 30-minute bars. The earlier &ldquo;+248%&rdquo; is withdrawn.</div>
+        <span class="chip c-no">Harmful</span>
+      </div>
+
+      <div class="lrow">
+        <div class="lq">Is there a better time for the daily check?</div>
+        <div class="la">12:30&ndash;1:00&nbsp;PM beats noon by <b class="num">$9,854</b> over 64 days and passes 2 of 4 validation checks. Anything before 10:30&nbsp;AM loses money.</div>
+        <span class="chip c-na">Suggestive</span>
       </div>
 
       <div class="lrow">
@@ -400,7 +550,7 @@
 
       <div class="lrow">
         <div class="lq">Is the &minus;1.51% intraday stop the right one?</div>
-        <div class="la">Removing it entirely gives <b class="num">&minus;11.6%</b>. Tightening to &minus;1.0% costs <b class="num">$14,943</b>. Loosening to &minus;2.5% gains $2,772 on P&amp;L but loses on <em>both</em> Sharpe and drawdown.</div>
+        <div class="la">Removing it entirely gives <b class="num">&minus;11.6%</b> over six months. Tightening to &minus;1.0% costs <b class="num">$14,943</b> there, though it wins the 64-day columns &mdash; and loses in the rising half. Loosening to &minus;2.5% wins on hourly bars and loses on 30-minute bars.</div>
         <span class="chip c-yes">Keep as is</span>
       </div>
 
@@ -632,7 +782,10 @@ P(variant better than baseline)                   <b>0.247</b></div>
 <b>python3 scripts/margin_style_research.py stats</b>                <span style="color:var(--ink-3)"># DSR + bootstrap verdict</span>
 <b>python3 scripts/margin_style_intraday_study.py validate</b>       <span style="color:var(--ink-3)"># gate for the two below</span>
 <b>python3 scripts/margin_style_intraday_study.py exits</b>
-<b>python3 scripts/margin_style_intraday_study.py frequency</b></div>
+<b>python3 scripts/margin_style_intraday_study.py frequency</b>
+<b>python3 scripts/margin_style_rank_admissible.py</b>            <span style="color:var(--ink-3)"># 30-min ranking + regime split</span>
+<b>python3 scripts/margin_style_daily_stop_admissible.py</b>      <span style="color:var(--ink-3)"># 1% daily stop, all bases</span>
+<b>python3 scripts/margin_style_check_time.py all</b>             <span style="color:var(--ink-3)"># check time + 1-min referee</span></div>
   </section>
 
   <footer>
@@ -645,8 +798,10 @@ P(variant better than baseline)                   <b>0.247</b></div>
     </p>
     <p>
       All figures are MEASURED by replaying <code>origin/main</code> &mdash; the revision that
-      trades real money &mdash; on $80,000 starting capital, priced at the actual 17:00&nbsp;UTC bar
-      the live trigger fires on. The engine was never modified; variants patch a copy in memory.
+      trades real money &mdash; on $80,000 starting capital, at the price basis stated beside each
+      figure (the live trigger fires at about 12:14&nbsp;PM&nbsp;CDT). The daily stop is replayed on
+      revision <code>f170602</code>, which matches <code>origin/main</code> to the cent with the stop
+      switched off. The engine was never modified; variants patch a copy in memory.
       Backtested returns describe the rules over one specific window and are not a forecast.
     </p>
   </footer>
@@ -709,6 +864,30 @@ const VARIANTS = [
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
+const CMP = [["Margin-Style Live (current rules)", 155.36, 23.37, 35.69], ["1% daily stop", 98.54, 6.94, 10.46], ["Intraday stop −1.0% (tighter)", 136.68, 27.36, 40.43], ["Intraday stop −2.5% (looser)", 158.83, 17.27, 32.98], ["Symbol cap 25% (was 50%)", 147.08, 23.88, 35.19], ["Trade cap 10% (was 25%)", 149.38, 19.43, 33.16], ["Quality filter: 3+ down days", 40.5, 36.91, 35.04], ["Max 1 tranche per symbol", 99.34, 14.68, 18.98], ["Best grid-search config", 96.74, -7.3, -5.58], ["No intraday stop at all", -11.59, -2.15, 17.25]];
+const CMP_REF = ["Buy & hold the 8 stocks", 119.19, -15.64, -16.26];
+const CHECK = [{"label": "8:30 AM", "sub": "13:30 UTC", "pct": -3.34}, {"label": "9:00 AM", "sub": "14:00 UTC", "pct": -2.34}, {"label": "9:30 AM", "sub": "14:30 UTC", "pct": -3.54}, {"label": "10:00 AM", "sub": "15:00 UTC", "pct": -2.85}, {"label": "10:30 AM", "sub": "15:30 UTC", "pct": 28.74}, {"label": "11:00 AM", "sub": "16:00 UTC", "pct": 26.74}, {"label": "11:30 AM", "sub": "16:30 UTC", "pct": 24.82}, {"label": "12:00 PM", "sub": "17:00 UTC", "pct": 23.37}, {"label": "12:30 PM", "sub": "17:30 UTC", "pct": 35.69}, {"label": "1:00 PM", "sub": "18:00 UTC", "pct": 34.89}, {"label": "1:30 PM", "sub": "18:30 UTC", "pct": 26.8}, {"label": "2:00 PM", "sub": "19:00 UTC", "pct": 22.54}, {"label": "2:30 PM", "sub": "19:30 UTC", "pct": 28.75}];
+
+function renderCompare() {
+  const base = CMP[0];
+  const cell = (v, b, isBase) => {
+    const sign = v > 0 ? '+' : (v < 0 ? '−' : '');
+    const txt = `${sign}${Math.abs(v).toFixed(1)}%`;
+    if (isBase) return `<td class="num">${txt}</td>`;
+    const d = v - b;
+    const mark = d > 0.005 ? '▲' : (d < -0.005 ? '▼' : '=');
+    const cls = d > 0.005 ? 'pos' : (d < -0.005 ? 'neg' : '');
+    return `<td class="num"><span class="${cls}" aria-label="${d > 0 ? 'beats' : 'loses to'} live rules">${mark}</span> ${txt}</td>`;
+  };
+  const ranks = [1, 2, 3].map(c => [...CMP].sort((a, b) => b[c] - a[c]).map(r => r[0]));
+  const rows = CMP.map((r, i) => `<tr class="${i === 0 ? 'hl' : ''}"><td>${esc(r[0])}</td>${
+    [1, 2, 3].map(c => cell(r[c], base[c], i === 0).replace('</td>',
+      ` <span style="color:var(--ink-3);font-size:11px">#${ranks[c - 1].indexOf(r[0]) + 1}</span></td>`)).join('')}</tr>`);
+  rows.push(`<tr><td style="color:var(--ink-2)"><em>${esc(CMP_REF[0])}</em></td>${
+    [1, 2, 3].map(c => `<td class="num" style="color:var(--ink-2)"><em>${CMP_REF[c] > 0 ? '+' : '−'}${Math.abs(CMP_REF[c]).toFixed(1)}%</em></td>`).join('')}</tr>`);
+  $('cmpBody').innerHTML = rows.join('');
+}
+
 function diverging(svg, rows, fmt, W, rowH, padL) {
   const padR = 92, padT = 16, padB = 26;
   const H = padT + rows.length * rowH + padB;
@@ -741,8 +920,10 @@ function diverging(svg, rows, fmt, W, rowH, padL) {
       const tx = r.v >= 0 ? x(r.v) + 8 : x(r.v) - 8;
       s += `<text class="vl" x="${tx.toFixed(1)}" y="${ty}" text-anchor="${r.v >= 0 ? 'start' : 'end'}">${fmt(r.v)}</text>`;
     } else {
-      // no room outside without colliding with the row label -- set it inside the bar
-      s += `<text class="vl" x="${(x(r.v) + 9).toFixed(1)}" y="${ty}" text-anchor="start" fill="${css('--surface')}">${fmt(r.v)}</text>`;
+      // no room outside without colliding with the row label, and a short bar is too
+      // narrow to hold it -- set it just right of the zero line, which is empty for a
+      // negative-only row
+      s += `<text class="vl" x="${(zx + 8).toFixed(1)}" y="${ty}" text-anchor="start">${fmt(r.v)}</text>`;
     }
   });
   s += `<line class="zero" x1="${zx.toFixed(1)}" y1="${padT}" x2="${zx.toFixed(1)}" y2="${H - padB}"/>`;
@@ -797,9 +978,11 @@ function drawAll() {
   diverging($('legChart'), LEGS.map(l => ({ ...l, v: l.v })), usdFmt, 900, 46, 168);
   diverging($('gapChart'), GAP.map((g, i) => ({ ...g, v: g.pct, hl: i === 0 })), pctFmt, 900, 38, 150);
   costChart($('costChart'));
+  diverging($('checkChart'), CHECK.map(c => ({ ...c, v: c.pct, hl: c.sub.startsWith('17:00') })), pctFmt, 900, 34, 150);
 }
 
 renderVariants();
+renderCompare();
 drawAll();
 if (window.matchMedia) {
   const mq = window.matchMedia('(prefers-color-scheme: dark)');

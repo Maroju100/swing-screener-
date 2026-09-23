@@ -899,9 +899,11 @@ by holding the series fixed (hourly) and splitting the 132 days by regime:**
   worthless-to-harmful when the basket rises, roughly neutral-to-helpful when it
   falls. The −2.5% stop wins on hourly-late and *loses* on 30-minute-late at both
   marks — a pure series artifact.
-- **Production is the only config that is never worse than rank 4 in any
-  cell.** That consistency, not a maximum in any single cell, is the case for
-  keeping it. The earlier "filter harmful" and "tighter stop costs money"
+- **Only two configs are never worse than rank 4 in any cell: production and
+  the 25% symbol cap** (corrected 2026-09-23 — an earlier version of this line
+  said production alone). The symbol cap beats production in just one cell
+  (+23.9% vs +23.4% at 17:00 UTC) and loses in the others. That consistency,
+  not a maximum in any single cell, is the case for keeping production. The earlier "filter harmful" and "tighter stop costs money"
   findings stand for the full period; they are not overturned by one falling
   64-day window.
 - 🚨 **Production underperformed buy & hold by ~2.3× in the up market**
