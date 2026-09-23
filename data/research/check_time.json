@@ -1,0 +1,954 @@
+{
+  "generated": "2026-09-23",
+  "engine": "origin/main",
+  "capital": 80000.0,
+  "cost_bps": 5.0,
+  "incumbent_utc": "17:00",
+  "anchor_validated": true,
+  "fine": {
+    "window": [
+      "2026-06-22",
+      "2026-09-21"
+    ],
+    "rows": [
+      {
+        "mark_utc": "13:30",
+        "mark_local": "8:30 AM CDT",
+        "realized": -2671.86,
+        "realized_pct": -3.34,
+        "trades": 164,
+        "sharpe": -0.24,
+        "max_dd": -20.34
+      },
+      {
+        "mark_utc": "14:00",
+        "mark_local": "9:00 AM CDT",
+        "realized": -1874.47,
+        "realized_pct": -2.34,
+        "trades": 51,
+        "sharpe": -0.31,
+        "max_dd": -15.2
+      },
+      {
+        "mark_utc": "14:30",
+        "mark_local": "9:30 AM CDT",
+        "realized": -2833.38,
+        "realized_pct": -3.54,
+        "trades": 139,
+        "sharpe": -0.29,
+        "max_dd": -15.17
+      },
+      {
+        "mark_utc": "15:00",
+        "mark_local": "10:00 AM CDT",
+        "realized": -2277.07,
+        "realized_pct": -2.85,
+        "trades": 142,
+        "sharpe": -0.2,
+        "max_dd": -16.05
+      },
+      {
+        "mark_utc": "15:30",
+        "mark_local": "10:30 AM CDT",
+        "realized": 22994.11,
+        "realized_pct": 28.74,
+        "trades": 368,
+        "sharpe": 2.31,
+        "max_dd": -12.95
+      },
+      {
+        "mark_utc": "16:00",
+        "mark_local": "11:00 AM CDT",
+        "realized": 21390.51,
+        "realized_pct": 26.74,
+        "trades": 370,
+        "sharpe": 2.2,
+        "max_dd": -11.74
+      },
+      {
+        "mark_utc": "16:30",
+        "mark_local": "11:30 AM CDT",
+        "realized": 19859.31,
+        "realized_pct": 24.82,
+        "trades": 369,
+        "sharpe": 1.96,
+        "max_dd": -14.56
+      },
+      {
+        "mark_utc": "17:00",
+        "mark_local": "12:00 PM CDT",
+        "realized": 28131.29,
+        "realized_pct": 35.16,
+        "trades": 367,
+        "sharpe": 2.68,
+        "max_dd": -11.53
+      },
+      {
+        "mark_utc": "17:30",
+        "mark_local": "12:30 PM CDT",
+        "realized": 28548.21,
+        "realized_pct": 35.69,
+        "trades": 364,
+        "sharpe": 2.7,
+        "max_dd": -11.53
+      },
+      {
+        "mark_utc": "18:00",
+        "mark_local": "1:00 PM CDT",
+        "realized": 27913.76,
+        "realized_pct": 34.89,
+        "trades": 373,
+        "sharpe": 2.6,
+        "max_dd": -14.07
+      },
+      {
+        "mark_utc": "18:30",
+        "mark_local": "1:30 PM CDT",
+        "realized": 21441.57,
+        "realized_pct": 26.8,
+        "trades": 367,
+        "sharpe": 2.15,
+        "max_dd": -15.3
+      },
+      {
+        "mark_utc": "19:00",
+        "mark_local": "2:00 PM CDT",
+        "realized": 18028.82,
+        "realized_pct": 22.54,
+        "trades": 373,
+        "sharpe": 1.96,
+        "max_dd": -14.62
+      },
+      {
+        "mark_utc": "19:30",
+        "mark_local": "2:30 PM CDT",
+        "realized": 23003.08,
+        "realized_pct": 28.75,
+        "trades": 365,
+        "sharpe": 2.43,
+        "max_dd": -16.14
+      }
+    ],
+    "subwindows": [
+      {
+        "sub": "A",
+        "from": "2026-06-22",
+        "to": "2026-07-21",
+        "days": 21,
+        "pnl": {
+          "13:30": 10626.73,
+          "14:00": -1874.47,
+          "14:30": 7185.12,
+          "15:00": 6919.08,
+          "15:30": 11736.87,
+          "16:00": 12540.01,
+          "16:30": 11907.79,
+          "17:00": 15009.92,
+          "17:30": 14559.94,
+          "18:00": 18960.22,
+          "18:30": 15206.57,
+          "19:00": 12465.74,
+          "19:30": 14576.75
+        },
+        "best": "18:00"
+      },
+      {
+        "sub": "B",
+        "from": "2026-07-22",
+        "to": "2026-08-19",
+        "days": 21,
+        "pnl": {
+          "13:30": -13298.59,
+          "14:00": 0.0,
+          "14:30": -10018.5,
+          "15:00": -9196.15,
+          "15:30": 12079.04,
+          "16:00": 6688.91,
+          "16:30": 4154.61,
+          "17:00": 8040.73,
+          "17:30": 7823.58,
+          "18:00": 2996.22,
+          "18:30": 1488.96,
+          "19:00": -180.39,
+          "19:30": 4409.32
+        },
+        "best": "15:30"
+      },
+      {
+        "sub": "C",
+        "from": "2026-08-20",
+        "to": "2026-09-21",
+        "days": 22,
+        "pnl": {
+          "13:30": 0.0,
+          "14:00": 0.0,
+          "14:30": 0.0,
+          "15:00": 0.0,
+          "15:30": -821.79,
+          "16:00": 2161.6,
+          "16:30": 3796.92,
+          "17:00": 5080.64,
+          "17:30": 6164.69,
+          "18:00": 5957.33,
+          "18:30": 4746.05,
+          "19:00": 5743.46,
+          "19:30": 4017.02
+        },
+        "best": "17:30"
+      }
+    ],
+    "stats": {
+      "window": "fine 64d",
+      "incumbent": "17:00",
+      "incumbent_local": "12:00 PM CDT",
+      "incumbent_realized": 28131.29,
+      "best_mark": "17:30",
+      "best_local": "12:30 PM CDT",
+      "best_realized": 28548.21,
+      "gap_dollars": 416.92,
+      "gap_pp": 0.52,
+      "spread_dollars": 31381.59,
+      "n_marks": 13,
+      "n_days": 64,
+      "bootstrap_daily_diff": {
+        "mean": 8.1e-05,
+        "ci_lo": -0.000438,
+        "ci_hi": 0.000819,
+        "p_better": 0.562
+      },
+      "observed_max_sharpe": 2.7,
+      "expected_max_sharpe_on_noise": 3.38
+    }
+  },
+  "full": {
+    "window": [
+      "2026-03-13",
+      "2026-09-21"
+    ],
+    "rows": [
+      {
+        "mark_utc": "14:00",
+        "mark_local": "9:00 AM CDT",
+        "realized": 54804.43,
+        "realized_pct": 68.51,
+        "total": 54804.43,
+        "total_pct": 68.51,
+        "trades": 509,
+        "trading_days": 132,
+        "quote_fallbacks": 0,
+        "sharpe": 2.86,
+        "max_dd": -16.5
+      },
+      {
+        "mark_utc": "15:00",
+        "mark_local": "10:00 AM CDT",
+        "realized": 69059.96,
+        "realized_pct": 86.32,
+        "total": 69059.96,
+        "total_pct": 86.32,
+        "trades": 501,
+        "trading_days": 132,
+        "quote_fallbacks": 0,
+        "sharpe": 3.69,
+        "max_dd": -15.41
+      },
+      {
+        "mark_utc": "16:00",
+        "mark_local": "11:00 AM CDT",
+        "realized": 131214.47,
+        "realized_pct": 164.02,
+        "total": 132708.39,
+        "total_pct": 165.89,
+        "trades": 776,
+        "trading_days": 132,
+        "quote_fallbacks": 0,
+        "sharpe": 4.74,
+        "max_dd": -10.22
+      },
+      {
+        "mark_utc": "17:00",
+        "mark_local": "12:00 PM CDT",
+        "realized": 100744.77,
+        "realized_pct": 125.93,
+        "total": 101995.02,
+        "total_pct": 127.49,
+        "trades": 752,
+        "trading_days": 132,
+        "quote_fallbacks": 0,
+        "sharpe": 3.87,
+        "max_dd": -10.33
+      },
+      {
+        "mark_utc": "18:00",
+        "mark_local": "1:00 PM CDT",
+        "realized": 124773.79,
+        "realized_pct": 155.97,
+        "total": 126232.43,
+        "total_pct": 157.79,
+        "trades": 778,
+        "trading_days": 132,
+        "quote_fallbacks": 0,
+        "sharpe": 4.45,
+        "max_dd": -8.81
+      },
+      {
+        "mark_utc": "19:00",
+        "mark_local": "2:00 PM CDT",
+        "realized": 88321.76,
+        "realized_pct": 110.4,
+        "total": 89800.05,
+        "total_pct": 112.25,
+        "trades": 768,
+        "trading_days": 132,
+        "quote_fallbacks": 0,
+        "sharpe": 3.72,
+        "max_dd": -8.99
+      },
+      {
+        "mark_utc": "20:00",
+        "mark_local": "3:00 PM CDT",
+        "realized": 79230.03,
+        "realized_pct": 99.04,
+        "total": 81113.82,
+        "total_pct": 101.39,
+        "trades": 756,
+        "trading_days": 132,
+        "quote_fallbacks": 0,
+        "sharpe": 3.42,
+        "max_dd": -13.22
+      }
+    ],
+    "subwindows": [
+      {
+        "sub": "A",
+        "from": "2026-03-13",
+        "to": "2026-05-14",
+        "days": 44,
+        "pnl": {
+          "14:00": 34339.93,
+          "15:00": 39159.66,
+          "16:00": 46902.98,
+          "17:00": 40828.17,
+          "18:00": 36361.47,
+          "19:00": 29093.76,
+          "20:00": 26212.71
+        },
+        "best": "16:00"
+      },
+      {
+        "sub": "B",
+        "from": "2026-05-15",
+        "to": "2026-07-20",
+        "days": 44,
+        "pnl": {
+          "14:00": 39028.81,
+          "15:00": 39803.75,
+          "16:00": 55362.25,
+          "17:00": 35963.13,
+          "18:00": 54219.56,
+          "19:00": 39243.93,
+          "20:00": 33617.41
+        },
+        "best": "16:00"
+      },
+      {
+        "sub": "C",
+        "from": "2026-07-21",
+        "to": "2026-09-21",
+        "days": 44,
+        "pnl": {
+          "14:00": -18564.31,
+          "15:00": -9903.44,
+          "16:00": 28949.24,
+          "17:00": 23953.46,
+          "18:00": 34192.76,
+          "19:00": 19984.07,
+          "20:00": 19399.9
+        },
+        "best": "18:00"
+      }
+    ],
+    "stats": {
+      "window": "full 132d",
+      "incumbent": "17:00",
+      "incumbent_local": "12:00 PM CDT",
+      "incumbent_realized": 100744.77,
+      "best_mark": "16:00",
+      "best_local": "11:00 AM CDT",
+      "best_realized": 131214.47,
+      "gap_dollars": 30469.7,
+      "gap_pp": 38.09,
+      "spread_dollars": 76410.04,
+      "n_marks": 7,
+      "n_days": 132,
+      "bootstrap_daily_diff": {
+        "mean": 0.002885,
+        "ci_lo": 0.000169,
+        "ci_hi": 0.005951,
+        "p_better": 0.983
+      },
+      "observed_max_sharpe": 4.74,
+      "expected_max_sharpe_on_noise": 1.916
+    }
+  },
+  "overlap": {
+    "rows": [
+      {
+        "mark_utc": "14:00",
+        "mark_local": "9:00 AM CDT",
+        "hourly_basis": -2980.17,
+        "min30_basis": -1874.47,
+        "diff": -1105.7
+      },
+      {
+        "mark_utc": "15:00",
+        "mark_local": "10:00 AM CDT",
+        "hourly_basis": -1366.35,
+        "min30_basis": -2277.07,
+        "diff": 910.72
+      },
+      {
+        "mark_utc": "16:00",
+        "mark_local": "11:00 AM CDT",
+        "hourly_basis": 21518.87,
+        "min30_basis": 21390.51,
+        "diff": 128.36
+      },
+      {
+        "mark_utc": "17:00",
+        "mark_local": "12:00 PM CDT",
+        "hourly_basis": 17810.8,
+        "min30_basis": 28131.29,
+        "diff": -10320.49
+      },
+      {
+        "mark_utc": "18:00",
+        "mark_local": "1:00 PM CDT",
+        "hourly_basis": 30233.16,
+        "min30_basis": 27913.76,
+        "diff": 2319.4
+      },
+      {
+        "mark_utc": "19:00",
+        "mark_local": "2:00 PM CDT",
+        "hourly_basis": 18012.5,
+        "min30_basis": 18028.82,
+        "diff": -16.32
+      }
+    ],
+    "spearman": 0.6,
+    "argmax_hourly": "18:00",
+    "argmax_min30": "17:00",
+    "argmax_agrees": false
+  },
+  "referee": {
+    "per_instant": [
+      {
+        "instant": "16:00",
+        "n": 90,
+        "identical": 86,
+        "hourly_closer": 0,
+        "min30_closer": 4,
+        "disagreements": 4,
+        "cases": [
+          {
+            "symbol": "MU",
+            "date": "2026-08-28",
+            "hourly": 923.61,
+            "min30": 921.335,
+            "min1_truth": 921.335,
+            "winner": "min30"
+          },
+          {
+            "symbol": "MU",
+            "date": "2026-09-01",
+            "hourly": 941.9201,
+            "min30": 962.56,
+            "min1_truth": 962.56,
+            "winner": "min30"
+          },
+          {
+            "symbol": "MU",
+            "date": "2026-09-11",
+            "hourly": 971.85,
+            "min30": 979.14,
+            "min1_truth": 979.14,
+            "winner": "min30"
+          },
+          {
+            "symbol": "SNDK",
+            "date": "2026-08-18",
+            "hourly": 1622.4285,
+            "min30": 1645.34,
+            "min1_truth": 1645.34,
+            "winner": "min30"
+          }
+        ]
+      },
+      {
+        "instant": "17:00",
+        "n": 90,
+        "identical": 81,
+        "hourly_closer": 2,
+        "min30_closer": 7,
+        "disagreements": 9,
+        "cases": [
+          {
+            "symbol": "MU",
+            "date": "2026-08-18",
+            "hourly": 938.985,
+            "min30": 935.45,
+            "min1_truth": 938.985,
+            "winner": "hourly"
+          },
+          {
+            "symbol": "MU",
+            "date": "2026-08-20",
+            "hourly": 954.8199,
+            "min30": 957.69,
+            "min1_truth": 957.69,
+            "winner": "min30"
+          },
+          {
+            "symbol": "MU",
+            "date": "2026-08-28",
+            "hourly": 928.91,
+            "min30": 923.1,
+            "min1_truth": 923.1,
+            "winner": "min30"
+          },
+          {
+            "symbol": "MU",
+            "date": "2026-09-02",
+            "hourly": 944.23,
+            "min30": 944.228,
+            "min1_truth": 944.228,
+            "winner": "min30"
+          },
+          {
+            "symbol": "MU",
+            "date": "2026-09-03",
+            "hourly": 942.405,
+            "min30": 943.041,
+            "min1_truth": 951.0,
+            "winner": "min30"
+          },
+          {
+            "symbol": "MU",
+            "date": "2026-09-16",
+            "hourly": 930.535,
+            "min30": 930.8,
+            "min1_truth": 930.8,
+            "winner": "min30"
+          },
+          {
+            "symbol": "SNDK",
+            "date": "2026-08-18",
+            "hourly": 1617.475,
+            "min30": 1613.47,
+            "min1_truth": 1625.34,
+            "winner": "hourly"
+          },
+          {
+            "symbol": "WDC",
+            "date": "2026-08-18",
+            "hourly": 499.89,
+            "min30": 499.98,
+            "min1_truth": 499.98,
+            "winner": "min30"
+          },
+          {
+            "symbol": "WDC",
+            "date": "2026-09-02",
+            "hourly": 444.42,
+            "min30": 442.69,
+            "min1_truth": 442.69,
+            "winner": "min30"
+          }
+        ]
+      },
+      {
+        "instant": "18:00",
+        "n": 90,
+        "identical": 82,
+        "hourly_closer": 1,
+        "min30_closer": 7,
+        "disagreements": 8,
+        "cases": [
+          {
+            "symbol": "MU",
+            "date": "2026-08-18",
+            "hourly": 934.33,
+            "min30": 932.73,
+            "min1_truth": 932.73,
+            "winner": "min30"
+          },
+          {
+            "symbol": "MU",
+            "date": "2026-08-21",
+            "hourly": 966.5,
+            "min30": 967.59,
+            "min1_truth": 967.59,
+            "winner": "min30"
+          },
+          {
+            "symbol": "MU",
+            "date": "2026-08-27",
+            "hourly": 914.5179,
+            "min30": 913.565,
+            "min1_truth": 913.565,
+            "winner": "min30"
+          },
+          {
+            "symbol": "MU",
+            "date": "2026-09-03",
+            "hourly": 945.77,
+            "min30": 950.78,
+            "min1_truth": 945.77,
+            "winner": "hourly"
+          },
+          {
+            "symbol": "MU",
+            "date": "2026-09-14",
+            "hourly": 928.805,
+            "min30": 930.2799,
+            "min1_truth": 930.2799,
+            "winner": "min30"
+          },
+          {
+            "symbol": "MU",
+            "date": "2026-09-17",
+            "hourly": 975.705,
+            "min30": 975.88,
+            "min1_truth": 975.88,
+            "winner": "min30"
+          },
+          {
+            "symbol": "MU",
+            "date": "2026-09-21",
+            "hourly": 1044.21,
+            "min30": 1039.5,
+            "min1_truth": 1039.5,
+            "winner": "min30"
+          },
+          {
+            "symbol": "SNDK",
+            "date": "2026-08-20",
+            "hourly": 1572.9,
+            "min30": 1586.1769,
+            "min1_truth": 1586.1769,
+            "winner": "min30"
+          }
+        ]
+      }
+    ],
+    "hourly_wins": 3,
+    "min30_wins": 18,
+    "verdict": "min30",
+    "symbols": [
+      "MU",
+      "SNDK",
+      "WDC"
+    ],
+    "note": "Only MU/SNDK/WDC have 1-minute coverage (Robinhood serves ~6 trailing weeks). The verdict is therefore measured on a subset, but it is lopsided enough (18-3) that the direction is not in doubt."
+  },
+  "noise": [
+    {
+      "mark_utc": "16:00",
+      "mark_local": "11:00 AM CDT",
+      "jitter_bps": 1.0,
+      "seeds": 24,
+      "unperturbed": 131214.47,
+      "min": 130949.73,
+      "max": 131471.21,
+      "median": 131246.34,
+      "p05": 130983.49,
+      "p95": 131466.13,
+      "stdev": 150.5,
+      "range": 521.48
+    },
+    {
+      "mark_utc": "16:00",
+      "mark_local": "11:00 AM CDT",
+      "jitter_bps": 2.5,
+      "seeds": 24,
+      "unperturbed": 131214.47,
+      "min": 130820.41,
+      "max": 131667.52,
+      "median": 131335.77,
+      "p05": 130884.78,
+      "p95": 131637.83,
+      "stdev": 287.28,
+      "range": 847.11
+    },
+    {
+      "mark_utc": "16:00",
+      "mark_local": "11:00 AM CDT",
+      "jitter_bps": 5.0,
+      "seeds": 24,
+      "unperturbed": 131214.47,
+      "min": 125217.75,
+      "max": 137919.82,
+      "median": 131504.14,
+      "p05": 125544.26,
+      "p95": 136649.46,
+      "stdev": 3493.64,
+      "range": 12702.07
+    },
+    {
+      "mark_utc": "17:00",
+      "mark_local": "12:00 PM CDT",
+      "jitter_bps": 1.0,
+      "seeds": 24,
+      "unperturbed": 100744.77,
+      "min": 100492.77,
+      "max": 101204.35,
+      "median": 100674.35,
+      "p05": 100523.26,
+      "p95": 100828.36,
+      "stdev": 134.44,
+      "range": 711.58
+    },
+    {
+      "mark_utc": "17:00",
+      "mark_local": "12:00 PM CDT",
+      "jitter_bps": 2.5,
+      "seeds": 24,
+      "unperturbed": 100744.77,
+      "min": 97961.71,
+      "max": 118760.62,
+      "median": 101347.88,
+      "p05": 98155.58,
+      "p95": 117413.19,
+      "stdev": 5602.29,
+      "range": 20798.91
+    },
+    {
+      "mark_utc": "17:00",
+      "mark_local": "12:00 PM CDT",
+      "jitter_bps": 5.0,
+      "seeds": 24,
+      "unperturbed": 100744.77,
+      "min": 97857.62,
+      "max": 123040.96,
+      "median": 103776.39,
+      "p05": 97945.11,
+      "p95": 121135.58,
+      "stdev": 7661.87,
+      "range": 25183.34
+    },
+    {
+      "mark_utc": "18:00",
+      "mark_local": "1:00 PM CDT",
+      "jitter_bps": 1.0,
+      "seeds": 24,
+      "unperturbed": 124773.79,
+      "min": 120153.55,
+      "max": 125392.35,
+      "median": 122085.52,
+      "p05": 120197.85,
+      "p95": 124822.91,
+      "stdev": 1453.95,
+      "range": 5238.8
+    },
+    {
+      "mark_utc": "18:00",
+      "mark_local": "1:00 PM CDT",
+      "jitter_bps": 2.5,
+      "seeds": 24,
+      "unperturbed": 124773.79,
+      "min": 118450.17,
+      "max": 125455.28,
+      "median": 122308.19,
+      "p05": 119203.7,
+      "p95": 125022.94,
+      "stdev": 1713.1,
+      "range": 7005.11
+    },
+    {
+      "mark_utc": "18:00",
+      "mark_local": "1:00 PM CDT",
+      "jitter_bps": 5.0,
+      "seeds": 24,
+      "unperturbed": 124773.79,
+      "min": 115430.09,
+      "max": 126932.64,
+      "median": 122099.76,
+      "p05": 116050.1,
+      "p95": 125106.65,
+      "stdev": 2597.16,
+      "range": 11502.55
+    }
+  ],
+  "walkforward_full": {
+    "folds": [
+      {
+        "fold": 1,
+        "train": [
+          "2026-03-13",
+          "2026-04-29",
+          33
+        ],
+        "test": [
+          "2026-04-30",
+          "2026-06-16",
+          33
+        ],
+        "picked_on_train": "16:00",
+        "picked_local": "11:00 AM CDT",
+        "train_pnl_of_pick": 31441.14,
+        "test_pnl_of_pick": 36265.41,
+        "test_pnl_of_incumbent": 21568.69,
+        "pick_beat_incumbent_on_test": true,
+        "test_rank_of_pick": 1,
+        "test_best_mark": "16:00",
+        "n_marks": 7
+      },
+      {
+        "fold": 2,
+        "train": [
+          "2026-03-13",
+          "2026-06-16",
+          66
+        ],
+        "test": [
+          "2026-06-17",
+          "2026-08-04",
+          33
+        ],
+        "picked_on_train": "16:00",
+        "picked_local": "11:00 AM CDT",
+        "train_pnl_of_pick": 67706.55,
+        "test_pnl_of_pick": 56710.75,
+        "test_pnl_of_incumbent": 47194.41,
+        "pick_beat_incumbent_on_test": true,
+        "test_rank_of_pick": 2,
+        "test_best_mark": "18:00",
+        "n_marks": 7
+      },
+      {
+        "fold": 3,
+        "train": [
+          "2026-03-13",
+          "2026-08-04",
+          99
+        ],
+        "test": [
+          "2026-08-05",
+          "2026-09-21",
+          33
+        ],
+        "picked_on_train": "16:00",
+        "picked_local": "11:00 AM CDT",
+        "train_pnl_of_pick": 124417.3,
+        "test_pnl_of_pick": 6797.17,
+        "test_pnl_of_incumbent": 5061.77,
+        "pick_beat_incumbent_on_test": true,
+        "test_rank_of_pick": 2,
+        "test_best_mark": "18:00",
+        "n_marks": 7
+      }
+    ],
+    "n_folds": 3,
+    "picked_beat_incumbent": 3,
+    "distinct_picks": [
+      "16:00"
+    ],
+    "mean_test_rank_of_pick": 1.67
+  },
+  "walkforward_fine": {
+    "folds": [
+      {
+        "fold": 1,
+        "train": [
+          "2026-06-22",
+          "2026-07-14",
+          16
+        ],
+        "test": [
+          "2026-07-15",
+          "2026-08-05",
+          16
+        ],
+        "picked_on_train": "18:00",
+        "picked_local": "1:00 PM CDT",
+        "train_pnl_of_pick": 17270.84,
+        "test_pnl_of_pick": 5690.91,
+        "test_pnl_of_incumbent": 10501.59,
+        "pick_beat_incumbent_on_test": false,
+        "test_rank_of_pick": 3,
+        "test_best_mark": "17:00",
+        "n_marks": 13
+      },
+      {
+        "fold": 2,
+        "train": [
+          "2026-06-22",
+          "2026-08-05",
+          32
+        ],
+        "test": [
+          "2026-08-06",
+          "2026-08-27",
+          16
+        ],
+        "picked_on_train": "17:00",
+        "picked_local": "12:00 PM CDT",
+        "train_pnl_of_pick": 24176.49,
+        "test_pnl_of_pick": -1822.45,
+        "test_pnl_of_incumbent": -1822.45,
+        "pick_beat_incumbent_on_test": false,
+        "test_rank_of_pick": 8,
+        "test_best_mark": "19:30",
+        "n_marks": 13
+      },
+      {
+        "fold": 3,
+        "train": [
+          "2026-06-22",
+          "2026-08-27",
+          48
+        ],
+        "test": [
+          "2026-08-28",
+          "2026-09-21",
+          16
+        ],
+        "picked_on_train": "17:00",
+        "picked_local": "12:00 PM CDT",
+        "train_pnl_of_pick": 22354.04,
+        "test_pnl_of_pick": 5777.25,
+        "test_pnl_of_incumbent": 5777.25,
+        "pick_beat_incumbent_on_test": false,
+        "test_rank_of_pick": 4,
+        "test_best_mark": "17:30",
+        "n_marks": 13
+      }
+    ],
+    "n_folds": 3,
+    "picked_beat_incumbent": 0,
+    "distinct_picks": [
+      "17:00",
+      "18:00"
+    ],
+    "mean_test_rank_of_pick": 5.0
+  },
+  "admissible_sweep": "fine",
+  "verdict": {
+    "admissible_sweep": "fine",
+    "reason": "the 1-minute referee shows the 30-minute series is the accurate one, so only the 64-day fine sweep is admissible; the 132-day hourly sweep is reported but must NOT be used to pick a time",
+    "best_mark": "17:30",
+    "best_local": "12:30 PM CDT",
+    "incumbent": "17:00",
+    "incumbent_local": "12:00 PM CDT",
+    "gap_dollars": 416.92,
+    "checks": {
+      "argmax_beats_incumbent_out_of_sample": false,
+      "same_argmax_every_fold": false,
+      "bootstrap_ci_excludes_zero": false,
+      "clears_expected_max_sharpe_on_noise": false
+    },
+    "all_checks_pass": false,
+    "recommendation": "DO NOT move the trigger -- no mark is distinguishable from the incumbent on admissible data"
+  }
+}
