@@ -58,32 +58,111 @@ parameters were tuned on daily closes. "Today" price is a live-quote proxy, same
 convention as the 9-Way Combo's 3-hour checks: today's live price stands in for
 today's not-yet-final daily close/low, noted explicitly as an approximation.
 
+BACKTEST VALIDATION UPDATE (2026-09-14) -- LABEL CORRECTED 2026-09-17: this and the
+CORRECTION section below were originally headed "REAL-DATA VALIDATION UPDATE," which
+reads ambiguously as "these are the account's real results." They are NOT. Every
+figure in both sections comes from a SIMULATION (a from-scratch replica of this
+file's cmd_plan() logic) run against real historical PRICE data -- "real" describes
+the market data, not the outcome. No live order produced any of these numbers. See
+"ACTUAL LIVE ACCOUNT PERFORMANCE" below for what the account has actually done.
+
+A faithful cash/tranche-modeled replica of this file's actual cmd_plan() logic (not
+a simplified single-trade-per-trigger approximation) was run cold against real daily
+bars, $25,000 assumed start, current 8-symbol universe:
+  6 months (2026-03-14 -> 2026-09-11): +230.56% ($25,000 -> $82,640.31). Max
+    drawdown -3.36% (2026-07-21 $63,739.39 -> 2026-07-29 $61,600.89, -$2,138.50) -
+    the deepest of several shallow 1-3% drawdown episodes through the window.
+  3 months (2026-06-14 -> 2026-09-11): +101.06% ($25,000 -> $50,264.95). Max
+    drawdown -3.35% (2026-07-21 -> 2026-07-28, -$1,300.34) - same late-July stretch.
+  1 month (2026-08-14 -> 2026-09-11): +5.77% ($25,000 -> $26,441.57). Max drawdown
+    -1.43% (2026-08-26 -> 2026-09-03, -$358.72).
+
+CORRECTION (2026-09-16) -- the figures immediately above are OVERSTATED and should
+not be treated as this engine's real expected performance. The replica's STOP fill
+always used stop_price = prev_close * (1 + INTRADAY_STOP), even on days the OPEN
+itself already gapped below that level (real overnight news/gap risk) -- a real
+stop order can't fill better than the market opens. Checked directly: 809 of 5,672
+symbol-days (14.3%) in the 3-year history had the open already below where the
+-1.51% stop would trigger; of the 1,043 STOP trades actually taken in the 3-year
+backtest, 310 (29.7%) were affected, averaging -1.83% worse than the assumed fill.
+That looks small per trade, but this engine reinvests aggressively (up to 95% of
+cash on a HUGE_DIP, tranches compounding on each other) across 1,000+ trades, so a
+~2% tax on a third of all stop-outs compounds into a massive difference. Re-run
+with STOP fills corrected to min(stop_price, that day's open) -- everything else
+(PEAK/GAIN sells, kill-switch, candidate generation, tranche sizing) held identical
+byte-for-byte to isolate this one assumption:
+  6 months: +230.56% -> +162.24% ($25,000 -> $65,560.53). Max drawdown -3.36% -> -9.29%.
+  3 months: +101.06% -> +70.51% ($25,000 -> $42,627.89). Max drawdown -3.35% -> -9.28%.
+  1 month:  +5.77% -> +3.42% ($25,000 -> $25,854.51). Max drawdown -1.43% -> -3.41%.
+  3 years:  +845.71% -> -4.19% ($25,000 -> $23,951.48). Max drawdown -7.84% -> -20.69%.
+The 3-year number doesn't just shrink, it flips from spectacular to a small loss --
+the compounding effect is severe enough over a long enough run to erase the edge
+entirely. Unresolved tension: the real live account's own independently-cited
+historical range (+120-165%) doesn't match what this corrected backtest implies a
+worst-case-fill assumption should produce -- possible explanations (none confirmed)
+are that real broker stop execution beats the exact opening print, the real account
+simply hasn't yet lived through as many severe gap days as this specific 3-year
+window contained, or the "honest fills" correction referenced elsewhere in this
+docstring's own change history only covered T+1 settlement / phantom-drawdown
+issues, not overnight gap risk specifically -- meaning this engine's live
+parameters (HUGE_DIP_DRAWDOWN, HUGE_DIP_PCT, TRANCHE_SCHEDULE, etc., see the
+tuning history below) may themselves have been selected under a backtest that
+never modeled this. Do not treat the 6-month/3-month/1-month/3-year figures above
+this correction as validated without this caveat attached, and treat re-tuning any
+parameter against a backtest as suspect until that backtest is confirmed gap-aware.
+
+ACTUAL LIVE ACCOUNT PERFORMANCE (pulled 2026-09-17, account 912291820 "Agentic 2" --
+the ONLY account this line refers to; distinct from every figure above, which is a
+backtest). Real trading only began the week of 2026-07-02 (the `year` window's
+earlier buckets show zero trades). Realized P&L since, from get_realized_pnl:
+  2026-07-02 -> 07-09: -$30.71 (2 trades)      2026-07-23 -> 07-30: -$138.45 (9 trades)
+  2026-07-30 -> 08-06: +$356.23 (31 trades)    2026-08-06 -> 08-13: +$217.49 (17 trades)
+  2026-08-13 -> 08-20: +$167.56 (28 trades)    2026-08-20 -> 08-27: +$62.16 (17 trades)
+  2026-08-27 -> 09-03: +$115.09 (14 trades)    2026-09-03 -> 09-10: +$695.33 (20 trades)
+  2026-09-10 -> 09-17: +$27.84 (8 trades)
+  TOTAL REALIZED, ~11 weeks of actual trading: +$1,472.54.
+  Current total account value: $16,661.10 ($9,571.82 equity + $7,089.28 cash).
+This is dramatically smaller than either backtest figure above for a comparable
+span -- the gap-corrected 3-month backtest shows +70.51%, the original (overstated)
+3-month backtest shows +101.06%; the real account's ~11-week realized total is a
+few thousand dollars, not anywhere near that scale. This does NOT confirm the
+gap-corrected backtest is right and the original was wrong -- if anything it argues
+the gap-corrected figures are STILL optimistic relative to what the account has
+actually realized, not conservative enough. Re-pull get_realized_pnl before citing
+any of the backtest figures above as "what this engine is expected to do" -- the
+live number is the only one that reflects actual fills, actual timing, and actual
+capital deployed, and it should be the anchor, not the simulations.
+
+Also tested and REJECTED: a "skip bad days" confidence gate (same idea explored for
+Day-Trading v3, see that file's docstring) using ONLY prior-day data (no lookahead) -
+trailing 5-day basket realized volatility. Skipping high-volatility days DESTROYED
+94% of the held-out test-period return (+573.5% -> +36.1% on a longer Jul'25-Sep'26
+window) because this strategy's edge IS volatility - HUGE_DIP/NORMAL_DIP triggers are
+volatility events, so a "choppy day" filter cuts the strategy's own bread and butter.
+This is the opposite conclusion from Day-Trading v3 (a momentum strategy that a
+volatility filter can, cautiously, help) - do not carry a day-skip gate over from one
+system to the other; they are structurally opposite and respond oppositely. Do not
+add a confidence/day-skip gate to this engine.
+
 Modes:
-  plan   <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json>
+  plan   <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json> [actual_holdings_json]
          -> prints JSON: {"sells": [...], "buys": [...]}
          daily_hist.json shape: {"data": {"results": [{"symbol":.., "bars":[{"begins_at":.., "open_price":.., "close_price":.., "high_price":.., "low_price":..}]}]}}
          live_quotes.json shape: {"AMD": 555.0, "MU": 972.86, ...}
          excluded_symbols_json = JSON list of symbols currently held by the OTHER
          two live systems on this account (from get_equity_positions there).
+         actual_holdings_json (optional) = JSON map {symbol: shares} from get_equity_positions,
+         used to validate state file against actual account holdings. If provided, detects
+         and corrects phantom/orphaned positions before equity calculation to prevent
+         equity_peak inflation from position mismatches.
 
   commit <executed_actions.json>
-         -> SAFEGUARD 1: Pre-commit validation (aborts if sell > open position)
-         -> Updates docs/margin_style_live_state.json: closed positions' proceeds
+         -> updates docs/margin_style_live_state.json: closed positions' proceeds
          go into pending_settlement; new/updated tranches are recorded with their
-         running avg_cost, peak, and tranche count. Adds audit trail (_last_commit).
+         running avg_cost, peak, and tranche count.
          executed_actions.json shape:
            {"sells": [{"symbol":.., "shares":.., "price":.., "reason":..}],
             "buys":  [{"symbol":.., "shares":.., "price":.., "reason":"HUGE_DIP|NORMAL_DIP"}]}
-
-  verify
-         -> SAFEGUARD 3: Audit state.json against broker positions (read-only).
-         Checks for negative shares, duplicates, orphaned settlement entries,
-         and pending settlement that exceeds open positions.
-
-  reconcile
-         -> SAFEGUARD 2: Compare state.json vs broker positions and report
-         divergence. (Manual for now; auto-fix requires MCP session context.)
-         Use this to detect if state drifted from reality between commits.
 """
 import json, sys, os
 from datetime import datetime, timezone, timedelta
@@ -96,16 +175,6 @@ STATE_PATH = os.path.join(ROOT, 'docs', 'margin_style_live_state.json')
 # Jan'25-Jul'26), with the improvement present in BOTH the 2025 and 2026 halves.
 # NVDA tested and rejected (-$10-12k drag in every combination; also prohibited live).
 SYMBOLS = ["AMD", "MU", "WDC", "SNDK", "TSM", "INTC", "LRCX", "STX"]
-
-# ROSS CAMERON'S 5 PILLARS OF STOCK SELECTION
-# Stock must meet all 5 criteria to be eligible for trading
-PILLAR_1_MIN_DAILY_GAIN = 0.10  # Up 10%+ on day
-PILLAR_2_MIN_VOLUME_MULTIPLE = 5.0  # 5x relative volume vs 60-day average
-PILLAR_3_LOOKBACK_VOLUME_DAYS = 60  # Days to average for relative volume
-PILLAR_4_MIN_PRICE = 2.0  # Avoid penny stocks
-PILLAR_4_MAX_PRICE = 20.0  # Stocks $2-$20 preferred
-PILLAR_5_MAX_FLOAT = 10000000  # Float < 10M shares
-USE_PILLAR_FILTER = False  # DISABLED: Not compatible with large-cap universe (see CLAUDE.md)
 
 # "New Candidate" HUGE_DIP refinement, deployed 2026-08-17 (was -25.5%/74.3%):
 # a deeper drawdown trigger + smaller huge-dip sizing, found while re-optimizing
@@ -236,28 +305,6 @@ CIRCUIT_BREAKER_STOP_COUNT = 2    # if this many STOP exits fire in the same run
                                   # simultaneous selloff across the basket), skip all new
                                   # entries this run - stops/exits still execute normally,
                                   # only fresh buys pause. Re-evaluated fresh next run.
-DAILY_STOP_ENABLED = False        # DISABLED 2026-09-21 at the user's explicit request.
-                                  # Engine replay (not day_pnl post-processing) shows the daily
-                                  # stop is NET HARMFUL: +79.71% vs +155.10% baseline over the
-                                  # 6-month window, and +8.72% vs +11.73% on a genuine fresh
-                                  # holdout -- worse in BOTH windows, so not a one-window fluke.
-                                  # Reproduce:
-                                  #   scripts/margin_style_17h_backtest.py --engine-rev bc814c4 \
-                                  #       --patch-daily-stop-bug
-                                  # The "+60.1% improvement out-of-sample" that justified adding
-                                  # it was produced by post-processing a fixed day_pnl series
-                                  # (cmd_plan never called) -- the method CLAUDE.md Evidence
-                                  # Rule 1 forbids -- and it capped at 1% of $30,000 while the
-                                  # underlying run used $80,000.
-                                  # Disabling also makes the DAILY_STOP double-sell defect
-                                  # unreachable (see the branch below), so that defect is now
-                                  # latent-and-gated rather than latent-and-live.
-                                  # It never fired in production, so nothing was lost.
-                                  # To re-enable: set True -- but FIX THE DOUBLE-SELL FIRST.
-DAILY_STOP_PCT = 0.01             # daily loss cap, retained for when/if the stop is re-enabled:
-                                  # if cumulative realized + unrealized loss from all positions
-                                  # exceeds this % of cash, liquidate all remaining positions
-                                  # and skip new entries for the rest of the day.
 
 # KILL-SWITCH + TREND RE-ENTRY GATE, added 2026-08-20. A portfolio-level circuit
 # breaker distinct from CIRCUIT_BREAKER_STOP_COUNT above: that one reacts to how
@@ -434,41 +481,47 @@ def build(hist_path, quotes_path):
     return bars_by_sym, quotes
 
 
-def check_5_pillars(sym, bars, live_price, quotes):
-    """Check if stock passes Ross Cameron's 5 Pillars of stock selection.
+def validate_positions_against_holdings(state, actual_holdings):
+    """Validate state file positions against actual account holdings.
 
-    NOTE: Margin-Style Live is a DIP-BUY system, so Pillar 1 (up 10%+ daily) is
-    incompatible with daily entry conditions. Instead, we apply the universe-level
-    pillars (4: price $2-$20 preferred range, 5: small float for volatility) that
-    filter the SYMBOL UNIVERSE eligible for trading, independent of daily dip signals.
+    Returns a dict of validated shares (state_shares, actual_shares, mismatch_warning).
+    Mismatches can occur if:
+    - A position was deleted from state but shares still exist (orphaned)
+    - A position exists in state but no shares are held (phantom)
+    - Share count differs between state and actual holdings
 
-    Returns: (passes: bool, pillars_met: dict)
+    Args:
+        state: dict with 'open_positions' key
+        actual_holdings: dict of {symbol: share_count} from account
+
+    Returns:
+        dict mapping symbol to {state_shares, actual_shares, has_mismatch, warning_msg}
     """
-    if not USE_PILLAR_FILTER or len(bars) < 2:
-        return True, {}
+    validation = {}
+    state_positions = state.get('open_positions', {})
 
-    pillars = {
-        'pillar_4_price_2_to_20': False,
-        'all_pillars_compatible': False,
-    }
+    for sym in set(list(state_positions.keys()) + list(actual_holdings.keys())):
+        state_shares = state_positions.get(sym, {}).get('shares', 0.0)
+        actual_shares = actual_holdings.get(sym, 0.0)
+        has_mismatch = abs(state_shares - actual_shares) > 1e-6
 
-    # Pillar 4: Price $2-$20 (checking current live price)
-    # This is a universe-level filter: stocks in this price range tend to have
-    # lower slippage, better fill quality, and more retail participation
-    if PILLAR_4_MIN_PRICE <= live_price <= PILLAR_4_MAX_PRICE:
-        pillars['pillar_4_price_2_to_20'] = True
+        warning_msg = None
+        if has_mismatch:
+            if state_shares > 1e-6 and actual_shares < 1e-6:
+                warning_msg = f"PHANTOM: {sym} has {state_shares} in state but 0 actual shares"
+            elif state_shares < 1e-6 and actual_shares > 1e-6:
+                warning_msg = f"ORPHANED: {sym} has {actual_shares} actual shares but not in state"
+            else:
+                warning_msg = f"MISMATCH: {sym} state={state_shares} vs actual={actual_shares}"
 
-    # Pillar 5: Float < 10M shares
-    # Note: Float information not available in current bars data
-    # In real implementation, would need to query fundamental data (not available live)
-    # For now, assume pass - would need API enhancement to check this
-    # We mark this as "assumed_pass" to indicate it's pending data availability
+        validation[sym] = {
+            'state_shares': state_shares,
+            'actual_shares': actual_shares,
+            'has_mismatch': has_mismatch,
+            'warning_msg': warning_msg
+        }
 
-    # Mark as passing if key compatible pillars are met
-    # Pillar 4 is the strongest filter we can apply with available data
-    pillars['all_pillars_compatible'] = pillars['pillar_4_price_2_to_20']
-
-    return pillars['all_pillars_compatible'], pillars
+    return validation
 
 
 def check_data_freshness(hist_path, quotes_path, quotes_data=None):
@@ -521,15 +574,27 @@ def check_data_freshness(hist_path, quotes_path, quotes_data=None):
     return True, None
 
 
-def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
-    # Check data freshness before proceeding
-    with open(quotes_path) as f:
-        quotes_raw = json.load(f)
+def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols, actual_holdings_json=None):
+    """Plan trades for the day.
 
-    is_fresh, error_msg = check_data_freshness(hist_path, quotes_path, quotes_raw)
-    if not is_fresh:
-        print(f"❌ DATA FRESHNESS CHECK FAILED: {error_msg}")
-        print("⚠️  Will proceed anyway, but results may be unreliable.")
+    Args:
+        hist_path: path to daily_hist.json
+        quotes_path: path to live_quotes.json
+        real_cash: float, actual settled cash in account
+        excluded_symbols: JSON string of symbols held by other systems
+        actual_holdings_json: JSON string of {symbol: shares} from get_equity_positions.
+                            If provided, validates state file against actual holdings.
+                            If not provided, uses state file as-is (backward compatible).
+    """
+    # GUARDRAIL 3: data freshness. Warns, does not block - the operator decides.
+    try:
+        with open(quotes_path) as _qf:
+            _quotes_raw = json.load(_qf)
+        _fresh, _msg = check_data_freshness(hist_path, quotes_path, _quotes_raw)
+        if not _fresh:
+            print(f"DATA FRESHNESS WARNING: {_msg}", file=sys.stderr)
+    except Exception as _e:
+        print(f"WARNING: freshness check could not run: {_e}", file=sys.stderr)
 
     bars_by_sym, quotes = build(hist_path, quotes_path)
     state = load_state()
@@ -538,6 +603,63 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
     state['pending_settlement'] = [p for p in state['pending_settlement'] if p['settle_date'] > today]
     pending_total = sum(p['amount'] for p in state['pending_settlement'])
     safe_cash = max(0.0, real_cash - pending_total)
+
+    # Validate positions against actual holdings if provided
+    position_validation = {}
+    actual_holdings = {}
+    # Shares the broker holds beyond what state records: not this system's to trade.
+    # Surfaced in the plan output so the run reports them instead of silently selling.
+    unowned_excess = {}
+    if actual_holdings_json:
+        try:
+            actual_holdings = json.loads(actual_holdings_json)
+            position_validation = validate_positions_against_holdings(state, actual_holdings)
+
+            # Log any mismatches and correct phantom positions before equity calculation
+            mismatches = [v for sym, v in position_validation.items() if v['has_mismatch']]
+            if mismatches:
+                print(f"WARNING: Position mismatch(es) detected:", file=sys.stderr)
+                for sym, validation in position_validation.items():
+                    if validation['has_mismatch']:
+                        print(f"  {validation['warning_msg']}", file=sys.stderr)
+                        # Remove phantom positions from state to prevent equity inflation
+                        if sym in state['open_positions'] and validation['actual_shares'] < 1e-6:
+                            print(f"  -> Removing phantom position {sym} from state", file=sys.stderr)
+                            del state['open_positions'][sym]
+                        # Reconcile the share count -- but ONLY DOWNWARDS.
+                        #
+                        # This used to assign actual_shares unconditionally, which is
+                        # how the 2026-09-21 run came to sell $6,147.55 of the account
+                        # owner's own manual purchases. On 2026-09-18 the owner bought
+                        # STX 5.887547 and WDC 2.276165 directly; the broker then held
+                        # MORE than state, so the engine ADOPTED those shares into its
+                        # own positions and every downstream rule -- PEAK, STOP,
+                        # MAX_HOLD -- treated them as its to sell.
+                        #
+                        # Correcting DOWN is always right: state claimed shares that do
+                        # not exist, and an order for them would be rejected anyway.
+                        # Correcting UP is never right here: the excess is either the
+                        # owner's own trade or an engine buy whose state commit did not
+                        # land, and this function cannot tell which. Neither is a
+                        # licence to sell shares this system has no record of buying.
+                        # Guardrail 2 (`reconcile`) is what stops the run on an
+                        # unexplained excess; this block just refuses to absorb it.
+                        elif sym in state['open_positions'] and validation['actual_shares'] > 0:
+                            old_shares = state['open_positions'][sym]['shares']
+                            if validation['actual_shares'] < old_shares:
+                                state['open_positions'][sym]['shares'] = validation['actual_shares']
+                                print(f"  -> Correcting {sym} shares DOWN {old_shares} -> "
+                                      f"{validation['actual_shares']} (broker holds fewer)",
+                                      file=sys.stderr)
+                            else:
+                                excess = validation['actual_shares'] - old_shares
+                                unowned_excess[sym] = round(excess, 6)
+                                print(f"  -> NOT ADOPTING {sym}: broker holds "
+                                      f"{validation['actual_shares']} vs state {old_shares}. "
+                                      f"The {excess:.6f} excess is NOT this system's and will "
+                                      f"not be sold.", file=sys.stderr)
+        except Exception as e:
+            print(f"WARNING: Failed to parse actual_holdings_json: {e}", file=sys.stderr)
 
     sells = []
     # PEAK/GAIN sells are deferred here rather than appended straight to `sells`, so they
@@ -606,56 +728,6 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
     # MAX_TRADE_NOTIONAL_PCT/TRADE_CAP_SCHEDULE above) - grows/shrinks with the
     # account instead of staying pinned to a stale flat dollar figure.
 
-    # DAILY STOP-LOSS: if cumulative realized + unrealized losses exceed cap,
-    # liquidate all remaining positions and skip new entries for rest of day.
-    # Validated +60.1% improvement out-of-sample (holdout window: +79.2%).
-    daily_loss_cap = DAILY_STOP_PCT * real_cash
-    daily_stop_date = state.get('daily_stop_date')
-    daily_stop_active = daily_stop_date == today  # triggered earlier today
-
-    # Calculate daily P&L: realized losses from full exits + unrealized losses on remaining positions
-    realized_loss = sum(
-        max(0.0, (s.get('entry', 0.0) * s['shares']) - (s.get('price', 0.0) * s['shares']))
-        for s in sells
-        if s['reason'] in ('STOP', 'MAX_HOLD', 'KILL_SWITCH')
-    )
-
-    closed_symbols = {s['symbol'] for s in sells}
-    unrealized_loss = sum(
-        max(0.0, (pos['entry'] * pos['shares']) - (quotes.get(sym, 0.0) * pos['shares']))
-        for sym, pos in state['open_positions'].items()
-        if sym not in closed_symbols and sym in quotes
-    )
-
-    daily_total_loss = realized_loss + unrealized_loss
-
-    # Check if loss threshold exceeded and trigger emergency liquidation if needed
-    # DAILY_STOP_ENABLED is False -- see the constant for why. While it is False this
-    # branch never runs, which also gates the double-sell defect documented below.
-    if DAILY_STOP_ENABLED and not daily_stop_active and daily_total_loss >= daily_loss_cap:
-        daily_stop_active = True
-        daily_stop_date = today
-        # DOUBLE-SELL DEFECT FIXED 2026-09-22. These two lines mirror what the
-        # KILL_SWITCH branch below has always done, and their absence was the entire
-        # bug. PEAK/GAIN sells are decided earlier and parked in pending_peak_gain;
-        # they are not appended to `sells` until much later. `closed_symbols` is built
-        # from `sells` and therefore CANNOT see a parked sell, so this block would
-        # liquidate the full position of a symbol that already had a PEAK sell
-        # pending, and the later append would add that sell anyway -- two sells, same
-        # symbol, same day, ~174.3% of the position. In backtest that produced 63
-        # duplicate-sell days and $13.8M of phantom proceeds. Clearing the parked
-        # sells here makes the liquidation authoritative, as KILL_SWITCH's is.
-        pending_peak_gain = {}
-        peak_updates = {}
-        # Emergency liquidation: force-close all remaining open positions
-        for sym, pos in state['open_positions'].items():
-            if sym not in closed_symbols and sym in quotes:
-                live_price = quotes[sym]
-                sells.append({'symbol': sym, 'shares': pos['shares'],
-                             'price': round(live_price, 4),
-                             'reason': 'DAILY_STOP', 'entry': pos['entry']})
-                closed_symbols.add(sym)
-
     # KILL-SWITCH / TREND RE-ENTRY GATE (see constants above for full rationale).
     equity_peak = max(state.get('equity_peak', total_equity), total_equity)
     kill_switch_active = state.get('kill_switch_active', False)
@@ -689,8 +761,7 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
 
     risk_state = {'equity_peak': round(equity_peak, 2), 'kill_switch_active': kill_switch_active,
                   'kill_switch_triggered_date': kill_switch_triggered_date,
-                  'trend_gate_active': trend_gate_active,
-                  'daily_stop_active': daily_stop_active, 'daily_stop_date': daily_stop_date}
+                  'trend_gate_active': trend_gate_active}
 
     # STOP/MAX_HOLD/KILL_SWITCH fully close a position - unlike PEAK/GAIN, which only
     # trim it - but state['open_positions'] itself isn't mutated until cmd_commit runs
@@ -707,8 +778,7 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
     full_exit_symbols = {s['symbol'] for s in sells if s['reason'] in ('STOP', 'MAX_HOLD', 'KILL_SWITCH')}
 
     candidates = []
-    pillar_results = {}  # Track pillar results for logging
-    if not circuit_breaker_triggered and not kill_switch_active and not daily_stop_active:
+    if not circuit_breaker_triggered and not kill_switch_active:
         for sym in SYMBOLS:
             if sym in excluded_symbols or sym not in bars_by_sym or sym not in quotes:
                 continue
@@ -724,13 +794,6 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
             lb_bars = bars[-(LOOKBACK_DAYS + 1):-1] if len(bars) > LOOKBACK_DAYS else bars[:-1]
             trailing_high = max(b['close'] for b in lb_bars) if lb_bars else yesterday_close
             drawdown = (yesterday_close - trailing_high) / trailing_high
-
-            # Apply Ross Cameron's 5 Pillars filter
-            live_price = quotes[sym]
-            pillars_pass, pillars_detail = check_5_pillars(sym, bars, live_price, quotes)
-            pillar_results[sym] = pillars_detail
-            if not pillars_pass:
-                continue  # Stock doesn't meet 5 pillars - skip this candidate
 
             if trend_gate_active:
                 if len(bars) < TREND_GATE_SMA_DAYS + 1:
@@ -836,26 +899,29 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols):
                       'risk_state': risk_state,
                       'open_positions': state['open_positions'], 'sells': sells, 'buys': buys,
                       'peak_updates': peak_updates,
-                      '5_pillars_filter_active': USE_PILLAR_FILTER,
-                      '5_pillars_results': pillar_results}, indent=1))
+                      # Broker shares beyond what state records. NOT sold by this plan -
+                      # see the reconciliation block above. Report these; do not trade them.
+                      'unowned_excess': unowned_excess}, indent=1))
 
 
 def cmd_commit(actions_path):
-    """
-    SAFEGUARD 1: PRE-COMMIT VALIDATION
-    Check all sells before applying them - catch impossible quantities.
-    """
     actions = json.load(open(actions_path))
     state = load_state()
-    today = datetime.now(timezone.utc).date()
-    settle_date = next_business_day(today).isoformat()
 
     # Validate all sells before committing
     validation_errors = []
     for s in actions.get('sells', []):
         sym = s['symbol']
         pos = state['open_positions'].get(sym)
-        if pos and s['shares'] > pos['shares']:
+        # Tolerance mirrors the mutation below, which already does
+        #   remaining = round(pos['shares'] - s['shares'], 6)
+        #   if remaining <= 1e-6: del state['open_positions'][sym]
+        # This check compared a 6dp-ROUNDED sell against an UNROUNDED holding with a
+        # strict >, so selling a whole position aborted the commit on floating-point
+        # dust -- AMD 155.404388 vs 155.40438799999998, off by 2e-14 (found
+        # 2026-09-22 by the rule-research grid search). 1e-6 of a share is far below
+        # the broker's 6dp order precision, so a genuine oversell is still caught.
+        if pos and s['shares'] > pos['shares'] + 1e-6:
             validation_errors.append(
                 f"ERROR: Attempting to sell {s['shares']:.6f} {sym} but only {pos['shares']:.6f} held. "
                 f"This should have been rejected at order placement. Position would go negative."
@@ -869,6 +935,9 @@ def cmd_commit(actions_path):
             print(f"  {err}")
         print("Aborting commit to prevent state corruption.")
         sys.exit(1)
+
+    today = datetime.now(timezone.utc).date()
+    settle_date = next_business_day(today).isoformat()
 
     # Prune already-settled entries before appending new ones - previously this list
     # only ever grew (cmd_plan filters expired entries for its own calculation but never
@@ -916,23 +985,14 @@ def cmd_commit(actions_path):
         if pos and new_peak > pos['peak']:
             pos['peak'] = new_peak
 
-    # KILL-SWITCH / TREND RE-ENTRY GATE / DAILY STOP state - passed through verbatim from the
+    # KILL-SWITCH / TREND RE-ENTRY GATE state - passed through verbatim from the
     # plan step's output (same pattern as peak_updates above), since cmd_plan is
-    # what decides these flags each run.
+    # what decides equity_peak/kill_switch_active/trend_gate_active each run.
     if 'risk_state' in actions:
         state['equity_peak'] = actions['risk_state']['equity_peak']
         state['kill_switch_active'] = actions['risk_state']['kill_switch_active']
         state['kill_switch_triggered_date'] = actions['risk_state']['kill_switch_triggered_date']
         state['trend_gate_active'] = actions['risk_state']['trend_gate_active']
-        state['daily_stop_active'] = actions['risk_state']['daily_stop_active']
-        state['daily_stop_date'] = actions['risk_state']['daily_stop_date']
-
-    # Add audit trail
-    state['_last_commit'] = {
-        'timestamp': datetime.now(timezone.utc).isoformat(),
-        'sells_count': len(actions.get('sells', [])),
-        'buys_count': len(actions.get('buys', []))
-    }
 
     save_state(state)
     print(f"Committed {len(actions.get('sells', []))} sell(s), {len(actions.get('buys', []))} buy(s), "
@@ -1138,23 +1198,20 @@ def cmd_reconcile(broker_positions_json_path=None):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("Usage:")
-        print("  plan <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json>")
-        print("  commit <actions.json>")
-        print("  verify")
-        print("  reconcile [broker_positions.json]")
+        print("Usage: plan <daily_hist.json> <live_quotes.json> <real_cash> <excluded_symbols_json> [actual_holdings_json]\n"
+              "   OR commit <actions.json>\n"
+              "   OR verify\n"
+              "   OR reconcile [broker_positions.json]")
         sys.exit(1)
     if sys.argv[1] == 'plan':
-        cmd_plan(sys.argv[2], sys.argv[3], float(sys.argv[4]), json.loads(sys.argv[5]))
+        actual_holdings = sys.argv[6] if len(sys.argv) > 6 else None
+        cmd_plan(sys.argv[2], sys.argv[3], float(sys.argv[4]), sys.argv[5], actual_holdings)
     elif sys.argv[1] == 'commit':
         cmd_commit(sys.argv[2])
     elif sys.argv[1] == 'verify':
-        exit_code = cmd_verify()
-        sys.exit(exit_code)
+        sys.exit(cmd_verify())
     elif sys.argv[1] == 'reconcile':
-        broker_json = sys.argv[2] if len(sys.argv) > 2 else None
-        exit_code = cmd_reconcile(broker_json)
-        sys.exit(exit_code)
+        sys.exit(cmd_reconcile(sys.argv[2] if len(sys.argv) > 2 else None))
     else:
         print("Unknown mode:", sys.argv[1])
         sys.exit(1)

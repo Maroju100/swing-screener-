@@ -46,33 +46,6 @@ so they desynchronise state from reality without any engine defect at all.
 Usage:
     python3 scripts/audit_phantom_equity.py
     python3 scripts/audit_phantom_equity.py --rev HEAD --json out.json
-    python3 scripts/audit_phantom_equity.py --divergence   # why state != broker
-
-WHY STATE AND BROKER DIVERGE (--divergence)
---------------------------------------------
-`open_positions` is a record of what the ENGINE BELIEVES IT DID; the broker is
-what actually happened. Every divergence is a write that did not complete, and
-the SIGN says which kind:
-
-  broker > state  - the engine missed a BUY
-      (a) the owner bought the symbol themselves - the engine only ever learns
-          about orders it placed (2026-09-18: STX +5.887547, WDC +2.276165)
-      (b) the engine bought, but its state commit never reached the branch the
-          next run reads (2026-09-15's buys were committed to the development
-          branch; `main`, which production checks out, still showed zero)
-
-  broker < state  - the engine missed a SELL
-      (c) the owner sold the symbol themselves (2026-09-09: WDC -4.131460,
-          MU -1.957520)
-      (d) the engine sold, but its state commit did not record it
-          (2026-09-16: LRCX 14.755994 - the phantom behind the equity_peak bug)
-
-(a)/(c) are outside the engine's knowledge; (b)/(d) are the engine's own write
-path failing. They are NOT distinguishable from the share counts alone - but
-they ARE distinguishable from the broker, because `get_equity_orders` stamps
-every fill with `placed_agent` ("user" vs "agentic"). That field is what turns
-"should a sell be capped at the state quantity?" from a judgement call into a
-lookup.
 
 Every number printed is MEASURED from committed files. Where the fill history does
 not cover a date the script says so and reports nothing for it, rather than
@@ -208,58 +181,10 @@ def state_before(rev, date):
         return None
 
 
-def report_divergence(rev, fills):
-    """Every state-vs-broker gap, with the fill that explains it."""
-    hist = []
-    for line in git('log', '--reverse', '--format=%H|%ad|%s', '--date=short',
-                    rev, '--', STATE_PATH).strip().splitlines():
-        sha, d, sub = line.split('|', 2)
-        if d < fills[0]['ts'][:10]:
-            continue
-        try:
-            hist.append((sha[:7], d, sub,
-                         json.loads(git('show', f'{sha}:{STATE_PATH}'))))
-        except Exception:
-            pass
-
-    print('-' * 86)
-    print('STATE THE RUN READ  vs  BROKER HOLDINGS AT START OF DAY')
-    print('-' * 86)
-    print(f"{'date':11} {'sym':5} {'state':>12} {'broker':>12} {'broker-state':>13}  explained by")
-    seen, found = set(), 0
-    for sha, d, sub, st in hist:
-        if d in seen:
-            continue
-        seen.add(d)
-        prev = [h for h in hist if h[1] < d]
-        if not prev:
-            continue
-        sp, bk = positions_of(prev[-1][3]), broker_holdings_at(fills, f'{d}T00:00:00Z')
-        for sym in sorted(set(sp) | set(bk)):
-            delta = bk.get(sym, 0.0) - sp.get(sym, 0.0)
-            if abs(delta) <= SHARE_EPS:
-                continue
-            found += 1
-            cand = [f for f in fills if f['symbol'] == sym and f['ts'][:10] < d
-                    and abs(f['qty'] - abs(delta)) < 1e-4]
-            who = ', '.join(sorted({f"{f['agent']} {f['side']} {f['ts'][:10]}"
-                                    for f in cand})) or 'no single fill matches'
-            print(f"{d:11} {sym:5} {sp.get(sym,0.0):12.6f} {bk.get(sym,0.0):12.6f} "
-                  f"{delta:+13.6f}  {who}")
-    print()
-    print(f'{found} divergences. Read the sign per the docstring: broker > state means')
-    print('a missed BUY (owner bought, or an engine buy not committed to this branch);')
-    print('broker < state means a missed SELL (owner sold, or an engine sell not recorded).')
-    print('placed_agent on each fill separates the owner\'s trades from the engine\'s.')
-    return 0
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--rev', default='origin/main')
     ap.add_argument('--json', dest='json_out')
-    ap.add_argument('--divergence', action='store_true',
-                    help='classify every state-vs-broker gap by direction and cause')
     args = ap.parse_args()
 
     fills = load_fills()
@@ -277,9 +202,6 @@ def main():
     print()
 
     covered_from = fills[0]['ts'][:10]
-
-    if args.divergence:
-        return report_divergence(args.rev, fills)
 
     # ---- manual trades: state desync with no engine defect involved ----
     print('-' * 72)

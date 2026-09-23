@@ -42,6 +42,72 @@ not a replacement. It exists to capture same-day intraday moves (like 2026-08-13
 WDC/SNDK/MU rally) that a once-daily system structurally cannot react to - not to
 out-return the primary system.
 
+BACKTEST VALIDATION UPDATE (2026-09-14) -- LABEL CORRECTED 2026-09-17: this section
+was originally headed "REAL-DATA VALIDATION UPDATE," ambiguous with "the paper
+account's real results." Every figure below is a SIMULATION run against real
+historical PRICE data -- "real" describes the market data, not that these trades
+were actually placed (this file places NO real or paper orders in its own state
+files beyond what a live run of it executes; these numbers are from an independent
+backtest, not from docs/daytrading_v3_paper_log.json). Check that log directly for
+what this paper tracker has actually recorded, rather than citing the figures below
+as its live paper-trading history.
+
+The +5.81%/+6.30% figures above came from an earlier pass whose data provenance was
+never confirmed. This engine's exact logic was re-transliterated and run cold
+against genuine, non-interpolated 30-minute Robinhood historicals (confirmed real -
+not gap-fill placeholders - for WDC/MU/SNDK back to roughly late Jan/early Feb
+2026). Results, all real bars, backtest only:
+  6 months (2026-03-16 -> 2026-09-11, 125 trading days): +9.62% ($5,000 -> $5,481.16).
+  3 months (2026-06-14 -> 2026-09-11): +1.21% ($5,000 -> $5,060.73), max drawdown
+    -10.47% (2026-06-30 $5,115.39 -> 2026-07-29 $4,579.93, -$535.46).
+  1 month (2026-08-14 -> 2026-09-11): +0.53% ($5,000 -> $5,026.70), max drawdown
+    -1.09% (2026-08-20 -> 2026-09-01, -$54.44).
+  Sub-window check on 2026-06-08 -> 2026-08-13 (the closest real-bar window to the
+    original "3 sub-windows" claim): +4.99% overall, 2 of 3 sub-windows profitable
+    (Jun8-29 +4.90%, Jun30-Jul22 -4.27% LOSING, Jul23-Aug13 +4.37%) - softer than the
+    +5.81%/+6.30% figures above; treat those older numbers as unverified/superseded
+    by this real-bar backtest.
+  A perfect-hindsight upper bound (skip every day that turns out to lose, impossible
+    to know in advance) over the same 6 months would be +39.74% - so roughly 30% of
+    capital is given back to bad days. THREE candidate real-time "skip bad days"
+    signals were tried and none survived genuine out-of-sample validation: a same-day
+    Efficiency-Ratio gate (hurt at every threshold), a same-day basket-breadth=3/3-up
+    gate (looked strong on one window, failed on a second), and a prior-day (no
+    lookahead) trailing-volatility gate (looked strong on train+test drawn from the
+    same 6-month stretch, but never even fired on a third, non-overlapping window -
+    wrong volatility regime). Do not add a confidence/day-skip gate to this engine
+    without a signal that survives a genuinely separate third window first.
+
+RELATED SETUP EXPLORED (2026-09-17): Opening Range Breakout + Break-and-Retest,
+sourced from a Scarface Trades transcript ("The Dark Side of ORB Trading") -
+NOT part of this engine's own rules, documented here as adjacent research on the
+same WDC/MU/SNDK universe. Mechanics: mark the opening range (first bar of the
+day's high/low), wait for a real breakout (a CANDLE CLOSE beyond the range, not
+just a wick), do NOT buy the breakout directly - wait for a retest back to the
+broken level holding as new support/resistance, enter only on a strong confirming
+candle at the retest. Stop = low of the retest candle. Target = 2:1 reward:risk
+(his stated minimum in all 3 worked examples). Backtest results (real historical
+price data, no live or paper orders placed), WDC/MU/SNDK:
+  30-min-bar proxy (Feb-Sep 2026, n=199): +41.9% at 1% risk/trade, 49.2% win rate.
+  Real 5-min bars, his actual stated timeframe (Aug14-Sep16 2026, n=180): +22.2%
+    at 1% risk/trade, 38.9% win rate - softer than the 30-min proxy but same
+    direction, confirming the effect survives the granularity correction.
+  Randomization control (5,000 random-entry draws per symbol, same stop/target
+    mechanics): real result beat 93.1% (WDC), 99.2% (MU), 96.5% (SNDK) of random
+    draws - the strongest randomization result of any setup tested this session,
+    including the validated Doji setup above (87-95th percentile there).
+CORRECTION / caveat (2026-09-17): tested against real small-cap/low-float movers
+(Ross Cameron's own named real trades, real minute bars, n=12 across 7 ticker-days)
+and came back INCONCLUSIVE, not confirmatory - net positive (+0.250 avg R) but
+driven almost entirely by 2 trades in one name, and 4 of 7 ticker-days produced
+ZERO signals at all. Likely structural, not a flaw in the setup: violent low-float
+gappers (e.g. one name moved from ~$2.91 to over $4 within a single 1-minute bar
+at the open) blow through the opening-range reference level before an orderly
+breakout-then-retest sequence has any chance to form. Treat ORB+Retest as validated
+for liquid large/mid-cap names (where it was built and tested) but UNPROVEN, not
+disproven, for low-float small-cap movers - do not assume it transfers.
+No engine implements this setup yet; it is documented here as a candidate only.
+
 HARD RULE: this is a paper tracker. Never call review_equity_order or
 place_equity_order for anything this script does.
 """
