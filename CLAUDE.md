@@ -702,6 +702,100 @@ below are what makes a claim checkable.
     that is asserted to reproduce the baseline **exactly** when set to 0, so the
     measured difference is the rule and nothing else.
 
+### 🚨 PRICE-BASIS DEFECT — every backtest priced 46 minutes late (found 2026-09-22)
+
+**The harness has never priced at the live check time.** It prices "today" off
+the hourly bar labelled `17:00`, taking its `close_price`. Hourly bars are
+**left-labelled**, so that bar *spans* 17:00–18:00 and its close is the
+**18:00 UTC = 1:00 PM CDT** price. The live trigger fires at **~17:14 UTC =
+12:14 PM CDT**. Reproduce the proof:
+`python3 -c` comparing the hourly bar against 30-minute bars — over 24
+symbol-days the hourly 17:00 close matches the **30-minute 17:30 bar's close
+23 times** and the 30-minute 17:00 close once.
+
+**It is not cosmetic.** Same rules, same window, only the priced instant differs:
+
+| Priced at | Realized | Return |
+|---|---|---|
+| 18:00 UTC · 1:00 PM CDT | $30,623 | **+38.3%** ← what every backtest used |
+| 17:30 UTC · 12:30 PM CDT | $28,131 | +35.2% |
+| 17:00 UTC · 12:00 PM CDT | $18,694 | **+23.4%** ← nearest to the live fire |
+
+**Fix**: `price_field` on `H.run`. The hourly 17:00 bar's **open** *is* the
+17:00 UTC price and exists across the whole window. Default stays `close_price`
+so the $124,080.90 anchor still reproduces exactly; pass `open_price` for a
+live-accurate basis.
+
+**⚠️ The +155.10% anchor is NOT withdrawn.** It remains the exact, reproducible
+output of its stated methodology. It is simply priced at 1:00 PM CDT rather than
+at the live check. **The live-accurate figure for the same rules and window is
++125.9%** ($100,745 on $80k, 5 bps/side). Quote +155.10% only as "the published
+anchor"; quote **+125.9%** for "what the live system's rules would have done".
+
+**Every conclusion gets STRONGER at the correct basis** — reproduce with
+`data/research/price_basis.json`:
+
+| # | Configuration | @ live basis | Return | Sharpe |
+|---|---|---|---|---|
+| **1** | **PRODUCTION — current rules** | **$100,745** | **+125.9%** | 3.38 |
+| 2 | Trade cap 10% | $96,337 | +120.4% | 3.40 |
+| 3 | Intraday stop −2.5% | $87,855 | +109.8% | 3.11 |
+| 4 | Best grid-search config | $62,326 | +77.9% | 2.57 |
+| 5 | Quality filter 3+ down days | $33,504 | +41.9% | 2.54 |
+| 6 | No intraday stop | −$9,956 | −12.4% | −0.83 |
+
+Production is **rank 1 outright** — nothing beats it, so the significance caveat
+needed at the 1 PM basis is not needed here at all. The −2.5% stop that ranked
+1st at 1 PM falls to **3rd** and takes the **largest** hit of any config (−31%
+vs −19% for production), independently corroborating the bootstrap verdict that
+its advantage was a timing artifact.
+
+**Standing rule from this:** a backtest's price basis must be stated as a
+*clock time*, not as a bar label. "The 17:00 bar" is not "17:00".
+
+#### ❌ DO NOT move the trigger to exactly noon (asked and measured 2026-09-23)
+
+The obvious response to the price-basis defect is "align the live trigger to the
+backtest". **It is the wrong move, and the measurement says so.** Reproduce from
+`data/research/check_hour.json` — validated 30-minute loop, 64 days, exact clock
+times, 5 bps/side:
+
+| Check | CDT | FULL | sub-A | sub-B | sub-C |
+|---|---|---|---|---|---|
+| 14:00 | 9:00 AM | −$1,874 | −$1,874 | **+$8,377** | −$1,450 |
+| 15:00 | 10:00 AM | −$2,277 | +$5,666 | +$2,895 | +$6,484 |
+| 16:00 | 11:00 AM | +$21,391 | +$12,553 | +$5,347 | +$6,633 |
+| **17:00** | **12:00 PM** | **+$18,694** | +$9,642 | +$4,398 | +$6,661 |
+| 18:00 | 1:00 PM | **+$27,914** | **+$18,533** | +$2,777 | **+$7,363** |
+| 19:00 | 2:00 PM | +$18,029 | +$14,664 | −$1,945 | +$7,007 |
+
+- **The ordering inverts between sub-windows.** 9:00 AM is worst in A, **best in
+  B**, worst again in C. 2:00 PM is 2nd in A and **last** in B. No hour wins more
+  than 2 of 3, and the full-window best (1:00 PM) ranks 5th of 6 in sub-window B.
+- **Noon is rank 3 of 6 and wins 0 of 3 sub-windows.** It is neither the best
+  hour nor the current one — it is just the round number.
+- Spread across hours is **$30,191 on $80k (38pp)** — the size of the noise, not
+  of an edge. This independently reproduces the walk-forward finding already
+  recorded here: **switching the check-hour does not hold up out of sample.**
+- **The defect was in MEASUREMENT, not TRADING.** Live has always fired at
+  ~17:14. Fixing how the backtest prices means the backtest now describes what
+  live already does; it is not a reason to move live.
+- Operationally: 63+ runs of live history sit at the current time. Moving it
+  introduces a variable with no measured gain behind it.
+- ⚠️ A first attempt at this sweep used an exec'd copy of the harness and was
+  **discarded unreported** — it returned identical numbers for every hour and 748
+  trades where the imported module gives 752, so it was ignoring the
+  substitution. Numbers from a harness that cannot be explained do not get
+  published.
+
+⚠️ **DST — a real and unhandled issue.** `0 17 * * 1-5` is UTC. From
+**2026-11-01** the US leaves daylight time, so 17:00 UTC becomes **11:00 AM CST**
+while the session itself shifts to 14:30–21:00 UTC — the check moves an hour
+earlier *relative to the session*. Every figure in this file was measured in the
+CDT half of the year. Decide before November whether the check should track the
+session (`0 18 * * 1-5` in winter) or stay at 17:00 UTC. Never previously
+considered.
+
 ### Rule research, 2026-09-22 — six questions, five answers, one refusal
 
 > 🏆 **IS THE LIVE CONFIGURATION THE BEST TESTED? Yes, on a risk-adjusted basis
