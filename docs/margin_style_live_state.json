@@ -1,14 +1,12 @@
 {
- "pending_settlement": [],
- "open_positions": {
-  "SNDK": {
-   "shares": 2.34988,
-   "entry": 1884.3999,
-   "peak": 1884.3999,
-   "tranches": 1,
-   "opened": "2026-09-22"
+ "pending_settlement": [
+  {
+   "amount": 4271.93,
+   "settle_date": "2026-09-24",
+   "symbol": "SNDK"
   }
- },
+ ],
+ "open_positions": {},
  "equity_peak": 17696.92,
  "kill_switch_active": false,
  "kill_switch_triggered_date": null,

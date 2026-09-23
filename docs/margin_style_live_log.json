@@ -2624,6 +2624,65 @@
     }
    },
    "notes": "First run after the account was converted back to CASH (confirmed type=cash, unsettled_funds=0). Live-quote proxy used for 'today' price, as always at this once-daily cadence."
+  },
+  {
+   "timestamp": "2026-09-23T17:33:40Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "account_type_note": "get_accounts now reports type=cash -- the owner's conversion from limited_margin is complete",
+   "sizing_input": {
+    "buying_power_used": 13265.52,
+    "cash": 13265.52,
+    "note": "sized off buying_power; equal to cash because unsettled_funds=0"
+   },
+   "broker_total_value": 17534.99,
+   "orders_placed": [
+    {
+     "side": "sell",
+     "symbol": "SNDK",
+     "shares": 2.34988,
+     "price": 1817.935,
+     "notional": 4271.93,
+     "reason": "STOP",
+     "entry": 1884.3999,
+     "realized_pnl_est": -156.18,
+     "stop_line": 1858.55,
+     "prior_close": 1887.04,
+     "quote_at_plan": 1815.24,
+     "order_id": "6ab40d73-13d0-4087-9852-f191ed710bb1",
+     "state": "filled",
+     "fees": 0.1
+    }
+   ],
+   "orders_skipped": [],
+   "buys_recommended": 0,
+   "netted_trades": [],
+   "unowned_excess": {},
+   "state_reconciliation": "none needed; broker held SNDK 2.349880 (= state) and CGC 2.0 (excluded)",
+   "pending_settlement_after": [
+    {
+     "symbol": "SNDK",
+     "amount": 4271.93,
+     "settle_date": "2026-09-24"
+    }
+   ],
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "data_freshness": "PASS (last bar 2026-09-22, quotes 17:15 UTC)",
+    "pre_commit": "PASS"
+   },
+   "risk_state": {
+    "equity_peak": 17696.92,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false
+   },
+   "drawdown_from_peak_pct": -0.92,
+   "stop_count_this_run": 1,
+   "circuit_breaker_triggered": false,
+   "note": "Live-quote proxy at ~17:15 UTC (12:15 PM CDT). Elevated-scrutiny status applies."
   }
  ]
 }
