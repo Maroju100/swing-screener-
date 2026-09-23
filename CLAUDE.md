@@ -753,6 +753,95 @@ its advantage was a timing artifact.
 **Standing rule from this:** a backtest's price basis must be stated as a
 *clock time*, not as a bar label. "The 17:00 bar" is not "17:00".
 
+#### 🚨 …AND THE HOURLY SERIES ITSELF IS WRONG AT ~7% OF INSTANTS (2026-09-23)
+
+The price-basis fix above chose the right *field* but on the wrong *series*.
+Refereed against **1-minute prints** — the only source that is unambiguously the
+price at instant T — the hourly and 30-minute series disagree on ~7% of opens,
+and the 30-minute series is right **18 times out of 21**. Reproduce:
+`python3 scripts/margin_style_check_time.py all` → the REFEREE block.
+(MU/SNDK/WDC only, 30 days — Robinhood serves ~6 trailing weeks of minute bars —
+so it is a subset, but 18–3 is not a close call.)
+
+- ⚠️ **This puts the `+125.9%` "live-accurate" figure in doubt.** It is the
+  hourly 17:00 **open**, and that is the series just shown to be wrong at ~7% of
+  instants. On the 64 days where both series exist, the same rules give
+  **$17,811 on hourly opens vs $28,131 on 30-minute opens — a 37% gap at the
+  identical nominal instant.** Quote +125.9% only with this caveat attached.
+- 🚫 **A corrected 132-day live-accurate figure CANNOT be produced** (Evidence
+  Rule 6): real 30-minute bars reach back only to 2026-06-22. The honest status
+  of "what would production's rules have returned over 6 months priced at the
+  live check" is **unknown**, not +125.9% and not +155.10%.
+- ✅ **The `+155.10%` anchor is still the anchor** — it is the exact reproducible
+  output of its stated method and is what every harness self-validates against.
+  It is a 1:00 PM-ish basis on the hourly series, nothing more.
+- **Why a 7% price-error rate moves P&L 37%:** the engine trades on **0.4%**
+  (`NORMAL_DIP_THRESHOLD`) and **−1.51%** (`INTRADAY_STOP`) thresholds. A
+  sub-0.1% price difference flips a rule, which changes the tranche index,
+  sizing, `MAX_HOLD_DAYS` timing and settlement — the whole path diverges. It is
+  **which** day is wrong that matters, not how wrong: at 16:00 the two series
+  differ by **$128** over 64 days and at 17:00 by **$10,320**, off near-identical
+  93% exact-match rates.
+- **Standing rule, second half:** state the *series* as well as the clock time.
+  A sweep across check times is only admissible on the series the 1-minute
+  referee endorses.
+
+#### ❌ NO CHECK TIME BEATS THE INCUMBENT — full sweep, asked 2026-09-23
+
+Asked directly: "rerun the backtests at 12:00pm, 1:00pm or any other time to
+validate the best time to fire that maximizes pl, and we will then use the same
+trigger time for the live trigger." Done properly this time — every 30-minute
+mark in the session, on the admissible series, with walk-forward and
+multiple-testing correction. Reproduce:
+`python3 scripts/margin_style_check_time.py all` → `data/research/check_time.json`.
+
+**Admissible result — 13 × 30-minute marks, 2026-06-22 → 2026-09-21 (64 days),
+$80k, 5 bps/side, real non-interpolated bars:**
+
+| UTC | CDT | Realized | Return | Sharpe |
+|---|---|---|---|---|
+| 17:30 | 12:30 PM | $28,548 | +35.7% | 2.70 |
+| **17:00** | **12:00 PM (LIVE)** | **$28,131** | **+35.2%** | **2.68** |
+| 18:00 | 1:00 PM | $27,914 | +34.9% | 2.60 |
+| 19:30 | 2:30 PM | $23,003 | +28.8% | 2.43 |
+| 16:00 | 11:00 AM | $21,391 | +26.7% | 2.20 |
+| 13:30–15:00 | 8:30–10:00 AM | −$1,874 … −$2,833 | negative | <0 |
+
+**The incumbent is rank 2 of 13, and the mark above it fails every test:**
+
+| Check | Result |
+|---|---|
+| argmax beats incumbent out-of-sample | ❌ **0 of 3** walk-forward folds |
+| same argmax in every fold | ❌ picks 17:00, 18:00 — it moves |
+| bootstrap 95% CI on daily diff excludes zero | ❌ **[−0.000438, +0.000819]**, P(better)=**0.562** |
+| observed max Sharpe clears expected-max-on-noise | ❌ **2.70 vs 3.38** |
+
+Top three marks sit within **$634** of each other (0.8pp) — below the noise
+floor. Best-in-sub-window inverts (18:00 / 15:30 / 17:30).
+
+- 🚨 **The 132-day hourly sweep says something completely different and MUST NOT
+  be used.** It ranks **16:00 UTC first at $131,214 vs 17:00's $100,745
+  (+$30,470)**, with walk-forward **3/3**, the same pick every fold, bootstrap CI
+  excluding zero (P=0.983) and Sharpe 4.74 over an expected-max-on-noise of 1.92.
+  Every validation passes. **It is still wrong** — it is built on the series the
+  referee rejected, and on the overlapping window the 30-minute data inverts the
+  16:00-vs-17:00 ordering outright. This is the cleanest example yet that
+  *passing validation does not rescue a bad input*: the folds, the bootstrap and
+  the DSR all faithfully validated an artifact. It is kept here only so a future
+  session that rediscovers the 16:00 result knows why it was rejected.
+- **Sensitivity is measured, not asserted** (`noise` in the script): re-replaying
+  a mark with seeded noise *smaller than the vendor disagreement* moves 17:00 by
+  **$25,183** at 5 bps and 18:00 by **$11,503**. A single mark's P&L is not a
+  stable property of that mark at this sample size.
+- **Genuine signal that did survive:** every mark before ~15:30 UTC (10:30 AM
+  CDT) loses money, on both series, by a wide margin. That is a real constraint —
+  **do not move the check earlier into the morning** — and it is the only
+  directional finding here that is robust.
+- **DECISION: the trigger stays at `0 17 * * 1-5`.** Not because 17:00 was shown
+  to be optimal — it was not — but because nothing is distinguishable from it and
+  it is already rank 2 of 13. Moving it would trade 63 runs of live history for
+  an unmeasurable difference.
+
 #### ❌ DO NOT move the trigger to exactly noon (asked and measured 2026-09-23)
 
 The obvious response to the price-basis defect is "align the live trigger to the

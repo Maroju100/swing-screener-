@@ -54,6 +54,7 @@ import contextlib
 import io
 import json
 import os
+import random
 import subprocess
 import sys
 from datetime import datetime as real_datetime
@@ -136,7 +137,8 @@ def extract_plan(text):
 
 def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False,
         params=None, src_patches=None, tag='17h', daily_path=None, hourly_path=None,
-        cost_bps=0.0, price_field='close_price'):
+        cost_bps=0.0, price_field='close_price', check_hhmm='17:00',
+        quote_jitter_bps=0.0, jitter_seed=0):
     """Replay the engine day-by-day at its real ~17:00 UTC check price.
 
     The four research hooks below were added 2026-09-22. All of them default to
@@ -164,6 +166,31 @@ def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False,
                      anchor still reproduces; pass 'open_price' for a
                      live-accurate basis. On the 64-day window the two differ by
                      -39% ($30,623 -> $18,694), so this is NOT cosmetic.
+    check_hhmm    -- WHICH HOURLY BAR is read, left-edge label, UTC. Combined with
+                     price_field this names an exact clock instant:
+                       check_hhmm='HH:00', price_field='open_price'  -> HH:00 UTC
+                       check_hhmm='HH:00', price_field='close_price' -> HH+1:00 UTC
+                     Default '17:00'+close_price is the published anchor's basis
+                     (18:00 UTC / 1:00 PM CDT) and is asserted by --validate.
+                     CAVEAT (MEASURED 2026-09-23): the hourly and 30-minute vendor
+                     series agree on only ~91% of bars at the same nominal instant,
+                     and disagreements cluster by date across all symbols at once
+                     (e.g. 2026-07-02). Sweeps built on hourly opens must be
+                     cross-checked against the 30-minute series over the overlap
+                     before their ordering is believed.
+    quote_jitter_bps -- multiplicative noise on each check-time quote, in basis
+                     points, drawn once per (symbol, day) from a seeded RNG.
+                     ADDED 2026-09-23 to answer a question the check-time sweep
+                     raised: two vendor series describing the SAME instant agree
+                     on ~93% of prices exactly, yet produce P&L differing by
+                     $10,320 at 17:00 and $128 at 16:00 over the same 64 days.
+                     Jitter measures how much of a check-time sweep's spread is
+                     the check time and how much is the engine's sensitivity to
+                     sub-0.1% price noise -- the thresholds it trades on are
+                     0.4% (NORMAL_DIP) and -1.51% (INTRADAY_STOP), so a tiny
+                     price change flips a rule, which changes the tranche index,
+                     sizing and settlement, and the whole path diverges.
+                     0.0 (default) is exactly the unperturbed path.
     cost_bps      -- round-trip friction, PER SIDE, in basis points. The engine
                      still SIGNALS off true prices (slippage does not move a
                      signal); cost is applied to the EXECUTION, so a buy fills at
@@ -207,7 +234,15 @@ def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False,
     q1700 = {}
     for r in hourly['data']['results']:
         q1700[r['symbol']] = {b['begins_at'][:10]: float(b[price_field])
-                              for b in r['bars'] if b['begins_at'][11:19] == '17:00:00'}
+                              for b in r['bars'] if b['begins_at'][11:16] == check_hhmm}
+
+    if quote_jitter_bps:
+        # Seeded per (symbol, day) so a given seed is one fully reproducible
+        # alternate price history, not fresh noise on every read.
+        rnd = random.Random(jitter_seed)
+        for sym in sorted(q1700):
+            for d in sorted(q1700[sym]):
+                q1700[sym][d] *= 1.0 + rnd.gauss(0.0, quote_jitter_bps / 10000.0)
 
     # Tag-scoped, NOT fixed names. These were shared filenames until 2026-09-22,
     # when a grid search running alongside another replay read a half-written
@@ -223,6 +258,7 @@ def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False,
     traded_days = 0
     day_pnl, day_equity, trades = {}, {}, []
     stop_days = []
+    quote_fallbacks = []
 
     for i, D in enumerate(all_dates):
         if D < start or D > end:
@@ -240,7 +276,13 @@ def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False,
             if D in q1700.get(sym, {}):
                 quotes[sym] = q1700[sym][D]
             elif D in daily_by_sym[sym]:
+                # Falls back to the DAILY CLOSE, i.e. a different clock time than
+                # check_hhmm. Harmless at the default (the 17:00 bar exists on
+                # every day of the anchor window) but a silent basis change during
+                # a check-time sweep, so it is counted and reported rather than
+                # left invisible.
                 quotes[sym] = daily_by_sym[sym][D]
+                quote_fallbacks.append((D, sym))
         json.dump(quotes, open(quotes_path, 'w'))
 
         SIM_DAY['value'] = real_datetime.strptime(D, '%Y-%m-%d')
@@ -296,6 +338,10 @@ def run(start, end, capital, engine_rev, patch_bug=False, no_lockup=False,
         'settlement_lockup_removed': no_lockup,
         'cost_bps': cost_bps,
         'price_field': price_field,
+        'check_hhmm': check_hhmm,
+        'quote_fallbacks': len(quote_fallbacks),
+        'quote_jitter_bps': quote_jitter_bps,
+        'jitter_seed': jitter_seed,
         'capital': capital,
         'realized': round(realized_total, 2),
         'unrealized': round(unrealized, 2),
