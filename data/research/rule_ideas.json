@@ -1,0 +1,317 @@
+{
+ "generated": "2026-09-24",
+ "engine": "origin/main",
+ "capital": 80000.0,
+ "cost_bps": 5.0,
+ "thirds": [
+  [
+   "2026-03-13",
+   "2026-05-14"
+  ],
+  [
+   "2026-05-15",
+   "2026-07-20"
+  ],
+  [
+   "2026-07-21",
+   "2026-09-21"
+  ]
+ ],
+ "halves": {
+  "rising (Mar 13-Jun 19)": [
+   "2026-03-13",
+   "2026-06-19"
+  ],
+  "falling (Jun 22-Sep 21)": [
+   "2026-06-22",
+   "2026-09-21"
+  ]
+ },
+ "fine_window": [
+  "2026-06-22",
+  "2026-09-21"
+ ],
+ "production": {
+  "full_pct": 155.36,
+  "full_summary": {
+   "realized": 124289.71,
+   "total": 125722.53,
+   "realized_pct": 155.36,
+   "total_pct": 157.15,
+   "trades": 771,
+   "days": 132,
+   "days_with_pnl": 110,
+   "sharpe": 3.834,
+   "max_dd_pct": -8.84,
+   "cost_bps": 5.0,
+   "seconds": 0.96
+  },
+  "thirds_pct": [
+   43.72,
+   30.93,
+   6.84
+  ],
+  "halves_pct": {
+   "rising (Mar 13-Jun 19)": 67.74,
+   "falling (Jun 22-Sep 21)": 38.28
+  },
+  "fine_pct": {
+   "17:00": 23.37,
+   "17:30": 35.69
+  }
+ },
+ "variants": [
+  {
+   "variant": "1 Regime: trim 30% / hold 10d in rising market",
+   "params": {
+    "REGIME_ADAPTIVE": true,
+    "REGIME_PEAK_SELL_PCT": 0.3,
+    "REGIME_MAX_HOLD_DAYS": 10
+   },
+   "full_pct": 150.78,
+   "full_summary": {
+    "realized": 120621.56,
+    "total": 126955.06,
+    "realized_pct": 150.78,
+    "total_pct": 158.69,
+    "trades": 788,
+    "days": 132,
+    "days_with_pnl": 110,
+    "sharpe": 3.544,
+    "max_dd_pct": -11.65,
+    "cost_bps": 5.0,
+    "seconds": 0.86
+   },
+   "full_delta": -3668.15,
+   "thirds_pct": [
+    47.53,
+    30.04,
+    3.7
+   ],
+   "halves_pct": {
+    "rising (Mar 13-Jun 19)": 85.16,
+    "falling (Jun 22-Sep 21)": 21.81
+   },
+   "fine_pct": {
+    "17:00": 9.28,
+    "17:30": 20.93
+   },
+   "bootstrap": {
+    "ci_daily": [
+     -0.0019366858234921476,
+     0.002241437695624237
+    ],
+    "p_better": 0.5216
+   },
+   "checks": {
+    "full window": false,
+    "all 3 thirds": false,
+    "both halves": false,
+    "both 30-min marks": false,
+    "bootstrap CI excludes 0": false
+   },
+   "checks_passed": 0,
+   "verdict": "NOT AN IMPROVEMENT"
+  },
+  {
+   "variant": "2a Equal split across qualifiers",
+   "params": {
+    "EQUAL_SPLIT": true
+   },
+   "full_pct": 112.49,
+   "full_summary": {
+    "realized": 89992.23,
+    "total": 91329.91,
+    "realized_pct": 112.49,
+    "total_pct": 114.16,
+    "trades": 910,
+    "days": 132,
+    "days_with_pnl": 111,
+    "sharpe": 3.667,
+    "max_dd_pct": -7.93,
+    "cost_bps": 5.0,
+    "seconds": 0.77
+   },
+   "full_delta": -34297.48,
+   "thirds_pct": [
+    39.49,
+    19.69,
+    6.65
+   ],
+   "halves_pct": {
+    "rising (Mar 13-Jun 19)": 54.61,
+    "falling (Jun 22-Sep 21)": 28.09
+   },
+   "fine_pct": {
+    "17:00": 17.65,
+    "17:30": 24.77
+   },
+   "bootstrap": {
+    "ci_daily": [
+     -0.002989948508933904,
+     -0.0005115711924048506
+    ],
+    "p_better": 0.0008
+   },
+   "checks": {
+    "full window": false,
+    "all 3 thirds": false,
+    "both halves": false,
+    "both 30-min marks": false,
+    "bootstrap CI excludes 0": false
+   },
+   "checks_passed": 0,
+   "verdict": "NOT AN IMPROVEMENT"
+  },
+  {
+   "variant": "2b Rank by yesterday's drop",
+   "params": {
+    "RANK_BY_DAY_DROP": true
+   },
+   "full_pct": 130.74,
+   "full_summary": {
+    "realized": 104593.34,
+    "total": 105939.63,
+    "realized_pct": 130.74,
+    "total_pct": 132.42,
+    "trades": 803,
+    "days": 132,
+    "days_with_pnl": 111,
+    "sharpe": 3.53,
+    "max_dd_pct": -9.04,
+    "cost_bps": 5.0,
+    "seconds": 0.86
+   },
+   "full_delta": -19696.37,
+   "thirds_pct": [
+    42.87,
+    26.49,
+    3.76
+   ],
+   "halves_pct": {
+    "rising (Mar 13-Jun 19)": 65.39,
+    "falling (Jun 22-Sep 21)": 30.26
+   },
+   "fine_pct": {
+    "17:00": 15.05,
+    "17:30": 26.36
+   },
+   "bootstrap": {
+    "ci_daily": [
+     -0.0018894409608394699,
+     2.990798327845178e-05
+    ],
+    "p_better": 0.0282
+   },
+   "checks": {
+    "full window": false,
+    "all 3 thirds": false,
+    "both halves": false,
+    "both 30-min marks": false,
+    "bootstrap CI excludes 0": false
+   },
+   "checks_passed": 0,
+   "verdict": "NOT AN IMPROVEMENT"
+  },
+  {
+   "variant": "3 Buy only once the bounce has started",
+   "params": {
+    "BOUNCE_CONFIRM": true
+   },
+   "full_pct": 69.93,
+   "full_summary": {
+    "realized": 55943.71,
+    "total": 56709.07,
+    "realized_pct": 69.93,
+    "total_pct": 70.89,
+    "trades": 666,
+    "days": 132,
+    "days_with_pnl": 105,
+    "sharpe": 2.493,
+    "max_dd_pct": -12.17,
+    "cost_bps": 5.0,
+    "seconds": 0.81
+   },
+   "full_delta": -68346.0,
+   "thirds_pct": [
+    40.65,
+    1.62,
+    12.21
+   ],
+   "halves_pct": {
+    "rising (Mar 13-Jun 19)": 57.1,
+    "falling (Jun 22-Sep 21)": 5.93
+   },
+   "fine_pct": {
+    "17:00": 0.74,
+    "17:30": 3.18
+   },
+   "bootstrap": {
+    "ci_daily": [
+     -0.0071833028586011614,
+     -0.0004438314506223229
+    ],
+    "p_better": 0.0074
+   },
+   "checks": {
+    "full window": false,
+    "all 3 thirds": false,
+    "both halves": false,
+    "both 30-min marks": false,
+    "bootstrap CI excludes 0": false
+   },
+   "checks_passed": 0,
+   "verdict": "NOT AN IMPROVEMENT"
+  },
+  {
+   "variant": "4 Skip buys under $500",
+   "params": {
+    "MIN_NOTIONAL": 500.0
+   },
+   "full_pct": 144.21,
+   "full_summary": {
+    "realized": 115370.97,
+    "total": 116741.01,
+    "realized_pct": 144.21,
+    "total_pct": 145.93,
+    "trades": 691,
+    "days": 132,
+    "days_with_pnl": 110,
+    "sharpe": 3.64,
+    "max_dd_pct": -11.05,
+    "cost_bps": 5.0,
+    "seconds": 0.78
+   },
+   "full_delta": -8918.74,
+   "thirds_pct": [
+    41.43,
+    30.92,
+    7.38
+   ],
+   "halves_pct": {
+    "rising (Mar 13-Jun 19)": 65.08,
+    "falling (Jun 22-Sep 21)": 34.35
+   },
+   "fine_pct": {
+    "17:00": 22.34,
+    "17:30": 31.3
+   },
+   "bootstrap": {
+    "ci_daily": [
+     -0.0008661267074241436,
+     -7.992723600478082e-06
+    ],
+    "p_better": 0.0022
+   },
+   "checks": {
+    "full window": false,
+    "all 3 thirds": false,
+    "both halves": false,
+    "both 30-min marks": false,
+    "bootstrap CI excludes 0": false
+   },
+   "checks_passed": 0,
+   "verdict": "NOT AN IMPROVEMENT"
+  }
+ ]
+}
