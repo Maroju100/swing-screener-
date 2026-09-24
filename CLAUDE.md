@@ -448,12 +448,19 @@ below are what makes a claim checkable.
   orders placed, reconciliation, risk state).
 - **Universe**: exactly `AMD, MU, WDC, SNDK, TSM, INTC, LRCX, STX` — do not
   add or remove symbols without being asked.
-- **Schedule**: runs once daily, ~17:00 UTC, via trigger
-  `trig_01VfH6Nhfbk7YLaTkzHWLG7E`. (Check-time evidence was re-measured
-  2026-09-23 on admissible 30-minute data: 12:30–1:00 PM CDT beats exactly
-  noon but fails 2 of 4 validation checks — suggestive, not validated; a
-  decision on moving is pending with the user. See "CHECK TIME" under the
-  price-basis section. Never move the check before ~15:30 UTC.)
+- **Schedule**: runs once daily via trigger `trig_01VfH6Nhfbk7YLaTkzHWLG7E`,
+  cron **`30 17 * * 1-5`** (fires ~17:34–17:44 UTC = ~12:34–12:44 PM CDT).
+  **Moved from `0 17` on 2026-09-24 at the user's explicit choice (option B)**
+  — see "CHECK TIME" under the price-basis section. The move is SUGGESTIVE,
+  NOT VALIDATED (2 of 4 checks). The trigger's own prompt text still says
+  "17:00 UTC / ~12:00pm CDT" in its CHECK-FREQUENCY paragraph; that sentence
+  is descriptive only and was deliberately not rewritten (re-sending ~25k
+  chars of real-money instructions to fix one stale sentence was judged the
+  bigger risk). **This file is authoritative on the time.** Do not "correct"
+  the cron back to `0 17`. DST: switch to `30 18 * * 1-5` after the Fri
+  2026-10-30 run (reminder `trig_01DrQ22mzBSXdBV2C4o3MJVY` fires 2026-10-30
+  19:00 UTC), and back to `30 17` before Mon 2027-03-15. Never move the check
+  before ~15:30 UTC.
   - **Check *frequency* is settled too — do not add intraday runs.**
     The primary evidence is in this trigger's own prompt (CHECK-FREQUENCY
     CHANGE, 2026-08-05, readable via `list_triggers` on
@@ -842,10 +849,10 @@ instant), 2026-06-22 → 2026-09-21 (64 days), $80k, 5 bps/side:**
   apart and $9,854 apart. Its own P&L is **unmeasured** — there are no 17:14
   bars for the full universe. That gap is itself the strongest evidence of how
   sensitive this engine is to the exact instant.
-- **DECISION PENDING — the user's call, not made here.** Options: (a) keep
-  `0 17 * * 1-5`; (b) move to `30 17 * * 1-5` (fires ~17:44 UTC = 12:44 PM CDT,
-  inside the 17:30–18:00 band that ranked 1st–2nd). Not validated either way.
-  Whatever is chosen, record it here and in the DST decision below.
+- ✅ **DECIDED 2026-09-24 by the user: option (b), `30 17 * * 1-5`** (fires
+  ~17:34–17:44 UTC = 12:34–12:44 PM CDT, between the 1st- and 2nd-ranked
+  marks). Chosen knowingly as an unvalidated move. Winter: `30 18 * * 1-5`
+  (see DST below). Worth re-checking once more 30-minute history exists.
 - 🚨 **The 132-day hourly sweep MUST NOT be used.** It ranks **16:00 UTC first
   at $131,214 vs 17:00's $100,745**, and every validation passes — but it is
   built on the series the 1-minute referee rejected, and on the admissible data
@@ -994,9 +1001,12 @@ times, 5 bps/side:
 **2026-11-01** the US leaves daylight time, so 17:00 UTC becomes **11:00 AM CST**
 while the session itself shifts to 14:30–21:00 UTC — the check moves an hour
 earlier *relative to the session*. Every figure in this file was measured in the
-CDT half of the year. Decide before November whether the check should track the
-session (`0 18 * * 1-5` in winter) or stay at 17:00 UTC. Never previously
-considered.
+CDT half of the year. ✅ **DECIDED 2026-09-24: the check tracks the session.** With the cron at
+`30 17` from 2026-09-24, switch to **`30 18 * * 1-5`** after the Friday
+2026-10-30 run and before Monday 2026-11-02, then back to `30 17` before Monday
+2027-03-15 (DST resumes 2027-03-14). A one-shot reminder into this session,
+`trig_01DrQ22mzBSXdBV2C4o3MJVY`, fires 2026-10-30 19:00 UTC to do the first
+switch and schedule the second.
 
 ### Rule research, 2026-09-22 — six questions, five answers, one refusal
 
