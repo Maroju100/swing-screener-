@@ -1,12 +1,42 @@
 {
- "pending_settlement": [
-  {
-   "amount": 4271.93,
-   "settle_date": "2026-09-24",
-   "symbol": "SNDK"
+ "pending_settlement": [],
+ "open_positions": {
+  "LRCX": {
+   "shares": 14.363727,
+   "entry": 302.82,
+   "peak": 302.82,
+   "tranches": 1,
+   "opened": "2026-09-24"
+  },
+  "SNDK": {
+   "shares": 2.470012,
+   "entry": 1764.9,
+   "peak": 1764.9,
+   "tranches": 1,
+   "opened": "2026-09-24"
+  },
+  "INTC": {
+   "shares": 34.822228,
+   "entry": 125.5966,
+   "peak": 125.5966,
+   "tranches": 1,
+   "opened": "2026-09-24"
+  },
+  "MU": {
+   "shares": 3.873503,
+   "entry": 1074.9443,
+   "peak": 1074.9443,
+   "tranches": 1,
+   "opened": "2026-09-24"
+  },
+  "TSM": {
+   "shares": 0.461176,
+   "entry": 450.6399,
+   "peak": 450.6399,
+   "tranches": 1,
+   "opened": "2026-09-24"
   }
- ],
- "open_positions": {},
+ },
  "equity_peak": 17696.92,
  "kill_switch_active": false,
  "kill_switch_triggered_date": null,

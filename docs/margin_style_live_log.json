@@ -2683,6 +2683,119 @@
    "stop_count_this_run": 1,
    "circuit_breaker_triggered": false,
    "note": "Live-quote proxy at ~17:15 UTC (12:15 PM CDT). Elevated-scrutiny status applies."
+  },
+  {
+   "timestamp": "2026-09-24T17:30:25Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "sizing_input": {
+    "buying_power_used": 17539.26,
+    "cash": 17539.26,
+    "note": "sized off buying_power; SNDK proceeds from 2026-09-23 settled, unsettled_funds=0"
+   },
+   "broker_total_value": 17539.26,
+   "orders_placed": [
+    {
+     "side": "buy",
+     "symbol": "LRCX",
+     "shares": 14.363727,
+     "price": 302.82,
+     "notional": 4349.62,
+     "reason": "NORMAL_DIP",
+     "tranche": 1,
+     "quote_at_plan": 305.27,
+     "order_id": "6ab55dc0-8aea-4f7b-a578-b0981b29ed6d",
+     "state": "filled",
+     "fees": 0.0,
+     "capped_by_trade_notional_limit": true
+    },
+    {
+     "side": "buy",
+     "symbol": "SNDK",
+     "shares": 2.470012,
+     "price": 1764.9,
+     "notional": 4359.32,
+     "reason": "NORMAL_DIP",
+     "tranche": 1,
+     "quote_at_plan": 1775.22,
+     "order_id": "6ab55dcc-5b6b-4d73-bc5e-7acc7e9e25a5",
+     "state": "filled",
+     "fees": 0.0,
+     "capped_by_trade_notional_limit": true
+    },
+    {
+     "side": "buy",
+     "symbol": "INTC",
+     "shares": 34.822228,
+     "price": 125.5966,
+     "notional": 4373.55,
+     "reason": "NORMAL_DIP",
+     "tranche": 1,
+     "quote_at_plan": 125.92,
+     "order_id": "6ab55e20-7c46-40de-81bf-f14b9ff57d9c",
+     "state": "filled",
+     "fees": 0.0,
+     "capped_by_trade_notional_limit": true
+    },
+    {
+     "side": "buy",
+     "symbol": "MU",
+     "shares": 3.873503,
+     "price": 1074.9443,
+     "notional": 4163.8,
+     "reason": "NORMAL_DIP",
+     "tranche": 1,
+     "quote_at_plan": 1075.4025,
+     "order_id": "6ab55e27-a299-4ebc-af07-86c2ce7726eb",
+     "state": "filled",
+     "fees": 0.0,
+     "capped_by_trade_notional_limit": false
+    },
+    {
+     "side": "buy",
+     "symbol": "TSM",
+     "shares": 0.461176,
+     "price": 450.6399,
+     "notional": 207.82,
+     "reason": "NORMAL_DIP",
+     "tranche": 1,
+     "quote_at_plan": 451.625,
+     "order_id": "6ab55e30-b642-4bfc-aefe-1eda299845b7",
+     "state": "filled",
+     "fees": 0.0,
+     "capped_by_trade_notional_limit": false
+    }
+   ],
+   "total_invested": 17454.11,
+   "orders_skipped": [],
+   "netted_trades": [],
+   "unowned_excess": {},
+   "state_reconciliation": "none needed; broker held no positions (CGC no longer held -- not this system's), state flat",
+   "pending_settlement_before": [
+    {
+     "symbol": "SNDK",
+     "amount": 4271.93,
+     "settle_date": "2026-09-24"
+    }
+   ],
+   "pending_settlement_note": "settled today (settle_date <= today), pruned to []",
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "data_freshness": "PASS (last bar 2026-09-23, quotes 17:04 UTC)",
+    "pre_commit": "PASS"
+   },
+   "risk_state": {
+    "equity_peak": 17696.92,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false
+   },
+   "drawdown_from_peak_pct": -0.89,
+   "stop_count_this_run": 0,
+   "circuit_breaker_triggered": false,
+   "note": "Live-quote proxy at ~17:04 UTC (12:04 PM CDT); orders placed 17:28-17:30 UTC. Elevated-scrutiny status applies."
   }
  ]
 }
