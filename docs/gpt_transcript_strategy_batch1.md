@@ -56,3 +56,20 @@ For a fairer second batch, obtain or build a historical small-cap intraday unive
 - sufficient breadth to reproduce scanner selection.
 
 Until then, transcript rules should remain a separate research track and should not be merged into production B0.
+
+
+## Normalized 0-bps vs 5-bps comparison
+
+A second normalized harness was added after the first batch so the same five objective proxies could be tested both before and after execution-cost stress.
+
+| Setup | 0-bps return | 5-bps return | 5-bps Sharpe | Max DD | Win rate | Trades | Profit factor | 5-bps impact |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Ross Cameron — first pullback momentum proxy | -0.42% | -0.55% | -1.725 | -0.66% | 14.3% | 7 | 0.249 | -0.13 pp |
+| Humbled Trader — gap/reclaim proxy | -0.79% | -1.64% | -1.041 | -2.97% | 50.0% | 34 | 0.747 | -0.85 pp |
+| ChartFanatics/Clement — ORH reclaim continuation | -1.49% | -1.99% | -1.894 | -2.97% | 40.0% | 20 | 0.483 | -0.50 pp |
+| Live Traders — relative-strength / ATR breakout | -4.14% | -5.16% | -2.394 | -8.63% | 36.6% | 41 | 0.496 | -1.02 pp |
+| Riley Coleman — pullback trend continuation | -0.55% | -2.29% | -1.279 | -4.16% | 35.8% | 95 | 0.824 | -1.74 pp |
+
+The Trading Geek supply/demand/order-block material remains excluded from this normalized batch because its zone construction and multi-timeframe context are too subjective to encode defensibly from the transcript alone.
+
+The normalized result is stricter than the original proxy suite: all five tested setups were negative even at zero transaction cost, and all deteriorated further at 5 bps/side. This supports keeping transcript-derived rules out of production B0 until they can be tested on a dataset matching their intended market/universe.
