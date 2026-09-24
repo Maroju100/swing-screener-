@@ -1,21 +1,34 @@
 #!/usr/bin/env python3
 """Independent GPT audit: replay production B0 across account sizes.
 
-This is research-only. It imports the repository's validated replay wrapper and
-changes only starting capital. No production/live file is modified.
-
-The goal is to test whether the $80k research baseline transfers to capital near
-the live account. Each row is a fresh full-engine replay, not scaled P&L.
+Research-only. Each row is a fresh full-engine replay through the repository's
+validated replay core; no P&L series is scaled and no production/live file is
+modified.
 """
 import argparse
+import contextlib
+import io
 import json
 import os
 import sys
+import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import margin_style_research as R
 
 DEFAULT_CAPITALS = [5000, 10000, 15000, 17696.92, 20000, 40000, 80000]
+
+
+def replay_at_capital(capital, cost_bps, tag):
+    """Call the same validated H.run core used by margin_style_research.replay."""
+    t0 = time.time()
+    with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+        r = R.H.run(R.RESEARCH_START, R.RESEARCH_END, capital, R.ENGINE,
+                    params=None, tag=tag, src_patches=None,
+                    daily_path=R.DAILY_EXT, hourly_path=R.HOURLY_EXT,
+                    cost_bps=cost_bps, price_field='close_price')
+    r['seconds'] = round(time.time() - t0, 2)
+    return r
 
 
 def main():
@@ -27,8 +40,8 @@ def main():
 
     rows = []
     for capital in args.capitals:
-        r = R.replay(capital=capital, cost_bps=args.cost_bps,
-                     tag=f'gpt_cap_{int(round(capital))}')
+        r = replay_at_capital(capital, args.cost_bps,
+                              f'gpt_cap_{int(round(capital))}')
         s = R.summarize(r)
         rows.append({'starting_capital': capital, **s})
         print(f"${capital:>10,.2f}  return={s['realized_pct']:>8.2f}%  "
