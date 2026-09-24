@@ -8,7 +8,7 @@ Fresh full-engine replay, no P&L scaling.
 
 | Starting capital | Cost | Realized P&L | Realized return | Total return | Sharpe | Max DD | Trades |
 |---:|---:|---:|---:|---:|---:|---:|---:|
-| $17,500 | 0 bps/side | $27,012.99 approx. | 154.36% | — | 3.793 | -10.84% | 703 |
+| $17,500 | 0 bps/side | $27,013.53 | 154.36% | 156.17% | 3.793 | -10.84% | 703 |
 | $17,500 | 5 bps/side | $25,235.46 | 144.20% | 145.92% | 3.640 | -11.05% | 701 |
 | $80,000 | 5 bps/side | $124,289.71 | 155.36% | 157.15% | 3.834 | -8.84% | 771 |
 
