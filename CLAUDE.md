@@ -913,6 +913,48 @@ by holding the series fixed (hourly) and splitting the 132 days by regime:**
 - Stop changes remain under the standing directive regardless — reported, not
   proposed.
 
+#### ❌ FOUR NEW RULE IDEAS — all fail, four of five variants significantly worse (2026-09-24)
+
+Asked: "can you think of better rules … that can increase the pl" → "test all
+four". Settings and pass criteria were fixed **before** any run, so nothing was
+tuned to the window. Reproduce: `python3 scripts/margin_style_rule_ideas.py` →
+`data/research/rule_ideas.json`. Full engine replay of `origin/main`, $80k,
+5 bps/side; gates asserted first (anchor $124,080.90; every patch switched off
+reproduces production exactly, $124,289.71 / 771 trades).
+
+| Idea | 6 mo | T1 | T2 | T3 | Rising | Falling | 12:00 | 12:30 | Bootstrap P(better) |
+|---|---|---|---|---|---|---|---|---|---|
+| **PRODUCTION** | **+155.4%** | +43.7 | +30.9 | +6.8 | +67.7 | +38.3 | +23.4 | +35.7 | — |
+| 1 Trim 30% / hold 10d when ≥4 of 8 above own SMA-50 | +150.8% | **+47.5** | +30.0 | +3.7 | **+85.2** | +21.8 | +9.3 | +20.9 | 0.52 |
+| 2a Equal split across qualifiers | +112.5% | +39.5 | +19.7 | +6.7 | +54.6 | +28.1 | +17.6 | +24.8 | **0.001** |
+| 2b Rank by yesterday's drop | +130.7% | +42.9 | +26.5 | +3.8 | +65.4 | +30.3 | +15.1 | +26.4 | 0.028 |
+| 3 Buy only if live ≥ yesterday's close | +69.9% | +40.6 | +1.6 | **+12.2** | +57.1 | +5.9 | +0.7 | +3.2 | 0.007 |
+| 4 Skip buys under $500 | +144.2% | +41.4 | +30.9 | **+7.4** | +65.1 | +34.4 | +22.3 | +31.3 | 0.002 |
+
+Pass required winning **all** of: full window, all three thirds, both halves,
+both 30-minute marks, and a bootstrap CI excluding zero. **0 of 5 variants
+passed a single one of the five checks.**
+
+- **Idea 1 did exactly what it was designed to do in the rising half
+  (+85.2% vs +67.7%) and gave it all back and more in the falling half
+  (+21.8% vs +38.3%)**, worse at both 30-minute marks and worse max drawdown
+  (−11.7% vs −8.8%). Net: a coin flip (P=0.52). The up-market gap to buy &
+  hold is real, but a lagging 50-day regime flag cannot capture it without
+  paying for it when the trend turns.
+- **2a/2b: the deepest-drawdown-first ranking with 25% caps is doing real
+  work.** Spreading the cash, or re-ranking by the size of yesterday's drop,
+  is *significantly* worse (bootstrap CI excludes zero on the losing side for
+  2a). Concentrating into the most-beaten-down names is part of the edge.
+- **3: waiting for the bounce costs more than half the return** (+69.9%) and
+  nearly all of it in the falling half and at both 30-minute marks. Same
+  lesson as the quality filter: this strategy is paid for buying weakness,
+  not for waiting for confirmation.
+- **4: even $500 minimum orders cost 11 points.** The small orders are mostly
+  later, tapered tranches, and they contribute. (Tested at $80k, where $500 is
+  0.6% of equity — a proportional threshold would block *more*.)
+- Nothing here changes production. Idea 1's rising-half result is the only
+  directional signal worth remembering; it is not a rule.
+
 #### ❌ DO NOT move the trigger to exactly noon (asked and measured 2026-09-23)
 
 The obvious response to the price-basis defect is "align the live trigger to the
