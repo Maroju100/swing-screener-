@@ -1,0 +1,34 @@
+name: GPT audit validation
+on:
+  push:
+    branches: [gpt-research-audit]
+    paths:
+      - '.github/workflows/gpt-audit-validation.yml'
+      - 'scripts/gpt_*.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile GPT audit scripts
+        run: python -m py_compile scripts/gpt_capital_sensitivity.py scripts/gpt_symbol_attribution.py
+      - name: Run capital sensitivity
+        run: python scripts/gpt_capital_sensitivity.py --cost-bps 0 --output data/research/gpt_capital_sensitivity_0bps.json
+      - name: Run symbol attribution
+        run: python scripts/gpt_symbol_attribution.py --cost-bps 0 --output data/research/gpt_symbol_attribution_0bps.json
+      - name: Upload audit results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gpt-audit-results
+          path: |
+            data/research/gpt_capital_sensitivity_0bps.json
+            data/research/gpt_symbol_attribution_0bps.json
+          if-no-files-found: warn
