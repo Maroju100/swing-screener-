@@ -14,15 +14,23 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Ensure production ref exists
+        run: git fetch origin main:refs/remotes/origin/main
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       - name: Compile GPT audit scripts
-        run: python -m py_compile scripts/gpt_capital_sensitivity.py scripts/gpt_symbol_attribution.py
+        run: python -m py_compile scripts/gpt_capital_sensitivity.py scripts/gpt_symbol_attribution.py scripts/gpt_live_reconciliation.py
       - name: Run capital sensitivity
-        run: python scripts/gpt_capital_sensitivity.py --cost-bps 0 --output data/research/gpt_capital_sensitivity_0bps.json
+        run: python scripts/gpt_capital_sensitivity.py --capitals 5000 10000 15000 17494.91 17500 17696.92 20000 40000 80000 --cost-bps 0 --output data/research/gpt_capital_sensitivity_0bps.json
+      - name: Run capital sensitivity at 5 bps
+        run: python scripts/gpt_capital_sensitivity.py --capitals 5000 10000 15000 17494.91 17500 17696.92 20000 40000 80000 --cost-bps 5 --output data/research/gpt_capital_sensitivity_5bps.json
       - name: Run symbol attribution
         run: python scripts/gpt_symbol_attribution.py --cost-bps 0 --output data/research/gpt_symbol_attribution_0bps.json
+      - name: Run live-scale reconciliation
+        run: python scripts/gpt_live_reconciliation.py
       - name: Upload audit results
         if: always()
         uses: actions/upload-artifact@v4
@@ -30,5 +38,7 @@ jobs:
           name: gpt-audit-results
           path: |
             data/research/gpt_capital_sensitivity_0bps.json
+            data/research/gpt_capital_sensitivity_5bps.json
             data/research/gpt_symbol_attribution_0bps.json
+            data/research/gpt_live_reconciliation_17_5k.json
           if-no-files-found: warn
