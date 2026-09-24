@@ -39,14 +39,13 @@ def replay(capital, cost_bps, price_field, hourly_path, start=START, tag="gpt_li
 def load_broker():
     rows = []
     with open(FILLS, newline="") as f:
+        header = None
         for line in f:
-            if line.startswith("#"):
-                continue
-            if not line.strip():
-                continue
-            # first non-comment line is header
-            header = [x.strip() for x in line.strip().split(",")]
-            break
+            if line.startswith("# created_at"):
+                header = [x.strip() for x in line.lstrip("# ").strip().split(",")]
+                break
+        if not header:
+            raise SystemExit("broker fill CSV header not found")
         reader = csv.DictReader(f, fieldnames=header)
         for r in reader:
             r["quantity"] = float(r["quantity"])
