@@ -39,19 +39,23 @@ def replay(capital, cost_bps, price_field, hourly_path, start=START, tag="gpt_li
 def load_broker():
     rows = []
     with open(FILLS, newline="") as f:
-        header = None
         for line in f:
-            if line.startswith("# created_at"):
-                header = [x.strip() for x in line.lstrip("# ").strip().split(",")]
-                break
-        if not header:
-            raise SystemExit("broker fill CSV header not found")
-        reader = csv.DictReader(f, fieldnames=header)
-        for r in reader:
-            r["quantity"] = float(r["quantity"])
-            r["average_price"] = float(r["average_price"])
-            r["date"] = r["created_at"][:10]
-            rows.append(r)
+            if line.startswith("#") or not line.strip():
+                continue
+            parts = [x.strip() for x in line.strip().split(",")]
+            if len(parts) != 7:
+                raise SystemExit(f"unexpected broker fill row with {len(parts)} fields: {line!r}")
+            created_at, symbol, side, quantity, average_price, placed_agent, order_id = parts
+            rows.append({
+                "created_at": created_at,
+                "date": created_at[:10],
+                "symbol": symbol,
+                "side": side,
+                "quantity": float(quantity),
+                "average_price": float(average_price),
+                "placed_agent": placed_agent,
+                "order_id": order_id,
+            })
     return rows
 
 
