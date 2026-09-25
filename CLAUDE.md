@@ -962,6 +962,45 @@ passed a single one of the five checks.**
 - Nothing here changes production. Idea 1's rising-half result is the only
   directional signal worth remembering; it is not a rule.
 
+#### ❌ ENTRY + EXIT GRID SEARCH — 972 configs, nothing generalizes (2026-09-25)
+
+Asked: "grid search on normal dip entry and find best margin live setup
+parameter of exits". Extends the 2026-09-22 grid to the dimensions it never
+searched, with `INTRADAY_STOP` held at −1.51% (standing directive). Reproduce:
+`python3 scripts/margin_style_grid_entry_exit.py` →
+`data/research/grid_entry_exit.json` (~9 min on 4 cores).
+
+Space: dip threshold 0.2/0.4*/0.8% × tranche sizes live*/half × max tranches
+3/5* × first-two-tranche cap 15/25*/35% × new-high trim 50/74.3*/100% × gain
+tiers live*/wider/none × max hold 4/6*/10 days = **972** (* = live). Gates
+asserted first: anchor $124,080.90, and the live grid point reproduces
+production exactly ($124,289.71).
+
+- **In-sample, production ranks 97th of 972** (top 10%); 96 configs beat it.
+  The best, **+165.0%** vs **+155.4%** (0.2% dip, half-size tranches, 35% cap,
+  50% trim, wider tiers, 6d hold), has a *lower* Sharpe (3.74 vs 3.83) and a
+  worse max drawdown (−10.8% vs −8.8%).
+- **Walk-forward, 3 independent flat-start folds:** the train-selected config
+  beat production on test **1 of 3** (Sharpe selection) and **0 of 3** (P&L
+  selection), and **a different config was picked in every fold** —
+  including trim 50% in folds 1–2 and 100% in fold 3. Fold 2 lost $18,456 and
+  $10,733 against production.
+- **The in-sample winner fails its checks:** beats production only in the
+  rising half (+$5,491); loses the falling half (−$2,729), at 17:00 on 30-min
+  bars (−$549) and at 17:30, the live time (−$3,176). Bootstrap CI
+  [−0.070%, +0.176%] straddles zero (P=0.79).
+- **Deflated Sharpe 0.988 passes, and that is not evidence for the winner.**
+  It tests the winner against the best Sharpe 972 pure-noise trials would
+  produce (0.98). Production's own Sharpe (3.83) is *higher* than the
+  winner's, so the DSR says this strategy family has skill — which production
+  already captures — not that the winner beats production.
+- 6/9 one-step neighbours of the winner also beat production in-sample: a
+  plateau, but an in-sample one, and the whole plateau leans on the same
+  rising stretch.
+- **Verdict: NOT AN IMPROVEMENT.** 2 of 8 pre-set checks pass. Consistent with
+  every prior search here: the in-sample optimum moves with the window and
+  the regime.
+
 #### ❌ DO NOT move the trigger to exactly noon (asked and measured 2026-09-23)
 
 The obvious response to the price-basis defect is "align the live trigger to the

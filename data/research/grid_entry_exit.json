@@ -1,0 +1,400 @@
+{
+ "generated": "2026-09-25",
+ "engine": "origin/main",
+ "capital": 80000.0,
+ "cost_bps": 5.0,
+ "window": [
+  "2026-03-13",
+  "2026-09-21"
+ ],
+ "n_configs": 972,
+ "space": {
+  "dip": [
+   0.002,
+   0.004,
+   0.008
+  ],
+  "tranche": [
+   "live",
+   "half"
+  ],
+  "max_tranches": [
+   3,
+   5
+  ],
+  "cap": [
+   0.15,
+   0.25,
+   0.35
+  ],
+  "peak": [
+   0.5,
+   0.743,
+   1.0
+  ],
+  "tiers": [
+   "live",
+   "wider",
+   "none"
+  ],
+  "hold": [
+   4,
+   6,
+   10
+  ]
+ },
+ "live_config": {
+  "dip": 0.004,
+  "tranche": "live",
+  "max_tranches": 5,
+  "cap": 0.25,
+  "peak": 0.743,
+  "tiers": "live",
+  "hold": 6
+ },
+ "production": {
+  "realized": 124289.71,
+  "pct": 155.36,
+  "sharpe": 3.834,
+  "max_dd": -8.84,
+  "rank_of_live_in_grid": 97
+ },
+ "n_configs_beating_production_in_sample": 96,
+ "top10_in_sample": [
+  {
+   "config": {
+    "dip": 0.002,
+    "tranche": "half",
+    "max_tranches": 5,
+    "cap": 0.35,
+    "peak": 0.5,
+    "tiers": "wider",
+    "hold": 6
+   },
+   "label": "dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers wider | hold 6d",
+   "realized": 132033.94,
+   "pct": 165.04,
+   "sharpe": 3.736,
+   "max_dd": -10.78,
+   "trades": 924
+  },
+  {
+   "config": {
+    "dip": 0.002,
+    "tranche": "half",
+    "max_tranches": 5,
+    "cap": 0.35,
+    "peak": 0.5,
+    "tiers": "live",
+    "hold": 6
+   },
+   "label": "dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers live | hold 6d",
+   "realized": 131518.36,
+   "pct": 164.4,
+   "sharpe": 3.725,
+   "max_dd": -10.66,
+   "trades": 929
+  },
+  {
+   "config": {
+    "dip": 0.002,
+    "tranche": "half",
+    "max_tranches": 3,
+    "cap": 0.35,
+    "peak": 0.5,
+    "tiers": "wider",
+    "hold": 6
+   },
+   "label": "dip 0.2% | tranche half x3 | cap 35% | peak 50.0% | tiers wider | hold 6d",
+   "realized": 131055.24,
+   "pct": 163.82,
+   "sharpe": 3.721,
+   "max_dd": -10.78,
+   "trades": 924
+  },
+  {
+   "config": {
+    "dip": 0.002,
+    "tranche": "half",
+    "max_tranches": 3,
+    "cap": 0.35,
+    "peak": 0.5,
+    "tiers": "live",
+    "hold": 6
+   },
+   "label": "dip 0.2% | tranche half x3 | cap 35% | peak 50.0% | tiers live | hold 6d",
+   "realized": 130542.56,
+   "pct": 163.18,
+   "sharpe": 3.711,
+   "max_dd": -10.66,
+   "trades": 929
+  },
+  {
+   "config": {
+    "dip": 0.002,
+    "tranche": "half",
+    "max_tranches": 5,
+    "cap": 0.35,
+    "peak": 0.5,
+    "tiers": "none",
+    "hold": 6
+   },
+   "label": "dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers none | hold 6d",
+   "realized": 130241.88,
+   "pct": 162.8,
+   "sharpe": 3.694,
+   "max_dd": -12.08,
+   "trades": 902
+  },
+  {
+   "config": {
+    "dip": 0.004,
+    "tranche": "live",
+    "max_tranches": 3,
+    "cap": 0.25,
+    "peak": 0.5,
+    "tiers": "live",
+    "hold": 10
+   },
+   "label": "dip 0.4% | tranche live x3 | cap 25% | peak 50.0% | tiers live | hold 10d",
+   "realized": 130055.17,
+   "pct": 162.57,
+   "sharpe": 3.805,
+   "max_dd": -10.3,
+   "trades": 792
+  },
+  {
+   "config": {
+    "dip": 0.004,
+    "tranche": "live",
+    "max_tranches": 3,
+    "cap": 0.25,
+    "peak": 0.5,
+    "tiers": "wider",
+    "hold": 10
+   },
+   "label": "dip 0.4% | tranche live x3 | cap 25% | peak 50.0% | tiers wider | hold 10d",
+   "realized": 129700.78,
+   "pct": 162.13,
+   "sharpe": 3.798,
+   "max_dd": -10.46,
+   "trades": 786
+  },
+  {
+   "config": {
+    "dip": 0.002,
+    "tranche": "half",
+    "max_tranches": 5,
+    "cap": 0.35,
+    "peak": 0.743,
+    "tiers": "wider",
+    "hold": 6
+   },
+   "label": "dip 0.2% | tranche half x5 | cap 35% | peak 74.3% | tiers wider | hold 6d",
+   "realized": 129661.81,
+   "pct": 162.08,
+   "sharpe": 3.77,
+   "max_dd": -9.22,
+   "trades": 924
+  },
+  {
+   "config": {
+    "dip": 0.002,
+    "tranche": "half",
+    "max_tranches": 5,
+    "cap": 0.35,
+    "peak": 0.743,
+    "tiers": "live",
+    "hold": 6
+   },
+   "label": "dip 0.2% | tranche half x5 | cap 35% | peak 74.3% | tiers live | hold 6d",
+   "realized": 129444.93,
+   "pct": 161.81,
+   "sharpe": 3.765,
+   "max_dd": -9.16,
+   "trades": 929
+  },
+  {
+   "config": {
+    "dip": 0.004,
+    "tranche": "live",
+    "max_tranches": 5,
+    "cap": 0.25,
+    "peak": 0.5,
+    "tiers": "live",
+    "hold": 6
+   },
+   "label": "dip 0.4% | tranche live x5 | cap 25% | peak 50.0% | tiers live | hold 6d",
+   "realized": 129377.88,
+   "pct": 161.72,
+   "sharpe": 3.802,
+   "max_dd": -10.3,
+   "trades": 762
+  }
+ ],
+ "walk_forward": [
+  {
+   "fold": 1,
+   "train": [
+    "2026-03-13",
+    "2026-04-29"
+   ],
+   "test": [
+    "2026-04-30",
+    "2026-06-16"
+   ],
+   "pick_by_sharpe": {
+    "dip": 0.002,
+    "tranche": "live",
+    "max_tranches": 3,
+    "cap": 0.15,
+    "peak": 0.5,
+    "tiers": "none",
+    "hold": 10
+   },
+   "pick_by_pnl": {
+    "dip": 0.002,
+    "tranche": "half",
+    "max_tranches": 3,
+    "cap": 0.35,
+    "peak": 0.743,
+    "tiers": "none",
+    "hold": 6
+   },
+   "test_prod": 17370.72,
+   "test_pick_sharpe": 19656.55,
+   "test_pick_pnl": 15660.64,
+   "sharpe_pick_won": true,
+   "pnl_pick_won": false
+  },
+  {
+   "fold": 2,
+   "train": [
+    "2026-03-13",
+    "2026-06-16"
+   ],
+   "test": [
+    "2026-06-17",
+    "2026-08-04"
+   ],
+   "pick_by_sharpe": {
+    "dip": 0.002,
+    "tranche": "live",
+    "max_tranches": 3,
+    "cap": 0.15,
+    "peak": 0.5,
+    "tiers": "none",
+    "hold": 10
+   },
+   "pick_by_pnl": {
+    "dip": 0.004,
+    "tranche": "live",
+    "max_tranches": 3,
+    "cap": 0.35,
+    "peak": 0.5,
+    "tiers": "none",
+    "hold": 10
+   },
+   "test_prod": 40625.59,
+   "test_pick_sharpe": 22169.87,
+   "test_pick_pnl": 29892.52,
+   "sharpe_pick_won": false,
+   "pnl_pick_won": false
+  },
+  {
+   "fold": 3,
+   "train": [
+    "2026-03-13",
+    "2026-08-04"
+   ],
+   "test": [
+    "2026-08-05",
+    "2026-09-21"
+   ],
+   "pick_by_sharpe": {
+    "dip": 0.004,
+    "tranche": "half",
+    "max_tranches": 3,
+    "cap": 0.25,
+    "peak": 1.0,
+    "tiers": "none",
+    "hold": 4
+   },
+   "pick_by_pnl": {
+    "dip": 0.008,
+    "tranche": "live",
+    "max_tranches": 3,
+    "cap": 0.35,
+    "peak": 1.0,
+    "tiers": "live",
+    "hold": 4
+   },
+   "test_prod": 4346.87,
+   "test_pick_sharpe": 1279.19,
+   "test_pick_pnl": -1296.44,
+   "sharpe_pick_won": false,
+   "pnl_pick_won": false
+  }
+ ],
+ "in_sample_winner": {
+  "config": {
+   "dip": 0.002,
+   "tranche": "half",
+   "max_tranches": 5,
+   "cap": 0.35,
+   "peak": 0.5,
+   "tiers": "wider",
+   "hold": 6
+  },
+  "label": "dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers wider | hold 6d",
+  "realized": 132033.94,
+  "pct": 165.04,
+  "halves": {
+   "rising": {
+    "prod": 54190.63,
+    "best": 59681.96
+   },
+   "falling": {
+    "prod": 30622.59,
+    "best": 27893.75
+   }
+  },
+  "fine": {
+   "17:00": {
+    "prod": 18694.35,
+    "best": 18145.25
+   },
+   "17:30": {
+    "prod": 28548.21,
+    "best": 25371.87
+   }
+  },
+  "bootstrap": {
+   "ci_daily": [
+    -0.0006971685806446829,
+    0.001764011799044776
+   ],
+   "p_better": 0.791
+  },
+  "deflated_sharpe": 0.9878,
+  "expected_max_sharpe_annualized": 0.978,
+  "observed_sharpe_annualized": 3.736,
+  "plateau": {
+   "neighbours": 9,
+   "neighbours_beating_production": 6
+  }
+ },
+ "checks": {
+  "walk-forward: Sharpe-selected pick wins majority of test folds": false,
+  "walk-forward: P&L-selected pick wins majority of test folds": false,
+  "in-sample winner beats production in rising half": true,
+  "in-sample winner beats production in falling half": false,
+  "in-sample winner beats production at 17:00 (30-min bars)": false,
+  "in-sample winner beats production at 17:30 (30-min bars, live time)": false,
+  "bootstrap CI on daily difference excludes zero": false,
+  "deflated Sharpe > 0.95": true
+ },
+ "checks_passed": 2,
+ "verdict": "NOT AN IMPROVEMENT -- production stays",
+ "runtime_seconds": 552
+}
