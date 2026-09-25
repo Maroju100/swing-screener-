@@ -12,7 +12,19 @@
 # prohibited for this system) and MU 2026-07-02 (-63.04) - and the owner's own
 # manual sells are included too. Filter before attributing P&L to the strategy.
 #
+# Extended 2026-09-25 with get_pnl_trade_history(span="week") rows for 2026-09-23 and
+# 2026-09-25 (7 trades, net -15.08). New per-trade sum +2659.84 reconciles EXACTLY to
+# get_realized_pnl(span="all") total_returns at 2026-09-25 17:56 UTC. CGC 09-23 is the
+# owner's position (never this system's), included because this is an account ledger.
+#
 # timestamp (UTC),symbol,side,quantity,price,realized_gain
+2026-09-25T17:45:02Z,TSM,sell,0.342654,450.9213375591704751732067917,0.1
+2026-09-25T17:44:58Z,MU,sell,2.878013,1083.699065987540709510346201,25.2
+2026-09-25T17:44:53Z,SNDK,sell,1.835219,1783.449277715629578813209759,34.04
+2026-09-25T17:44:50Z,LRCX,sell,10.672249,314.5203977156080222640982233,124.87
+2026-09-25T17:44:43Z,INTC,sell,34.822228,124.3599346945864578222852369,-43.06
+2026-09-23T17:37:10Z,CGC,sell,2,0.955,-0.05
+2026-09-23T17:33:39Z,SNDK,sell,2.34988,1817.935383934498782916574463,-156.18
 2026-09-21T17:06:41Z,STX,sell,5.904389,873.0403772515665888544945125,141.91
 2026-09-21T17:06:34Z,LRCX,sell,4.178418,301.2503775352298405760266206,130.23
 2026-09-21T17:06:31Z,SNDK,sell,0.72084,1752.233505354863770046057378,150.74

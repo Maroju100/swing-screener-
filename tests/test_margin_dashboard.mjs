@@ -47,26 +47,33 @@ const check = (n, c, x='') => { console.log(`${c?'PASS':'FAIL'}  ${n}${x?'  '+x:
 const prod = JSON.parse(fs.readFileSync('/home/user/swing-screener-/docs/margin_style_live_state.json','utf8'));
 check('MS_STATE === committed state.json',
       JSON.stringify(T.MS_STATE) === JSON.stringify(prod));
-check('MS_STATE carries today\'s SNDK position',
-      T.MS_STATE.open_positions.SNDK?.shares === 2.34988, JSON.stringify(T.MS_STATE.open_positions.SNDK));
-check('pending_settlement drained to []', T.MS_STATE.pending_settlement.length === 0);
-check('equity_peak unchanged at 17696.92', T.MS_STATE.equity_peak === 17696.92);
-check('SNAPSHOT_TIME advanced', T.SNAPSHOT_TIME === '2026-09-22 17:16 UTC', T.SNAPSHOT_TIME);
+check('MS_STATE carries the 2026-09-25 open positions',
+      ['LRCX','SNDK','MU','TSM','WDC'].every(k=>T.MS_STATE.open_positions[k]) && !T.MS_STATE.open_positions.INTC,
+      Object.keys(T.MS_STATE.open_positions).join(','));
+check('WDC dip buy recorded', T.MS_STATE.open_positions.WDC?.shares === 0.176777);
+check('pending_settlement = 14,233.57 settling 2026-09-28',
+      Math.abs(T.MS_STATE.pending_settlement.reduce((a,p)=>a+p.amount,0) - 14233.57) < 0.01
+      && T.MS_STATE.pending_settlement.every(p=>p.settle_date==='2026-09-28'));
+check('equity_peak 17739.28', T.MS_STATE.equity_peak === 17739.28);
+check('SNAPSHOT_TIME advanced', T.SNAPSHOT_TIME === '2026-09-25 17:45 UTC', T.SNAPSHOT_TIME);
 
-// --- 2. trade log gained exactly one row, the real fill ---
+// --- 2. trade log gained the 12 real fills from 09-23 / 09-24 / 09-25 ---
 const t0 = T.MS_DATA.trades[0];
-check('newest trade is today\'s SNDK buy',
-      t0.t==='2026-09-22T17:16:41Z' && t0.sym==='SNDK' && t0.side==='BUY' && t0.shares===2.34988 && t0.price===1884.3999);
-check('trade count 205 -> 206', T.MS_DATA.trades.length === 206, String(T.MS_DATA.trades.length));
-check('exactly one 2026-09-22 trade',
-      T.MS_DATA.trades.filter(t=>t.t.startsWith('2026-09-22')).length === 1);
+check('newest trade is the 09-25 WDC buy',
+      t0.t==='2026-09-25T17:45:06Z' && t0.sym==='WDC' && t0.side==='BUY' && t0.shares===0.176777);
+check('trade count 206 -> 218', T.MS_DATA.trades.length === 218, String(T.MS_DATA.trades.length));
+check('six 2026-09-25 trades', T.MS_DATA.trades.filter(t=>t.t.startsWith('2026-09-25')).length === 6);
+check('INTC 09-25 STOP carries broker realized -43.06',
+      T.MS_DATA.trades.some(t=>t.t.startsWith('2026-09-25') && t.sym==='INTC' && t.reason==='STOP' && t.pnl===-43.06));
 
-// --- 3. broker-sourced figures untouched (a BUY realizes nothing) ---
-check('total_realized still broker 2674.92', T.MS_DATA.total_realized === 2674.92);
-check('BROKER_PNL_SNAPSHOT still matches live get_realized_pnl',
-      T.BROKER_PNL_SNAPSHOT.total_returns === '2674.92');
-check('daily series still ends 2026-09-21 (no phantom zero bar)',
-      T.MS_DATA.daily[T.MS_DATA.daily.length-1].date === '2026-09-21');
+// --- 3. broker-sourced figures reconcile to get_realized_pnl(span=all) 2026-09-25 ---
+check('total_realized = broker 2659.84', T.MS_DATA.total_realized === 2659.84);
+check('BROKER_PNL_SNAPSHOT = live get_realized_pnl', T.BROKER_PNL_SNAPSHOT.total_returns === '2659.84');
+check('daily series sums to total_realized',
+      Math.abs(T.MS_DATA.daily.reduce((a,d)=>a+d.pnl,0) - 2659.84) < 0.02);
+check('daily series ends 2026-09-25 (no phantom zero bar for 09-24)',
+      T.MS_DATA.daily[T.MS_DATA.daily.length-1].date === '2026-09-25'
+      && !T.MS_DATA.daily.some(d=>d.date==='2026-09-24'));
 
 // --- 4. drive the REAL ingest + renderAll path with real broker payloads ---
 const qPayload = JSON.parse(fs.readFileSync(new URL('./fixtures_margin_quotes_2026-09-22.json', import.meta.url),'utf8'));
@@ -82,10 +89,10 @@ try { T.renderAll(); check('renderAll ran without throwing', true); }
 catch(e) { check('renderAll ran without throwing', false, e.stack.split('\n').slice(0,2).join(' | ')); }
 
 const pos = document.getElementById('posBody').innerHTML;
-check('positions table renders the SNDK position', pos.includes('SNDK'), `${pos.length} chars`);
-check('position shows a live gain vs entry 1884.3999', /[-+]?\d+\.\d+%/.test(pos));
+check('positions table renders all 5 positions', ['LRCX','SNDK','MU','TSM','WDC'].every(k=>pos.includes(k)), `${pos.length} chars`);
+check('positions show a live gain vs entry', /[-+]?\d+\.\d+%/.test(pos));
 const log = document.getElementById('tradeLogBody').innerHTML;
-check('trade log shows today\'s NORMAL_DIP buy', log.includes('NORMAL_DIP') && log.includes('SNDK'));
+check('trade log shows the 09-25 STOP and PEAK sells', log.includes('STOP') && log.includes('PEAK') && log.includes('WDC'));
 const svg = document.getElementById('pnlBarSvg').innerHTML;
 check('P&L chart emitted marks', svg.length > 500, `${svg.length} chars`);
 const dist = document.getElementById('distBody').innerHTML;
@@ -95,7 +102,7 @@ const stats = document.getElementById('statRow').innerHTML;
 check('stat row shows unsettled $0.00 (cash account)', stats.includes('unsettled: $0.00'));
 check('stat row shows kill-switch off', stats.includes('off') && stats.includes('never triggered'));
 const foot = document.getElementById('footerNote').innerHTML;
-check('footer carries the new snapshot time', foot.includes('2026-09-22 17:16 UTC'));
+check('footer carries the new snapshot time', foot.includes('2026-09-25 17:45 UTC'));
 
 // --- 5. published file must not contain the test hook ---
 check('no __test hook in the published source', !html.includes('__test'));
