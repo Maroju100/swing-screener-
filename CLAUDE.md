@@ -377,6 +377,30 @@ below are what makes a claim checkable.
     overnight shares before any new purchase, which FINRA's day-trade
     definition generally exempts. That reading is a PROXY, not the broker's own
     counter. Either way, it does not rescue a benefit that fails its checks.
+  - 🚨 **THE PDT RULE ITSELF NO LONGER EXISTS (checked 2026-09-25) — the
+    premise of the 2026-09-22 cash decision is gone.** FINRA replaced the
+    pattern-day-trader provisions of Rule 4210 (4 day trades / 5 days / $25k)
+    with intraday margin standards effective **2026-06-04** (Regulatory Notice
+    26-10; firms may take until 2027-10-20). Sources were read through web
+    search results only — finra.org and robinhood.com are blocked from this
+    container — so confirm Robinhood's own implementation in the app before
+    relying on it. The measured "8 day trades in 5 days" below is still true as
+    history, but it no longer maps to a restriction.
+  - **What Robinhood says limited margin is:** `get_limited_margin_upgrade_info`
+    (2026-09-25) → `eligible: true`, "trade with unsettled funds … with no
+    borrowing or leverage". Robinhood's agentic-trading help says margin
+    borrowing is not enabled for agentic accounts, so no margin loan, interest
+    or margin call. **GFV is a cash-account rule** and does not apply on
+    limited margin.
+  - ⚠️ **The one real engineering caveat if the account ever goes to limited
+    margin:** sizing is `buying_power`. If Robinhood later enables borrowing on
+    this account, `buying_power` would exceed cash and the engine would start
+    using leverage with no code change. `min(buying_power, cash)` is correct on
+    both account types (cash account: buying_power ≤ cash; limited margin
+    without borrowing: equal) and would close that hole. Not implemented —
+    the account is cash today.
+  - Dashboard: section "Limited margin: spending today's sale money today" on
+    [Margin-Style Rule Trials](https://claude.ai/artifact/4H8w99Qw8ZwmSkpMKvf8qp).
 - 📌 **Superseded by the decision above, kept for the reasoning — ACCOUNT TYPE
   AS OF 2026-09-22 was `limited_margin`.**
   - **Evidence it is limited margin, not cash:** `get_accounts` →
