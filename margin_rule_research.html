@@ -210,7 +210,7 @@
 <div class="wrap">
 
   <header>
-    <div class="eyebrow">Replay study &middot; updated 23 September 2026 &middot; engine origin/main</div>
+    <div class="eyebrow">Replay study &middot; updated 25 September 2026 &middot; engine origin/main</div>
     <h1>Margin-Style Rule Trials</h1>
     <p class="deck">
       Every variation of the live rules tested so far &mdash; stops, the 1% daily stop,
@@ -531,6 +531,12 @@
       </div>
 
       <div class="lrow">
+        <div class="lq">Can buy sizes, add-ons, caps and profit levels be tuned?</div>
+        <div class="la">972-combination grid with the stop fixed. Live settings rank <b>97th</b> in-sample; tuned picks win <b>1 of 3</b> and <b>0 of 3</b> walk-forward folds; the in-sample winner loses the falling half and both 30-minute checks.</div>
+        <span class="chip c-no">Not supported</span>
+      </div>
+
+      <div class="lrow">
         <div class="lq">Does a 1% daily loss stop help?</div>
         <div class="la">Loses on every basis: <b class="num">+98.5%</b> vs <b class="num">+155.4%</b> over six months, and <b class="num">+6.9%</b> vs <b class="num">+23.4%</b> at noon on 30-minute bars. The earlier &ldquo;+248%&rdquo; is withdrawn.</div>
         <span class="chip c-no">Harmful</span>
@@ -706,6 +712,84 @@ P(variant better than baseline)                   <b>0.247</b></div>
   </section>
 
   <section>
+    <h2 class="head">Entry and exit grid: 972 combinations, same answer</h2>
+    <p class="sub">
+      The first grid searched the stop, the new-high trim, the hold time and the dip
+      threshold. This one searched what it never touched &mdash; how big each dip buy is,
+      how many times a stock can be added to, the per-trade cap and the profit-taking
+      levels &mdash; alongside the dip threshold, trim and hold. The &minus;1.51% stop was
+      held fixed. Every combination is a full replay over six months, 5&nbsp;bps per side.
+    </p>
+    <div class="card">
+      <h3>The live settings rank 97th of 972 in-sample</h3>
+      <p class="note">
+        Top 10% before any validation. The five best combinations all share a 0.2% dip
+        threshold, half-size buys and a 35% cap &mdash; and all have a lower Sharpe and a
+        deeper drawdown than the live settings.
+      </p>
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Combination</th><th>6 months</th><th>Sharpe</th><th>Max DD</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>Live: dip 0.4% &middot; live buy sizes &times;5 &middot; cap 25% &middot; trim 74.3% &middot; live tiers &middot; hold 6d</td><td class="num pos">+155.4%</td><td class="num">3.83</td><td class="num">&minus;8.8%</td></tr>
+            <tr><td>#1 dip 0.2% &middot; half-size &times;5 &middot; cap 35% &middot; trim 50% &middot; wider tiers &middot; hold 6d</td><td class="num pos">+165.0%</td><td class="num">3.74</td><td class="num">&minus;10.8%</td></tr>
+            <tr><td>#2 same, live tiers</td><td class="num pos">+164.4%</td><td class="num">3.73</td><td class="num">&minus;10.7%</td></tr>
+            <tr><td>#3 same as #1, max 3 buys</td><td class="num pos">+163.8%</td><td class="num">3.72</td><td class="num">&minus;10.8%</td></tr>
+            <tr><td>#4 same as #2, max 3 buys</td><td class="num pos">+163.2%</td><td class="num">3.71</td><td class="num">&minus;10.7%</td></tr>
+            <tr><td>#5 same as #1, no profit tiers</td><td class="num pos">+162.8%</td><td class="num">3.69</td><td class="num">&minus;12.1%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>Walk-forward: tuned settings lose on the data they weren&rsquo;t picked on</h3>
+      <p class="note">
+        For each fold, the best combination was chosen on the earlier data &mdash; once by
+        Sharpe, once by profit &mdash; then replayed from a flat start on the later data it
+        had never seen.
+      </p>
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Test period</th><th>Live settings</th><th>Picked by Sharpe</th><th>Picked by profit</th></tr></thead>
+          <tbody>
+            <tr><td>Apr 30 &ndash; Jun 16</td><td class="num">$17,371</td><td class="num pos">$19,657 &#9650;</td><td class="num neg">$15,661 &#9660;</td></tr>
+            <tr><td>Jun 17 &ndash; Aug 4</td><td class="num">$40,626</td><td class="num neg">$22,170 &#9660;</td><td class="num neg">$29,893 &#9660;</td></tr>
+            <tr><td>Aug 5 &ndash; Sep 21</td><td class="num">$4,347</td><td class="num neg">$1,279 &#9660;</td><td class="num neg">&minus;$1,296 &#9660;</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0">
+        <strong>1 of 3 and 0 of 3.</strong> A different combination was picked every time
+        &mdash; one fold favoured selling 50% on a new high, another 100%. An optimum that
+        moves with the window is fitting that window.
+      </p>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>The in-sample winner, checked like everything else</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Check</th><th>Live settings</th><th>Grid winner</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Rising half (Mar&ndash;Jun), hourly</td><td class="num">$54,191</td><td class="num">$59,682</td><td class="num pos">&#9650; wins</td></tr>
+            <tr><td>Falling half (Jun&ndash;Sep), hourly</td><td class="num">$30,623</td><td class="num">$27,894</td><td class="num neg">&#9660; loses</td></tr>
+            <tr><td>64 days, 30-min bars, 12:00&nbsp;PM</td><td class="num">$18,694</td><td class="num">$18,145</td><td class="num neg">&#9660; loses</td></tr>
+            <tr><td>64 days, 30-min bars, 12:30&nbsp;PM (live check time)</td><td class="num">$28,548</td><td class="num">$25,372</td><td class="num neg">&#9660; loses</td></tr>
+            <tr><td>Daily difference statistically non-zero</td><td class="num">&mdash;</td><td class="num">P = 0.79</td><td class="num neg">&#9660; no</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0">
+        <strong>2 of 8 pre-set checks passed; not an improvement.</strong> Its entire edge is
+        the rising stretch. It does clear the &ldquo;better than 972 random tries&rdquo; test
+        (deflated Sharpe 0.988), but that shows this family of rules has real skill &mdash;
+        and the live settings, with a higher Sharpe, already capture it.
+      </p>
+    </div>
+  </section>
+
+  <section>
     <h2 class="head">Structural variants</h2>
     <p class="sub">
       Each is a single anchored source patch against the production engine, asserted to be an
@@ -791,6 +875,7 @@ P(variant better than baseline)                   <b>0.247</b></div>
 <b>python3 scripts/margin_style_intraday_study.py frequency</b>
 <b>python3 scripts/margin_style_rank_admissible.py</b>            <span style="color:var(--ink-3)"># 30-min ranking + regime split</span>
 <b>python3 scripts/margin_style_daily_stop_admissible.py</b>      <span style="color:var(--ink-3)"># 1% daily stop, all bases</span>
+<b>python3 scripts/margin_style_grid_entry_exit.py</b>        <span style="color:var(--ink-3)"># 972-config entry/exit grid, ~9 min</span>
 <b>python3 scripts/margin_style_check_time.py all</b>             <span style="color:var(--ink-3)"># check time + 1-min referee</span></div>
   </section>
 
@@ -870,7 +955,7 @@ const VARIANTS = [
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
-const CMP = [["Margin-Style Live (current rules, incl. −1.51% stop)", 155.36, 23.37, 35.69], ["1% daily stop", 98.54, 6.94, 10.46], ["Intraday stop −1.0% (instead of −1.51%)", 136.68, 27.36, 40.43], ["Intraday stop −2.5% (instead of −1.51%)", 158.83, 17.27, 32.98], ["Symbol cap 25% (was 50%)", 147.08, 23.88, 35.19], ["Trade cap 10% (was 25%)", 149.38, 19.43, 33.16], ["Quality filter: 3+ down days", 40.5, 36.91, 35.04], ["Max 1 tranche per symbol", 99.34, 14.68, 18.98], ["Best grid-search config", 96.74, -7.3, -5.58], ["No intraday stop (−1.51% removed)", -11.59, -2.15, 17.25]];
+const CMP = [["Margin-Style Live (current rules, incl. −1.51% stop)", 155.36, 23.37, 35.69], ["1% daily stop", 98.54, 6.94, 10.46], ["Intraday stop −1.0% (instead of −1.51%)", 136.68, 27.36, 40.43], ["Intraday stop −2.5% (instead of −1.51%)", 158.83, 17.27, 32.98], ["Symbol cap 25% (was 50%)", 147.08, 23.88, 35.19], ["Trade cap 10% (was 25%)", 149.38, 19.43, 33.16], ["Quality filter: 3+ down days", 40.5, 36.91, 35.04], ["Max 1 tranche per symbol", 99.34, 14.68, 18.98], ["Best of first grid (500 configs)", 96.74, -7.3, -5.58], ["Best of entry/exit grid (972 configs)", 165.04, 22.68, 31.71], ["No intraday stop (−1.51% removed)", -11.59, -2.15, 17.25]];
 const CMP_REF = ["Buy & hold the 8 stocks", 119.19, -15.64, -16.26];
 const CHECK = [{"label": "8:30 AM", "sub": "13:30 UTC", "pct": -3.34}, {"label": "9:00 AM", "sub": "14:00 UTC", "pct": -2.34}, {"label": "9:30 AM", "sub": "14:30 UTC", "pct": -3.54}, {"label": "10:00 AM", "sub": "15:00 UTC", "pct": -2.85}, {"label": "10:30 AM", "sub": "15:30 UTC", "pct": 28.74}, {"label": "11:00 AM", "sub": "16:00 UTC", "pct": 26.74}, {"label": "11:30 AM", "sub": "16:30 UTC", "pct": 24.82}, {"label": "12:00 PM", "sub": "17:00 UTC", "pct": 23.37}, {"label": "12:30 PM", "sub": "17:30 UTC", "pct": 35.69}, {"label": "1:00 PM", "sub": "18:00 UTC", "pct": 34.89}, {"label": "1:30 PM", "sub": "18:30 UTC", "pct": 26.8}, {"label": "2:00 PM", "sub": "19:00 UTC", "pct": 22.54}, {"label": "2:30 PM", "sub": "19:30 UTC", "pct": 28.75}];
 
