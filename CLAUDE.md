@@ -347,6 +347,36 @@ below are what makes a claim checkable.
   - **GFV becomes the live constraint** — the GFV hard rule at the top of this
     file is now the binding safety mechanism, not a dormant one. Keep it exactly
     as written.
+- ⚖️ **RE-TESTED 2026-09-25: limited margin's benefit is now MEASURED — small
+  and inconsistent, so cash stays.** The decision above called the benefit
+  "unquantifiable". It can be measured: what limited margin adds is *today's*
+  sale proceeds funding *today's* buys (a cash account already gets yesterday's
+  by the next run, which is why `--no-settlement-lockup` was a no-op). Neither the
+  engine nor the trigger has ever done this: e.g. on 2026-09-25 the run sold
+  $14,233.57 and sized its only buy off $85.15. Reproduce:
+  `python3 scripts/margin_style_instant_settlement.py` →
+  `data/research/instant_settlement.json` (one anchored patch that credits the
+  run's own sell proceeds before the buy loop; switched off, it reproduces
+  production to the cent). 132 days, $80k, 5 bps/side:
+
+  | | 6 mo | T1 | T2 | T3 | Rising | Falling | 30m 17:30 | 30m 17:00 | Sharpe | Max DD |
+  |---|---|---|---|---|---|---|---|---|---|---|
+  | Production (cash, T+1) | +155.4 | +43.7 | +30.9 | +6.8 | +67.7 | +38.3 | +35.7 | +23.4 | 3.83 | −8.8 |
+  | Same-run proceeds | +159.2 | +40.8 | +29.2 | +13.2 | +74.2 | +40.3 | +35.5 | +25.5 | 3.59 | −9.0 |
+
+  - **2 of 5 checks pass — NOT AN IMPROVEMENT.** +3.8pp over six months, but it
+    loses two of three thirds and at the live 17:30 mark, the Sharpe is *lower*,
+    and the bootstrap CI [−0.180%, +0.205%] straddles zero (P=0.55). Buying
+    ~5% more ($5.96M vs $5.65M) adds exposure, not edge.
+  - **Capturing it would need a procedure change as well as an account change:**
+    place sells, wait for fills, re-read `buying_power`, then size buys. Flipping
+    the account alone, with the trigger as written, would change nothing.
+  - **The PDT exposure note below was measured off multi-run days.** At the
+    current once-daily cadence the replay shows at most **2** same-symbol
+    buy+sell days in any 5-day window, for both variants. Sells in a run close
+    overnight shares before any new purchase, which FINRA's day-trade
+    definition generally exempts. That reading is a PROXY, not the broker's own
+    counter. Either way, it does not rescue a benefit that fails its checks.
 - 📌 **Superseded by the decision above, kept for the reasoning — ACCOUNT TYPE
   AS OF 2026-09-22 was `limited_margin`.**
   - **Evidence it is limited margin, not cash:** `get_accounts` →

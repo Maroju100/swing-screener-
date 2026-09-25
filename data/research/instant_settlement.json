@@ -1,0 +1,107 @@
+{
+ "generated": "2026-09-25",
+ "engine": "origin/main",
+ "window": [
+  "2026-03-13",
+  "2026-09-21"
+ ],
+ "capital": 80000.0,
+ "cost_bps": 5.0,
+ "thirds": [
+  [
+   "2026-03-13",
+   "2026-05-14"
+  ],
+  [
+   "2026-05-15",
+   "2026-07-20"
+  ],
+  [
+   "2026-07-21",
+   "2026-09-21"
+  ]
+ ],
+ "gate_patch_off_equals_production": true,
+ "production": {
+  "full_pct": 155.36,
+  "realized": 124289.71,
+  "trades": 771,
+  "summary": {
+   "realized": 124289.71,
+   "total": 125722.53,
+   "realized_pct": 155.36,
+   "total_pct": 157.15,
+   "trades": 771,
+   "days": 132,
+   "days_with_pnl": 110,
+   "sharpe": 3.834,
+   "max_dd_pct": -8.84,
+   "cost_bps": 5.0,
+   "seconds": 0.92
+  },
+  "thirds_pct": [
+   43.72,
+   30.93,
+   6.84
+  ],
+  "halves_pct": {
+   "rising": 67.74,
+   "falling": 38.28
+  },
+  "fine_pct": {
+   "17:30": 35.69,
+   "17:00": 23.37
+  }
+ },
+ "instant_settlement": {
+  "full_pct": 159.17,
+  "realized": 127339.72,
+  "trades": 803,
+  "summary": {
+   "realized": 127339.72,
+   "total": 129520.1,
+   "realized_pct": 159.17,
+   "total_pct": 161.9,
+   "trades": 803,
+   "days": 132,
+   "days_with_pnl": 110,
+   "sharpe": 3.591,
+   "max_dd_pct": -9.0,
+   "cost_bps": 5.0,
+   "seconds": 0.88
+  },
+  "thirds_pct": [
+   40.79,
+   29.2,
+   13.25
+  ],
+  "halves_pct": {
+   "rising": 74.2,
+   "falling": 40.32
+  },
+  "fine_pct": {
+   "17:30": 35.5,
+   "17:00": 25.52
+  }
+ },
+ "bootstrap": {
+  "ci_daily": [
+   -0.0017966485715533694,
+   0.002051503836166306
+  ],
+  "p_better": 0.5496
+ },
+ "checks": {
+  "full window": true,
+  "all 3 thirds": false,
+  "both halves": true,
+  "both 30-min marks": false,
+  "bootstrap CI excludes 0": false
+ },
+ "checks_passed": 2,
+ "verdict": "NOT AN IMPROVEMENT",
+ "total_bought_notional": {
+  "production": 5645432.97,
+  "instant_settlement": 5955373.67
+ }
+}
