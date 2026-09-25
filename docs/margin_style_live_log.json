@@ -2796,6 +2796,119 @@
    "stop_count_this_run": 0,
    "circuit_breaker_triggered": false,
    "note": "Live-quote proxy at ~17:04 UTC (12:04 PM CDT); orders placed 17:28-17:30 UTC. Elevated-scrutiny status applies."
+  },
+  {
+   "timestamp": "2026-09-25T17:44:43Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "sizing_input": {
+    "buying_power_used": 85.15,
+    "cash": 85.15,
+    "note": "sized off buying_power; ~$17.5k deployed in the 2026-09-24 buys, only $85.15 settled cash free"
+   },
+   "broker_total_value": 17743.69,
+   "orders_placed": [
+    {
+     "side": "sell",
+     "symbol": "INTC",
+     "shares": 34.822228,
+     "price": 124.36,
+     "notional": 4330.49,
+     "reason": "STOP",
+     "quote_at_plan": 124.2,
+     "order_id": "6ab6b30b-0574-4df0-aed3-6d00b9e91806",
+     "state": "filled",
+     "fees": 0.09,
+     "note": "live 124.20 <= prior close 127.39 * (1-1.51%) = 125.47; opened 2026-09-24"
+    },
+    {
+     "side": "sell",
+     "symbol": "LRCX",
+     "shares": 10.672249,
+     "price": 314.5202,
+     "notional": 3356.64,
+     "reason": "PEAK",
+     "quote_at_plan": 314.335,
+     "order_id": "6ab6b311-0e9a-47e2-be37-1226ba0fa1e4",
+     "state": "filled",
+     "fees": 0.07
+    },
+    {
+     "side": "sell",
+     "symbol": "SNDK",
+     "shares": 1.835219,
+     "price": 1783.449,
+     "notional": 3273.02,
+     "reason": "PEAK",
+     "quote_at_plan": 1784.45,
+     "order_id": "6ab6b315-cd74-43b5-8646-ceaa752ad537",
+     "state": "filled",
+     "fees": 0.08
+    },
+    {
+     "side": "sell",
+     "symbol": "MU",
+     "shares": 2.878013,
+     "price": 1083.7013,
+     "notional": 3118.91,
+     "reason": "PEAK",
+     "quote_at_plan": 1083.925,
+     "order_id": "6ab6b31a-5c7a-481c-9373-5999ae2945c3",
+     "state": "filled",
+     "fees": 0.07
+    },
+    {
+     "side": "sell",
+     "symbol": "TSM",
+     "shares": 0.342654,
+     "price": 450.9242,
+     "notional": 154.51,
+     "reason": "PEAK",
+     "quote_at_plan": 451.0,
+     "order_id": "6ab6b31e-7578-483a-818a-1b7d7bdffed3",
+     "state": "filled",
+     "fees": 0.0
+    },
+    {
+     "side": "buy",
+     "symbol": "WDC",
+     "shares": 0.176777,
+     "price": 457.725,
+     "notional": 80.92,
+     "reason": "NORMAL_DIP",
+     "quote_at_plan": 457.595,
+     "order_id": "6ab6b322-2774-4994-9458-8acfee2bda85",
+     "state": "filled",
+     "fees": 0.0,
+     "tranche": 1,
+     "note": "drawdown -29.5%, prior day -4.94%; sized from $85.15 settled buying power only"
+    }
+   ],
+   "total_proceeds": 14233.57,
+   "skipped_orders": [],
+   "netted_trades": [],
+   "reconciliation": "none needed - verify PASS, reconcile PASS (5 positions matched broker exactly; CGC no longer held)",
+   "unowned_excess": {},
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "freshness": "no warnings (last bar 2026-09-24, quotes 17:43 UTC)",
+    "pre_commit": "PASS"
+   },
+   "risk_state": {
+    "equity_peak": 17739.28,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false,
+    "total_equity": 17739.28,
+    "drawdown_from_peak": 0.0
+   },
+   "pending_settlement_after": {
+    "total": 14233.57,
+    "settle_date": "2026-09-28"
+   },
+   "notes": "First run at the 30 17 cron (fired 17:34 UTC). equity_peak rose 17,696.92 -> 17,739.28 (new real high, consistent with broker total_value 17,743.69). Proceeds settle Mon 2026-09-28 on the cash account; engine's pending_settlement tracks them."
   }
  ]
 }
