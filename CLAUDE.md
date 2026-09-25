@@ -415,6 +415,12 @@ below are what makes a claim checkable.
     re-deployed ~$10.0k of the $10.95k the shadow sold (WDC, STX, netted SNDK) instead
     of leaving $14.2k idle until 09-28. Read results as forward evidence only
     after weeks, not days.
+    Shown on [Margin-Style Rule Trials](https://claude.ai/artifact/4H8w99Qw8ZwmSkpMKvf8qp)
+    ("Paper shadow" card); the routine refreshes it daily via
+    `scripts/build_shadow_dashboard_data.py` and republishes. Because the shadow
+    commits only to the development branch, **`margin_rule_research.html` on
+    the development branch is the current source; `main`'s copy lags** from
+    2026-09-25 on.
   - **Answered 2026-09-25: the +155.10% backtest DOES include the settlement
     lockup**, the same way the cash account has it. The harness calls `cmd_plan`
     with cash as it stood *before* that day's sells and credits proceeds after

@@ -400,6 +400,24 @@
         buying power and cash would guard against that on either account type.
       </p>
     </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>Paper shadow: the two-step routine, tracked forward</h3>
+      <p class="note">
+        Since 25&nbsp;September a paper copy runs after each live run, on the live run&rsquo;s own
+        prices, with limited margin&rsquo;s same-day cash reuse switched on. <strong>Paper only &mdash;
+        it never places orders.</strong> Values are taken at the start of each run, before its trades,
+        so both columns are measured at the same moment. Paper fills are charged an estimated
+        5&nbsp;bps per side.
+      </p>
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Date</th><th>Paper shadow</th><th>Live account</th><th>Gap</th><th style="text-align:left">Shadow&rsquo;s paper trades</th></tr></thead>
+          <tbody id="shadowBody"></tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0" id="shadowNote"></p>
+    </div>
   </section>
 
   <section>
@@ -1028,6 +1046,30 @@ const CMP = [["Margin-Style Live (current rules, incl. −1.51% stop)", 155.36, 
 const CMP_REF = ["Buy & hold the 8 stocks", 119.19, -15.64, -16.26];
 const CHECK = [{"label": "8:30 AM", "sub": "13:30 UTC", "pct": -3.34}, {"label": "9:00 AM", "sub": "14:00 UTC", "pct": -2.34}, {"label": "9:30 AM", "sub": "14:30 UTC", "pct": -3.54}, {"label": "10:00 AM", "sub": "15:00 UTC", "pct": -2.85}, {"label": "10:30 AM", "sub": "15:30 UTC", "pct": 28.74}, {"label": "11:00 AM", "sub": "16:00 UTC", "pct": 26.74}, {"label": "11:30 AM", "sub": "16:30 UTC", "pct": 24.82}, {"label": "12:00 PM", "sub": "17:00 UTC", "pct": 23.37}, {"label": "12:30 PM", "sub": "17:30 UTC", "pct": 35.69}, {"label": "1:00 PM", "sub": "18:00 UTC", "pct": 34.89}, {"label": "1:30 PM", "sub": "18:30 UTC", "pct": 26.8}, {"label": "2:00 PM", "sub": "19:00 UTC", "pct": 22.54}, {"label": "2:30 PM", "sub": "19:30 UTC", "pct": 28.75}];
 
+// PAPER SHADOW snapshot -- rewritten by scripts/build_shadow_dashboard_data.py
+// from docs/margin_style_instant_shadow_log.json. Do not edit by hand.
+const SHADOW = /*SHADOW_START*/[{"date":"2026-09-25","shadow":17739.28,"live":17743.69,"trades":"sell INTC (STOP), sell LRCX (PEAK), sell MU (PEAK), sell TSM (PEAK), buy WDC $4,435, buy SNDK $1,160, buy STX $4,435"}]/*SHADOW_END*/;
+
+function renderShadow() {
+  const money = (v) => '$' + v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (!SHADOW.length) { $('shadowBody').innerHTML = '<tr><td colspan="5">No shadow runs yet.</td></tr>'; return; }
+  $('shadowBody').innerHTML = SHADOW.map(r => {
+    const gap = r.live == null ? null : r.shadow - r.live;
+    const gcls = gap == null ? '' : (gap > 0.005 ? 'pos' : (gap < -0.005 ? 'neg' : ''));
+    const gtxt = gap == null ? 'n/a' : (gap >= 0 ? '+' : '−') + money(Math.abs(gap));
+    const nw = 'style="white-space:nowrap"';
+    return `<tr><td ${nw}>${esc(r.date)}</td><td class="num" ${nw}>${money(r.shadow)}</td>
+      <td class="num" ${nw}>${r.live == null ? 'n/a' : money(r.live)}</td>
+      <td class="num ${gcls}" ${nw}>${gtxt}</td>
+      <td style="text-align:left;font-size:12.5px">${esc(r.trades || '—')}</td></tr>`;
+  }).join('');
+  const first = SHADOW[0], last = SHADOW[SHADOW.length - 1];
+  const days = SHADOW.length;
+  $('shadowNote').innerHTML = `<strong>${days} day${days === 1 ? '' : 's'} so far</strong> (from ${esc(first.date)} to ${esc(last.date)}). ` +
+    `Day&nbsp;1 starts about $4 apart only because the paper side is valued from the engine&rsquo;s own records and the live side is Robinhood&rsquo;s account value. ` +
+    `Too few days to read anything into yet &mdash; give it several weeks.`;
+}
+
 function renderCompare() {
   const base = CMP[0];
   const cell = (v, b, isBase) => {
@@ -1143,6 +1185,7 @@ function drawAll() {
 
 renderVariants();
 renderCompare();
+renderShadow();
 drawAll();
 if (window.matchMedia) {
   const mq = window.matchMedia('(prefers-color-scheme: dark)');
