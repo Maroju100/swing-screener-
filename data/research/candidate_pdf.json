@@ -1,0 +1,241 @@
+{
+ "generated": "2026-09-25",
+ "source": "user-uploaded PDF \"Margin-live rule comparison\"",
+ "pdf_reproduction": {
+  "claims": {
+   "0bps": {
+    "baseline": 124080.9,
+    "candidate": 128438.15
+   },
+   "5bps": {
+    "baseline": 116932.14,
+    "candidate": 120675.15
+   }
+  },
+  "reproduced": {
+   "0bps": true,
+   "5bps": true
+  }
+ },
+ "engine": "origin/main",
+ "window": [
+  "2026-03-13",
+  "2026-09-21"
+ ],
+ "capital": 80000.0,
+ "cost_bps": 5.0,
+ "thirds": [
+  [
+   "2026-03-13",
+   "2026-05-14"
+  ],
+  [
+   "2026-05-15",
+   "2026-07-20"
+  ],
+  [
+   "2026-07-21",
+   "2026-09-21"
+  ]
+ ],
+ "production": {
+  "full_pct": 155.36,
+  "summary": {
+   "realized": 124289.71,
+   "total": 125722.53,
+   "realized_pct": 155.36,
+   "total_pct": 157.15,
+   "trades": 771,
+   "days": 132,
+   "days_with_pnl": 110,
+   "sharpe": 3.834,
+   "max_dd_pct": -8.84,
+   "cost_bps": 5.0,
+   "seconds": 1.4
+  },
+  "thirds_pct": [
+   43.72,
+   30.93,
+   6.84
+  ],
+  "halves_pct": {
+   "rising": 67.74,
+   "falling": 38.28
+  },
+  "fine_pct": {
+   "17:30": 35.69,
+   "18:00": 34.89
+  }
+ },
+ "variants": [
+  {
+   "variant": "CANDIDATE (both rule changes)",
+   "params": {
+    "TRANCHE_SCHEDULE": [
+     0.5,
+     0.3,
+     0.2,
+     0.1,
+     0.05
+    ],
+    "PEAK_SELL_PCT": 1.0
+   },
+   "full_pct": 156.32,
+   "summary": {
+    "realized": 125053.15,
+    "total": 125053.15,
+    "realized_pct": 156.32,
+    "total_pct": 156.32,
+    "trades": 674,
+    "days": 132,
+    "days_with_pnl": 92,
+    "sharpe": 4.074,
+    "max_dd_pct": -11.44,
+    "cost_bps": 5.0,
+    "seconds": 1.18
+   },
+   "full_delta": 763.44,
+   "thirds_pct": [
+    37.64,
+    36.54,
+    17.64
+   ],
+   "halves_pct": {
+    "rising": 60.65,
+    "falling": 59.36
+   },
+   "fine_pct": {
+    "17:30": 53.9,
+    "18:00": 60.41
+   },
+   "bootstrap": {
+    "ci_daily": [
+     -0.0026876483717590727,
+     0.003009471835243671
+    ],
+    "p_better": 0.4536
+   },
+   "checks": {
+    "full window": true,
+    "all 3 thirds": false,
+    "both halves": false,
+    "both 30-min marks (same time)": true,
+    "bootstrap CI excludes 0": false
+   },
+   "checks_passed": 2,
+   "verdict": "NOT AN IMPROVEMENT"
+  },
+  {
+   "variant": "Smaller tranches only",
+   "params": {
+    "TRANCHE_SCHEDULE": [
+     0.5,
+     0.3,
+     0.2,
+     0.1,
+     0.05
+    ]
+   },
+   "full_pct": 136.96,
+   "summary": {
+    "realized": 109568.87,
+    "total": 111154.54,
+    "realized_pct": 136.96,
+    "total_pct": 138.94,
+    "trades": 910,
+    "days": 132,
+    "days_with_pnl": 111,
+    "sharpe": 3.683,
+    "max_dd_pct": -9.08,
+    "cost_bps": 5.0,
+    "seconds": 1.32
+   },
+   "full_delta": -14720.84,
+   "thirds_pct": [
+    40.46,
+    29.04,
+    7.51
+   ],
+   "halves_pct": {
+    "rising": 59.6,
+    "falling": 38.62
+   },
+   "fine_pct": {
+    "17:30": 36.6,
+    "18:00": 39.15
+   },
+   "bootstrap": {
+    "ci_daily": [
+     -0.001346489770234502,
+     4.513816403064816e-05
+    ],
+    "p_better": 0.039
+   },
+   "checks": {
+    "full window": false,
+    "all 3 thirds": false,
+    "both halves": false,
+    "both 30-min marks (same time)": true,
+    "bootstrap CI excludes 0": false
+   },
+   "checks_passed": 1,
+   "verdict": "NOT AN IMPROVEMENT"
+  },
+  {
+   "variant": "Full exit on new high only",
+   "params": {
+    "PEAK_SELL_PCT": 1.0
+   },
+   "full_pct": 153.41,
+   "summary": {
+    "realized": 122727.32,
+    "total": 122727.32,
+    "realized_pct": 153.41,
+    "total_pct": 153.41,
+    "trades": 546,
+    "days": 132,
+    "days_with_pnl": 87,
+    "sharpe": 3.885,
+    "max_dd_pct": -11.67,
+    "cost_bps": 5.0,
+    "seconds": 1.17
+   },
+   "full_delta": -1562.39,
+   "thirds_pct": [
+    38.03,
+    33.29,
+    17.61
+   ],
+   "halves_pct": {
+    "rising": 60.32,
+    "falling": 58.07
+   },
+   "fine_pct": {
+    "17:30": 54.69,
+    "18:00": 58.54
+   },
+   "bootstrap": {
+    "ci_daily": [
+     -0.002841412832309508,
+     0.00303166663524986
+    ],
+    "p_better": 0.4296
+   },
+   "checks": {
+    "full window": false,
+    "all 3 thirds": false,
+    "both halves": false,
+    "both 30-min marks (same time)": true,
+    "bootstrap CI excludes 0": false
+   },
+   "checks_passed": 1,
+   "verdict": "NOT AN IMPROVEMENT"
+  }
+ ],
+ "deployment_comparison_30min": {
+  "production_at_1730": 35.69,
+  "production_at_1800": 34.89,
+  "candidate_at_1730": 53.9,
+  "candidate_at_1800": 60.41
+ }
+}
