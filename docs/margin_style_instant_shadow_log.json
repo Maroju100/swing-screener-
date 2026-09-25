@@ -1,0 +1,92 @@
+{
+ "description": "PAPER shadow: Margin-Style Live on limited margin with a sell-then-buy two-step routine. Never real money. See scripts/margin_style_instant_shadow.py.",
+ "runs": [
+  {
+   "date": "2026-09-25",
+   "timestamp": "2026-09-25T18:59:26+00:00",
+   "engine": "origin/main + patch_instant",
+   "cost_bps_estimated": 5.0,
+   "cash_before": 85.15,
+   "same_run_proceeds_credited": 10953.67,
+   "sells": [
+    {
+     "symbol": "INTC",
+     "shares": 34.822228,
+     "price": 124.2,
+     "reason": "STOP",
+     "entry": 125.5966
+    },
+    {
+     "symbol": "LRCX",
+     "shares": 10.672249,
+     "price": 314.335,
+     "reason": "PEAK",
+     "entry": 302.82
+    },
+    {
+     "symbol": "MU",
+     "shares": 2.878013,
+     "price": 1083.925,
+     "reason": "PEAK",
+     "entry": 1074.9443
+    },
+    {
+     "symbol": "TSM",
+     "shares": 0.342654,
+     "price": 451.0,
+     "reason": "PEAK",
+     "entry": 450.6399
+    }
+   ],
+   "buys": [
+    {
+     "symbol": "WDC",
+     "shares": 9.691585,
+     "price": 457.595,
+     "notional": 4434.82,
+     "reason": "NORMAL_DIP",
+     "drawdown": -0.295,
+     "day_return": -0.0494,
+     "capped_by_trade_notional_limit": true,
+     "capped_by_concentration_limit": false
+    },
+    {
+     "symbol": "SNDK",
+     "shares": 0.65004,
+     "price": 1784.45,
+     "notional": 1159.96,
+     "reason": "NORMAL_DIP-NET(vs PEAK)",
+     "drawdown": -0.2287,
+     "day_return": -0.0347,
+     "capped_by_trade_notional_limit": true,
+     "capped_by_concentration_limit": false
+    },
+    {
+     "symbol": "STX",
+     "shares": 4.81763,
+     "price": 920.5399,
+     "notional": 4434.82,
+     "reason": "NORMAL_DIP",
+     "drawdown": -0.0893,
+     "day_return": -0.0194,
+     "capped_by_trade_notional_limit": true,
+     "capped_by_concentration_limit": false
+    }
+   ],
+   "realized_estimated": 89.32,
+   "cash_after": 998.72,
+   "positions": {
+    "LRCX": 3.691478,
+    "SNDK": 3.120052,
+    "MU": 0.99549,
+    "TSM": 0.118522,
+    "WDC": 9.691585,
+    "STX": 4.81763
+   },
+   "shadow_equity_pre_run": 17739.28,
+   "shadow_equity": 17728.79,
+   "live_broker_total_value_pre_run": 17743.69,
+   "live_run_found": true
+  }
+ ]
+}

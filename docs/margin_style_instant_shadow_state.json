@@ -1,0 +1,84 @@
+{
+ "pending_settlement": [
+  {
+   "amount": 4324.92,
+   "settle_date": "2026-09-28",
+   "symbol": "INTC"
+  },
+  {
+   "amount": 3354.66,
+   "settle_date": "2026-09-28",
+   "symbol": "LRCX"
+  },
+  {
+   "amount": 3119.55,
+   "settle_date": "2026-09-28",
+   "symbol": "MU"
+  },
+  {
+   "amount": 154.54,
+   "settle_date": "2026-09-28",
+   "symbol": "TSM"
+  }
+ ],
+ "open_positions": {
+  "LRCX": {
+   "shares": 3.691478,
+   "entry": 302.82,
+   "peak": 314.335,
+   "tranches": 1,
+   "opened": "2026-09-24"
+  },
+  "SNDK": {
+   "shares": 3.1200520000000003,
+   "entry": 1768.9731,
+   "peak": 1784.45,
+   "tranches": 2,
+   "opened": "2026-09-24"
+  },
+  "MU": {
+   "shares": 0.99549,
+   "entry": 1074.9443,
+   "peak": 1083.925,
+   "tranches": 1,
+   "opened": "2026-09-24"
+  },
+  "TSM": {
+   "shares": 0.118522,
+   "entry": 450.6399,
+   "peak": 451.0,
+   "tranches": 1,
+   "opened": "2026-09-24"
+  },
+  "WDC": {
+   "shares": 9.691585,
+   "entry": 457.595,
+   "peak": 457.595,
+   "tranches": 1,
+   "opened": "2026-09-25"
+  },
+  "STX": {
+   "shares": 4.81763,
+   "entry": 920.5399,
+   "peak": 920.5399,
+   "tranches": 1,
+   "opened": "2026-09-25"
+  }
+ },
+ "equity_peak": 17739.28,
+ "kill_switch_active": false,
+ "kill_switch_triggered_date": null,
+ "trend_gate_active": false,
+ "_last_commit": {
+  "timestamp": "2026-09-21T17:06:48.586045+00:00",
+  "sells_count": 4,
+  "buys_count": 0,
+  "ported_from": "ca55e21 (development branch) on 2026-09-22"
+ },
+ "shadow_cash": 998.72,
+ "shadow_started_from": {
+  "rev": "c3a77e4~1",
+  "cash": 85.15,
+  "at": "2026-09-25T18:59:25.462748+00:00"
+ }
+}
