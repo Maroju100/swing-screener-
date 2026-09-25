@@ -401,6 +401,28 @@ below are what makes a claim checkable.
     the account is cash today.
   - Dashboard: section "Limited margin: spending today's sale money today" on
     [Margin-Style Rule Trials](https://claude.ai/artifact/4H8w99Qw8ZwmSkpMKvf8qp).
+  - 📄 **PAPER SHADOW RUNNING since 2026-09-25** (user request) — forward test
+    of the two-step routine. `scripts/margin_style_instant_shadow.py`: engine =
+    `origin/main`'s source + `patch_instant` only (gate: patch off reproduced the
+    09-25 live plan exactly); own files `docs/margin_style_instant_shadow_{state,log}.json`
+    on the **development branch only**; paper cash, 5 bps/side ESTIMATED; priced
+    off the live run's own `/tmp` quote/bar files and refuses anything not from
+    today. Routine `trig_01Pb8WcSNiwF9EWN5Qodyfrh`, `CRON_TZ=America/Chicago
+    13 13 * * 1-5` (tracks DST by itself), fires into this session after the
+    live run and skips any day the live run did not log. **Never calls order
+    tools.** Compare with `python3 scripts/margin_style_instant_shadow.py status`
+    (equity at the start of each run, before trades). Day 1: paper would have
+    re-deployed ~$10.0k of the $10.95k the shadow sold (WDC, STX, netted SNDK) instead
+    of leaving $14.2k idle until 09-28. Read results as forward evidence only
+    after weeks, not days.
+  - **Answered 2026-09-25: the +155.10% backtest DOES include the settlement
+    lockup**, the same way the cash account has it. The harness calls `cmd_plan`
+    with cash as it stood *before* that day's sells and credits proceeds after
+    (`margin_style_17h_backtest.py`, the `cmd_plan(...cash...)` call then
+    `cash += s['shares'] * s['price']`), so sale money is usable from the next
+    day on — T+1, as live. Its measured cost is the +3.8pp above. A day like
+    09-25 with $85 free is normal for this engine: the first tranche takes 95% of
+    available cash, so it is near fully invested after any buying day.
 - 📌 **Superseded by the decision above, kept for the reasoning — ACCOUNT TYPE
   AS OF 2026-09-22 was `limited_margin`.**
   - **Evidence it is limited margin, not cash:** `get_accounts` →
