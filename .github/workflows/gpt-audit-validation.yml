@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Compile GPT audit scripts
-        run: python -m py_compile scripts/gpt_capital_sensitivity.py scripts/gpt_symbol_attribution.py scripts/gpt_live_reconciliation.py scripts/gpt_transcript_proxy_backtests.py scripts/gpt_youtube_strategy_backtest.py scripts/gpt_transcript_setups_backtest.py scripts/gpt_transcript_setup_backtest.py
+        run: python -m py_compile scripts/gpt_capital_sensitivity.py scripts/gpt_symbol_attribution.py scripts/gpt_live_reconciliation.py scripts/gpt_transcript_screen.py scripts/gpt_transcript_proxy_backtests.py scripts/gpt_youtube_strategy_backtest.py scripts/gpt_transcript_setups_backtest.py scripts/gpt_transcript_setup_backtest.py
       - name: Run capital sensitivity
         run: python scripts/gpt_capital_sensitivity.py --capitals 5000 10000 15000 17494.91 17500 17696.92 20000 40000 80000 --cost-bps 0 --output data/research/gpt_capital_sensitivity_0bps.json
       - name: Run capital sensitivity at 5 bps
@@ -39,6 +39,8 @@ jobs:
         run: python scripts/gpt_transcript_setup_backtest.py
       - name: Run transcript proxy backtests
         run: python scripts/gpt_transcript_proxy_backtests.py
+      - name: Run transcript-theme screening backtest
+        run: python scripts/gpt_transcript_screen.py
       - name: Upload audit results
         if: always()
         uses: actions/upload-artifact@v4
@@ -49,6 +51,7 @@ jobs:
             data/research/gpt_capital_sensitivity_5bps.json
             data/research/gpt_symbol_attribution_0bps.json
             data/research/gpt_live_reconciliation_17_5k.json
+            data/research/gpt_transcript_screen.json
             data/research/gpt_transcript_proxy_backtests.json
             data/research/youtube_strategy_batch1_results.json
             data/research/gpt_transcript_setup_backtests.json
