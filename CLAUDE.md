@@ -1001,6 +1001,45 @@ production exactly ($124,289.71).
   every prior search here: the in-sample optimum moves with the window and
   the regime.
 
+#### ⚖️ USER-UPLOADED "OPTIMIZED CANDIDATE" (PDF, 2026-09-25) — reproduces, but a regime bet
+
+The user uploaded a PDF ("Margin-live rule comparison") proposing: tranche
+schedule 95/55/35/20/10% → **50/30/20/10/5%**, `PEAK_SELL_PCT` 74.3% →
+**100%**, check **17:30 → 18:00 UTC**, claiming +155.10% → +160.55% (0 bps) and
++146.17% → +150.84% (5 bps) on Mar 13–Sep 4, and itself stating it is
+in-sample. It is one point of the 972-config grid above. Reproduce:
+`python3 scripts/margin_style_candidate_pdf.py` → `data/research/candidate_pdf.json`.
+
+- ✅ **The PDF's four figures reproduce to the cent** on its stated basis
+  (anchor window/data, engine `origin/main`): $124,080.90 → $128,438.15 and
+  $116,932.14 → $120,675.15. The claim is accurate as stated.
+- **Standard battery** (132 days, 5 bps, same pre-set checks as the rule-idea
+  study) — **2 of 5 pass, NOT AN IMPROVEMENT:**
+
+  | | 6 mo | T1 | T2 | T3 | Rising | Falling | 30m 17:30 | 30m 18:00 | P(better) |
+  |---|---|---|---|---|---|---|---|---|---|
+  | PRODUCTION | +155.4 | +43.7 | +30.9 | +6.8 | +67.7 | +38.3 | +35.7 | +34.9 | — |
+  | Candidate (both rules) | +156.3 | +37.6 | +36.5 | +17.6 | +60.6 | **+59.4** | **+53.9** | **+60.4** | 0.45 |
+  | Smaller tranches only | +137.0 | +40.5 | +29.0 | +7.5 | +59.6 | +38.6 | +36.6 | +39.1 | 0.04 |
+  | Full exit on new high only | +153.4 | +38.0 | +33.3 | +17.6 | +60.3 | +58.1 | +54.7 | +58.5 | 0.43 |
+
+- **The 100% trim does all the work, and it is the mirror image of rule idea
+  1.** It adds ~20 points in the falling half and on 30-minute bars, and costs
+  ~7 points in the rising half. **The falling half and the 30-minute window
+  are the same stretch of time (Jun 22–Sep 21)**, so those two wins are one
+  observation, not two. Over the full 132 days the net is +0.9 points, a coin
+  flip (P=0.45), with a higher Sharpe (4.07 vs 3.83) but a deeper drawdown
+  (−11.4% vs −8.8%).
+- **Smaller tranches alone are significantly worse** (+137.0%, P=0.04); they
+  only look neutral inside the candidate because the 100% trim carries them.
+- **The 18:00 check adds nothing for production's rules** (+34.9% at 18:00 vs
+  +35.7% at 17:30 on 30-minute bars); it helps only in combination with the
+  100% trim (+60.4% vs +53.9%) — again on the single falling stretch.
+- **Reading:** the most favourable *regime-dependent* result so far — full
+  exits pay when rallies do not last. Not a validated improvement; would only
+  become one if it held through a rising stretch in forward data. Production
+  unchanged.
+
 #### ❌ DO NOT move the trigger to exactly noon (asked and measured 2026-09-23)
 
 The obvious response to the price-basis defect is "align the live trigger to the
