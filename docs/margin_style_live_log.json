@@ -2909,6 +2909,86 @@
     "settle_date": "2026-09-28"
    },
    "notes": "First run at the 30 17 cron (fired 17:34 UTC). equity_peak rose 17,696.92 -> 17,739.28 (new real high, consistent with broker total_value 17,743.69). Proceeds settle Mon 2026-09-28 on the cash account; engine's pending_settlement tracks them."
+  },
+  {
+   "timestamp": "2026-09-28T17:41:24Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "sizing_input": {
+    "buying_power_used": 14237.48,
+    "cash": 14237.48,
+    "note": "09-25 proceeds settled; buying_power == cash"
+   },
+   "broker_total_value": 17673.72,
+   "orders_placed": [
+    {
+     "side": "sell",
+     "symbol": "SNDK",
+     "shares": 0.634793,
+     "price": 1712.0,
+     "notional": 1086.77,
+     "reason": "STOP",
+     "quote_at_plan": 1715.37,
+     "order_id": "6abaa6c4-a0a6-4721-8b41-69cede5c6a0c",
+     "state": "filled",
+     "fees": 0.03,
+     "entry": 1764.9,
+     "realized_vs_state_entry": -33.58
+    },
+    {
+     "side": "sell",
+     "symbol": "MU",
+     "shares": 0.99549,
+     "price": 1055.1601,
+     "notional": 1050.4,
+     "reason": "STOP",
+     "quote_at_plan": 1055.55,
+     "order_id": "6abaa6c7-172d-4ab0-a9b5-8f41354e5fb9",
+     "state": "filled",
+     "fees": 0.03,
+     "entry": 1074.9443,
+     "realized_vs_state_entry": -19.69
+    },
+    {
+     "side": "sell",
+     "symbol": "TSM",
+     "shares": 0.088062,
+     "price": 453.5801,
+     "notional": 39.94,
+     "reason": "PEAK",
+     "quote_at_plan": 453.58,
+     "order_id": "6abaa6c9-2df9-42fd-9d23-9d04a87ddd27",
+     "state": "filled",
+     "fees": 0.0,
+     "entry": 450.6399,
+     "realized_vs_state_entry": 0.26
+    }
+   ],
+   "skipped_orders": [],
+   "netted_trades": [],
+   "circuit_breaker": {
+    "triggered": true,
+    "stop_count": 2,
+    "effect": "no new entries this run; $14,237.48 buying power left undeployed"
+   },
+   "reconciliation": "none needed - verify PASS, reconcile PASS (5 positions matched broker exactly)",
+   "unowned_excess": {},
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "freshness": "WARNING 'Historical data is 3 days old (last bar 2026-09-25)' - verified FALSE POSITIVE (Monday; check counts calendar days). All 8 last bars = 2026-09-25 and equal the broker's official previous_close (previous_close_date 2026-09-25) to the cent; quotes 17:36 UTC today. Proceeded on that verification.",
+    "pre_commit": "PASS"
+   },
+   "risk_state": {
+    "equity_peak": 17739.28,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false,
+    "total_equity": 17671.26,
+    "drawdown_from_peak": -0.0038
+   },
+   "notes": "SNDK live 1715.37 <= 1777.80*(1-1.51%)=1750.96; MU 1055.55 <= 1082.28*0.9849=1065.94. TSM new high 453.58 > peak 450.92 -> 74.3% trim."
   }
  ]
 }

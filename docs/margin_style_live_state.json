@@ -1,28 +1,18 @@
 {
  "pending_settlement": [
   {
-   "amount": 4330.49,
-   "settle_date": "2026-09-28",
-   "symbol": "INTC"
-  },
-  {
-   "amount": 3356.64,
-   "settle_date": "2026-09-28",
-   "symbol": "LRCX"
-  },
-  {
-   "amount": 3273.02,
-   "settle_date": "2026-09-28",
+   "amount": 1086.77,
+   "settle_date": "2026-09-29",
    "symbol": "SNDK"
   },
   {
-   "amount": 3118.91,
-   "settle_date": "2026-09-28",
+   "amount": 1050.4,
+   "settle_date": "2026-09-29",
    "symbol": "MU"
   },
   {
-   "amount": 154.51,
-   "settle_date": "2026-09-28",
+   "amount": 39.94,
+   "settle_date": "2026-09-29",
    "symbol": "TSM"
   }
  ],
@@ -34,24 +24,10 @@
    "tranches": 1,
    "opened": "2026-09-24"
   },
-  "SNDK": {
-   "shares": 0.634793,
-   "entry": 1764.9,
-   "peak": 1783.449,
-   "tranches": 1,
-   "opened": "2026-09-24"
-  },
-  "MU": {
-   "shares": 0.99549,
-   "entry": 1074.9443,
-   "peak": 1083.7013,
-   "tranches": 1,
-   "opened": "2026-09-24"
-  },
   "TSM": {
-   "shares": 0.118522,
+   "shares": 0.03046,
    "entry": 450.6399,
-   "peak": 450.9242,
+   "peak": 453.5801,
    "tranches": 1,
    "opened": "2026-09-24"
   },
