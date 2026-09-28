@@ -659,7 +659,16 @@ below are what makes a claim checkable.
   
   3. **Data Freshness Checks** (Guardrail 3 — Current Data):
      - Built into `cmd_plan`: automatically validates historical bars date and quotes timestamp
-     - Historical bars: must be ≤1 day old (last bar date is checked)
+     - Historical bars: last bar must be the previous **trading** session
+       (≤1 trading day old; weekends and NYSE full-day closures 2026–27 are
+       skipped, `MARKET_HOLIDAYS` in the engine). Changed on `main` in
+       `1cb91a2` (2026-09-28): the calendar-day version called Friday's bar
+       "3 days old" every Monday — a false alarm the 2026-09-28 run had to
+       verify by hand (all 8 bars equal to the broker's previous close).
+       A genuinely missing session (Tuesday with only Friday's bar) still
+       warns. Trading unchanged: 6-month replay still $124,080.90. Extend
+       `MARKET_HOLIDAYS` before 2028; past its end, holidays count as trading
+       days, so the check errs towards a warning.
      - Quotes: must be ≤5 minutes old (if timestamp metadata provided)
      - Prints warnings but continues (user can accept or abort)
      - **Prevents signals based on stale data** (e.g., Sep 4 closes used for Sep 16 trading, 
