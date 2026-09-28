@@ -524,12 +524,43 @@ def validate_positions_against_holdings(state, actual_holdings):
     return validation
 
 
-def check_data_freshness(hist_path, quotes_path, quotes_data=None):
+# NYSE full-day closures, used ONLY by check_data_freshness to count trading
+# days (next_business_day / business_days_elapsed deliberately stay weekday-only,
+# since changing them would move settlement and MAX_HOLD timing). Derived from
+# NYSE holiday rules, observed dates applied. Dates past the end of this list are
+# treated as trading days, which errs towards a warning, never towards silence.
+MARKET_HOLIDAYS = {
+    '2026-01-01', '2026-01-19', '2026-02-16', '2026-04-03', '2026-05-25',
+    '2026-06-19', '2026-07-03', '2026-09-07', '2026-11-26', '2026-12-25',
+    '2027-01-01', '2027-01-18', '2027-02-15', '2027-03-26', '2027-05-31',
+    '2027-06-18', '2027-07-05', '2027-09-06', '2027-11-25', '2027-12-24',
+}
+
+
+def trading_days_between(from_date, to_date):
+    """Trading days strictly after from_date up to and including to_date."""
+    count, d = 0, from_date
+    while d < to_date:
+        d += timedelta(days=1)
+        if d.weekday() < 5 and d.isoformat() not in MARKET_HOLIDAYS:
+            count += 1
+    return count
+
+
+def check_data_freshness(hist_path, quotes_path, quotes_data=None, now=None):
     """
     SAFEGUARD 0: DATA FRESHNESS CHECK
     Verifies that historical bars and quotes are recent enough for trading.
     Returns (is_fresh, error_msg) tuple.
+
+    Bars are measured in TRADING days, not calendar days. The newest bar a run
+    can have is the previous completed session, so on a Monday that is Friday's
+    bar: 1 trading day old, fresh. The calendar-day version called it "3 days
+    old" every Monday (first seen 2026-09-28, where all 8 bars matched the
+    broker's official previous close to the cent). A genuinely missing session
+    -- e.g. Tuesday with only Friday's bar -- is 2 trading days and still warns.
     """
+    now = now or datetime.now(timezone.utc)
     errors = []
 
     try:
@@ -552,16 +583,17 @@ def check_data_freshness(hist_path, quotes_path, quotes_data=None):
 
         last_date_str = max(last_dates)  # Get the most recent date
         last_date = datetime.fromisoformat(last_date_str.replace('Z', '+00:00'))
-        days_old = (datetime.now(timezone.utc) - last_date).days
+        trading_days_old = trading_days_between(last_date.date(), now.date())
 
-        if days_old > 1:
-            errors.append(f"Historical data is {days_old} days old (last bar: {last_date_str})")
+        if trading_days_old > 1:
+            errors.append(f"Historical data is {trading_days_old} trading days old "
+                          f"(last bar: {last_date_str}; expected the previous session)")
 
         # Check quotes timestamp if provided as dict with timestamp
         if quotes_data and isinstance(quotes_data, dict):
             if '_timestamp' in quotes_data:
                 quote_time = datetime.fromisoformat(quotes_data['_timestamp'].replace('Z', '+00:00'))
-                minutes_old = (datetime.now(timezone.utc) - quote_time).total_seconds() / 60
+                minutes_old = (now - quote_time).total_seconds() / 60
                 if minutes_old > 5:
                     errors.append(f"Quotes are {minutes_old:.0f} minutes old (max 5 min)")
 
