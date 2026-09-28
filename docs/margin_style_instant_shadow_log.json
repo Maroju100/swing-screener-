@@ -87,6 +87,64 @@
    "shadow_equity": 17728.79,
    "live_broker_total_value_pre_run": 17743.69,
    "live_run_found": true
+  },
+  {
+   "date": "2026-09-28",
+   "timestamp": "2026-09-28T18:14:39+00:00",
+   "engine": "origin/main + patch_instant",
+   "cost_bps_estimated": 5.0,
+   "cash_before": 998.72,
+   "same_run_proceeds_credited": 10603.84,
+   "sells": [
+    {
+     "symbol": "SNDK",
+     "shares": 3.1200520000000003,
+     "price": 1715.37,
+     "reason": "STOP",
+     "entry": 1768.9731
+    },
+    {
+     "symbol": "MU",
+     "shares": 0.99549,
+     "price": 1055.55,
+     "reason": "STOP",
+     "entry": 1074.9443
+    },
+    {
+     "symbol": "LRCX",
+     "shares": 2.742768,
+     "price": 314.445,
+     "reason": "PEAK",
+     "entry": 302.82
+    },
+    {
+     "symbol": "TSM",
+     "shares": 0.088062,
+     "price": 453.58,
+     "reason": "PEAK",
+     "entry": 450.6399
+    },
+    {
+     "symbol": "STX",
+     "shares": 3.579499,
+     "price": 921.53,
+     "reason": "PEAK",
+     "entry": 920.5399
+    }
+   ],
+   "buys": [],
+   "realized_estimated": -161.54,
+   "cash_after": 11597.26,
+   "positions": {
+    "LRCX": 0.94871,
+    "TSM": 0.03046,
+    "WDC": 9.691585,
+    "STX": 1.238131
+   },
+   "shadow_equity_pre_run": 17417.46,
+   "shadow_equity": 17412.16,
+   "live_broker_total_value_pre_run": 17673.72,
+   "live_run_found": true
   }
  ]
 }
