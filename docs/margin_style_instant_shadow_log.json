@@ -145,6 +145,97 @@
    "shadow_equity": 17412.16,
    "live_broker_total_value_pre_run": 17673.72,
    "live_run_found": true
+  },
+  {
+   "date": "2026-09-29",
+   "timestamp": "2026-09-29T18:15:05+00:00",
+   "engine": "origin/main + patch_instant",
+   "cost_bps_estimated": 5.0,
+   "cash_before": 11597.26,
+   "same_run_proceeds_credited": 1356.48,
+   "sells": [
+    {
+     "symbol": "STX",
+     "shares": 1.238131,
+     "price": 904.8401,
+     "reason": "STOP",
+     "entry": 920.5399
+    },
+    {
+     "symbol": "LRCX",
+     "shares": 0.704892,
+     "price": 320.34,
+     "reason": "PEAK",
+     "entry": 302.82
+    },
+    {
+     "symbol": "TSM",
+     "shares": 0.022632,
+     "price": 458.005,
+     "reason": "PEAK",
+     "entry": 450.6399
+    }
+   ],
+   "buys": [
+    {
+     "symbol": "WDC",
+     "shares": 9.604623,
+     "price": 451.04,
+     "notional": 4332.07,
+     "reason": "NORMAL_DIP",
+     "drawdown": -0.222,
+     "day_return": -0.0078,
+     "capped_by_trade_notional_limit": true,
+     "capped_by_concentration_limit": true
+    },
+    {
+     "symbol": "SNDK",
+     "shares": 2.544218,
+     "price": 1710.42,
+     "notional": 4351.68,
+     "reason": "NORMAL_DIP",
+     "drawdown": -0.106,
+     "day_return": -0.0365,
+     "capped_by_trade_notional_limit": true,
+     "capped_by_concentration_limit": false
+    },
+    {
+     "symbol": "INTC",
+     "shares": 34.772448,
+     "price": 116.6582,
+     "notional": 4056.49,
+     "reason": "NORMAL_DIP",
+     "drawdown": -0.0892,
+     "day_return": -0.0567,
+     "capped_by_trade_notional_limit": false,
+     "capped_by_concentration_limit": false
+    },
+    {
+     "symbol": "MU",
+     "shares": 0.189483,
+     "price": 1070.4099,
+     "notional": 202.82,
+     "reason": "NORMAL_DIP",
+     "drawdown": -0.0385,
+     "day_return": -0.0261,
+     "capped_by_trade_notional_limit": false,
+     "capped_by_concentration_limit": false
+    }
+   ],
+   "realized_estimated": -8.28,
+   "cash_after": 3.53,
+   "positions": {
+    "LRCX": 0.243818,
+    "TSM": 0.007828,
+    "WDC": 19.296208,
+    "SNDK": 2.544218,
+    "INTC": 34.772448,
+    "MU": 0.189483
+   },
+   "shadow_equity_pre_run": 17406.72,
+   "shadow_equity": 17399.57,
+   "live_broker_total_value_pre_run": 17690.74,
+   "live_run_found": true
   }
  ]
 }

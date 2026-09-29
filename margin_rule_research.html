@@ -1048,7 +1048,7 @@ const CHECK = [{"label": "8:30 AM", "sub": "13:30 UTC", "pct": -3.34}, {"label":
 
 // PAPER SHADOW snapshot -- rewritten by scripts/build_shadow_dashboard_data.py
 // from docs/margin_style_instant_shadow_log.json. Do not edit by hand.
-const SHADOW = /*SHADOW_START*/[{"date":"2026-09-25","shadow":17739.28,"live":17743.69,"trades":"sell INTC (STOP), sell LRCX (PEAK), sell MU (PEAK), sell TSM (PEAK), buy WDC $4,435, buy SNDK $1,160, buy STX $4,435"},{"date":"2026-09-28","shadow":17417.46,"live":17673.72,"trades":"sell SNDK (STOP), sell MU (STOP), sell LRCX (PEAK), sell TSM (PEAK), sell STX (PEAK)"}]/*SHADOW_END*/;
+const SHADOW = /*SHADOW_START*/[{"date":"2026-09-25","shadow":17739.28,"live":17743.69,"trades":"sell INTC (STOP), sell LRCX (PEAK), sell MU (PEAK), sell TSM (PEAK), buy WDC $4,435, buy SNDK $1,160, buy STX $4,435"},{"date":"2026-09-28","shadow":17417.46,"live":17673.72,"trades":"sell SNDK (STOP), sell MU (STOP), sell LRCX (PEAK), sell TSM (PEAK), sell STX (PEAK)"},{"date":"2026-09-29","shadow":17406.72,"live":17690.74,"trades":"sell STX (STOP), sell LRCX (PEAK), sell TSM (PEAK), buy WDC $4,332, buy SNDK $4,352, buy INTC $4,056, buy MU $203"}]/*SHADOW_END*/;
 
 function renderShadow() {
   const money = (v) => '$' + v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
