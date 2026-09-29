@@ -2989,6 +2989,126 @@
     "drawdown_from_peak": -0.0038
    },
    "notes": "SNDK live 1715.37 <= 1777.80*(1-1.51%)=1750.96; MU 1055.55 <= 1082.28*0.9849=1065.94. TSM new high 453.58 > peak 450.92 -> 74.3% trim."
+  },
+  {
+   "timestamp": "2026-09-29T18:12:06Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "sizing_input": {
+    "buying_power_used": 16414.53,
+    "cash": 16414.53
+   },
+   "broker_total_value": 17690.74,
+   "orders_placed": [
+    {
+     "side": "sell",
+     "symbol": "LRCX",
+     "shares": 2.742768,
+     "price": 321.09,
+     "notional": 880.68,
+     "reason": "PEAK",
+     "quote_at_plan": 320.34,
+     "order_id": "6abbff76-9d60-448e-832f-3cdcb63c59cf",
+     "state": "filled",
+     "fees": 0.02
+    },
+    {
+     "side": "sell",
+     "symbol": "TSM",
+     "shares": 0.022632,
+     "price": 458.0411,
+     "notional": 10.37,
+     "reason": "PEAK",
+     "quote_at_plan": 458.005,
+     "order_id": "6abbff78-3a66-4b8a-9cf9-3ec3f2192c67",
+     "state": "filled",
+     "fees": 0.0
+    },
+    {
+     "side": "buy",
+     "symbol": "WDC",
+     "shares": 9.805529,
+     "price": 451.0761,
+     "notional": 4423.04,
+     "reason": "NORMAL_DIP",
+     "quote_at_plan": 451.04,
+     "order_id": "6abbff7a-7027-4ba1-be94-6efb74530515",
+     "state": "filled",
+     "fees": 0.0
+    },
+    {
+     "side": "buy",
+     "symbol": "SNDK",
+     "shares": 2.585731,
+     "price": 1711.8499,
+     "notional": 4426.38,
+     "reason": "NORMAL_DIP",
+     "quote_at_plan": 1710.42,
+     "order_id": "6abbff7d-8be9-4bf5-af0e-d485e690987e",
+     "state": "filled",
+     "fees": 0.0
+    },
+    {
+     "side": "buy",
+     "symbol": "INTC",
+     "shares": 37.911485,
+     "price": 116.4794,
+     "notional": 4415.91,
+     "reason": "NORMAL_DIP",
+     "quote_at_plan": 116.6582,
+     "order_id": "6abbff7f-10e7-4ddd-a561-651efcda5345",
+     "state": "filled",
+     "fees": 0.0
+    },
+    {
+     "side": "buy",
+     "symbol": "MU",
+     "shares": 2.792527,
+     "price": 1071.3999,
+     "notional": 2991.91,
+     "reason": "NORMAL_DIP",
+     "quote_at_plan": 1070.4099,
+     "order_id": "6abbff83-e866-4f4c-8cb8-5a40c7698111",
+     "state": "filled",
+     "fees": 0.0
+    },
+    {
+     "side": "buy",
+     "symbol": "AMD",
+     "shares": 0.244108,
+     "price": 610.71,
+     "notional": 149.08,
+     "reason": "NORMAL_DIP",
+     "quote_at_plan": 612.26,
+     "order_id": "6abbff85-5388-4fc8-a4d1-9989a50537b0",
+     "state": "filled",
+     "fees": 0.0
+    }
+   ],
+   "skipped_orders": [],
+   "netted_trades": [],
+   "circuit_breaker": {
+    "triggered": false,
+    "stop_count": 0
+   },
+   "reconciliation": "none needed - verify PASS, reconcile PASS (3 positions matched broker exactly)",
+   "unowned_excess": {},
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "freshness": "PASS (first run on the trading-day check, 1cb91a2)",
+    "pre_commit": "PASS"
+   },
+   "execution_note": "plan priced at 17:34 UTC quotes; orders reviewed and placed 18:11-18:12 UTC (~38 min later). Signals re-checked at review: LRCX/TSM still above peaks; buy signals depend only on 09-28 closes.",
+   "risk_state": {
+    "equity_peak": 17739.28,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false,
+    "total_equity": 17690.74,
+    "drawdown_from_peak": -0.0027
+   }
   }
  ]
 }
