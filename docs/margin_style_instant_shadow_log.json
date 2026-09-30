@@ -236,6 +236,79 @@
    "shadow_equity": 17399.57,
    "live_broker_total_value_pre_run": 17690.74,
    "live_run_found": true
+  },
+  {
+   "date": "2026-09-30",
+   "timestamp": "2026-09-30T18:13:55+00:00",
+   "engine": "origin/main + patch_instant",
+   "cost_bps_estimated": 5.0,
+   "cash_before": 3.53,
+   "same_run_proceeds_credited": 12990.6,
+   "sells": [
+    {
+     "symbol": "LRCX",
+     "shares": 0.181157,
+     "price": 325.535,
+     "reason": "PEAK",
+     "entry": 302.82
+    },
+    {
+     "symbol": "TSM",
+     "shares": 0.005816,
+     "price": 458.4695,
+     "reason": "PEAK",
+     "entry": 450.6399
+    },
+    {
+     "symbol": "WDC",
+     "shares": 14.337083,
+     "price": 458.675,
+     "reason": "PEAK",
+     "entry": 454.3323
+    },
+    {
+     "symbol": "SNDK",
+     "shares": 1.890354,
+     "price": 1730.735,
+     "reason": "PEAK",
+     "entry": 1710.42
+    },
+    {
+     "symbol": "INTC",
+     "shares": 25.835929,
+     "price": 119.2601,
+     "reason": "PEAK",
+     "entry": 116.6582
+    }
+   ],
+   "buys": [
+    {
+     "symbol": "STX",
+     "shares": 4.796154,
+     "price": 922.09,
+     "notional": 4422.49,
+     "reason": "NORMAL_DIP",
+     "drawdown": -0.0818,
+     "day_return": -0.0087,
+     "capped_by_trade_notional_limit": true,
+     "capped_by_concentration_limit": false
+    }
+   ],
+   "realized_estimated": 159.14,
+   "cash_after": 8562.94,
+   "positions": {
+    "LRCX": 0.062661,
+    "TSM": 0.002012,
+    "WDC": 4.959125,
+    "SNDK": 0.653864,
+    "INTC": 8.936519,
+    "MU": 0.189483,
+    "STX": 4.796154
+   },
+   "shadow_equity_pre_run": 17689.94,
+   "shadow_equity": 17681.23,
+   "live_broker_total_value_pre_run": 17917.97,
+   "live_run_found": true
   }
  ]
 }
