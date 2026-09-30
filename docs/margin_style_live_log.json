@@ -3109,6 +3109,119 @@
     "total_equity": 17690.74,
     "drawdown_from_peak": -0.0027
    }
+  },
+  {
+   "timestamp": "2026-09-30T17:47:39Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "sizing_input": {
+    "buying_power_used": 899.25,
+    "cash": 899.25
+   },
+   "broker_total_value": 17917.97,
+   "orders_placed": [
+    {
+     "side": "sell",
+     "symbol": "LRCX",
+     "shares": 0.704892,
+     "price": 326.6888,
+     "notional": 230.28,
+     "reason": "PEAK",
+     "quote_at_plan": 325.535,
+     "order_id": "6abd4b3b-09f4-413e-90a7-0128e1ad8f22",
+     "state": "filled",
+     "fees": 0.0,
+     "realized_vs_state_entry": 16.82
+    },
+    {
+     "side": "sell",
+     "symbol": "TSM",
+     "shares": 0.005816,
+     "price": 457.9572,
+     "notional": 2.66,
+     "reason": "PEAK",
+     "quote_at_plan": 458.4695,
+     "order_id": "6abd4b3d-9017-413b-bbd7-31f13c2c0d62",
+     "state": "filled",
+     "fees": 0.0,
+     "realized_vs_state_entry": 0.04
+    },
+    {
+     "side": "sell",
+     "symbol": "WDC",
+     "shares": 7.416853,
+     "price": 460.0578,
+     "notional": 3412.18,
+     "reason": "PEAK",
+     "quote_at_plan": 458.675,
+     "order_id": "6abd4b40-b74b-4598-84d8-3a4163f98872",
+     "state": "filled",
+     "fees": 0.07,
+     "realized_vs_state_entry": 65.74
+    },
+    {
+     "side": "sell",
+     "symbol": "SNDK",
+     "shares": 1.921198,
+     "price": 1734.3869,
+     "notional": 3332.1,
+     "reason": "PEAK",
+     "quote_at_plan": 1730.735,
+     "order_id": "6abd4b42-4083-4aac-ad58-ae32bcd0100d",
+     "state": "filled",
+     "fees": 0.08,
+     "realized_vs_state_entry": 43.3
+    },
+    {
+     "side": "sell",
+     "symbol": "INTC",
+     "shares": 28.168233,
+     "price": 119.3471,
+     "notional": 3361.8,
+     "reason": "PEAK",
+     "quote_at_plan": 119.2601,
+     "order_id": "6abd4b44-328d-4d1b-9076-98111cffc5ea",
+     "state": "filled",
+     "fees": 0.07,
+     "realized_vs_state_entry": 80.78
+    },
+    {
+     "side": "buy",
+     "symbol": "STX",
+     "shares": 0.926469,
+     "price": 922.7871,
+     "notional": 854.93,
+     "reason": "NORMAL_DIP",
+     "quote_at_plan": 922.09,
+     "order_id": "6abd4b46-3766-4534-9e85-badc1f79b87c",
+     "state": "filled",
+     "fees": 0.0
+    }
+   ],
+   "skipped_orders": [],
+   "netted_trades": [],
+   "circuit_breaker": {
+    "triggered": false,
+    "stop_count": 0
+   },
+   "reconciliation": "none needed - verify PASS, reconcile PASS (7 positions matched broker exactly)",
+   "unowned_excess": {},
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "freshness": "PASS",
+    "pre_commit": "PASS"
+   },
+   "risk_state": {
+    "equity_peak": 17917.9,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false,
+    "total_equity": 17917.9,
+    "drawdown_from_peak": 0.0
+   },
+   "notes": "New equity high 17,917.90 (broker total_value 17,917.97). Broad rebound: 5 PEAK trims of positions bought 09-24/09-29."
   }
  ]
 }
