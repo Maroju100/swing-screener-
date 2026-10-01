@@ -3232,7 +3232,7 @@
     "buying_power_used": 10383.12,
     "cash": 10383.12
    },
-   "broker_total_value_pre_trade": 18033.74,
+   "broker_total_value": 18033.74,
    "orders_placed": [
     {
      "side": "sell",
