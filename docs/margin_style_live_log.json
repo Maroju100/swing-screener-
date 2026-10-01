@@ -3222,6 +3222,130 @@
     "drawdown_from_peak": 0.0
    },
    "notes": "New equity high 17,917.90 (broker total_value 17,917.97). Broad rebound: 5 PEAK trims of positions bought 09-24/09-29."
+  },
+  {
+   "timestamp": "2026-10-01T17:40:15Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "sizing_input": {
+    "buying_power_used": 10383.12,
+    "cash": 10383.12
+   },
+   "broker_total_value_pre_trade": 18033.74,
+   "orders_placed": [
+    {
+     "side": "sell",
+     "symbol": "LRCX",
+     "shares": 0.181157,
+     "price": 338.5001,
+     "notional": 61.32,
+     "reason": "PEAK",
+     "quote_at_plan": 339.385,
+     "order_id": "6abe9af2-0a2b-4e9f-b723-73fc7f6dbc31",
+     "state": "filled",
+     "fees": 0.0,
+     "realized_vs_state_entry": 6.46
+    },
+    {
+     "side": "sell",
+     "symbol": "SNDK",
+     "shares": 0.493748,
+     "price": 1786.618,
+     "notional": 882.14,
+     "reason": "PEAK",
+     "quote_at_plan": 1796.57,
+     "order_id": "6abe9af5-4b89-4531-ab23-b3a3668aedd7",
+     "state": "filled",
+     "fees": 0.02,
+     "realized_vs_state_entry": 36.92
+    },
+    {
+     "side": "sell",
+     "symbol": "INTC",
+     "shares": 7.239236,
+     "price": 121.1101,
+     "notional": 876.74,
+     "reason": "PEAK",
+     "quote_at_plan": 121.625,
+     "order_id": "6abe9af7-4ee0-494c-9042-5711c0dc960f",
+     "state": "filled",
+     "fees": 0.02,
+     "realized_vs_state_entry": 33.52
+    },
+    {
+     "side": "sell",
+     "symbol": "MU",
+     "shares": 2.074848,
+     "price": 1077.2639,
+     "notional": 2235.16,
+     "reason": "PEAK",
+     "quote_at_plan": 1076.14,
+     "order_id": "6abe9af9-3bcc-4bba-bd3b-81dce5b6947e",
+     "state": "filled",
+     "fees": 0.05,
+     "realized_vs_state_entry": 12.17
+    },
+    {
+     "side": "sell",
+     "symbol": "AMD",
+     "shares": 0.181372,
+     "price": 615.4401,
+     "notional": 111.62,
+     "reason": "PEAK",
+     "quote_at_plan": 617.645,
+     "order_id": "6abe9afc-9b14-4244-bb01-936616af5476",
+     "state": "filled",
+     "fees": 0.0,
+     "realized_vs_state_entry": 0.86
+    },
+    {
+     "side": "sell",
+     "symbol": "STX",
+     "shares": 0.688366,
+     "price": 931.01,
+     "notional": 640.88,
+     "reason": "PEAK",
+     "quote_at_plan": 934.4,
+     "order_id": "6abe9aff-ffc3-4027-887b-2ce6a513067b",
+     "state": "filled",
+     "fees": 0.02,
+     "realized_vs_state_entry": 5.66
+    }
+   ],
+   "total_proceeds": 4807.86,
+   "skipped_orders": [
+    {
+     "symbol": "TSM",
+     "side": "sell",
+     "shares": 0.001495,
+     "price": 460.1125,
+     "reason": "PEAK",
+     "why": "review_equity_order flagged EQUITY_SUB_DOLLAR_SHARE_BASED_ORDER (~$0.69 notional) - skipped, not forced; TSM peak left unchanged in state."
+    }
+   ],
+   "netted_trades": [],
+   "circuit_breaker": {
+    "triggered": false,
+    "stop_count": 0
+   },
+   "reconciliation": "none needed - verify PASS, reconcile PASS (8 positions matched broker exactly)",
+   "unowned_excess": {},
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "freshness": "PASS",
+    "pre_commit": "PASS"
+   },
+   "risk_state": {
+    "equity_peak": 18035.23,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false,
+    "total_equity": 18035.23,
+    "drawdown_from_peak": 0.0
+   },
+   "notes": "New equity high 18,035.23 (broker total_value 18,033.74 pre-trade). Broad up day (all 8 above prior close): 6 PEAK trims of 74.3%. No buys - no symbol dipped >=0.4% below prior close, despite $10,383 settled cash. TSM trim sub-dollar, skipped."
   }
  ]
 }

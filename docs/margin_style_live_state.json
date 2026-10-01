@@ -1,36 +1,41 @@
 {
  "pending_settlement": [
   {
-   "amount": 230.28,
-   "settle_date": "2026-10-01",
+   "amount": 61.32,
+   "settle_date": "2026-10-02",
    "symbol": "LRCX"
   },
   {
-   "amount": 2.66,
-   "settle_date": "2026-10-01",
-   "symbol": "TSM"
-  },
-  {
-   "amount": 3412.18,
-   "settle_date": "2026-10-01",
-   "symbol": "WDC"
-  },
-  {
-   "amount": 3332.1,
-   "settle_date": "2026-10-01",
+   "amount": 882.14,
+   "settle_date": "2026-10-02",
    "symbol": "SNDK"
   },
   {
-   "amount": 3361.8,
-   "settle_date": "2026-10-01",
+   "amount": 876.74,
+   "settle_date": "2026-10-02",
    "symbol": "INTC"
+  },
+  {
+   "amount": 2235.16,
+   "settle_date": "2026-10-02",
+   "symbol": "MU"
+  },
+  {
+   "amount": 111.62,
+   "settle_date": "2026-10-02",
+   "symbol": "AMD"
+  },
+  {
+   "amount": 640.88,
+   "settle_date": "2026-10-02",
+   "symbol": "STX"
   }
  ],
  "open_positions": {
   "LRCX": {
-   "shares": 0.243818,
+   "shares": 0.062661,
    "entry": 302.82,
-   "peak": 326.6888,
+   "peak": 338.5001,
    "tranches": 1,
    "opened": "2026-09-24"
   },
@@ -49,42 +54,42 @@
    "opened": "2026-09-25"
   },
   "SNDK": {
-   "shares": 0.664533,
+   "shares": 0.170785,
    "entry": 1711.8499,
-   "peak": 1734.3869,
+   "peak": 1786.618,
    "tranches": 1,
    "opened": "2026-09-29"
   },
   "INTC": {
-   "shares": 9.743252,
+   "shares": 2.504016,
    "entry": 116.4794,
-   "peak": 119.3471,
+   "peak": 121.1101,
    "tranches": 1,
    "opened": "2026-09-29"
   },
   "MU": {
-   "shares": 2.792527,
+   "shares": 0.717679,
    "entry": 1071.3999,
-   "peak": 1071.3999,
+   "peak": 1077.2639,
    "tranches": 1,
    "opened": "2026-09-29"
   },
   "AMD": {
-   "shares": 0.244108,
+   "shares": 0.062736,
    "entry": 610.71,
-   "peak": 610.71,
+   "peak": 615.4401,
    "tranches": 1,
    "opened": "2026-09-29"
   },
   "STX": {
-   "shares": 0.926469,
+   "shares": 0.238103,
    "entry": 922.7871,
-   "peak": 922.7871,
+   "peak": 931.01,
    "tranches": 1,
    "opened": "2026-09-30"
   }
  },
- "equity_peak": 17917.9,
+ "equity_peak": 18035.23,
  "kill_switch_active": false,
  "kill_switch_triggered_date": null,
  "trend_gate_active": false,
