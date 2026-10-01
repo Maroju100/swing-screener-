@@ -412,11 +412,42 @@
       </p>
       <div class="tw">
         <table>
-          <thead><tr><th style="text-align:left">Date</th><th>Paper shadow</th><th>Live account</th><th>Gap</th><th style="text-align:left">Shadow&rsquo;s paper trades</th></tr></thead>
+          <thead><tr><th style="text-align:left">Date</th><th>Paper shadow</th><th>Live account</th><th>Gap</th><th>Change since previous run</th><th style="text-align:left">Shadow&rsquo;s paper trades</th></tr></thead>
           <tbody id="shadowBody"></tbody>
         </table>
       </div>
       <p class="note" style="margin:16px 0 0" id="shadowNote"></p>
+
+      <h3 style="margin:22px 0 6px;font-size:15px">Where the gap came from (as of 1&nbsp;October)</h3>
+      <p class="note">
+        Almost all of it opened over one weekend. On 25&nbsp;September both sides sold about
+        $10,950 of stock. Live, on a cash account, could spend only $85 of it that day and sat
+        in cash over the weekend. The shadow put about $10,000 straight back in: new WDC and STX
+        positions, and it kept SNDK shares that live sold, because a same-day dip buy netted
+        against the new-high trim. Those stocks then fell before the 28&nbsp;September run.
+      </p>
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Extra shares the shadow held, 25&ndash;28&nbsp;Sep</th><th>Price at 25 Sep run</th><th>Price at 28 Sep run</th><th>Effect on gap</th></tr></thead>
+          <tbody>
+            <tr><td style="text-align:left">SNDK +2.49 sh (stopped out on the 28th)</td><td class="num">$1,784.45</td><td class="num">$1,715.37</td><td class="num neg">−$171.68</td></tr>
+            <tr><td style="text-align:left">WDC +9.51 sh</td><td class="num">$457.60</td><td class="num">$450.06<sup>*</sup></td><td class="num neg">−$71.70</td></tr>
+            <tr><td style="text-align:left">STX +4.82 sh</td><td class="num">$920.54</td><td class="num">$921.53</td><td class="num pos">+$4.77</td></tr>
+            <tr><td style="text-align:left">Costs and fill-vs-quote differences (estimated)</td><td></td><td></td><td class="num neg">−$13.24</td></tr>
+            <tr><td style="text-align:left"><strong>Gap change, 25 &rarr; 28 Sep</strong></td><td></td><td></td><td class="num neg"><strong>−$251.85</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:12px 0 0">
+        Over the three runs since, the gap moved only +$12 net (−$27.76, +$55.99, −$15.88).
+        Spending sale money the same day adds no skill to the picks. It just keeps about 5% more
+        money in the market, which helps when the next move is up and hurts when it is down. The
+        weekend after 25&nbsp;September happened to be down. The 6-month replay said the same:
+        +3.8&nbsp;points over six months, a lower Sharpe, and about even odds of being better.
+        <span style="color:var(--ink-3)"><sup>*</sup>WDC did not trade on 28&nbsp;Sep; its price
+        is inferred from the shadow&rsquo;s own account value. All other prices are from the logs.
+        Reproduce: <code>python3 scripts/shadow_gap_attribution.py</code>.</span>
+      </p>
     </div>
   </section>
 
@@ -1052,16 +1083,21 @@ const SHADOW = /*SHADOW_START*/[{"date":"2026-09-25","shadow":17739.28,"live":17
 
 function renderShadow() {
   const money = (v) => '$' + v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  if (!SHADOW.length) { $('shadowBody').innerHTML = '<tr><td colspan="5">No shadow runs yet.</td></tr>'; return; }
-  $('shadowBody').innerHTML = SHADOW.map(r => {
+  if (!SHADOW.length) { $('shadowBody').innerHTML = '<tr><td colspan="6">No shadow runs yet.</td></tr>'; return; }
+  $('shadowBody').innerHTML = SHADOW.map((r, i) => {
     const gap = r.live == null ? null : r.shadow - r.live;
+    const prev = i > 0 ? SHADOW[i - 1] : null;
+    const dg = (gap == null || !prev || prev.live == null) ? null : gap - (prev.shadow - prev.live);
+    const dcls = dg == null ? '' : (dg > 0.005 ? 'pos' : (dg < -0.005 ? 'neg' : ''));
+    const dtxt = dg == null ? '—' : (dg >= 0 ? '+' : '−') + money(Math.abs(dg));
     const gcls = gap == null ? '' : (gap > 0.005 ? 'pos' : (gap < -0.005 ? 'neg' : ''));
     const gtxt = gap == null ? 'n/a' : (gap >= 0 ? '+' : '−') + money(Math.abs(gap));
     const nw = 'style="white-space:nowrap"';
     return `<tr><td ${nw}>${esc(r.date)}</td><td class="num" ${nw}>${money(r.shadow)}</td>
       <td class="num" ${nw}>${r.live == null ? 'n/a' : money(r.live)}</td>
       <td class="num ${gcls}" ${nw}>${gtxt}</td>
-      <td style="text-align:left;font-size:12.5px">${esc(r.trades || '—')}</td></tr>`;
+      <td class="num ${dcls}" ${nw}>${dtxt}</td>
+      <td style="text-align:left;font-size:12.5px;min-width:280px">${esc(r.trades || '—')}</td></tr>`;
   }).join('');
   const first = SHADOW[0], last = SHADOW[SHADOW.length - 1];
   const days = SHADOW.length;
