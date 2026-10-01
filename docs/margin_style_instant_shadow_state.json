@@ -1,43 +1,48 @@
 {
  "pending_settlement": [
   {
-   "amount": 58.97,
-   "settle_date": "2026-10-01",
+   "amount": 15.8,
+   "settle_date": "2026-10-02",
    "symbol": "LRCX"
   },
   {
-   "amount": 2.67,
-   "settle_date": "2026-10-01",
+   "amount": 0.69,
+   "settle_date": "2026-10-02",
    "symbol": "TSM"
   },
   {
-   "amount": 6576.06,
-   "settle_date": "2026-10-01",
-   "symbol": "WDC"
-  },
-  {
-   "amount": 3271.7,
-   "settle_date": "2026-10-01",
+   "amount": 872.81,
+   "settle_date": "2026-10-02",
    "symbol": "SNDK"
   },
   {
-   "amount": 3081.2,
-   "settle_date": "2026-10-01",
+   "amount": 807.57,
+   "settle_date": "2026-10-02",
    "symbol": "INTC"
+  },
+  {
+   "amount": 151.51,
+   "settle_date": "2026-10-02",
+   "symbol": "MU"
+  },
+  {
+   "amount": 3329.77,
+   "settle_date": "2026-10-02",
+   "symbol": "STX"
   }
  ],
  "open_positions": {
   "LRCX": {
-   "shares": 0.062661,
+   "shares": 0.016104,
    "entry": 302.82,
-   "peak": 325.535,
+   "peak": 339.385,
    "tranches": 1,
    "opened": "2026-09-24"
   },
   "TSM": {
-   "shares": 0.002012,
+   "shares": 0.000517,
    "entry": 450.6399,
-   "peak": 458.4695,
+   "peak": 460.1125,
    "tranches": 1,
    "opened": "2026-09-24"
   },
@@ -49,35 +54,35 @@
    "opened": "2026-09-25"
   },
   "SNDK": {
-   "shares": 0.653864,
+   "shares": 0.168043,
    "entry": 1710.42,
-   "peak": 1730.735,
+   "peak": 1796.57,
    "tranches": 1,
    "opened": "2026-09-29"
   },
   "INTC": {
-   "shares": 8.936519,
+   "shares": 2.296685,
    "entry": 116.6582,
-   "peak": 119.2601,
+   "peak": 121.625,
    "tranches": 1,
    "opened": "2026-09-29"
   },
   "MU": {
-   "shares": 0.189483,
+   "shares": 0.048697,
    "entry": 1070.4099,
-   "peak": 1070.4099,
+   "peak": 1076.14,
    "tranches": 1,
    "opened": "2026-09-29"
   },
   "STX": {
-   "shares": 4.796154,
+   "shares": 1.232612,
    "entry": 922.09,
-   "peak": 922.09,
+   "peak": 934.4,
    "tranches": 1,
    "opened": "2026-09-30"
   }
  },
- "equity_peak": 17739.28,
+ "equity_peak": 17789.83,
  "kill_switch_active": false,
  "kill_switch_triggered_date": null,
  "trend_gate_active": false,
@@ -87,7 +92,7 @@
   "buys_count": 0,
   "ported_from": "ca55e21 (development branch) on 2026-09-22"
  },
- "shadow_cash": 8562.94,
+ "shadow_cash": 13738.5,
  "shadow_started_from": {
   "rev": "c3a77e4~1",
   "cash": 85.15,
