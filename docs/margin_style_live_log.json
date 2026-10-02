@@ -3346,6 +3346,134 @@
     "drawdown_from_peak": 0.0
    },
    "notes": "New equity high 18,035.23 (broker total_value 18,033.74 pre-trade). Broad up day (all 8 above prior close): 6 PEAK trims of 74.3%. No buys - no symbol dipped >=0.4% below prior close, despite $10,383 settled cash. TSM trim sub-dollar, skipped."
+  },
+  {
+   "timestamp": "2026-10-02T17:40:08Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "sizing_input": {
+    "buying_power_used": 15190.87,
+    "cash": 15190.87
+   },
+   "broker_total_value": 17883.72,
+   "orders_placed": [
+    {
+     "side": "sell",
+     "symbol": "WDC",
+     "shares": 2.565453,
+     "price": 412.5862,
+     "notional": 1058.47,
+     "reason": "STOP",
+     "quote_at_plan": 413.35,
+     "order_id": "6abfec59-9caf-4a16-b35f-eb5dc95ee2aa",
+     "state": "filled",
+     "fees": 0.02,
+     "realized_vs_state_entry": -99.05
+    },
+    {
+     "side": "sell",
+     "symbol": "SNDK",
+     "shares": 0.170785,
+     "price": 1723.3601,
+     "notional": 294.32,
+     "reason": "STOP",
+     "quote_at_plan": 1723.985,
+     "order_id": "6abfec5c-7059-46ee-abdc-4ce9696ce649",
+     "state": "filled",
+     "fees": 0.0,
+     "realized_vs_state_entry": 1.97
+    },
+    {
+     "side": "sell",
+     "symbol": "STX",
+     "shares": 0.238103,
+     "price": 837.3101,
+     "notional": 199.37,
+     "reason": "STOP",
+     "quote_at_plan": 834.455,
+     "order_id": "6abfec62-ad10-4cb5-bd6d-2f815ce65a15",
+     "state": "filled",
+     "fees": 0.0,
+     "realized_vs_state_entry": -20.35
+    },
+    {
+     "side": "sell",
+     "symbol": "LRCX",
+     "shares": 0.062661,
+     "price": 349.0192,
+     "notional": 21.87,
+     "reason": "MAX_HOLD",
+     "quote_at_plan": 349.37,
+     "order_id": "6abfec65-d8e1-4559-ac6e-21420f528bf4",
+     "state": "filled",
+     "fees": 0.0,
+     "realized_vs_state_entry": 2.89
+    },
+    {
+     "side": "sell",
+     "symbol": "TSM",
+     "shares": 0.002012,
+     "price": 469.5801,
+     "notional": 0.94,
+     "reason": "MAX_HOLD",
+     "quote_at_plan": 470.05,
+     "order_id": "6abfec68-78b1-490a-b2e6-0aa4a84c0294",
+     "state": "filled",
+     "fees": 0.0,
+     "realized_vs_state_entry": 0.04
+    },
+    {
+     "side": "sell",
+     "symbol": "MU",
+     "shares": 0.533235,
+     "price": 1081.2601,
+     "notional": 576.57,
+     "reason": "PEAK",
+     "quote_at_plan": 1081.26,
+     "order_id": "6abfec6b-30df-48a6-8a41-67837bbe17bc",
+     "state": "filled",
+     "fees": 0.02,
+     "realized_vs_state_entry": 5.26
+    },
+    {
+     "side": "sell",
+     "symbol": "AMD",
+     "shares": 0.046613,
+     "price": 630.1342,
+     "notional": 29.37,
+     "reason": "PEAK",
+     "quote_at_plan": 630.62,
+     "order_id": "6abfec78-e2ab-4ced-9977-28342f4f2699",
+     "state": "filled",
+     "fees": 0.0,
+     "realized_vs_state_entry": 0.91
+    }
+   ],
+   "total_proceeds": 2180.91,
+   "skipped_orders": [],
+   "netted_trades": [],
+   "circuit_breaker": {
+    "triggered": true,
+    "stop_count": 3
+   },
+   "reconciliation": "none needed - verify PASS, reconcile PASS (8 positions matched broker exactly)",
+   "unowned_excess": {},
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "freshness": "PASS",
+    "pre_commit": "PASS"
+   },
+   "risk_state": {
+    "equity_peak": 18035.23,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false,
+    "total_equity": 17883.42,
+    "drawdown_from_peak": -0.0084
+   },
+   "notes": "Storage names gapped down hard (STX -11.8%, WDC -10.6%, SNDK -3.6% vs 10-01 close at the check): 3 INTRADAY STOPs, so the circuit breaker blocked all buys this run despite $15.2k buying power and dips in WDC/STX/SNDK/MU. LRCX and TSM leftovers (opened 09-24) hit MAX_HOLD at 6 trading days. MU and AMD set new highs -> PEAK trims. Remaining: INTC 2.504, MU 0.184, AMD 0.016. Stops hit small residual positions after earlier PEAK trims, so the dollar loss is modest."
   }
  ]
 }
