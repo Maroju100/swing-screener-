@@ -3473,7 +3473,7 @@
     "total_equity": 17883.42,
     "drawdown_from_peak": -0.0084
    },
-   "notes": "Storage names gapped down hard (STX -11.8%, WDC -10.6%, SNDK -3.6% vs 10-01 close at the check): 3 INTRADAY STOPs, so the circuit breaker blocked all buys this run despite $15.2k buying power and dips in WDC/STX/SNDK/MU. LRCX and TSM leftovers (opened 09-24) hit MAX_HOLD at 6 trading days. MU and AMD set new highs -> PEAK trims. Remaining: INTC 2.504, MU 0.184, AMD 0.016. Stops hit small residual positions after earlier PEAK trims, so the dollar loss is modest."
+   "notes": "Storage names gapped down hard (STX -11.8%, WDC -10.6%, SNDK -3.6% vs 10-01 close at the check): 3 INTRADAY STOPs, so the circuit breaker fired. It blocked nothing in practice: the dip rule reads completed closes (10-01 vs 09-30), every symbol closed up on 10-01 except INTC (-0.19%, under the 0.4% threshold), so there were no buy candidates. Today's intraday drop only counts as a dip if it persists into today's close. LRCX and TSM leftovers (opened 09-24) hit MAX_HOLD at 6 trading days. MU and AMD set new highs -> PEAK trims. Remaining: INTC 2.504, MU 0.184, AMD 0.016. Stops hit small residual positions after earlier PEAK trims, so the dollar loss is modest."
   }
  ]
 }
