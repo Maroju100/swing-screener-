@@ -47,22 +47,27 @@ const check = (n, c, x='') => { console.log(`${c?'PASS':'FAIL'}  ${n}${x?'  '+x:
 const prod = JSON.parse(fs.readFileSync('/home/user/swing-screener-/docs/margin_style_live_state.json','utf8'));
 check('MS_STATE === committed state.json',
       JSON.stringify(T.MS_STATE) === JSON.stringify(prod));
-check('MS_STATE carries the 2026-10-01 open positions',
-      ['LRCX','TSM','WDC','SNDK','INTC','MU','AMD','STX'].every(k=>T.MS_STATE.open_positions[k]),
+check('MS_STATE carries the 2026-10-02 open positions (INTC, MU, AMD only)',
+      Object.keys(T.MS_STATE.open_positions).sort().join(',') === 'AMD,INTC,MU',
       Object.keys(T.MS_STATE.open_positions).join(','));
-check('STX PEAK trim recorded', T.MS_STATE.open_positions.STX?.shares === 0.238103);
-check('pending_settlement = 4,807.86 settling 2026-10-02',
-      Math.abs(T.MS_STATE.pending_settlement.reduce((a,p)=>a+p.amount,0) - 4807.86) < 0.01
-      && T.MS_STATE.pending_settlement.every(p=>p.settle_date==='2026-10-02'));
-check('equity_peak 18035.23 (new high)', T.MS_STATE.equity_peak === 18035.23);
-check('SNAPSHOT_TIME advanced', T.SNAPSHOT_TIME === '2026-10-01 17:41 UTC', T.SNAPSHOT_TIME);
+check('WDC and STX stopped out (gone from state)', !T.MS_STATE.open_positions.WDC && !T.MS_STATE.open_positions.STX);
+check('pending_settlement = 2,180.91 settling 2026-10-05',
+      Math.abs(T.MS_STATE.pending_settlement.reduce((a,p)=>a+p.amount,0) - 2180.91) < 0.01
+      && T.MS_STATE.pending_settlement.every(p=>p.settle_date==='2026-10-05'));
+check('equity_peak unchanged at 18035.23', T.MS_STATE.equity_peak === 18035.23);
+check('SNAPSHOT_TIME advanced', T.SNAPSHOT_TIME === '2026-10-02 17:40 UTC', T.SNAPSHOT_TIME);
 
-// --- 2. trade log gained the 6 real fills from 10-01 ---
+// --- 2. trade log gained the 7 real fills from 10-02 ---
 const t0 = T.MS_DATA.trades[0];
-check('newest trade is the 10-01 STX PEAK sell',
-      t0.t==='2026-10-01T17:40:15Z' && t0.sym==='STX' && t0.side==='SELL' && t0.shares===0.688366);
-check('trade count 234 -> 240', T.MS_DATA.trades.length === 240, String(T.MS_DATA.trades.length));
-check('six 2026-10-01 PEAK trades', T.MS_DATA.trades.filter(t=>t.t.startsWith('2026-10-01') && t.reason==='PEAK').length === 6);
+check('newest trade is the 10-02 AMD PEAK sell',
+      t0.t==='2026-10-02T17:40:08Z' && t0.sym==='AMD' && t0.side==='SELL' && t0.shares===0.046613);
+check('trade count 240 -> 247', T.MS_DATA.trades.length === 247, String(T.MS_DATA.trades.length));
+check('10-02: 3 STOP, 2 MAX_HOLD, 2 PEAK',
+      ['STOP',3,'MAX_HOLD',2,'PEAK',2].every((v,i,a)=> i%2 ? true : T.MS_DATA.trades.filter(t=>t.t.startsWith('2026-10-02') && t.reason===v).length===a[i+1]));
+check('WDC 10-02 STOP carries broker realized -98.74',
+      T.MS_DATA.trades.some(t=>t.t.startsWith('2026-10-02') && t.sym==='WDC' && t.reason==='STOP' && t.pnl===-98.74));
+check('LRCX 10-01 carries the broker restatement 6.47',
+      T.MS_DATA.trades.some(t=>t.t==='2026-10-01T17:40:02Z' && t.sym==='LRCX' && t.pnl===6.47));
 check('WDC 09-30 carries the broker restatement 65.43',
       T.MS_DATA.trades.some(t=>t.t==='2026-09-30T17:47:44Z' && t.sym==='WDC' && t.pnl===65.43));
 check('INTC 09-30 PEAK carries broker realized 80.77',
@@ -70,13 +75,13 @@ check('INTC 09-30 PEAK carries broker realized 80.77',
 check('09-28 SNDK and MU STOPs present',
       ['SNDK','MU'].every(k=>T.MS_DATA.trades.some(t=>t.t.startsWith('2026-09-28') && t.sym===k && t.reason==='STOP')));
 
-// --- 3. broker-sourced figures reconcile to get_realized_pnl(span=all) 2026-10-01 ---
-check('total_realized = broker 2959.08', T.MS_DATA.total_realized === 2959.08);
-check('BROKER_PNL_SNAPSHOT = live get_realized_pnl', T.BROKER_PNL_SNAPSHOT.total_returns === '2959.08');
+// --- 3. broker-sourced figures reconcile to get_realized_pnl(span=all) 2026-10-02 ---
+check('total_realized = broker 2851.05', T.MS_DATA.total_realized === 2851.05);
+check('BROKER_PNL_SNAPSHOT = live get_realized_pnl', T.BROKER_PNL_SNAPSHOT.total_returns === '2851.05');
 check('daily series sums to total_realized',
-      Math.abs(T.MS_DATA.daily.reduce((a,d)=>a+d.pnl,0) - 2959.08) < 0.02);
-check('daily series ends 2026-10-01 (no phantom zero bar for 09-24)',
-      T.MS_DATA.daily[T.MS_DATA.daily.length-1].date === '2026-10-01'
+      Math.abs(T.MS_DATA.daily.reduce((a,d)=>a+d.pnl,0) - 2851.05) < 0.02);
+check('daily series ends 2026-10-02 at -108.04 (no phantom zero bar for 09-24)',
+      T.MS_DATA.daily[T.MS_DATA.daily.length-1].date === '2026-10-02' && T.MS_DATA.daily[T.MS_DATA.daily.length-1].pnl === -108.04
       && !T.MS_DATA.daily.some(d=>d.date==='2026-09-24'));
 
 // --- 4. drive the REAL ingest + renderAll path with real broker payloads ---
@@ -93,10 +98,10 @@ try { T.renderAll(); check('renderAll ran without throwing', true); }
 catch(e) { check('renderAll ran without throwing', false, e.stack.split('\n').slice(0,2).join(' | ')); }
 
 const pos = document.getElementById('posBody').innerHTML;
-check('positions table renders all 8 positions', ['LRCX','SNDK','MU','TSM','WDC','INTC','AMD','STX'].every(k=>pos.includes(k)), `${pos.length} chars`);
+check('positions table renders the 3 open positions', ['INTC','MU','AMD'].every(k=>pos.includes(k)) && !pos.includes('WDC'), `${pos.length} chars`);
 check('positions show a live gain vs entry', /[-+]?\d+\.\d+%/.test(pos));
 const log = document.getElementById('tradeLogBody').innerHTML;
-check('trade log shows the 10-01 PEAK sells', log.includes('PEAK') && log.includes('STX') && log.includes('931.01'));
+check('trade log shows the 10-02 STOP and MAX_HOLD sells', log.includes('STOP') && log.includes('MAX_HOLD') && log.includes('$412.5862'));
 const svg = document.getElementById('pnlBarSvg').innerHTML;
 check('P&L chart emitted marks', svg.length > 500, `${svg.length} chars`);
 const dist = document.getElementById('distBody').innerHTML;
@@ -106,7 +111,7 @@ const stats = document.getElementById('statRow').innerHTML;
 check('stat row shows unsettled $0.00 (cash account)', stats.includes('unsettled: $0.00'));
 check('stat row shows kill-switch off', stats.includes('off') && stats.includes('never triggered'));
 const foot = document.getElementById('footerNote').innerHTML;
-check('footer carries the new snapshot time', foot.includes('2026-10-01 17:41 UTC'));
+check('footer carries the new snapshot time', foot.includes('2026-10-02 17:40 UTC'));
 
 // --- 5. published file must not contain the test hook ---
 check('no __test hook in the published source', !html.includes('__test'));
