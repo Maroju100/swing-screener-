@@ -1,0 +1,301 @@
+{
+ "generated": "2026-10-12",
+ "engine": "origin/main",
+ "capital": 80000.0,
+ "cost_bps": 5.0,
+ "option1_fraction": [
+  {
+   "fraction": 1.0,
+   "full": {
+    "realized": 124289.71,
+    "return_pct": 155.36,
+    "max_dd_pct": -8.84,
+    "worst_week_pct": -8.84,
+    "sharpe": 3.83
+   },
+   "halves": {
+    "rising (Mar 13-Jun 19)": {
+     "realized": 54190.63,
+     "return_pct": 67.74,
+     "max_dd_pct": -6.78,
+     "worst_week_pct": -6.55,
+     "sharpe": 5.4
+    },
+    "falling (Jun 22-Sep 21)": {
+     "realized": 30622.59,
+     "return_pct": 38.28,
+     "max_dd_pct": -8.84,
+     "worst_week_pct": -8.84,
+     "sharpe": 2.46
+    }
+   },
+   "fine": {
+    "17:00": {
+     "realized": 18694.35,
+     "return_pct": 23.37,
+     "max_dd_pct": -11.9,
+     "worst_week_pct": -11.9,
+     "sharpe": 1.7
+    },
+    "17:30": {
+     "realized": 28548.21,
+     "return_pct": 35.69,
+     "max_dd_pct": -11.53,
+     "worst_week_pct": -9.54,
+     "sharpe": 2.31
+    }
+   },
+   "scale_vs_full": 1.0
+  },
+  {
+   "fraction": 0.75,
+   "full": {
+    "realized": 93217.29,
+    "return_pct": 116.52,
+    "max_dd_pct": -7.71,
+    "worst_week_pct": -7.71,
+    "sharpe": 3.73
+   },
+   "halves": {
+    "rising (Mar 13-Jun 19)": {
+     "realized": 40642.97,
+     "return_pct": 50.8,
+     "max_dd_pct": -5.6,
+     "worst_week_pct": -5.41,
+     "sharpe": 5.42
+    },
+    "falling (Jun 22-Sep 21)": {
+     "realized": 22966.85,
+     "return_pct": 28.71,
+     "max_dd_pct": -6.96,
+     "worst_week_pct": -6.96,
+     "sharpe": 2.41
+    }
+   },
+   "fine": {
+    "17:00": {
+     "realized": 14020.76,
+     "return_pct": 17.53,
+     "max_dd_pct": -9.24,
+     "worst_week_pct": -9.24,
+     "sharpe": 1.64
+    },
+    "17:30": {
+     "realized": 21411.16,
+     "return_pct": 26.76,
+     "max_dd_pct": -9.09,
+     "worst_week_pct": -7.48,
+     "sharpe": 2.26
+    }
+   },
+   "scale_vs_full": 0.75
+  },
+  {
+   "fraction": 0.5,
+   "full": {
+    "realized": 60556.26,
+    "return_pct": 75.7,
+    "max_dd_pct": -6.11,
+    "worst_week_pct": -6.11,
+    "sharpe": 3.53
+   },
+   "halves": {
+    "rising (Mar 13-Jun 19)": {
+     "realized": 26051.82,
+     "return_pct": 32.56,
+     "max_dd_pct": -4.13,
+     "worst_week_pct": -3.98,
+     "sharpe": 5.25
+    },
+    "falling (Jun 22-Sep 21)": {
+     "realized": 13748.51,
+     "return_pct": 17.19,
+     "max_dd_pct": -6.17,
+     "worst_week_pct": -6.17,
+     "sharpe": 2.14
+    }
+   },
+   "fine": {
+    "17:00": {
+     "realized": 9312.06,
+     "return_pct": 11.64,
+     "max_dd_pct": -6.41,
+     "worst_week_pct": -6.4,
+     "sharpe": 1.57
+    },
+    "17:30": {
+     "realized": 14241.01,
+     "return_pct": 17.8,
+     "max_dd_pct": -6.38,
+     "worst_week_pct": -5.22,
+     "sharpe": 2.2
+    }
+   },
+   "scale_vs_full": 0.4872
+  },
+  {
+   "fraction": 0.25,
+   "full": {
+    "realized": 28834.96,
+    "return_pct": 36.04,
+    "max_dd_pct": -4.79,
+    "worst_week_pct": -4.79,
+    "sharpe": 3.22
+   },
+   "halves": {
+    "rising (Mar 13-Jun 19)": {
+     "realized": 13010.66,
+     "return_pct": 16.26,
+     "max_dd_pct": -2.32,
+     "worst_week_pct": -2.23,
+     "sharpe": 5.25
+    },
+    "falling (Jun 22-Sep 21)": {
+     "realized": 6873.93,
+     "return_pct": 8.59,
+     "max_dd_pct": -3.27,
+     "worst_week_pct": -3.27,
+     "sharpe": 2.08
+    }
+   },
+   "fine": {
+    "17:00": {
+     "realized": 4659.18,
+     "return_pct": 5.82,
+     "max_dd_pct": -3.32,
+     "worst_week_pct": -3.32,
+     "sharpe": 1.51
+    },
+    "17:30": {
+     "realized": 6263.87,
+     "return_pct": 7.83,
+     "max_dd_pct": -3.55,
+     "worst_week_pct": -3.55,
+     "sharpe": 1.92
+    }
+   },
+   "scale_vs_full": 0.232
+  }
+ ],
+ "option2_streak_pause": {
+  "settings": {
+   "window": 5,
+   "min_breakers": 2,
+   "pause_runs": 3
+  },
+  "production": {
+   "full": {
+    "realized": 124289.71,
+    "return_pct": 155.36,
+    "max_dd_pct": -8.84,
+    "worst_week_pct": -8.84,
+    "sharpe": 3.83
+   },
+   "halves": {
+    "rising (Mar 13-Jun 19)": {
+     "realized": 54190.63,
+     "return_pct": 67.74,
+     "max_dd_pct": -6.78,
+     "worst_week_pct": -6.55,
+     "sharpe": 5.4
+    },
+    "falling (Jun 22-Sep 21)": {
+     "realized": 30622.59,
+     "return_pct": 38.28,
+     "max_dd_pct": -8.84,
+     "worst_week_pct": -8.84,
+     "sharpe": 2.46
+    }
+   },
+   "fine": {
+    "17:00": {
+     "realized": 18694.35,
+     "return_pct": 23.37,
+     "max_dd_pct": -11.9,
+     "worst_week_pct": -11.9,
+     "sharpe": 1.7
+    },
+    "17:30": {
+     "realized": 28548.21,
+     "return_pct": 35.69,
+     "max_dd_pct": -11.53,
+     "worst_week_pct": -9.54,
+     "sharpe": 2.31
+    }
+   },
+   "thirds_pct": [
+    43.72,
+    30.93,
+    6.84
+   ],
+   "trades": 771
+  },
+  "variant": {
+   "full": {
+    "realized": 61588.03,
+    "return_pct": 76.99,
+    "max_dd_pct": -18.58,
+    "worst_week_pct": -11.64,
+    "sharpe": 3.36
+   },
+   "halves": {
+    "rising (Mar 13-Jun 19)": {
+     "realized": 70367.64,
+     "return_pct": 87.96,
+     "max_dd_pct": -2.6,
+     "worst_week_pct": -2.37,
+     "sharpe": 7.28
+    },
+    "falling (Jun 22-Sep 21)": {
+     "realized": -2282.35,
+     "return_pct": -2.85,
+     "max_dd_pct": -18.58,
+     "worst_week_pct": -11.64,
+     "sharpe": -0.05
+    }
+   },
+   "fine": {
+    "17:00": {
+     "realized": -4781.76,
+     "return_pct": -5.98,
+     "max_dd_pct": -19.16,
+     "worst_week_pct": -10.17,
+     "sharpe": -0.44
+    },
+    "17:30": {
+     "realized": -2112.42,
+     "return_pct": -2.64,
+     "max_dd_pct": -17.72,
+     "worst_week_pct": -9.98,
+     "sharpe": -0.09
+    }
+   },
+   "thirds_pct": [
+    54.83,
+    14.93,
+    -12.08
+   ],
+   "trades": 418
+  },
+  "bootstrap": {
+   "ci_daily": [
+    -0.007016233819619001,
+    0.001128390892628394
+   ],
+   "p_better": 0.0858
+  },
+  "dd_checks": {
+   "full window": false,
+   "both halves": false,
+   "both 30-min marks": false
+  },
+  "pnl_checks": {
+   "full window": false,
+   "all 3 thirds": false,
+   "both halves": false,
+   "both 30-min marks": false,
+   "bootstrap CI excludes 0": false
+  },
+  "verdict": "NOT AN IMPROVEMENT"
+ }
+}
