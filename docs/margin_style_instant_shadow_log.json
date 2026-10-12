@@ -440,6 +440,38 @@
    "shadow_equity": 17439.15,
    "live_broker_total_value_pre_run": 17883.72,
    "live_run_found": true
+  },
+  {
+   "date": "2026-10-12",
+   "timestamp": "2026-10-12T18:14:04+00:00",
+   "engine": "origin/main + patch_instant",
+   "cost_bps_estimated": 5.0,
+   "cash_before": 17149.9,
+   "same_run_proceeds_credited": 245.15,
+   "sells": [
+    {
+     "symbol": "INTC",
+     "shares": 2.296685,
+     "price": 101.34,
+     "reason": "STOP",
+     "entry": 116.6582
+    },
+    {
+     "symbol": "MU",
+     "shares": 0.012515,
+     "price": 991.35,
+     "reason": "STOP",
+     "entry": 1070.4099
+    }
+   ],
+   "buys": [],
+   "realized_estimated": -36.43,
+   "cash_after": 17394.93,
+   "positions": {},
+   "shadow_equity_pre_run": 17395.05,
+   "shadow_equity": 17394.93,
+   "live_broker_total_value_pre_run": 17817.86,
+   "live_run_found": true
   }
  ]
 }
