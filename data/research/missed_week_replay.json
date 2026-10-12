@@ -1,0 +1,343 @@
+{
+ "engine_rev": "e9ba57b",
+ "cost_bps": 0.0,
+ "start_cash": 17371.74,
+ "gate_actual_1012_reproduced": true,
+ "actual": [
+  {
+   "date": "2026-10-12",
+   "equity_pre_run": 17817.95,
+   "equity_post_run": 17817.95,
+   "cash_after": 17817.95,
+   "realized_vs_entry": -52.91,
+   "circuit_breaker": true,
+   "sells": [
+    {
+     "symbol": "INTC",
+     "shares": 2.504016,
+     "price": 101.3795,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "MU",
+     "shares": 0.184444,
+     "price": 991.29,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "AMD",
+     "shares": 0.016123,
+     "price": 590.425,
+     "reason": "STOP"
+    }
+   ],
+   "buys": [],
+   "positions_after": {}
+  }
+ ],
+ "counterfactual": [
+  {
+   "date": "2026-10-05",
+   "equity_pre_run": 17870.91,
+   "equity_post_run": 17870.91,
+   "cash_after": 389.3,
+   "realized_vs_entry": 1.02,
+   "circuit_breaker": false,
+   "sells": [
+    {
+     "symbol": "INTC",
+     "shares": 2.504016,
+     "price": 116.79,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "AMD",
+     "shares": 0.011979,
+     "price": 631.255,
+     "reason": "PEAK"
+    }
+   ],
+   "buys": [
+    {
+     "symbol": "WDC",
+     "shares": 10.134811,
+     "price": 440.83,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "STX",
+     "shares": 5.00328,
+     "price": 892.96,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "SNDK",
+     "shares": 2.604319,
+     "price": 1715.5075,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "INTC",
+     "shares": 32.281239,
+     "price": 116.79,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "MU",
+     "shares": 0.102412,
+     "price": 1065.65,
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "positions_after": {
+    "MU": 0.286856,
+    "AMD": 0.004144,
+    "WDC": 10.134811,
+    "STX": 5.00328,
+    "SNDK": 2.604319,
+    "INTC": 32.281239
+   }
+  },
+  {
+   "date": "2026-10-06",
+   "equity_pre_run": 16991.83,
+   "equity_post_run": 16991.83,
+   "cash_after": 16686.04,
+   "realized_vs_entry": -878.45,
+   "circuit_breaker": true,
+   "sells": [
+    {
+     "symbol": "WDC",
+     "shares": 10.134811,
+     "price": 414.31,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "STX",
+     "shares": 5.00328,
+     "price": 809.575,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "SNDK",
+     "shares": 2.604319,
+     "price": 1673.9,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "INTC",
+     "shares": 32.281239,
+     "price": 114.18,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "AMD",
+     "shares": 0.003079,
+     "price": 654.555,
+     "reason": "PEAK"
+    }
+   ],
+   "buys": [],
+   "positions_after": {
+    "MU": 0.286856,
+    "AMD": 0.001065
+   }
+  },
+  {
+   "date": "2026-10-07",
+   "equity_pre_run": 16997.91,
+   "equity_post_run": 16997.91,
+   "cash_after": 321.71,
+   "realized_vs_entry": 4.47,
+   "circuit_breaker": false,
+   "sells": [
+    {
+     "symbol": "MU",
+     "shares": 0.286856,
+     "price": 1084.7974,
+     "reason": "MAX_HOLD"
+    },
+    {
+     "symbol": "AMD",
+     "shares": 0.001065,
+     "price": 646.01,
+     "reason": "MAX_HOLD"
+    }
+   ],
+   "buys": [
+    {
+     "symbol": "WDC",
+     "shares": 10.519028,
+     "price": 403.98,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "STX",
+     "shares": 5.314869,
+     "price": 799.545,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "SNDK",
+     "shares": 2.466539,
+     "price": 1722.85,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "INTC",
+     "shares": 33.054089,
+     "price": 113.1699,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "MU",
+     "shares": 0.172416,
+     "price": 1084.7974,
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "positions_after": {
+    "WDC": 10.519028,
+    "STX": 5.314869,
+    "SNDK": 2.466539,
+    "INTC": 33.054089,
+    "MU": 0.172416
+   }
+  },
+  {
+   "date": "2026-10-08",
+   "equity_pre_run": 16223.57,
+   "equity_post_run": 16223.57,
+   "cash_after": 16223.57,
+   "realized_vs_entry": -774.34,
+   "circuit_breaker": true,
+   "sells": [
+    {
+     "symbol": "WDC",
+     "shares": 10.519028,
+     "price": 393.5,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "STX",
+     "shares": 5.314869,
+     "price": 773.925,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "SNDK",
+     "shares": 2.466539,
+     "price": 1606.5,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "INTC",
+     "shares": 33.054089,
+     "price": 106.11,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "MU",
+     "shares": 0.172416,
+     "price": 1040.77,
+     "reason": "STOP"
+    }
+   ],
+   "buys": [],
+   "positions_after": {}
+  },
+  {
+   "date": "2026-10-09",
+   "equity_pre_run": 16223.57,
+   "equity_post_run": 16223.57,
+   "cash_after": 10.14,
+   "realized_vs_entry": 0.0,
+   "circuit_breaker": false,
+   "sells": [],
+   "buys": [
+    {
+     "symbol": "WDC",
+     "shares": 10.263405,
+     "price": 395.18,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "STX",
+     "shares": 5.158626,
+     "price": 786.235,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "INTC",
+     "shares": 38.406254,
+     "price": 105.605,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "SNDK",
+     "shares": 2.405202,
+     "price": 1601.9851,
+     "reason": "NORMAL_DIP"
+    },
+    {
+     "symbol": "LRCX",
+     "shares": 0.600761,
+     "price": 320.685,
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "positions_after": {
+    "WDC": 10.263405,
+    "STX": 5.158626,
+    "INTC": 38.406254,
+    "SNDK": 2.405202,
+    "LRCX": 0.600761
+   }
+  },
+  {
+   "date": "2026-10-12",
+   "equity_pre_run": 15541.39,
+   "equity_post_run": 15541.39,
+   "cash_after": 15541.39,
+   "realized_vs_entry": -682.18,
+   "circuit_breaker": true,
+   "sells": [
+    {
+     "symbol": "WDC",
+     "shares": 10.263405,
+     "price": 387.52,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "STX",
+     "shares": 5.158626,
+     "price": 757.19,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "INTC",
+     "shares": 38.406254,
+     "price": 101.3795,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "SNDK",
+     "shares": 2.405202,
+     "price": 1483.17,
+     "reason": "STOP"
+    },
+    {
+     "symbol": "LRCX",
+     "shares": 0.600761,
+     "price": 311.24,
+     "reason": "STOP"
+    }
+   ],
+   "buys": [],
+   "positions_after": {}
+  }
+ ],
+ "actual_equity_after_1012": 17817.95,
+ "counterfactual_equity_after_1012": 15541.39,
+ "difference": -2276.56
+}
