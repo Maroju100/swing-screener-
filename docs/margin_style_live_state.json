@@ -1,64 +1,22 @@
 {
  "pending_settlement": [
   {
-   "amount": 1058.47,
-   "settle_date": "2026-10-05",
-   "symbol": "WDC"
+   "amount": 253.87,
+   "settle_date": "2026-10-13",
+   "symbol": "INTC"
   },
   {
-   "amount": 294.32,
-   "settle_date": "2026-10-05",
-   "symbol": "SNDK"
-  },
-  {
-   "amount": 199.37,
-   "settle_date": "2026-10-05",
-   "symbol": "STX"
-  },
-  {
-   "amount": 21.87,
-   "settle_date": "2026-10-05",
-   "symbol": "LRCX"
-  },
-  {
-   "amount": 0.94,
-   "settle_date": "2026-10-05",
-   "symbol": "TSM"
-  },
-  {
-   "amount": 576.57,
-   "settle_date": "2026-10-05",
+   "amount": 182.88,
+   "settle_date": "2026-10-13",
    "symbol": "MU"
   },
   {
-   "amount": 29.37,
-   "settle_date": "2026-10-05",
+   "amount": 9.52,
+   "settle_date": "2026-10-13",
    "symbol": "AMD"
   }
  ],
- "open_positions": {
-  "INTC": {
-   "shares": 2.504016,
-   "entry": 116.4794,
-   "peak": 121.1101,
-   "tranches": 1,
-   "opened": "2026-09-29"
-  },
-  "MU": {
-   "shares": 0.184444,
-   "entry": 1071.3999,
-   "peak": 1081.2601,
-   "tranches": 1,
-   "opened": "2026-09-29"
-  },
-  "AMD": {
-   "shares": 0.016123,
-   "entry": 610.71,
-   "peak": 630.1342,
-   "tranches": 1,
-   "opened": "2026-09-29"
-  }
- },
+ "open_positions": {},
  "equity_peak": 18035.23,
  "kill_switch_active": false,
  "kill_switch_triggered_date": null,

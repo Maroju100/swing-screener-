@@ -3474,6 +3474,95 @@
     "drawdown_from_peak": -0.0084
    },
    "notes": "Storage names gapped down hard (STX -11.8%, WDC -10.6%, SNDK -3.6% vs 10-01 close at the check): 3 INTRADAY STOPs, so the circuit breaker fired. It blocked nothing in practice: the dip rule reads completed closes (10-01 vs 09-30), every symbol closed up on 10-01 except INTC (-0.19%, under the 0.4% threshold), so there were no buy candidates. Today's intraday drop only counts as a dip if it persists into today's close. LRCX and TSM leftovers (opened 09-24) hit MAX_HOLD at 6 trading days. MU and AMD set new highs -> PEAK trims. Remaining: INTC 2.504, MU 0.184, AMD 0.016. Stops hit small residual positions after earlier PEAK trims, so the dollar loss is modest."
+  },
+  {
+   "timestamp": "2026-10-12T17:34:39Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "sizing_input": {
+    "buying_power_used": 17371.74,
+    "cash": 17371.74
+   },
+   "broker_total_value": 17817.86,
+   "orders_placed": [
+    {
+     "side": "sell",
+     "symbol": "INTC",
+     "shares": 2.504016,
+     "price": 101.3857,
+     "notional": 253.87,
+     "reason": "STOP",
+     "quote_at_plan": 101.34,
+     "prior_close": 104.7,
+     "stop_line": 103.119,
+     "order_id": "6acd1a28-5df7-4d79-9c9a-d3d8b1a45a3a",
+     "state": "filled",
+     "fees": 0.0,
+     "realized_vs_state_entry": -37.79
+    },
+    {
+     "side": "sell",
+     "symbol": "MU",
+     "shares": 0.184444,
+     "price": 991.5285,
+     "notional": 182.88,
+     "reason": "STOP",
+     "quote_at_plan": 991.35,
+     "prior_close": 1029.0,
+     "stop_line": 1013.4621,
+     "order_id": "6acd1a2b-603d-4e2a-9d66-625e96304729",
+     "state": "filled",
+     "fees": 0.0,
+     "realized_vs_state_entry": -14.73
+    },
+    {
+     "side": "sell",
+     "symbol": "AMD",
+     "shares": 0.016123,
+     "price": 590.4001,
+     "notional": 9.52,
+     "reason": "STOP",
+     "quote_at_plan": 590.42,
+     "prior_close": 608.1,
+     "stop_line": 598.9177,
+     "order_id": "6acd1a2f-2129-49d8-9b66-140a2b219ef2",
+     "state": "filled",
+     "fees": 0.0,
+     "realized_vs_state_entry": -0.33
+    }
+   ],
+   "total_proceeds": 446.27,
+   "skipped_orders": [],
+   "netted_trades": [],
+   "circuit_breaker": {
+    "triggered": true,
+    "stop_count": 3
+   },
+   "reconciliation": "none needed - verify PASS, reconcile PASS (3 positions matched broker exactly)",
+   "unowned_excess": {},
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "freshness": "PASS",
+    "pre_commit": "PASS"
+   },
+   "risk_state": {
+    "equity_peak": 18035.23,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false,
+    "total_equity": 17817.86,
+    "drawdown_from_peak": -0.0121
+   },
+   "missed_runs": [
+    "2026-10-05",
+    "2026-10-06",
+    "2026-10-07",
+    "2026-10-08",
+    "2026-10-09"
+   ],
+   "notes": "First completed run since 10-02. The scheduled runs of 10-05..10-09 did not complete (10-05/06 stalled awaiting approval of the positions read; 10-07..09 ended after verify without any broker call) - no orders, no state change, no log on those days; get_equity_orders confirms no orders between 10-02 and this run. Today all 8 symbols were down 1.5-6.3% vs the 10-09 close at the check; INTC, MU and AMD each fell through the -1.51% stop line, so all three leftovers were sold (STOP, which outranks the overdue MAX_HOLD). 3 stops -> circuit breaker, no buys. System now flat: 100% cash."
   }
  ]
 }
