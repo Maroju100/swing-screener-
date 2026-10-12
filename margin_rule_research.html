@@ -341,6 +341,66 @@
   </section>
 
   <section>
+    <h2 class="head">The missed week, and three rules to stop a repeat</h2>
+    <p class="sub">
+      The live runs of 5&ndash;9&nbsp;October did not complete, so nothing traded between the
+      2&nbsp;October and 12&nbsp;October runs. Replayed as if every run had gone through &mdash;
+      production engine, unmodified, priced at 12:34&nbsp;PM CDT each day from 1-minute bars,
+      starting from the real <span class="num">$17,371.74</span> of cash. Gate: replaying the actual
+      12&nbsp;October run reproduces the live orders exactly.
+    </p>
+    <div class="card">
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Day</th><th style="text-align:left">What the live rules would have done</th><th>Realized</th><th>Equity at check</th></tr></thead>
+          <tbody>
+            <tr><td style="white-space:nowrap">Mon 5&nbsp;Oct</td><td style="text-align:left;min-width:240px">Stop INTC leftover; buy WDC, STX, SNDK ~$4.5k each, INTC $3.8k, MU</td><td class="num">+$1</td><td class="num">$17,870.91</td></tr>
+            <tr><td style="white-space:nowrap">Tue 6&nbsp;Oct</td><td style="text-align:left;min-width:240px">4 stops, sell everything (circuit breaker, no buys)</td><td class="num neg">&minus;$878</td><td class="num">$16,991.83</td></tr>
+            <tr><td style="white-space:nowrap">Wed 7&nbsp;Oct</td><td style="text-align:left;min-width:240px">Buy the same five dips again, ~$16.7k</td><td class="num">+$4</td><td class="num">$16,997.91</td></tr>
+            <tr><td style="white-space:nowrap">Thu 8&nbsp;Oct</td><td style="text-align:left;min-width:240px">5 stops, sell everything</td><td class="num neg">&minus;$774</td><td class="num">$16,223.57</td></tr>
+            <tr><td style="white-space:nowrap">Fri 9&nbsp;Oct</td><td style="text-align:left;min-width:240px">Buy a third time, ~$16.2k</td><td class="num">$0</td><td class="num">$16,223.57</td></tr>
+            <tr><td style="white-space:nowrap">Mon 12&nbsp;Oct</td><td style="text-align:left;min-width:240px">5 stops, sell everything</td><td class="num neg">&minus;$682</td><td class="num">$15,541.39</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0">
+        <strong>Missing the week saved about <span class="num">$2,277</span></strong>: the account
+        actually stood at <span class="num">$17,817.95</span> at the 12&nbsp;October check, against
+        <span class="num">$15,541.39</span> had every run completed (&minus;$2,323 at 5&nbsp;bps per side).
+        That is 13.8% below the equity peak, one round short of the &minus;15% kill-switch. It is one
+        falling week &mdash; the case dip-buying is built to lose &mdash; so it is luck, not a better rule.
+      </p>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>Three rules aimed at exactly that pattern &mdash; all rejected</h3>
+      <p class="note">
+        Proposed and fixed before any run, each switched off reproducing the live engine to the cent.
+        6 months, $80k, 5&nbsp;bps per side. A rule had to cut the worst drawdown on the full window,
+        both halves and both 30-minute marks, without a significant P&amp;L cost.
+      </p>
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Rule</th><th>6 months</th><th>Worst drawdown</th><th>Sharpe</th><th>Drawdown checks</th><th>P(better)</th><th>Missed week</th></tr></thead>
+          <tbody>
+            <tr><td style="text-align:left;min-width:220px"><strong>Margin-Style Live (current)</strong></td><td class="num pos">+155.4%</td><td class="num">&minus;8.8%</td><td class="num">3.83</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
+            <tr><td style="text-align:left;min-width:220px">A&nbsp; No buys the run after a circuit breaker</td><td class="num">+45.2%</td><td class="num neg">&minus;12.4%</td><td class="num">2.30</td><td class="num neg">0 of 3</td><td class="num neg">0.01</td><td class="num pos">+$1,279</td></tr>
+            <tr><td style="text-align:left">B&nbsp; No dip buys when 6+ of 8 stocks fell</td><td class="num">+48.1%</td><td class="num neg">&minus;10.2%</td><td class="num">2.44</td><td class="num neg">1 of 3</td><td class="num neg">0.03</td><td class="num pos">+$1,289</td></tr>
+            <tr><td style="text-align:left">C&nbsp; Shrink buys as drawdown grows (zero at &minus;15%)</td><td class="num">+134.6%</td><td class="num neg">&minus;9.3%</td><td class="num">3.73</td><td class="num neg">0 of 3</td><td class="num">0.11</td><td class="num pos">+$375</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0">
+        <strong>Each would have softened the missed week and made the six months worse &mdash; including
+        a deeper worst drawdown.</strong> The day after a broad stop-out is usually the rebound this
+        strategy is paid for; skipping it removes the recovery, not just the losing entries. This matches
+        two earlier rejections recorded in the engine (a per-stock cooldown after stops, and a daily total
+        buying cap). The missed-week column is in-sample by construction and was not used as a check.
+      </p>
+    </div>
+  </section>
+
+  <section>
     <h2 class="head">Limited margin: spending today&rsquo;s sale money today</h2>
     <p class="sub">
       On a cash account, sale proceeds can be spent at the next day&rsquo;s run anyway
@@ -994,7 +1054,9 @@ P(variant better than baseline)                   <b>0.247</b></div>
 <b>python3 scripts/margin_style_daily_stop_admissible.py</b>      <span style="color:var(--ink-3)"># 1% daily stop, all bases</span>
 <b>python3 scripts/margin_style_grid_entry_exit.py</b>        <span style="color:var(--ink-3)"># 972-config entry/exit grid, ~9 min</span>
 <b>python3 scripts/margin_style_instant_settlement.py</b>     <span style="color:var(--ink-3)"># limited margin: same-day proceeds</span>
-<b>python3 scripts/margin_style_check_time.py all</b>             <span style="color:var(--ink-3)"># check time + 1-min referee</span></div>
+<b>python3 scripts/margin_style_check_time.py all</b>             <span style="color:var(--ink-3)"># check time + 1-min referee</span>
+<b>python3 scripts/margin_style_missed_week_replay.py</b>      <span style="color:var(--ink-3)"># the missed week, 5-12 Oct</span>
+<b>python3 scripts/margin_style_drawdown_rules.py</b>         <span style="color:var(--ink-3)"># three drawdown rules</span></div>
   </section>
 
   <footer>

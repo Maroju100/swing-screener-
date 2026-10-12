@@ -1,0 +1,215 @@
+{
+ "generated": "2026-10-12",
+ "engine": "origin/main",
+ "capital": 80000.0,
+ "cost_bps": 5.0,
+ "thirds": [
+  [
+   "2026-03-13",
+   "2026-05-14"
+  ],
+  [
+   "2026-05-15",
+   "2026-07-20"
+  ],
+  [
+   "2026-07-21",
+   "2026-09-21"
+  ]
+ ],
+ "production": {
+  "full_pct": 155.36,
+  "full_dd": -8.84,
+  "sharpe": 3.834,
+  "trades": 771,
+  "thirds_pct": [
+   43.72,
+   30.93,
+   6.84
+  ],
+  "halves_pct": {
+   "rising (Mar 13-Jun 19)": 67.74,
+   "falling (Jun 22-Sep 21)": 38.28
+  },
+  "halves_dd": {
+   "rising (Mar 13-Jun 19)": -6.78,
+   "falling (Jun 22-Sep 21)": -8.84
+  },
+  "fine_pct": {
+   "17:00": 23.37,
+   "17:30": 35.69
+  },
+  "fine_dd": {
+   "17:00": -11.9,
+   "17:30": -11.53
+  },
+  "missed_week_end": 15541.39
+ },
+ "variants": [
+  {
+   "variant": "A Whipsaw pause: no buys the run after a circuit breaker",
+   "params": {
+    "WHIPSAW_PAUSE": true
+   },
+   "full_pct": 45.25,
+   "full_dd": -12.4,
+   "sharpe": 2.304,
+   "trades": 515,
+   "full_delta": -88092.58,
+   "thirds_pct": [
+    13.51,
+    8.16,
+    8.95
+   ],
+   "halves_pct": {
+    "rising (Mar 13-Jun 19)": 25.88,
+    "falling (Jun 22-Sep 21)": 14.79
+   },
+   "halves_dd": {
+    "rising (Mar 13-Jun 19)": -8.23,
+    "falling (Jun 22-Sep 21)": -12.4
+   },
+   "fine_pct": {
+    "17:00": 1.17,
+    "17:30": 8.36
+   },
+   "fine_dd": {
+    "17:00": -15.27,
+    "17:30": -14.8
+   },
+   "bootstrap": {
+    "ci_daily": [
+     -0.008834248213269674,
+     -0.0006898865925259525
+    ],
+    "p_better": 0.0086
+   },
+   "dd_checks": {
+    "full window": false,
+    "both halves": false,
+    "both 30-min marks": false
+   },
+   "pnl_checks": {
+    "full window": false,
+    "all 3 thirds": false,
+    "both halves": false,
+    "both 30-min marks": false,
+    "bootstrap CI excludes 0": false
+   },
+   "pnl_checks_passed": 0,
+   "missed_week_end": 16820.51,
+   "missed_week_vs_prod": 1279.12,
+   "verdict": "NOT AN IMPROVEMENT"
+  },
+  {
+   "variant": "B Breadth gate: no dip buys when 6+ of 8 fell",
+   "params": {
+    "BREADTH_GATE": true
+   },
+   "full_pct": 48.11,
+   "full_dd": -10.23,
+   "sharpe": 2.44,
+   "trades": 426,
+   "full_delta": -85800.54,
+   "thirds_pct": [
+    4.68,
+    4.4,
+    20.08
+   ],
+   "halves_pct": {
+    "rising (Mar 13-Jun 19)": 16.53,
+    "falling (Jun 22-Sep 21)": 26.44
+   },
+   "halves_dd": {
+    "rising (Mar 13-Jun 19)": -10.23,
+    "falling (Jun 22-Sep 21)": -8.83
+   },
+   "fine_pct": {
+    "17:00": 25.16,
+    "17:30": 23.19
+   },
+   "fine_dd": {
+    "17:00": -9.44,
+    "17:30": -10.27
+   },
+   "bootstrap": {
+    "ci_daily": [
+     -0.008879138513507377,
+     0.00020978416884912703
+    ],
+    "p_better": 0.0292
+   },
+   "dd_checks": {
+    "full window": false,
+    "both halves": false,
+    "both 30-min marks": true
+   },
+   "pnl_checks": {
+    "full window": false,
+    "all 3 thirds": false,
+    "both halves": false,
+    "both 30-min marks": false,
+    "bootstrap CI excludes 0": false
+   },
+   "pnl_checks_passed": 0,
+   "missed_week_end": 16830.23,
+   "missed_week_vs_prod": 1288.84,
+   "verdict": "NOT AN IMPROVEMENT"
+  },
+  {
+   "variant": "C Drawdown throttle: size x (1 + dd/15%)",
+   "params": {
+    "DD_THROTTLE": true
+   },
+   "full_pct": 134.62,
+   "full_dd": -9.33,
+   "sharpe": 3.73,
+   "trades": 872,
+   "full_delta": -16596.77,
+   "thirds_pct": [
+    43.63,
+    33.26,
+    1.26
+   ],
+   "halves_pct": {
+    "rising (Mar 13-Jun 19)": 68.64,
+    "falling (Jun 22-Sep 21)": 25.41
+   },
+   "halves_dd": {
+    "rising (Mar 13-Jun 19)": -6.61,
+    "falling (Jun 22-Sep 21)": -9.33
+   },
+   "fine_pct": {
+    "17:00": 7.81,
+    "17:30": 19.22
+   },
+   "fine_dd": {
+    "17:00": -12.39,
+    "17:30": -11.29
+   },
+   "bootstrap": {
+    "ci_daily": [
+     -0.0017648185170429799,
+     0.00040652709827776213
+    ],
+    "p_better": 0.1066
+   },
+   "dd_checks": {
+    "full window": false,
+    "both halves": false,
+    "both 30-min marks": false
+   },
+   "pnl_checks": {
+    "full window": false,
+    "all 3 thirds": false,
+    "both halves": false,
+    "both 30-min marks": false,
+    "bootstrap CI excludes 0": false
+   },
+   "pnl_checks_passed": 0,
+   "missed_week_end": 15916.58,
+   "missed_week_vs_prod": 375.19,
+   "verdict": "NOT AN IMPROVEMENT"
+  }
+ ]
+}

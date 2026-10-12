@@ -45,6 +45,10 @@ OUT = os.path.join(ROOT, 'data', 'research', 'missed_week_replay.json')
 START_CASH = 17371.74
 DAYS = ['2026-10-05', '2026-10-06', '2026-10-07', '2026-10-08', '2026-10-09', '2026-10-12']
 REAL_MONEY_FILES = ('margin_style_live_state.json', 'margin_style_live_log.json')
+# Optional hooks for rule studies: a source patch and module-level settings.
+# Left as None/{} this script replays production unmodified.
+SRC_PATCH = None
+PARAMS = {}
 
 
 def git_show(rev, path):
@@ -62,8 +66,11 @@ class FakeDatetime(_dt.datetime):
 
 def load_engine(state_path):
     ns = {'__name__': 'replay_engine', '__file__': os.path.join(ROOT, 'scripts', 'x.py')}
-    exec(compile(git_show(ENGINE_REV, 'scripts/margin_style_live_engine.py'),
-                 f'<{ENGINE_REV} engine>', 'exec'), ns)
+    src = git_show(ENGINE_REV, 'scripts/margin_style_live_engine.py')
+    if SRC_PATCH:
+        src = SRC_PATCH(src)
+    exec(compile(src, f'<{ENGINE_REV} engine>', 'exec'), ns)
+    ns.update(PARAMS)
     ns['STATE_PATH'] = state_path
     ns['datetime'] = FakeDatetime
     assert not any(state_path.endswith(f) for f in REAL_MONEY_FILES)
