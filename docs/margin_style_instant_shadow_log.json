@@ -472,6 +472,85 @@
    "shadow_equity": 17394.93,
    "live_broker_total_value_pre_run": 17817.86,
    "live_run_found": true
+  },
+  {
+   "date": "2026-10-13",
+   "timestamp": "2026-10-13T18:15:03+00:00",
+   "engine": "origin/main + patch_instant",
+   "cost_bps_estimated": 5.0,
+   "cash_before": 17394.93,
+   "same_run_proceeds_credited": 0,
+   "sells": [],
+   "buys": [
+    {
+     "symbol": "WDC",
+     "shares": 11.517075,
+     "price": 377.59,
+     "notional": 4348.73,
+     "reason": "NORMAL_DIP",
+     "drawdown": -0.3069,
+     "day_return": -0.026,
+     "capped_by_trade_notional_limit": true,
+     "capped_by_concentration_limit": false
+    },
+    {
+     "symbol": "STX",
+     "shares": 5.924986,
+     "price": 733.965,
+     "notional": 4348.73,
+     "reason": "NORMAL_DIP",
+     "drawdown": -0.2428,
+     "day_return": -0.038,
+     "capped_by_trade_notional_limit": true,
+     "capped_by_concentration_limit": false
+    },
+    {
+     "symbol": "SNDK",
+     "shares": 3.007526,
+     "price": 1445.95,
+     "notional": 4348.73,
+     "reason": "NORMAL_DIP",
+     "drawdown": -0.2118,
+     "day_return": -0.0597,
+     "capped_by_trade_notional_limit": true,
+     "capped_by_concentration_limit": false
+    },
+    {
+     "symbol": "INTC",
+     "shares": 40.606413,
+     "price": 101.74,
+     "notional": 4131.3,
+     "reason": "NORMAL_DIP",
+     "drawdown": -0.2044,
+     "day_return": -0.032,
+     "capped_by_trade_notional_limit": false,
+     "capped_by_concentration_limit": false
+    },
+    {
+     "symbol": "LRCX",
+     "shares": 0.700077,
+     "price": 295.06,
+     "notional": 206.56,
+     "reason": "NORMAL_DIP",
+     "drawdown": -0.1092,
+     "day_return": -0.0291,
+     "capped_by_trade_notional_limit": false,
+     "capped_by_concentration_limit": false
+    }
+   ],
+   "realized_estimated": 0.0,
+   "cash_after": 2.18,
+   "positions": {
+    "WDC": 11.517075,
+    "STX": 5.924986,
+    "SNDK": 3.007526,
+    "INTC": 40.606413,
+    "LRCX": 0.700077
+   },
+   "shadow_equity_pre_run": 17394.93,
+   "shadow_equity": 17386.24,
+   "live_broker_total_value_pre_run": 17818.01,
+   "live_run_found": true
   }
  ]
 }

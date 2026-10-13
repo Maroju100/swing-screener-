@@ -1,17 +1,42 @@
 {
- "pending_settlement": [
-  {
-   "amount": 232.75,
-   "settle_date": "2026-10-13",
-   "symbol": "INTC"
+ "pending_settlement": [],
+ "open_positions": {
+  "WDC": {
+   "shares": 11.517075,
+   "entry": 377.59,
+   "peak": 377.59,
+   "tranches": 1,
+   "opened": "2026-10-13"
   },
-  {
-   "amount": 12.41,
-   "settle_date": "2026-10-13",
-   "symbol": "MU"
+  "STX": {
+   "shares": 5.924986,
+   "entry": 733.965,
+   "peak": 733.965,
+   "tranches": 1,
+   "opened": "2026-10-13"
+  },
+  "SNDK": {
+   "shares": 3.007526,
+   "entry": 1445.95,
+   "peak": 1445.95,
+   "tranches": 1,
+   "opened": "2026-10-13"
+  },
+  "INTC": {
+   "shares": 40.606413,
+   "entry": 101.74,
+   "peak": 101.74,
+   "tranches": 1,
+   "opened": "2026-10-13"
+  },
+  "LRCX": {
+   "shares": 0.700077,
+   "entry": 295.06,
+   "peak": 295.06,
+   "tranches": 1,
+   "opened": "2026-10-13"
   }
- ],
- "open_positions": {},
+ },
  "equity_peak": 17789.83,
  "kill_switch_active": false,
  "kill_switch_triggered_date": null,
@@ -22,7 +47,7 @@
   "buys_count": 0,
   "ported_from": "ca55e21 (development branch) on 2026-09-22"
  },
- "shadow_cash": 17394.93,
+ "shadow_cash": 2.18,
  "shadow_started_from": {
   "rev": "c3a77e4~1",
   "cash": 85.15,
