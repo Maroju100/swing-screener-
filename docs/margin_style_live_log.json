@@ -3563,6 +3563,113 @@
     "2026-10-09"
    ],
    "notes": "First completed run since 10-02. The scheduled runs of 10-05..10-09 did not complete (10-05/06 stalled awaiting approval of the positions read; 10-07..09 ended after verify without any broker call) - no orders, no state change, no log on those days; get_equity_orders confirms no orders between 10-02 and this run. Today all 8 symbols were down 1.5-6.3% vs the 10-09 close at the check; INTC, MU and AMD each fell through the -1.51% stop line, so all three leftovers were sold (STOP, which outranks the overdue MAX_HOLD). 3 stops -> circuit breaker, no buys. System now flat: 100% cash."
+  },
+  {
+   "timestamp": "2026-10-13T17:38:23Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "sizing_input": {
+    "buying_power_used": 17818.01,
+    "cash": 17818.01
+   },
+   "broker_total_value": 17818.01,
+   "orders_placed": [
+    {
+     "side": "buy",
+     "symbol": "WDC",
+     "shares": 11.797194,
+     "price": 376.9977,
+     "notional": 4447.52,
+     "reason": "NORMAL_DIP",
+     "quote_at_plan": 377.59,
+     "drawdown": -0.3069,
+     "day_return": -0.026,
+     "order_id": "6ace6c87-6f51-4615-8ade-b614f8e3eb89",
+     "state": "filled",
+     "fees": 0.0
+    },
+    {
+     "side": "buy",
+     "symbol": "STX",
+     "shares": 6.069094,
+     "price": 734.4299,
+     "notional": 4457.32,
+     "reason": "NORMAL_DIP",
+     "quote_at_plan": 733.965,
+     "drawdown": -0.2428,
+     "day_return": -0.038,
+     "order_id": "6ace6c89-83d7-4979-8139-98a4fdbd9410",
+     "state": "filled",
+     "fees": 0.0
+    },
+    {
+     "side": "buy",
+     "symbol": "SNDK",
+     "shares": 3.080675,
+     "price": 1446.5972,
+     "notional": 4456.5,
+     "reason": "NORMAL_DIP",
+     "quote_at_plan": 1445.95,
+     "drawdown": -0.2118,
+     "day_return": -0.0597,
+     "order_id": "6ace6c8b-481b-41b7-b584-38cf26aec45b",
+     "state": "filled",
+     "fees": 0.0
+    },
+    {
+     "side": "buy",
+     "symbol": "INTC",
+     "shares": 41.594041,
+     "price": 102.0287,
+     "notional": 4243.79,
+     "reason": "NORMAL_DIP",
+     "quote_at_plan": 101.74,
+     "drawdown": -0.2044,
+     "day_return": -0.032,
+     "order_id": "6ace6c8d-abf2-4252-99cf-3122cf0271a6",
+     "state": "filled",
+     "fees": 0.0
+    },
+    {
+     "side": "buy",
+     "symbol": "LRCX",
+     "shares": 0.717105,
+     "price": 295.7963,
+     "notional": 212.12,
+     "reason": "NORMAL_DIP",
+     "quote_at_plan": 295.06,
+     "drawdown": -0.1092,
+     "day_return": -0.0291,
+     "order_id": "6ace6c8f-f8ec-4740-8b96-c4a0b999e2d3",
+     "state": "filled",
+     "fees": 0.0
+    }
+   ],
+   "total_bought": 17817.25,
+   "skipped_orders": [],
+   "netted_trades": [],
+   "circuit_breaker": {
+    "triggered": false,
+    "stop_count": 0
+   },
+   "reconciliation": "none needed - verify PASS, reconcile PASS (account flat, state flat)",
+   "unowned_excess": {},
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "freshness": "PASS",
+    "pre_commit": "PASS"
+   },
+   "risk_state": {
+    "equity_peak": 18035.23,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false,
+    "total_equity": 17818.01,
+    "drawdown_from_peak": -0.012
+   },
+   "notes": "All 8 closed down on 10-12 vs 10-09; 5 qualified as NORMAL_DIP (WDC, STX, SNDK at the 25% per-trade cap, INTC, LRCX with the remainder). AMD/MU/TSM also dipped but cash ran out. Essentially fully invested (~$17.8k) in 5 correlated semis - the same pattern the 10-05..10-12 missed-week replay showed losing three rounds in a row; production rules unchanged, user has not decided on volatility sizing."
   }
  ]
 }
