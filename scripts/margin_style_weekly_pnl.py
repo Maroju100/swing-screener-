@@ -15,7 +15,7 @@ A BACKTEST, not the real account: it compounds from $80k and does not include th
 live account's missed runs, deposits or fills.
 
 Reproduce:
-    python3 scripts/margin_style_weekly_pnl.py
+    python3 scripts/margin_style_weekly_pnl.py [--capital 15000]
 """
 import datetime as dt
 import json
@@ -33,11 +33,18 @@ CAP, COST = 80000.0, 5.0
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser(); ap.add_argument('--capital', type=float, default=80000.0)
+    global CAP, OUT
+    CAP = ap.parse_args().capital
+    if CAP != 80000.0:
+        OUT = OUT.replace('weekly_pnl.json', f'weekly_pnl_{int(CAP)}.json')
     g = R.replay(start='2026-03-13', end='2026-09-21', tag='wk_gate', cost_bps=COST, daily=DAILY, hourly=HOURLY)
     if abs(g['realized'] - 124289.71) > 0.005 or g['trade_count'] != 771:
         raise SystemExit(f"GATE FAILED: {g['realized']} / {g['trade_count']}")
     print('gate PASS: extended data reproduces the baseline to 09-21 ($124,289.71, 771 trades)\n')
-    r = R.replay(start='2026-03-13', end='2026-10-14', tag='wk_full', cost_bps=COST, daily=DAILY, hourly=HOURLY)
+    r = R.replay(start='2026-03-13', end='2026-10-14', tag=f'wk_full{int(CAP)}', cost_bps=COST, daily=DAILY,
+                 hourly=HOURLY, capital=CAP)
     eq = sorted(r['day_equity'].items())
     weeks, prev = [], CAP
     for d, v in eq:
