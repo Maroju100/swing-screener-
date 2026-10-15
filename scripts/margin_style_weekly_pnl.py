@@ -15,7 +15,12 @@ A BACKTEST, not the real account: it compounds from $80k and does not include th
 live account's missed runs, deposits or fills.
 
 Reproduce:
-    python3 scripts/margin_style_weekly_pnl.py [--capital 15000]
+    python3 scripts/margin_style_weekly_pnl.py [--capital 15000] [--vol-target 0.03]
+
+--vol-target applies rule D (volatility sizing) from margin_style_sizing_rules.py:
+each buy x min(1, target / the stock's 20-day daily volatility). The patch is the
+same anchored patch that study gates against production; with the flag omitted the
+engine is unpatched.
 """
 import datetime as dt
 import json
@@ -35,16 +40,23 @@ CAP, COST = 80000.0, 5.0
 def main():
     import argparse
     ap = argparse.ArgumentParser(); ap.add_argument('--capital', type=float, default=80000.0)
+    ap.add_argument('--vol-target', type=float, default=None)
+    a = ap.parse_args()
     global CAP, OUT
-    CAP = ap.parse_args().capital
+    CAP = a.capital
     if CAP != 80000.0:
         OUT = OUT.replace('weekly_pnl.json', f'weekly_pnl_{int(CAP)}.json')
+    kw = {}
+    if a.vol_target:
+        import margin_style_sizing_rules as SZ
+        kw = {'src_patches': [SZ.patch_size], 'params': {'VOL_SIZE': True, 'VOL_TARGET': a.vol_target}}
+        OUT = OUT.replace('.json', f'_vol{int(a.vol_target * 1000)}.json')
     g = R.replay(start='2026-03-13', end='2026-09-21', tag='wk_gate', cost_bps=COST, daily=DAILY, hourly=HOURLY)
     if abs(g['realized'] - 124289.71) > 0.005 or g['trade_count'] != 771:
         raise SystemExit(f"GATE FAILED: {g['realized']} / {g['trade_count']}")
     print('gate PASS: extended data reproduces the baseline to 09-21 ($124,289.71, 771 trades)\n')
-    r = R.replay(start='2026-03-13', end='2026-10-14', tag=f'wk_full{int(CAP)}', cost_bps=COST, daily=DAILY,
-                 hourly=HOURLY, capital=CAP)
+    r = R.replay(start='2026-03-13', end='2026-10-14', tag=f'wk_full{int(CAP)}{"v" if kw else ""}', cost_bps=COST, daily=DAILY,
+                 hourly=HOURLY, capital=CAP, **kw)
     eq = sorted(r['day_equity'].items())
     weeks, prev = [], CAP
     for d, v in eq:
