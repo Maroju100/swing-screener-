@@ -1,0 +1,203 @@
+{
+ "hourly_6mo": {
+  "worst_weeks": [
+   {
+    "from": "2026-07-09",
+    "to": "2026-07-16",
+    "change_pct": -8.84,
+    "equity_from": 181954.13,
+    "equity_to": 165873.35
+   },
+   {
+    "from": "2026-07-22",
+    "to": "2026-07-29",
+    "change_pct": -8.53,
+    "equity_from": 186511.16,
+    "equity_to": 170600.59
+   },
+   {
+    "from": "2026-09-08",
+    "to": "2026-09-15",
+    "change_pct": -7.9,
+    "equity_from": 205341.06,
+    "equity_to": 189119.18
+   },
+   {
+    "from": "2026-07-31",
+    "to": "2026-08-07",
+    "change_pct": -6.96,
+    "equity_from": 194254.26,
+    "equity_to": 180736.5
+   },
+   {
+    "from": "2026-08-17",
+    "to": "2026-08-24",
+    "change_pct": -6.8,
+    "equity_from": 202308.81,
+    "equity_to": 188541.72
+   },
+   {
+    "from": "2026-06-03",
+    "to": "2026-06-10",
+    "change_pct": -6.55,
+    "equity_from": 126251.98,
+    "equity_to": 117983.92
+   },
+   {
+    "from": "2026-05-11",
+    "to": "2026-05-18",
+    "change_pct": -4.2,
+    "equity_from": 118923.46,
+    "equity_to": 113924.24
+   },
+   {
+    "from": "2026-03-23",
+    "to": "2026-03-30",
+    "change_pct": -2.37,
+    "equity_from": 81948.77,
+    "equity_to": 80004.69
+   }
+  ],
+  "episodes_over_4pct": [
+   {
+    "peak": "2026-07-09",
+    "trough": "2026-07-16",
+    "depth_pct": -8.84,
+    "recovered": "2026-07-21"
+   },
+   {
+    "peak": "2026-07-22",
+    "trough": "2026-07-29",
+    "depth_pct": -8.53,
+    "recovered": "2026-07-30"
+   },
+   {
+    "peak": "2026-09-09",
+    "trough": "2026-09-15",
+    "depth_pct": -8.01,
+    "recovered": "2026-09-21"
+   },
+   {
+    "peak": "2026-08-04",
+    "trough": "2026-08-07",
+    "depth_pct": -7.16,
+    "recovered": "2026-08-13"
+   },
+   {
+    "peak": "2026-08-17",
+    "trough": "2026-08-25",
+    "depth_pct": -6.85,
+    "recovered": "2026-09-08"
+   },
+   {
+    "peak": "2026-06-04",
+    "trough": "2026-06-09",
+    "depth_pct": -6.78,
+    "recovered": "2026-06-12"
+   },
+   {
+    "peak": "2026-03-25",
+    "trough": "2026-03-31",
+    "depth_pct": -6.54,
+    "recovered": "2026-04-01"
+   },
+   {
+    "peak": "2026-05-11",
+    "trough": "2026-05-18",
+    "depth_pct": -4.2,
+    "recovered": "2026-05-21"
+   }
+  ]
+ },
+ "30min_1730_64d": {
+  "worst_weeks": [
+   {
+    "from": "2026-07-22",
+    "to": "2026-07-29",
+    "change_pct": -9.54,
+    "equity_from": 96981.27,
+    "equity_to": 87733.77
+   },
+   {
+    "from": "2026-07-09",
+    "to": "2026-07-16",
+    "change_pct": -8.87,
+    "equity_from": 94322.38,
+    "equity_to": 85956.58
+   },
+   {
+    "from": "2026-09-08",
+    "to": "2026-09-15",
+    "change_pct": -7.45,
+    "equity_from": 108974.16,
+    "equity_to": 100855.05
+   },
+   {
+    "from": "2026-08-17",
+    "to": "2026-08-24",
+    "change_pct": -7.03,
+    "equity_from": 107178.23,
+    "equity_to": 99644.0
+   },
+   {
+    "from": "2026-07-31",
+    "to": "2026-08-07",
+    "change_pct": -6.91,
+    "equity_from": 103157.59,
+    "equity_to": 96027.11
+   },
+   {
+    "from": "2026-06-25",
+    "to": "2026-07-02",
+    "change_pct": -2.66,
+    "equity_from": 88747.3,
+    "equity_to": 86388.36
+   },
+   {
+    "from": "2026-08-27",
+    "to": "2026-09-03",
+    "change_pct": 0.15,
+    "equity_from": 101978.5,
+    "equity_to": 102134.51
+   }
+  ],
+  "episodes_over_4pct": [
+   {
+    "peak": "2026-07-27",
+    "trough": "2026-07-29",
+    "depth_pct": -11.53,
+    "recovered": "2026-07-30"
+   },
+   {
+    "peak": "2026-07-10",
+    "trough": "2026-07-16",
+    "depth_pct": -9.28,
+    "recovered": "2026-07-21"
+   },
+   {
+    "peak": "2026-09-09",
+    "trough": "2026-09-14",
+    "depth_pct": -7.77,
+    "recovered": "2026-09-21"
+   },
+   {
+    "peak": "2026-08-17",
+    "trough": "2026-08-24",
+    "depth_pct": -7.03,
+    "recovered": "2026-09-04"
+   },
+   {
+    "peak": "2026-07-31",
+    "trough": "2026-08-07",
+    "depth_pct": -6.91,
+    "recovered": "2026-08-13"
+   },
+   {
+    "peak": "2026-06-25",
+    "trough": "2026-06-26",
+    "depth_pct": -5.24,
+    "recovered": "2026-07-06"
+   }
+  ]
+ }
+}
