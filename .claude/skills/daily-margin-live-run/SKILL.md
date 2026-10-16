@@ -21,17 +21,38 @@ pre-authorization conditions) this procedure assumes.
      **not** tracked there belongs to another system/human (e.g. CGC) and
      must be excluded from consideration.
 
-2. **Fetch live data.**
+2. **Verify state file integrity (Guardrail 1).**
+   - Run: `python scripts/margin_style_live_engine.py verify`
+   - This audits `margin_style_live_state.json` for logical inconsistencies
+     (negative shares, invalid prices, orphaned entries, date errors).
+   - **If verify fails**: ABORT and alert user. Do not proceed to data fetch.
+   - **If verify passes**: continue to next step.
+
+3. **Fetch live data.**
    - `get_equity_historicals` for the universe (daily bars, enough history
-     for the dip/peak signal logic).
-   - `get_equity_quotes` for current live prices.
+     for the dip/peak signal logic — need at least through yesterday's close).
+   - `get_equity_quotes` for current live prices (check timestamp < 5 min old).
+   - `get_equity_positions` for account 912291820 to get actual holdings.
    - `get_accounts` / `get_portfolio` for account 912291820 to confirm
      current cash and settled/pending funds — **never** touch account
      410961445.
 
-3. **Build the plan.**
-   - Run `scripts/margin_style_live_engine.py cmd_plan` with the fetched
+4. **Reconcile state vs broker (Guardrail 2).**
+   - Run: `python scripts/margin_style_live_engine.py reconcile <broker_positions.json>`
+     where `broker_positions.json` is the data from `get_equity_positions`.
+   - This compares state file positions, shares, and entry prices against
+     actual broker holdings. Catches divergence from previous runs.
+   - **If reconcile fails** (symbol mismatch, share count >0.01% off):
+     ABORT and alert user. Review the discrepancy before proceeding.
+   - **If reconcile passes**: state matches broker reality. Continue.
+
+5. **Build the plan.**
+   - Run `scripts/margin_style_live_engine.py plan` with the fetched
      historicals, quotes, and real cash figure.
+   - The script will perform **data freshness checks** automatically:
+     - Historicals must be ≤1 day old
+     - Quotes must be ≤5 minutes old
+     - Warnings will be printed, but execution will continue
    - Inspect the resulting buy/sell actions against the live thresholds in
      CLAUDE.md (HUGE_DIP, NORMAL_DIP, INTRADAY_STOP, PEAK_SELL_PCT,
      GAIN_TIERS, MAX_HOLD_DAYS, kill-switch/trend-gate, circuit breaker,
@@ -39,24 +60,37 @@ pre-authorization conditions) this procedure assumes.
      looks wrong, that's a bug to fix in the script, not to patch around
      here.
 
-4. **Review each order before placing.**
-   - Call `review_equity_order` for every planned buy/sell.
+6. **Show the plan and wait for the user (mandatory since 2026-10-16).**
+   - Present every planned sell/buy (symbol, shares, quote, reason, stop
+     line and % move for STOPs), estimated proceeds/P&L, circuit-breaker
+     and kill-switch state, equity vs `equity_peak`, guardrail results.
+   - Offer execute all / hold / execute some / pause, then **end the
+     turn**. Do not call `review_equity_order` or `place_equity_order` in
+     the same turn as the plan, and never without an explicit go-ahead.
+   - A plan with no orders needs no approval — log it as a no-trade run.
+   - Approval covers that one plan at those prices. If it arrives more
+     than 30 minutes after the quotes, re-run the plan and show it again.
+   - On hold / no answer: place nothing; still commit risk_state and log
+     the run with `executed: false` and `planned_not_executed`.
+
+7. **Review each approved order before placing.**
+   - Call `review_equity_order` for every approved buy/sell.
    - **GFV-safety hard rule**: if it warns about unsettled/insufficient
      settled funds, skip that specific order — do not override, do not
      retry with a workaround.
-   - Any **novel alert type** not covered by the FULL AUTOMATION
-     conditions in CLAUDE.md → stop and escalate to the user instead of
+   - Any **novel alert type** → stop and escalate to the user instead of
      placing the order.
 
-5. **Place orders (FULL AUTOMATION, pre-authorized).**
-   - Placing both buys and sells without pausing for confirmation is fine
-     **only** when: `review_equity_order` showed no alerts, the order
-     matches the plan step exactly (symbol, side, quantity, price logic),
-     and no hard-rule skip condition fired.
+8. **Place the approved orders.**
+   - After the user's go-ahead, place each approved order straight away
+     when `review_equity_order` showed no alerts, the order matches the
+     plan step exactly (symbol, side, quantity, price logic), and no
+     hard-rule skip condition fired. Place nothing the user did not
+     approve.
    - Same-day same-symbol orders net against each other per the engine's
      existing logic — don't double-place.
 
-6. **Commit state and log.**
+9. **Commit state and log.**
    - Run `cmd_commit` to apply the executed actions to
      `docs/margin_style_live_state.json`.
    - Append the full run record (orders placed, reconciliation, risk
@@ -64,7 +98,7 @@ pre-authorization conditions) this procedure assumes.
    - Commit and push both files to `main` with a clear message (date +
      summary of buys/sells/stops).
 
-7. **Republish the dashboard.**
+10. **Republish the dashboard.**
    - Update `margin_live_dashboard.html`'s embedded daily-P&L and
      trade-log snapshots with the new run's data.
    - Test via the Node.js DOM-mock harness (see CLAUDE.md conventions)
