@@ -1,0 +1,126 @@
+{
+ "engine": "scripts/daytrading_v3_paper_engine.py",
+ "params": "baseline (engine constants)",
+ "symbols": [
+  "WDC",
+  "MU",
+  "SNDK"
+ ],
+ "capital": 15000.0,
+ "cost_bps": 5.0,
+ "start": "2026-08-10",
+ "through": "2026-10-16",
+ "weeks": [
+  {
+   "week_of": "2026-08-10",
+   "days": 5,
+   "last_day": "2026-08-14",
+   "start_equity": 15000.0,
+   "end_equity": 15183.33,
+   "pnl": 183.33,
+   "pct": 1.22,
+   "below_peak_pct": 0.0,
+   "cum_trades": 147
+  },
+  {
+   "week_of": "2026-08-17",
+   "days": 5,
+   "last_day": "2026-08-21",
+   "start_equity": 15183.33,
+   "end_equity": 15150.55,
+   "pnl": -32.78,
+   "pct": -0.22,
+   "below_peak_pct": -0.22,
+   "cum_trades": 222
+  },
+  {
+   "week_of": "2026-08-24",
+   "days": 5,
+   "last_day": "2026-08-28",
+   "start_equity": 15150.55,
+   "end_equity": 15129.03,
+   "pnl": -21.52,
+   "pct": -0.14,
+   "below_peak_pct": -0.36,
+   "cum_trades": 342
+  },
+  {
+   "week_of": "2026-08-31",
+   "days": 5,
+   "last_day": "2026-09-04",
+   "start_equity": 15129.03,
+   "end_equity": 15079.55,
+   "pnl": -49.48,
+   "pct": -0.33,
+   "below_peak_pct": -0.68,
+   "cum_trades": 499
+  },
+  {
+   "week_of": "2026-09-07",
+   "days": 4,
+   "last_day": "2026-09-11",
+   "start_equity": 15079.55,
+   "end_equity": 15100.11,
+   "pnl": 20.56,
+   "pct": 0.14,
+   "below_peak_pct": -0.55,
+   "cum_trades": 601
+  },
+  {
+   "week_of": "2026-09-14",
+   "days": 5,
+   "last_day": "2026-09-18",
+   "start_equity": 15100.11,
+   "end_equity": 15061.64,
+   "pnl": -38.47,
+   "pct": -0.25,
+   "below_peak_pct": -0.8,
+   "cum_trades": 748
+  },
+  {
+   "week_of": "2026-09-21",
+   "days": 5,
+   "last_day": "2026-09-25",
+   "start_equity": 15061.64,
+   "end_equity": 15037.01,
+   "pnl": -24.63,
+   "pct": -0.16,
+   "below_peak_pct": -0.96,
+   "cum_trades": 892
+  },
+  {
+   "week_of": "2026-09-28",
+   "days": 5,
+   "last_day": "2026-10-02",
+   "start_equity": 15037.01,
+   "end_equity": 14950.69,
+   "pnl": -86.32,
+   "pct": -0.57,
+   "below_peak_pct": -1.53,
+   "cum_trades": 1029
+  },
+  {
+   "week_of": "2026-10-05",
+   "days": 5,
+   "last_day": "2026-10-09",
+   "start_equity": 14950.69,
+   "end_equity": 14951.39,
+   "pnl": 0.7,
+   "pct": 0.0,
+   "below_peak_pct": -1.53,
+   "cum_trades": 1143
+  },
+  {
+   "week_of": "2026-10-12",
+   "days": 5,
+   "last_day": "2026-10-16",
+   "start_equity": 14951.39,
+   "end_equity": 14938.66,
+   "pnl": -12.73,
+   "pct": -0.09,
+   "below_peak_pct": -1.61,
+   "cum_trades": 1257
+  }
+ ],
+ "not_replayable": "weeks before 2026-08-10: no real 1-minute bars from the source"
+}
