@@ -21,7 +21,10 @@ Weekly equity is taken from a fresh replay truncated at each week's last day. Th
 is causal and flat every night, so a truncated replay is exactly the prefix of the full one.
 
 Reproduce:
-    python3 scripts/v3_weekly_pnl.py [--capital 15000]
+    python3 scripts/v3_weekly_pnl.py [--capital 15000] [--params tightened]
+
+--params tightened uses v3_replay.PARAMS['tightened'] (the grid-optimized set); its gate is
+the committed data/v3_replay_results_tightened.json ($4,900.96, 635 trades at 5 bps).
 """
 import argparse
 import datetime as dt
@@ -63,16 +66,18 @@ def set_capital(cap):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--capital', type=float, default=15000.0)
+    ap.add_argument('--params', choices=sorted(VR.PARAMS), default='baseline')
     a = ap.parse_args()
     bars, days = load()
-    params = VR.PARAMS['baseline']
+    params = VR.PARAMS[a.params]
+    gate_eq, gate_n = {'baseline': (5018.91, 767), 'tightened': (4900.96, 635)}[a.params]
 
     set_capital(5000.0)
     gdays = [d for d in days if d <= '2026-09-21']
-    g = VR.replay('wk_gate', params, gdays, bars, cost_bps=COST)
-    if abs(g['equity'] - 5018.91) > 0.005 or g['trades'] != 767:
+    g = VR.replay(f'wk_gate_{a.params}', params, gdays, bars, cost_bps=COST)
+    if abs(g['equity'] - gate_eq) > 0.005 or g['trades'] != gate_n:
         raise SystemExit(f"GATE FAILED: {g['equity']} / {g['trades']}")
-    print('gate PASS: committed window reproduces $5,018.91 / 767 trades at 5 bps\n')
+    print(f'gate PASS ({a.params}): committed window reproduces ${gate_eq:,.2f} / {gate_n} trades at 5 bps\n')
 
     set_capital(a.capital)
     weeks = {}
@@ -81,7 +86,7 @@ def main():
         weeks.setdefault(mon, []).append(d)
     out, prev, peak = [], a.capital, a.capital
     for mon, wd in weeks.items():
-        r = VR.replay(f'wk_{int(a.capital)}_{wd[-1]}', params, [d for d in days if d <= wd[-1]], bars, cost_bps=COST)
+        r = VR.replay(f'wk_{a.params}_{int(a.capital)}_{wd[-1]}', params, [d for d in days if d <= wd[-1]], bars, cost_bps=COST)
         eq = r['equity']
         peak = max(peak, eq)
         out.append({'week_of': mon, 'days': len(wd), 'last_day': wd[-1], 'start_equity': round(prev, 2),
@@ -95,8 +100,8 @@ def main():
     tot = out[-1]['end_equity'] - a.capital
     print(f"\ntotal {tot:+,.0f} ({tot / a.capital * 100:+.1f}%) from {days[0]} to {days[-1]}, "
           f"{out[-1]['cum_trades']} trades")
-    path = os.path.join(ROOT, 'data', 'research', f'v3_weekly_pnl_{int(a.capital)}.json')
-    json.dump({'engine': 'scripts/daytrading_v3_paper_engine.py', 'params': 'baseline (engine constants)',
+    path = os.path.join(ROOT, 'data', 'research', f'v3_weekly_pnl_{int(a.capital)}' + ('' if a.params == 'baseline' else f'_{a.params}') + '.json')
+    json.dump({'engine': 'scripts/daytrading_v3_paper_engine.py', 'params': a.params,
                'symbols': V3.SYMBOLS, 'capital': a.capital, 'cost_bps': COST, 'start': days[0],
                'through': days[-1], 'weeks': out,
                'not_replayable': 'weeks before 2026-08-10: no real 1-minute bars from the source'},
