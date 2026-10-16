@@ -60,24 +60,37 @@ pre-authorization conditions) this procedure assumes.
      looks wrong, that's a bug to fix in the script, not to patch around
      here.
 
-4. **Review each order before placing.**
-   - Call `review_equity_order` for every planned buy/sell.
+6. **Show the plan and wait for the user (mandatory since 2026-10-16).**
+   - Present every planned sell/buy (symbol, shares, quote, reason, stop
+     line and % move for STOPs), estimated proceeds/P&L, circuit-breaker
+     and kill-switch state, equity vs `equity_peak`, guardrail results.
+   - Offer execute all / hold / execute some / pause, then **end the
+     turn**. Do not call `review_equity_order` or `place_equity_order` in
+     the same turn as the plan, and never without an explicit go-ahead.
+   - A plan with no orders needs no approval — log it as a no-trade run.
+   - Approval covers that one plan at those prices. If it arrives more
+     than 30 minutes after the quotes, re-run the plan and show it again.
+   - On hold / no answer: place nothing; still commit risk_state and log
+     the run with `executed: false` and `planned_not_executed`.
+
+7. **Review each approved order before placing.**
+   - Call `review_equity_order` for every approved buy/sell.
    - **GFV-safety hard rule**: if it warns about unsettled/insufficient
      settled funds, skip that specific order — do not override, do not
      retry with a workaround.
-   - Any **novel alert type** not covered by the FULL AUTOMATION
-     conditions in CLAUDE.md → stop and escalate to the user instead of
+   - Any **novel alert type** → stop and escalate to the user instead of
      placing the order.
 
-5. **Place orders (FULL AUTOMATION, pre-authorized).**
-   - Placing both buys and sells without pausing for confirmation is fine
-     **only** when: `review_equity_order` showed no alerts, the order
-     matches the plan step exactly (symbol, side, quantity, price logic),
-     and no hard-rule skip condition fired.
+8. **Place the approved orders.**
+   - After the user's go-ahead, place each approved order straight away
+     when `review_equity_order` showed no alerts, the order matches the
+     plan step exactly (symbol, side, quantity, price logic), and no
+     hard-rule skip condition fired. Place nothing the user did not
+     approve.
    - Same-day same-symbol orders net against each other per the engine's
      existing logic — don't double-place.
 
-6. **Commit state and log.**
+9. **Commit state and log.**
    - Run `cmd_commit` to apply the executed actions to
      `docs/margin_style_live_state.json`.
    - Append the full run record (orders placed, reconciliation, risk
@@ -85,7 +98,7 @@ pre-authorization conditions) this procedure assumes.
    - Commit and push both files to `main` with a clear message (date +
      summary of buys/sells/stops).
 
-7. **Republish the dashboard.**
+10. **Republish the dashboard.**
    - Update `margin_live_dashboard.html`'s embedded daily-P&L and
      trade-log snapshots with the new run's data.
    - Test via the Node.js DOM-mock harness (see CLAUDE.md conventions)

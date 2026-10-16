@@ -26,11 +26,24 @@ Any universe symbol currently held that is **not** tracked in
 and must be excluded from new entries for Margin-Style Live. (CGC is a
 known example — always excluded.)
 
-## FULL AUTOMATION pre-authorization (Margin-Style Live only)
+## PLAN FIRST — user approval required before any order — HARD RULE (2026-10-16)
 
-Placing both buy and sell orders for the Margin-Style Live plan without
-pausing for confirmation is pre-authorized, **only** when all of the
-following hold:
+**The 2026-08-07 FULL AUTOMATION pre-authorization is withdrawn**, at the
+user's explicit request. Every Margin-Style Live run (scheduled or manual)
+does the read-only steps and the plan, **shows the plan to the user, and
+ends the turn.** No `review_equity_order` or `place_equity_order` call
+until the user has explicitly approved that day's plan in the conversation.
+- Silence is not approval. Approval covers one plan, one day, at the
+  prices shown; if it arrives >30 minutes after the quotes, re-plan and
+  show it again.
+- On hold / no approval: place nothing, still commit `risk_state`, and log
+  the run with `executed: false` and `planned_not_executed`.
+- A plan with no orders needs no approval.
+- Wording lives in step 7b of trigger `trig_01VfH6Nhfbk7YLaTkzHWLG7E` and
+  in `.claude/skills/daily-margin-live-run/SKILL.md` step 6.
+
+Once the user approves, each approved order is placed without a further
+per-order confirmation, **only** when all of the following hold:
 - `review_equity_order` shows no alerts (see GFV rule above).
 - The order matches the generated plan step exactly (symbol, side,
   quantity, price logic).
