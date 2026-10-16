@@ -3670,6 +3670,168 @@
     "drawdown_from_peak": -0.012
    },
    "notes": "All 8 closed down on 10-12 vs 10-09; 5 qualified as NORMAL_DIP (WDC, STX, SNDK at the 25% per-trade cap, INTC, LRCX with the remainder). AMD/MU/TSM also dipped but cash ran out. Essentially fully invested (~$17.8k) in 5 correlated semis - the same pattern the 10-05..10-12 missed-week replay showed losing three rounds in a row; production rules unchanged, user has not decided on volatility sizing."
+  },
+  {
+   "timestamp": "2026-10-14T17:35:00Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "executed": false,
+   "orders_placed": [],
+   "total_bought": 0.0,
+   "total_proceeds": 0.0,
+   "circuit_breaker": {
+    "triggered": true,
+    "stop_count": 5
+   },
+   "unowned_excess": {},
+   "broker_total_value": null,
+   "planned_not_executed": [
+    {
+     "side": "sell",
+     "symbol": "WDC",
+     "reason": "STOP"
+    },
+    {
+     "side": "sell",
+     "symbol": "STX",
+     "reason": "STOP"
+    },
+    {
+     "side": "sell",
+     "symbol": "SNDK",
+     "reason": "STOP"
+    },
+    {
+     "side": "sell",
+     "symbol": "INTC",
+     "reason": "STOP"
+    },
+    {
+     "side": "sell",
+     "symbol": "LRCX",
+     "reason": "STOP"
+    }
+   ],
+   "notes": "Plan produced 5 STOP sells (all positions opened 10-13). NOT EXECUTED: the run stalled after planning and placed no orders; this was not reported to the user until 10-15. Exact quotes/broker value for this run were not preserved. Estimated cost vs executing (ESTIMATE, vs 10-16 prices): ~$900."
+  },
+  {
+   "timestamp": "2026-10-15T17:35:00Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "executed": false,
+   "orders_placed": [],
+   "total_bought": 0.0,
+   "total_proceeds": 0.0,
+   "circuit_breaker": {
+    "triggered": true,
+    "stop_count": 5
+   },
+   "unowned_excess": {},
+   "broker_total_value": null,
+   "planned_not_executed": [
+    {
+     "side": "sell",
+     "symbol": "WDC",
+     "reason": "STOP"
+    },
+    {
+     "side": "sell",
+     "symbol": "STX",
+     "reason": "STOP"
+    },
+    {
+     "side": "sell",
+     "symbol": "SNDK",
+     "reason": "STOP"
+    },
+    {
+     "side": "sell",
+     "symbol": "INTC",
+     "reason": "STOP"
+    },
+    {
+     "side": "sell",
+     "symbol": "LRCX",
+     "reason": "STOP"
+    }
+   ],
+   "notes": "Plan again produced 5 STOP sells. User denied the review_equity_order calls; no orders placed. User asked to see each day's plan before any orders are sent."
+  },
+  {
+   "timestamp": "2026-10-16T17:35:00Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "executed": false,
+   "orders_placed": [],
+   "total_bought": 0.0,
+   "total_proceeds": 0.0,
+   "circuit_breaker": {
+    "triggered": true,
+    "stop_count": 5
+   },
+   "unowned_excess": {},
+   "broker_total_value": 16062.22,
+   "sizing_input": {
+    "buying_power_used": 0.78,
+    "cash": 0.78
+   },
+   "planned_not_executed": [
+    {
+     "side": "sell",
+     "symbol": "WDC",
+     "shares": 11.797194,
+     "quote_at_plan": 340.115,
+     "reason": "STOP",
+     "entry": 376.9977
+    },
+    {
+     "side": "sell",
+     "symbol": "STX",
+     "shares": 6.069094,
+     "quote_at_plan": 654.755,
+     "reason": "STOP",
+     "entry": 734.4299
+    },
+    {
+     "side": "sell",
+     "symbol": "SNDK",
+     "shares": 3.080675,
+     "quote_at_plan": 1329.34,
+     "reason": "STOP",
+     "entry": 1446.5972
+    },
+    {
+     "side": "sell",
+     "symbol": "INTC",
+     "shares": 41.594041,
+     "quote_at_plan": 91.06,
+     "reason": "STOP",
+     "entry": 102.0287
+    },
+    {
+     "side": "sell",
+     "symbol": "LRCX",
+     "shares": 0.717105,
+     "quote_at_plan": 268.375,
+     "reason": "STOP",
+     "entry": 295.7963
+    }
+   ],
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "freshness": "PASS",
+    "pre_commit": "not run (no orders)"
+   },
+   "risk_state": {
+    "equity_peak": 18035.23,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false,
+    "total_equity": 16062.22,
+    "drawdown_from_peak": -0.1094
+   },
+   "notes": "Plan: 5 STOP sells (est. proceeds $16,061, realized ~-$1,756 vs 10-13 entries), no buys (circuit breaker, $0.78 cash). Shown to user before any order; USER CHOSE TO HOLD all 5 (explicit override of the STOP rule). No orders reviewed or placed; state unchanged."
   }
  ]
 }
