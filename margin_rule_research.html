@@ -550,7 +550,7 @@
       </p>
     </div>
     <div class="card" style="margin-top:14px">
-      <h3>Can the setup keep its gains? Five rules built for it</h3>
+      <h3>Can the setup keep its gains? Round 1: five rules built for it</h3>
       <p class="note">
         Asked 16 Oct: the live rules were up 22% at the end of September and gave nearly all of it back in two October weeks.
         These rules target the give-back directly instead of the timing of buys. Settings and pass criteria fixed before
@@ -589,6 +589,32 @@
         cost of 14 points of return. <strong>The honest reading:</strong> a long-only dip-buyer in a basket that falls hard
         cannot keep all its gains; these rules trade return for a smaller give-back. Which trade-off is acceptable is a
         choice, not something the replay can decide. Nothing in production has changed.
+      </p>
+      <h3 style="margin-top:22px">Round 2: break the buy-stop-rebuy cycle</h3>
+      <p class="note">
+        October was lost the same way four times: the same stocks bought on a dip, stopped out the next day, bought again.
+        These rules target that cycle instead of shrinking the whole account. Same windows, costs and pass criteria;
+        settings fixed before running.
+      </p>
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Rule</th><th>6 months</th><th>Worst drop</th><th>Sharpe</th><th>Thirds, %</th><th>3 months, $15k</th><th>Worst drop</th><th>Gain kept</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td style="text-align:left;min-width:240px">S2&nbsp; Stop cool-off: no re-buy of a stopped stock for 2 days</td><td class="num neg">+66.8%</td><td class="num pos">&minus;15.7%</td><td class="num">2.30</td><td class="num">+28.6 / +42.9 / +3.2</td><td class="num pos">$18,624</td><td class="num pos">&minus;11.9%</td><td class="num pos">59%</td><td class="num"><span class="neg">fail</span></td></tr>
+            <tr><td style="text-align:left;min-width:240px">S5&nbsp; Same, 5 days</td><td class="num neg">+23.8%</td><td class="num pos">&minus;15.6%</td><td class="num">1.23</td><td class="num">+23.6 / +15.1 / &minus;14.8</td><td class="num neg">$14,200</td><td class="num pos">&minus;16.6%</td><td class="num neg">-40%</td><td class="num"><span class="neg">fail</span></td></tr>
+            <tr><td style="text-align:left;min-width:240px">EQ10&nbsp; No new buys while equity is below its 10-day average</td><td class="num neg">+31.1%</td><td class="num pos">&minus;6.5%</td><td class="num">2.56</td><td class="num">+31.0 / +16.2 / &minus;5.7</td><td class="num neg">$14,984</td><td class="num pos">&minus;10.9%</td><td class="num neg">-1%</td><td class="num"><span class="neg">fail</span></td></tr>
+            <tr><td style="text-align:left;min-width:240px">S2 + volatility sizing</td><td class="num neg">+51.7%</td><td class="num pos">&minus;13.3%</td><td class="num">2.42</td><td class="num">+21.1 / +25.8 / +0.0</td><td class="num pos">$16,367</td><td class="num pos">&minus;13.3%</td><td class="num pos">35%</td><td class="num"><span class="neg">fail</span></td></tr>
+            <tr><td style="text-align:left;min-width:240px">EQ10 + volatility sizing</td><td class="num neg">+23.2%</td><td class="num pos">&minus;7.2%</td><td class="num">1.78</td><td class="num">+27.2 / &minus;2.6 / +0.3</td><td class="num neg">$14,393</td><td class="num pos">&minus;7.3%</td><td class="num neg">-115%</td><td class="num"><span class="neg">fail</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin:16px 0 0">
+        <strong>S2 is the trap to avoid.</strong> On the 3-month table it would look like the answer: $18,624 at the end,
+        +24%, keeping 51% of its gain. Over 6 months it returns +67% against +118% and loses the first two thirds badly.
+        Waiting 5 days instead of 2 (S5) turns the same 3 months into a loss ($14,200). A rule whose result flips with a
+        3-day change in one setting, and that only wins in the window it is being judged on, is fitting October, not
+        learning anything. The equity-curve filter has the smallest drop of anything tested (&minus;6.5%) but keeps only
+        +31% of a +118% strategy. <strong>Ten rules across two rounds, none passes.</strong>
       </p>
     </div>
   </section>
@@ -1254,6 +1280,7 @@ P(variant better than baseline)                   <b>0.247</b></div>
 <b>python3 scripts/margin_style_sizing_rules.py</b>           <span style="color:var(--ink-3)"># volatility sizing, exposure cap, 2 buys</span>
 <b>python3 scripts/margin_style_vol_sizing_sensitivity.py</b> <span style="color:var(--ink-3)"># volatility target 2%-5%</span>
 <b>python3 scripts/margin_style_protect_rules.py</b> <span style="color:var(--ink-3)"># rules to keep gains (K1, K2, L1, C1)</span>
+<b>python3 scripts/margin_style_protect_rules2.py</b> <span style="color:var(--ink-3)"># stop cool-off, equity-curve filter</span>
 <b>python3 scripts/margin_style_weekly_pnl.py --capital 15000 --start 2026-07-13 [--vol-target 0.03]</b> <span style="color:var(--ink-3)"># weekly P&amp;L, 3 months</span></div>
   </section>
 
