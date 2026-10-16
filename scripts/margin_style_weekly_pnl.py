@@ -74,6 +74,24 @@ def main():
         w['end_equity'] = v; w['last_day'] = d; w['days'] += 1
         w['realized'] += r['day_pnl'].get(d, 0.0)
         prev = v
+    # Buy & hold reference ("no setup"): CAP split equally across the 8 symbols at the
+    # first replay day's check price (same hourly 17:00 close the engine uses), one
+    # entry cost at COST bps, then held and marked at each day's check price.
+    hd = json.load(open(HOURLY)); dd = json.load(open(DAILY))
+    chk = {r['symbol']: {b['begins_at'][:10]: float(b['close_price']) for b in r['bars']
+                         if b['begins_at'][11:16] == '17:00'} for r in hd['data']['results']}
+    dcl = {r['symbol']: {b['begins_at'][:10]: float(b['close_price']) for b in r['bars']}
+           for r in dd['data']['results']}
+    px = lambda s, d: chk[s].get(d, dcl[s].get(d))
+    d0 = eq[0][0]
+    sh = {s: CAP / len(chk) * (1 - COST / 1e4) / px(s, d0) for s in chk}
+    bh = {d: sum(sh[s] * px(s, d) for s in chk) for d, _ in eq}
+    bprev, bpeak = CAP, CAP
+    for w in weeks:
+        v = bh[w['last_day']]
+        w['bh_pnl'] = round(v - bprev, 2); w['bh_pct'] = round((v / bprev - 1) * 100, 2)
+        bpeak = max(bpeak, v); w['bh_below_peak_pct'] = round((v / bpeak - 1) * 100, 2)
+        w['bh_equity'] = round(v, 2); bprev = v
     peak = CAP
     for w in weeks:
         w['pnl'] = round(w['end_equity'] - w['start_equity'], 2)
@@ -82,13 +100,15 @@ def main():
         peak = max(peak, w['end_equity'])
         w['below_peak_pct'] = round((w['end_equity'] / peak - 1) * 100, 2)
         w['start_equity'] = round(w['start_equity'], 2); w['end_equity'] = round(w['end_equity'], 2)
-    print(f"{'week of':11}{'days':>5}{'P&L':>12}{'%':>8}{'realized':>12}{'equity':>13}{'vs peak':>9}")
+    print(f"{'week of':11}{'days':>5}{'P&L':>12}{'%':>8}{'realized':>12}{'equity':>13}{'vs peak':>9}{'B&H P&L':>11}{'B&H eq':>10}")
     for w in weeks:
         print(f"{w['week_of']:11}{w['days']:>5}{w['pnl']:>+12,.0f}{w['pct']:>+8.2f}{w['realized']:>+12,.0f}"
-              f"{w['end_equity']:>13,.0f}{w['below_peak_pct']:>+9.2f}")
+              f"{w['end_equity']:>13,.0f}{w['below_peak_pct']:>+9.2f}{w['bh_pnl']:>+11,.0f}{w['bh_equity']:>10,.0f}")
     tot = weeks[-1]['end_equity'] - CAP
     print(f"\ntotal {tot:+,.0f} ({tot/CAP*100:+.1f}%), {len(weeks)} weeks, "
           f"{sum(1 for w in weeks if w['pnl'] > 0)} up / {sum(1 for w in weeks if w['pnl'] <= 0)} down")
+    bt = weeks[-1]['bh_equity'] - CAP
+    print(f"buy & hold {bt:+,.0f} ({bt/CAP*100:+.1f}%), worst below peak {min(w['bh_below_peak_pct'] for w in weeks):+.1f}%")
     json.dump({'engine': R.ENGINE, 'cost_bps': COST, 'capital': CAP, 'through': END, 'start': a.start,
                'basis': 'hourly 17:00 bar close (~1 PM CDT)', 'weeks': weeks}, open(OUT, 'w'), indent=1)
 
