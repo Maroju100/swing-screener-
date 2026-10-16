@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Weekly P&L of the production rules, 6-month replay extended to 2026-10-14.
+"""Weekly P&L of the production rules, 6-month replay extended to 2026-10-16.
 
 Production engine (origin/main, unpatched), $80k from 2026-03-13, 5 bps per side,
 committed hourly basis (the ~17:00 UTC bar's close, i.e. ~1 PM CDT pricing).
@@ -15,7 +15,10 @@ A BACKTEST, not the real account: it compounds from $80k and does not include th
 live account's missed runs, deposits or fills.
 
 Reproduce:
-    python3 scripts/margin_style_weekly_pnl.py [--capital 15000] [--vol-target 0.03]
+    python3 scripts/margin_style_weekly_pnl.py [--capital 15000] [--vol-target 0.03] [--start 2026-07-13]
+
+Data now runs to 2026-10-16 (the 10-16 daily bar is a provisional placeholder used only
+to make 10-16 a replay day; its check price is the real 17:00 hourly bar).
 
 --vol-target applies rule D (volatility sizing) from margin_style_sizing_rules.py:
 each buy x min(1, target / the stock's 20-day daily volatility). The patch is the
@@ -31,8 +34,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import margin_style_research as R
 
 DATA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
-DAILY = os.path.join(DATA, 'margin_live_daily_ext_2025-11-03_2026-10-14.json')
-HOURLY = os.path.join(DATA, 'margin_live_hourly_ext_2026-03-06_2026-10-14.json')
+DAILY = os.path.join(DATA, 'margin_live_daily_ext_2025-11-03_2026-10-16.json')
+HOURLY = os.path.join(DATA, 'margin_live_hourly_ext_2026-03-06_2026-10-16.json')
+END = '2026-10-16'
 OUT = os.path.join(DATA, 'research', 'weekly_pnl.json')
 CAP, COST = 80000.0, 5.0
 
@@ -41,12 +45,15 @@ def main():
     import argparse
     ap = argparse.ArgumentParser(); ap.add_argument('--capital', type=float, default=80000.0)
     ap.add_argument('--vol-target', type=float, default=None)
+    ap.add_argument('--start', default='2026-03-13', help='flat start with --capital on this day')
     a = ap.parse_args()
     global CAP, OUT
     CAP = a.capital
     if CAP != 80000.0:
         OUT = OUT.replace('weekly_pnl.json', f'weekly_pnl_{int(CAP)}.json')
     kw = {}
+    if a.start != '2026-03-13':
+        OUT = OUT.replace('.json', f'_from{a.start}.json')
     if a.vol_target:
         import margin_style_sizing_rules as SZ
         kw = {'src_patches': [SZ.patch_size], 'params': {'VOL_SIZE': True, 'VOL_TARGET': a.vol_target}}
@@ -55,7 +62,7 @@ def main():
     if abs(g['realized'] - 124289.71) > 0.005 or g['trade_count'] != 771:
         raise SystemExit(f"GATE FAILED: {g['realized']} / {g['trade_count']}")
     print('gate PASS: extended data reproduces the baseline to 09-21 ($124,289.71, 771 trades)\n')
-    r = R.replay(start='2026-03-13', end='2026-10-14', tag=f'wk_full{int(CAP)}{"v" if kw else ""}', cost_bps=COST, daily=DAILY,
+    r = R.replay(start=a.start, end=END, tag=f'wk_full{int(CAP)}{"v" if kw else ""}{a.start}', cost_bps=COST, daily=DAILY,
                  hourly=HOURLY, capital=CAP, **kw)
     eq = sorted(r['day_equity'].items())
     weeks, prev = [], CAP
@@ -82,7 +89,7 @@ def main():
     tot = weeks[-1]['end_equity'] - CAP
     print(f"\ntotal {tot:+,.0f} ({tot/CAP*100:+.1f}%), {len(weeks)} weeks, "
           f"{sum(1 for w in weeks if w['pnl'] > 0)} up / {sum(1 for w in weeks if w['pnl'] <= 0)} down")
-    json.dump({'engine': R.ENGINE, 'cost_bps': COST, 'capital': CAP, 'through': '2026-10-14',
+    json.dump({'engine': R.ENGINE, 'cost_bps': COST, 'capital': CAP, 'through': END, 'start': a.start,
                'basis': 'hourly 17:00 bar close (~1 PM CDT)', 'weeks': weeks}, open(OUT, 'w'), indent=1)
 
 
