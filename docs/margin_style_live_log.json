@@ -3832,6 +3832,54 @@
     "drawdown_from_peak": -0.1094
    },
    "notes": "Plan: 5 STOP sells (est. proceeds $16,061, realized ~-$1,756 vs 10-13 entries), no buys (circuit breaker, $0.78 cash). Shown to user before any order; USER CHOSE TO HOLD all 5 (explicit override of the STOP rule). No orders reviewed or placed; state unchanged."
+  },
+  {
+   "timestamp": "2026-10-19T17:34:30Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "sizing_input": {
+    "buying_power_used": 0.78,
+    "cash": 0.78
+   },
+   "broker_total_value": 16393.73,
+   "orders_placed": [],
+   "executed": true,
+   "total_bought": 0.0,
+   "total_proceeds": 0.0,
+   "skipped_orders": [],
+   "netted_trades": [],
+   "circuit_breaker": {
+    "triggered": false,
+    "stop_count": 0
+   },
+   "reconciliation": "none needed - verify PASS, reconcile PASS",
+   "unowned_excess": {},
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "freshness": "PASS",
+    "pre_commit": "PASS (no orders)"
+   },
+   "risk_state": {
+    "equity_peak": 18035.23,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false,
+    "total_equity": 16393.58,
+    "drawdown_from_peak": -0.091
+   },
+   "quotes_at_plan": {
+    "AMD": 541.13,
+    "MU": 904.6013,
+    "WDC": 347.76,
+    "SNDK": 1376.822,
+    "TSM": 421.48,
+    "INTC": 92.66,
+    "LRCX": 275.1,
+    "STX": 658.6302
+   },
+   "notes": "No-trade run: all 5 positions (opened 10-13) up 2.5-6.0% vs Friday's close, so no STOP; no new high since entry, no gain tier, MAX_HOLD not yet reached (4th trading day). No buys: $0.78 buying power. Plan-first rule: no orders, so nothing to approve."
   }
  ]
 }
