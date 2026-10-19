@@ -551,6 +551,29 @@
    "shadow_equity": 17386.24,
    "live_broker_total_value_pre_run": 17818.01,
    "live_run_found": true
+  },
+  {
+   "date": "2026-10-19",
+   "timestamp": "2026-10-19T18:14:03+00:00",
+   "engine": "origin/main + patch_instant",
+   "cost_bps_estimated": 5.0,
+   "cash_before": 2.18,
+   "same_run_proceeds_credited": 0,
+   "sells": [],
+   "buys": [],
+   "realized_estimated": 0.0,
+   "cash_after": 2.18,
+   "positions": {
+    "WDC": 11.517075,
+    "STX": 5.924986,
+    "SNDK": 3.007526,
+    "INTC": 40.606413,
+    "LRCX": 0.700077
+   },
+   "shadow_equity_pre_run": 16005.74,
+   "shadow_equity": 16005.74,
+   "live_broker_total_value_pre_run": 16393.73,
+   "live_run_found": true
   }
  ]
 }
