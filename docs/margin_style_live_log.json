@@ -3880,6 +3880,120 @@
     "STX": 658.6302
    },
    "notes": "No-trade run: all 5 positions (opened 10-13) up 2.5-6.0% vs Friday's close, so no STOP; no new high since entry, no gain tier, MAX_HOLD not yet reached (4th trading day). No buys: $0.78 buying power. Plan-first rule: no orders, so nothing to approve."
+  },
+  {
+   "timestamp": "2026-10-20T17:44:30Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "sizing_input": {
+    "buying_power_used": 500.71,
+    "cash": 500.71
+   },
+   "broker_total_value": 16685.51,
+   "orders_placed": [],
+   "executed": false,
+   "planned_not_executed": [
+    {
+     "side": "sell",
+     "symbol": "LRCX",
+     "shares": 0.717105,
+     "quote_at_plan": 264.48,
+     "reason": "STOP"
+    },
+    {
+     "side": "buy",
+     "symbol": "WDC",
+     "shares": 0.551139,
+     "quote_at_plan": 363.4,
+     "reason": "HUGE_DIP"
+    }
+   ],
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "freshness": "PASS",
+    "pre_commit": "not run (no orders)"
+   },
+   "risk_state": {
+    "equity_peak": 18035.23,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false,
+    "total_equity": 16684.45
+   },
+   "notes": "Reconcile first failed (WDC broker 10.377794 < state 11.797194: owner's own $500 sale 10-19, order 6ad67676, placed_agent=user); state corrected down in 198dec1, checks re-run PASS. Plan shown to user: LRCX STOP + WDC HUGE_DIP $200. No answer from the user before the close, so nothing was placed (plan-first rule: silence is not approval)."
+  },
+  {
+   "timestamp": "2026-10-21T17:44:30Z",
+   "account": "912291820",
+   "account_type": "cash",
+   "unsettled_funds": 0.0,
+   "sizing_input": {
+    "buying_power_used": 500.71,
+    "cash": 500.71
+   },
+   "broker_total_value": 17023.6,
+   "orders_placed": [],
+   "executed": false,
+   "planned_not_executed": [
+    {
+     "side": "sell",
+     "symbol": "WDC",
+     "shares": 10.377794,
+     "quote_at_plan": 380.07,
+     "reason": "MAX_HOLD"
+    },
+    {
+     "side": "sell",
+     "symbol": "STX",
+     "shares": 6.069094,
+     "quote_at_plan": 701.34,
+     "reason": "MAX_HOLD"
+    },
+    {
+     "side": "sell",
+     "symbol": "SNDK",
+     "shares": 3.080675,
+     "quote_at_plan": 1389.21,
+     "reason": "MAX_HOLD"
+    },
+    {
+     "side": "sell",
+     "symbol": "INTC",
+     "shares": 41.594041,
+     "quote_at_plan": 92.644,
+     "reason": "MAX_HOLD"
+    },
+    {
+     "side": "sell",
+     "symbol": "LRCX",
+     "shares": 0.717105,
+     "quote_at_plan": 263.65,
+     "reason": "MAX_HOLD"
+    },
+    {
+     "side": "buy",
+     "symbol": "SNDK",
+     "shares": 0.342406,
+     "quote_at_plan": 1389.21,
+     "reason": "NORMAL_DIP"
+    }
+   ],
+   "guardrails": {
+    "verify": "PASS",
+    "reconcile": "PASS",
+    "freshness": "PASS",
+    "pre_commit": "not run (no orders)"
+   },
+   "risk_state": {
+    "equity_peak": 18035.23,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false,
+    "total_equity": 17023.7
+   },
+   "notes": "Plan shown to user: all 5 positions MAX_HOLD (opened 10-13, 6th trading day) + SNDK NORMAL_DIP $476. No answer before the close; nothing placed. MAX_HOLD will plan the same exits on the next run."
   }
  ]
 }
