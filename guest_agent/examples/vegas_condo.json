@@ -1,0 +1,17 @@
+{
+ "id": "lv-strip-condo-12",
+ "name": "Strip View Condo",
+ "host_name": "Suman",
+ "utc_offset_hours": -7,
+ "address_area": "Paradise, NV, 10 minutes' walk from the south Strip (full address sent with the access details)",
+ "checkin": {"time": "4:00 PM", "how": "Self check-in with a keypad on the unit door. Take elevator B to floor 12."},
+ "checkout": {"time": "11:00 AM", "how": "Start the dishwasher, put used towels in the bathtub, close the door; it locks itself."},
+ "wifi": {"network": "StripView12", "password_placeholder": "{{wifi_password}}"},
+ "parking": "One free self-parking spot in garage level P2, any unmarked space. Valet at the resort costs extra.",
+ "amenities": ["King bed + sofa bed", "Full kitchen", "Washer/dryer in unit", "Resort pool 9 AM-8 PM, wristband at front desk", "Gym on floor 3"],
+ "house_rules": ["Max 4 guests", "No parties or events", "No pets", "No smoking, including balcony", "Quiet hours 10 PM-8 AM"],
+ "local_tips": ["Coffee: the cafe in the lobby opens 6 AM", "Groceries: Smith's on Tropicana, 5 minutes by car", "Strip shows: the concierge desk can book same-day tickets"],
+ "on_call": {"name": "Suman (host)"},
+ "rules": {"send_codes_hours_before_checkin": 24, "auto_send": false},
+ "secrets": {"door_code": "4821#", "wifi_password": "Neon-Desert-77"}
+}
