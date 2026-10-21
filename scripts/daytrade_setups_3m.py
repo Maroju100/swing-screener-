@@ -36,7 +36,9 @@ Ideas explored earlier, on the same window and $15k (engine replays, hourly 17:0
 Margin-Style Live (production), volatility sizing 3% (D), C1, buy & hold; v3 baseline /
 tightened come from data/research/v3_weekly_pnl_15000*.json (Aug 10 -> Oct 16 only).
 
-Reproduce:  python3 scripts/daytrade_setups_3m.py
+Reproduce:  python3 scripts/daytrade_setups_3m.py            # 3 months, Jul 13 -> Oct 21
+            python3 scripts/daytrade_setups_3m.py --6m       # 6 months, Apr 21 -> Oct 21
+                (data/semis_5min_2026-04-17_2026-10-21.json; same rules, nothing re-tuned)
 """
 import json
 import math
@@ -47,6 +49,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, 'scripts'))
 DATA = os.path.join(ROOT, 'data', 'semis_5min_2026-07-10_2026-10-21.json')
 CAP, COST, START, END = 15000.0, 5e-4, '2026-07-13', '2026-10-21'
+SIX = '--6m' in sys.argv
+if SIX:
+    DATA = os.path.join(ROOT, 'data', 'semis_5min_2026-04-17_2026-10-21.json')
+    START = '2026-04-21'
 
 
 def ema(xs, n):
@@ -217,7 +223,7 @@ def engine_rows(days):
     for name, key in [('Margin-Style Live (production)', 'PRODUCTION'),
                       ('Margin-Style + volatility sizing 3%', 'D volatility sizing 3%'),
                       ('C1: fast kill-switch + vol sizing', 'C1 fast switch + vol sizing (round 1)')]:
-        r = P2.run(START, END, P2.VARIANTS[key], CAP, f'dt3m_{key.split()[0]}')
+        r = P2.run(START, END, P2.VARIANTS[key], CAP, f"dt{'6' if SIX else '3'}m_{key.split()[0]}")
         out[name] = {'curve': r['day_equity'], 'trades': r['trades'], 'win_rate': None}
     hd = json.load(open(P1.HOURLY))
     chk = {x['symbol']: {b['begins_at'][:10]: float(b['close_price']) for b in x['bars'] if b['begins_at'][11:16] == '17:00'}
@@ -261,7 +267,7 @@ def main():
         h1, h2 = half(r['curve'], mid)
         rows.append((ret, name, end, dd, pk, h1, h2, r['trades'], r['win_rate'], r.get('partial')))
     rows.sort(reverse=True)
-    print(f"Jul 13 -> Oct 21 2026, $15,000, 5 bps/side. Halves split after {mid}.\n")
+    print(f"{START} -> {END}, $15,000, 5 bps/side. Halves split after {mid}.\n")
     print(f"{'setup':38}{'ends at':>10}{'return':>9}{'worst dd':>10}{'1st half':>10}{'2nd half':>10}{'trades':>8}{'win%':>7}")
     for ret, name, end, dd, pk, h1, h2, n, wr, part in rows:
         f = lambda x: f"{x:+.1f}%" if x is not None else '-'
@@ -271,7 +277,7 @@ def main():
                                   'first_half_pct': h1, 'second_half_pct': h2, 'trades': n, 'win_rate': wr,
                                   'note': part, 'curve': res[name]['curve']}
                            for ret, name, end, dd, pk, h1, h2, n, wr, part in rows}},
-              open(os.path.join(ROOT, 'data', 'research', 'daytrade_setups_3m.json'), 'w'), indent=1)
+              open(os.path.join(ROOT, 'data', 'research', 'daytrade_setups_6m.json' if SIX else 'daytrade_setups_3m.json'), 'w'), indent=1)
 
 
 if __name__ == '__main__':
