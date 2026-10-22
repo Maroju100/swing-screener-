@@ -1,11 +1,11 @@
-"""Counterfactual: the live account from the 10-02 run to today (10-21) if EVERY daily plan
+"""Counterfactual: the live account from the 10-02 run to 10-22 (extended from 10-21) if EVERY daily plan
 had been executed -- no stalls, no denials, no holds (asked 2026-10-21).
 
 Real engine (origin/main), starting from main's state after the 10-02 run (commit e9ba57b,
 flat, cash $17,371.74). Each day's check price:
   10-05..10-09  open of the 17:34 UTC 1-minute bar (data/research/missed_week_2026-10-05_prices.json)
   10-12..10-15  open of the 17:34 UTC 1-minute bar (fetched 2026-10-21, inline below)
-  10-16..10-21  the quotes the live runs themselves used
+  10-16..10-22  the quotes the live runs themselves used (10-22: 18:14 UTC plan quotes)
 Fills ASSUMED at the check price, no slippage or fees. Sale proceeds usable the next
 trading day (T+1, cash account). The owner's own $500 WDC sale on 10-19 is left out.
 Reproduce: python3 scripts/margin_style_no_skips_since_1002.py [--from-0922]
@@ -44,7 +44,7 @@ exec(compile(src, 'engine', 'exec'), ns)
 ns['datetime'] = FD
 ns['STATE_PATH'] = SC + '/state.json'
 json.dump(state0, open(SC + '/state.json', 'w'))
-hist = json.load(open(os.path.join(D, 'missed_runs_2026-10-14', 'daily_hist_to_2026-10-20.json')))
+hist = json.load(open(os.path.join(D, 'missed_runs_2026-10-14', 'daily_hist_to_2026-10-21.json')))
 mw = json.load(open(os.path.join(D, 'missed_week_2026-10-05_prices.json')))['check_prices_1734utc']
 S = ['AMD', 'MU', 'WDC', 'SNDK', 'TSM', 'INTC', 'LRCX', 'STX']
 row = lambda *v: dict(zip(S, v))
@@ -67,6 +67,8 @@ quotes['2026-10-16'] = row(536.0, 894.725, 340.115, 1329.34, 413.5, 91.06, 268.3
 quotes['2026-10-19'] = row(541.13, 904.6013, 347.76, 1376.822, 421.48, 92.66, 275.10, 658.6302)
 quotes['2026-10-20'] = row(540.465, 909.99, 363.40, 1383.46, 426.7599, 92.4203, 264.48, 678.30)
 quotes['2026-10-21'] = row(553.795, 917.985, 380.07, 1389.21, 429.955, 92.644, 263.65, 701.34)
+quotes['2026-10-22'] = row(510.0601, 861.22, 351.0656, 1250.3766, 411.50, 86.0801, 231.55, 636.41)  # live plan quotes, 18:14 UTC
+CLOSE_1022 = row(507.77, 857.01, 354.22, 1261.72, 412.375, 85.4958, 230.16, 642.03)          # 10-22 4 PM close
 
 settled, pending, realized = START_CASH, 0.0, 0.0
 for day in sorted(quotes):
@@ -96,5 +98,7 @@ for day in sorted(quotes):
     fmt = lambda xs: ' '.join(f"{x['symbol']}:{x['reason']}" for x in xs) or '-'
     print(f"{day}  equity ${eq:>10,.2f}  sells [{fmt(acts['sells'])}]  buys [{fmt(acts['buys'])}]"
           f"  ks={plan['risk_state']['kill_switch_active']}")
+st = json.load(open(SC + '/state.json'))
+print(f"10-22 at 4 PM close: ${settled + pending + sum(p['shares'] * CLOSE_1022[s] for s, p in st['open_positions'].items()):,.2f}  open: {sorted(st['open_positions'])}")
 print(f"\nrealized: ${realized:+,.2f}   ending equity ${eq:,.2f} vs start ${START_CASH:,.2f} "
       f"({eq - START_CASH:+,.2f})")
