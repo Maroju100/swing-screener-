@@ -4058,6 +4058,91 @@
         "total_equity": 15604.9
       },
       "notes": "Run interrupted at 17:44, re-planned on 18:14 UTC quotes. Plan shown to user: all 5 positions STOP (also past MAX_HOLD), circuit breaker on, no buys; est. realized -$2,178. No answer before the close; nothing placed. Positions valued $15,681.39 incl. cash at the 4 PM close."
+    },
+    {
+      "timestamp": "2026-10-23T17:44:00Z",
+      "account": "912291820",
+      "account_type": "cash",
+      "unsettled_funds": 0.0,
+      "sizing_input": {
+        "buying_power_used": 500.71,
+        "cash": 500.71
+      },
+      "broker_total_value": 15665.95,
+      "orders_placed": [],
+      "executed": false,
+      "planned_not_executed": [
+        {
+          "side": "sell",
+          "symbol": "WDC",
+          "shares": 10.377794,
+          "quote_at_plan": 345.39,
+          "reason": "STOP"
+        },
+        {
+          "side": "sell",
+          "symbol": "STX",
+          "shares": 6.069094,
+          "quote_at_plan": 643.64,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "sell",
+          "symbol": "SNDK",
+          "shares": 3.080675,
+          "quote_at_plan": 1267.01,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "sell",
+          "symbol": "INTC",
+          "shares": 41.594041,
+          "quote_at_plan": 86.63,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "sell",
+          "symbol": "LRCX",
+          "shares": 0.717105,
+          "quote_at_plan": 230.9,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "buy",
+          "symbol": "STX",
+          "shares": 0.311174,
+          "quote_at_plan": 643.64,
+          "reason": "HUGE_DIP"
+        },
+        {
+          "side": "buy",
+          "symbol": "WDC",
+          "shares": 0.347927,
+          "quote_at_plan": 345.39,
+          "reason": "HUGE_DIP"
+        },
+        {
+          "side": "buy",
+          "symbol": "LRCX",
+          "shares": 0.741631,
+          "quote_at_plan": 230.9,
+          "reason": "NORMAL_DIP"
+        }
+      ],
+      "guardrails": {
+        "verify": "PASS",
+        "reconcile": "PASS",
+        "freshness": "PASS",
+        "pre_commit": "not run (no orders)"
+      },
+      "risk_state": {
+        "equity_peak": 18035.23,
+        "kill_switch_active": false,
+        "kill_switch_triggered_date": null,
+        "trend_gate_active": false,
+        "total_equity": 15663.53
+      },
+      "notes": "Plan shown to user: WDC STOP + 4 MAX_HOLD exits (est. realized -$2,119), buys STX/WDC HUGE_DIP + LRCX NORMAL_DIP ($492 of settled cash). No answer before the close; nothing placed. Paper shadow skipped (live not executed)."
     }
   ]
 }
