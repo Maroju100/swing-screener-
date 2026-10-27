@@ -4227,7 +4227,7 @@
         "trend_gate_active": false,
         "total_equity": 16103.72
       },
-      "notes": "Run interrupted: get_equity_positions sat on a pending tool approval and the plan was never shown to the user. Plan reconstructed afterwards from the run's own 17:44 UTC quotes for the record: 5 MAX_HOLD exits (est. realized about -,830) + WDC/STX HUGE_DIP and SNDK NORMAL_DIP buys (92). Nothing placed. Paper shadow skipped."
+      "notes": "Run interrupted: get_equity_positions sat on a pending tool approval and the plan was never shown to the user. Plan reconstructed afterwards from the run's own 17:44 UTC quotes for the record: 5 MAX_HOLD exits (est. realized about -$1,679) + WDC/STX HUGE_DIP and SNDK NORMAL_DIP buys (92). Nothing placed. Paper shadow skipped."
     }
   ]
 }
