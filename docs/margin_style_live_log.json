@@ -4143,6 +4143,91 @@
         "total_equity": 15663.53
       },
       "notes": "Plan shown to user: WDC STOP + 4 MAX_HOLD exits (est. realized -$2,119), buys STX/WDC HUGE_DIP + LRCX NORMAL_DIP ($492 of settled cash). No answer before the close; nothing placed. Paper shadow skipped (live not executed)."
+    },
+    {
+      "timestamp": "2026-10-26T17:44:30Z",
+      "account": "912291820",
+      "account_type": "cash",
+      "unsettled_funds": 0.0,
+      "sizing_input": {
+        "buying_power_used": 500.71,
+        "cash": 500.71
+      },
+      "broker_total_value": 16104.55,
+      "orders_placed": [],
+      "executed": false,
+      "planned_not_executed": [
+        {
+          "side": "sell",
+          "symbol": "WDC",
+          "shares": 10.377794,
+          "quote_at_plan": 359.585,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "sell",
+          "symbol": "STX",
+          "shares": 6.069094,
+          "quote_at_plan": 659.7,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "sell",
+          "symbol": "SNDK",
+          "shares": 3.080675,
+          "quote_at_plan": 1264.88,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "sell",
+          "symbol": "INTC",
+          "shares": 41.594041,
+          "quote_at_plan": 91.34,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "sell",
+          "symbol": "LRCX",
+          "shares": 0.717105,
+          "quote_at_plan": 239.3634,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "buy",
+          "symbol": "WDC",
+          "shares": 0.556987,
+          "quote_at_plan": 359.585,
+          "reason": "HUGE_DIP"
+        },
+        {
+          "side": "buy",
+          "symbol": "STX",
+          "shares": 0.182159,
+          "quote_at_plan": 659.7,
+          "reason": "HUGE_DIP"
+        },
+        {
+          "side": "buy",
+          "symbol": "SNDK",
+          "shares": 0.135383,
+          "quote_at_plan": 1264.88,
+          "reason": "NORMAL_DIP"
+        }
+      ],
+      "guardrails": {
+        "verify": "PASS",
+        "reconcile": "not run (positions read waited on approval until 18:14 UTC; broker positions then matched state exactly)",
+        "freshness": "bars through 10-23, quotes 17:44 UTC",
+        "pre_commit": "not run (no orders)"
+      },
+      "risk_state": {
+        "equity_peak": 18035.23,
+        "kill_switch_active": false,
+        "kill_switch_triggered_date": null,
+        "trend_gate_active": false,
+        "total_equity": 16103.72
+      },
+      "notes": "Run interrupted: get_equity_positions sat on a pending tool approval and the plan was never shown to the user. Plan reconstructed afterwards from the run's own 17:44 UTC quotes for the record: 5 MAX_HOLD exits (est. realized about -,830) + WDC/STX HUGE_DIP and SNDK NORMAL_DIP buys (92). Nothing placed. Paper shadow skipped."
     }
   ]
 }
