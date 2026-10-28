@@ -2,28 +2,28 @@
   "pending_settlement": [],
   "open_positions": {
     "WDC": {
-      "shares": 10.377794,
+      "shares": 9.076224,
       "entry": 376.9977,
       "peak": 376.9977,
       "tranches": 1,
       "opened": "2026-10-13"
     },
     "STX": {
-      "shares": 6.069094,
+      "shares": 5.331744,
       "entry": 734.4299,
       "peak": 734.4299,
       "tranches": 1,
       "opened": "2026-10-13"
     },
     "SNDK": {
-      "shares": 3.080675,
+      "shares": 2.698983,
       "entry": 1446.5972,
       "peak": 1446.5972,
       "tranches": 1,
       "opened": "2026-10-13"
     },
     "INTC": {
-      "shares": 41.594041,
+      "shares": 36.258441,
       "entry": 102.0287,
       "peak": 102.0287,
       "tranches": 1,

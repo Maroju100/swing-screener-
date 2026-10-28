@@ -4228,6 +4228,63 @@
         "total_equity": 16103.72
       },
       "notes": "Run interrupted: get_equity_positions sat on a pending tool approval and the plan was never shown to the user. Plan reconstructed afterwards from the run's own 17:44 UTC quotes for the record: 5 MAX_HOLD exits (est. realized about -$1,679) + WDC/STX HUGE_DIP and SNDK NORMAL_DIP buys (92). Nothing placed. Paper shadow skipped."
+    },
+    {
+      "timestamp": "2026-10-27T17:44:20Z",
+      "account": "912291820",
+      "account_type": "cash",
+      "unsettled_funds": 1999.57,
+      "sizing_input": {
+        "buying_power_used": 500.71,
+        "cash": 2500.28
+      },
+      "broker_total_value": 16650.12,
+      "orders_placed": [],
+      "executed": false,
+      "planned_not_executed": [],
+      "guardrails": {
+        "verify": "PASS",
+        "reconcile": "not run (get_equity_positions waited on a tool approval; run never reached plan)",
+        "freshness": "n/a",
+        "pre_commit": "not run (no orders)"
+      },
+      "risk_state": {
+        "equity_peak": 18035.23,
+        "kill_switch_active": false,
+        "kill_switch_triggered_date": null,
+        "trend_gate_active": false
+      },
+      "owner_trades": [
+        {
+          "symbol": "SNDK",
+          "side": "sell",
+          "shares": 0.381692,
+          "price": 1309.955,
+          "order": "6ae0d44a"
+        },
+        {
+          "symbol": "INTC",
+          "side": "sell",
+          "shares": 5.3356,
+          "price": 93.7,
+          "order": "6ae0d459"
+        },
+        {
+          "symbol": "WDC",
+          "side": "sell",
+          "shares": 1.30157,
+          "price": 384.0201,
+          "order": "6ae0d465"
+        },
+        {
+          "symbol": "STX",
+          "side": "sell",
+          "shares": 0.73735,
+          "price": 677.825,
+          "order": "6ae0d470"
+        }
+      ],
+      "notes": "Run interrupted before the plan was shown; nothing placed by the system. The owner manually sold $500 each of SNDK/INTC/WDC/STX at 16:41-16:42 UTC (placed_agent=user, $1,999.57 total, settles 10-28). State corrected DOWN to the broker on 2026-10-28 (positions read matched state minus those sells exactly)."
     }
   ]
 }
