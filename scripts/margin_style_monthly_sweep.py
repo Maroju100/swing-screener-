@@ -6,7 +6,7 @@ nothing is withdrawn and nothing is topped up. Each month is replayed from flat 
 month's starting capital (a sweep is assumed to happen with the account in cash, and the
 kill-switch high-water mark is reset to the new balance, as it must be after a withdrawal).
 NO SWEEP: one continuous replay. Compared for production and C1.
-Reproduce: python3 scripts/margin_style_monthly_sweep.py
+Reproduce: python3 scripts/margin_style_monthly_sweep.py [--base 28700] [--prod-only]
 """
 import calendar, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -16,11 +16,13 @@ import margin_style_protect_rules2 as P2
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 P1.DAILY = os.path.join(ROOT, 'data', 'margin_live_daily_ext_2025-11-03_2026-10-21.json')
 P1.HOURLY = os.path.join(ROOT, 'data', 'margin_live_hourly_ext_2026-03-06_2026-10-21.json')
-BASE, START, END = 15000.0, '2026-04-21', '2026-10-21'
+BASE = float(sys.argv[sys.argv.index('--base') + 1]) if '--base' in sys.argv else 15000.0
+START, END = '2026-04-21', '2026-10-21'
 MONTHS = [('2026-04-21', '2026-04-30')] + [(f'2026-{m:02d}-01', f'2026-{m:02d}-{calendar.monthrange(2026, m)[1]:02d}')
                                            for m in range(5, 10)] + [('2026-10-01', END)]
 
-for name, key in [('Current setup', 'PRODUCTION'), ('C1', 'C1 fast switch + vol sizing (round 1)')]:
+SETUPS = [('Current setup', 'PRODUCTION'), ('C1', 'C1 fast switch + vol sizing (round 1)')]
+for name, key in (SETUPS[:1] if '--prod-only' in sys.argv else SETUPS):
     params = P2.VARIANTS[key]
     cont = P2.run(START, END, params, BASE, f'sw_c_{key.split()[0]}')
     cap, banked, rows, worst = BASE, 0.0, [], 0.0
