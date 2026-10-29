@@ -1,0 +1,132 @@
+{
+ "PRODUCTION": {
+  "full (Mar 13-Oct 21)": {
+   "ret": 108.58941171347922,
+   "dd": -17.134815066694642,
+   "trades": 796
+  },
+  "rising (Mar 13-Jun 19)": {
+   "ret": 67.60328770689235,
+   "dd": -7.786312456948663,
+   "trades": 357
+  },
+  "falling (Jun 22-Sep 21)": {
+   "ret": 35.31773041164568,
+   "dd": -11.05304398179986,
+   "trades": 333
+  },
+  "October (Sep 22-Oct 21)": {
+   "ret": -15.383463977707567,
+   "dd": -17.134814859426285,
+   "trades": 89
+  }
+ },
+ "A  dip must be 10%+ below 20-day high": {
+  "full (Mar 13-Oct 21)": {
+   "ret": 38.25744207299637,
+   "dd": -15.195771699264904,
+   "trades": 493
+  },
+  "rising (Mar 13-Jun 19)": {
+   "ret": 16.748303246423912,
+   "dd": -8.155781477919122,
+   "trades": 155
+  },
+  "falling (Jun 22-Sep 21)": {
+   "ret": 39.30735972425203,
+   "dd": -11.053044054374173,
+   "trades": 300
+  },
+  "October (Sep 22-Oct 21)": {
+   "ret": -15.195771890151654,
+   "dd": -15.195771890151654,
+   "trades": 30
+  },
+  "checks": {
+   "full (Mar 13-Oct 21)": false,
+   "rising (Mar 13-Jun 19)": false,
+   "falling (Jun 22-Sep 21)": true,
+   "October (Sep 22-Oct 21)": true,
+   "bootstrap CI > 0": false
+  },
+  "bootstrap": {
+   "ci": [
+    -0.005227387482778554,
+    -0.0006335112655789403
+   ],
+   "p_better": 0.0052
+  }
+ },
+ "B  no profit-taking before day 3": {
+  "full (Mar 13-Oct 21)": {
+   "ret": 74.1375219989242,
+   "dd": -20.07937542727567,
+   "trades": 301
+  },
+  "rising (Mar 13-Jun 19)": {
+   "ret": 82.3928103455442,
+   "dd": -10.275635034126418,
+   "trades": 225
+  },
+  "falling (Jun 22-Sep 21)": {
+   "ret": -7.173863263400094,
+   "dd": -16.77575286318951,
+   "trades": 60
+  },
+  "October (Sep 22-Oct 21)": {
+   "ret": -17.036164112384878,
+   "dd": -18.845514852426028,
+   "trades": 59
+  },
+  "checks": {
+   "full (Mar 13-Oct 21)": false,
+   "rising (Mar 13-Jun 19)": true,
+   "falling (Jun 22-Sep 21)": false,
+   "October (Sep 22-Oct 21)": false,
+   "bootstrap CI > 0": false
+  },
+  "bootstrap": {
+   "ci": [
+    -0.005215797231696318,
+    0.0026014486495665964
+   ],
+   "p_better": 0.2608
+  }
+ },
+ "A+B": {
+  "full (Mar 13-Oct 21)": {
+   "ret": 25.3229168498208,
+   "dd": -21.14696543084217,
+   "trades": 163
+  },
+  "rising (Mar 13-Jun 19)": {
+   "ret": 39.911686944109626,
+   "dd": -9.191362464416198,
+   "trades": 107
+  },
+  "falling (Jun 22-Sep 21)": {
+   "ret": -7.6949384164554875,
+   "dd": -18.741756947311927,
+   "trades": 52
+  },
+  "October (Sep 22-Oct 21)": {
+   "ret": -15.195771890151654,
+   "dd": -15.195771890151654,
+   "trades": 30
+  },
+  "checks": {
+   "full (Mar 13-Oct 21)": false,
+   "rising (Mar 13-Jun 19)": false,
+   "falling (Jun 22-Sep 21)": false,
+   "October (Sep 22-Oct 21)": true,
+   "bootstrap CI > 0": false
+  },
+  "bootstrap": {
+   "ci": [
+    -0.007981843022748725,
+    0.0005136879860997623
+   ],
+   "p_better": 0.0392
+  }
+ }
+}
