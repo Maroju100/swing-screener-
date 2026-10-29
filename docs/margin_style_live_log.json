@@ -4285,6 +4285,70 @@
         }
       ],
       "notes": "Run interrupted before the plan was shown; nothing placed by the system. The owner manually sold $500 each of SNDK/INTC/WDC/STX at 16:41-16:42 UTC (placed_agent=user, $1,999.57 total, settles 10-28). State corrected DOWN to the broker on 2026-10-28 (positions read matched state minus those sells exactly)."
+    },
+    {
+      "timestamp": "2026-10-28T17:44:14Z",
+      "account": "912291820",
+      "account_type": "cash",
+      "unsettled_funds": 0.0,
+      "sizing_input": {
+        "buying_power_used": 2500.28,
+        "cash": 2500.28
+      },
+      "broker_total_value": 17028.44,
+      "orders_placed": [],
+      "executed": false,
+      "planned_not_executed": [
+        {
+          "side": "sell",
+          "symbol": "WDC",
+          "shares": 9.076224,
+          "quote_at_plan": 392.275,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "sell",
+          "symbol": "STX",
+          "shares": 5.331744,
+          "quote_at_plan": 683.82,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "sell",
+          "symbol": "SNDK",
+          "shares": 2.698983,
+          "quote_at_plan": 1380.245,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "sell",
+          "symbol": "INTC",
+          "shares": 36.258441,
+          "quote_at_plan": 94.2,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "sell",
+          "symbol": "LRCX",
+          "shares": 0.717105,
+          "quote_at_plan": 253.08,
+          "reason": "MAX_HOLD"
+        }
+      ],
+      "guardrails": {
+        "verify": "PASS",
+        "reconcile": "PASS",
+        "freshness": "PASS",
+        "pre_commit": "not run (no orders)"
+      },
+      "risk_state": {
+        "equity_peak": 18035.23,
+        "kill_switch_active": false,
+        "kill_switch_triggered_date": null,
+        "trend_gate_active": false,
+        "total_equity": 17028.9
+      },
+      "notes": "Plan shown to user: 5 MAX_HOLD exits (est. realized about -$625), no buys. No answer before the close; nothing placed. Owner's $2,000 (10-27 manual sells) still unassigned: user not yet asked whether it is theirs or the system's. Paper shadow skipped."
     }
   ]
 }
