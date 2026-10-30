@@ -21,7 +21,7 @@ Weekly equity is taken from a fresh replay truncated at each week's last day. Th
 is causal and flat every night, so a truncated replay is exactly the prefix of the full one.
 
 Reproduce:
-    python3 scripts/v3_weekly_pnl.py [--capital 15000] [--params tightened]
+    python3 scripts/v3_weekly_pnl.py [--capital 15000] [--params tightened] [--start 2026-09-22]
 
 --params tightened uses v3_replay.PARAMS['tightened'] (the grid-optimized set); its gate is
 the committed data/v3_replay_results_tightened.json ($4,900.96, 635 trades at 5 bps).
@@ -38,7 +38,8 @@ import daytrading_v3_paper_engine as V3
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FILES = [os.path.join(ROOT, 'data', 'semis_1min_2026-08-10_2026-09-21.json'),
-         os.path.join(ROOT, 'data', 'semis_1min_2026-09-22_2026-10-16.json')]
+         os.path.join(ROOT, 'data', 'semis_1min_2026-09-22_2026-10-16.json'),
+         os.path.join(ROOT, 'data', 'semis_1min_2026-10-19_2026-10-29.json')]
 COST = 5.0
 
 
@@ -67,6 +68,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--capital', type=float, default=15000.0)
     ap.add_argument('--params', choices=sorted(VR.PARAMS), default='baseline')
+    ap.add_argument('--start', default=None)
     a = ap.parse_args()
     bars, days = load()
     params = VR.PARAMS[a.params]
@@ -80,6 +82,8 @@ def main():
     print(f'gate PASS ({a.params}): committed window reproduces ${gate_eq:,.2f} / {gate_n} trades at 5 bps\n')
 
     set_capital(a.capital)
+    if a.start:
+        days = [d for d in days if d >= a.start]
     weeks = {}
     for d in days:
         mon = (dt.date.fromisoformat(d) - dt.timedelta(days=dt.date.fromisoformat(d).weekday())).isoformat()
@@ -100,7 +104,7 @@ def main():
     tot = out[-1]['end_equity'] - a.capital
     print(f"\ntotal {tot:+,.0f} ({tot / a.capital * 100:+.1f}%) from {days[0]} to {days[-1]}, "
           f"{out[-1]['cum_trades']} trades")
-    path = os.path.join(ROOT, 'data', 'research', f'v3_weekly_pnl_{int(a.capital)}' + ('' if a.params == 'baseline' else f'_{a.params}') + '.json')
+    path = os.path.join(ROOT, 'data', 'research', f'v3_weekly_pnl_{int(a.capital)}' + (f'_from{a.start}' if a.start else '') + ('' if a.params == 'baseline' else f'_{a.params}') + '.json')
     json.dump({'engine': 'scripts/daytrading_v3_paper_engine.py', 'params': a.params,
                'symbols': V3.SYMBOLS, 'capital': a.capital, 'cost_bps': COST, 'start': days[0],
                'through': days[-1], 'weeks': out,
