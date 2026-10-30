@@ -1,11 +1,11 @@
-"""Counterfactual: the live account from the 10-02 run to 10-28 (extended 2026-10-29) if EVERY daily plan
+"""Counterfactual: the live account from the 10-02 run to 10-29 (extended 2026-10-30) if EVERY daily plan
 had been executed -- no stalls, no denials, no holds (asked 2026-10-21).
 
 Real engine (origin/main), starting from main's state after the 10-02 run (commit e9ba57b,
 flat, cash $17,371.74). Each day's check price:
   10-05..10-09  open of the 17:34 UTC 1-minute bar (data/research/missed_week_2026-10-05_prices.json)
   10-12..10-15  open of the 17:34 UTC 1-minute bar (fetched 2026-10-21, inline below)
-  10-16..10-28  the quotes the live runs themselves used (10-22: 18:14 UTC plan quotes)
+  10-16..10-29  the quotes the live runs themselves used (10-22: 18:14 UTC plan quotes)
 Fills ASSUMED at the check price, no slippage or fees. Sale proceeds usable the next
 trading day (T+1, cash account). The owner's own $500 WDC sale on 10-19 is left out.
 Reproduce: python3 scripts/margin_style_no_skips_since_1002.py [--from-0922]
@@ -44,7 +44,7 @@ exec(compile(src, 'engine', 'exec'), ns)
 ns['datetime'] = FD
 ns['STATE_PATH'] = SC + '/state.json'
 json.dump(state0, open(SC + '/state.json', 'w'))
-hist = json.load(open(os.path.join(D, 'missed_runs_2026-10-14', 'daily_hist_to_2026-10-27.json')))
+hist = json.load(open(os.path.join(D, 'missed_runs_2026-10-14', 'daily_hist_to_2026-10-28.json')))
 mw = json.load(open(os.path.join(D, 'missed_week_2026-10-05_prices.json')))['check_prices_1734utc']
 S = ['AMD', 'MU', 'WDC', 'SNDK', 'TSM', 'INTC', 'LRCX', 'STX']
 row = lambda *v: dict(zip(S, v))
@@ -72,6 +72,7 @@ quotes['2026-10-23'] = row(516.005, 883.705, 345.39, 1267.01, 416.30, 86.63, 230
 quotes['2026-10-26'] = row(530.1885, 909.39, 359.585, 1264.88, 426.6144, 91.34, 239.3634, 659.70)
 quotes['2026-10-27'] = row(559.845, 933.1063, 382.225, 1301.46, 437.42, 93.695, 240.545, 674.8889)
 quotes['2026-10-28'] = row(568.37, 968.8199, 392.275, 1380.245, 438.23, 94.20, 253.08, 683.82)
+quotes['2026-10-29'] = row(567.53, 938.365, 395.57, 1343.79, 431.81, 91.80, 255.395, 700.0695)
 CLOSE_1022 = row(507.77, 857.01, 354.22, 1261.72, 412.375, 85.4958, 230.16, 642.03)          # 10-22 4 PM close
 
 settled, pending, realized = START_CASH, 0.0, 0.0
