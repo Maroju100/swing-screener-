@@ -544,7 +544,11 @@ below are what makes a claim checkable.
 - **Universe**: exactly `AMD, MU, WDC, SNDK, TSM, INTC, LRCX, STX` — do not
   add or remove symbols without being asked.
 - **Schedule**: runs once daily via trigger `trig_01VfH6Nhfbk7YLaTkzHWLG7E`,
-  cron **`30 17 * * 1-5`** (fires ~17:34–17:44 UTC = ~12:34–12:44 PM CDT).
+  cron **`30 18 * * 1-5`** since 2026-10-30 (winter/CST: fires ~18:34–18:44 UTC =
+  ~12:34–12:44 PM CST); it was `30 17 * * 1-5` during CDT (fires ~17:34–17:44 UTC =
+  ~12:34–12:44 PM CDT). ✅ **DST switch DONE 2026-10-30 19:15 UTC** (next fire
+  2026-11-02T18:34Z verified). Reverse reminder `trig_0171jtXaRWdn3SomE3TXBYi6`
+  fires 2027-03-12 19:00 UTC to move it back to `30 17`.
   **Moved from `0 17` on 2026-09-24 at the user's explicit choice (option B)**
   — see "CHECK TIME" under the price-basis section. The move is SUGGESTIVE,
   NOT VALIDATED (2 of 4 checks). The trigger's own prompt text still says
