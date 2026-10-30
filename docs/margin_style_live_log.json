@@ -4349,6 +4349,70 @@
         "total_equity": 17028.9
       },
       "notes": "Plan shown to user: 5 MAX_HOLD exits (est. realized about -$625), no buys. No answer before the close; nothing placed. Owner's $2,000 (10-27 manual sells) still unassigned: user not yet asked whether it is theirs or the system's. Paper shadow skipped."
+    },
+    {
+      "timestamp": "2026-10-29T17:45:17Z",
+      "account": "912291820",
+      "account_type": "cash",
+      "unsettled_funds": 0.0,
+      "sizing_input": {
+        "buying_power_used": 10499.45,
+        "cash": 10499.45
+      },
+      "broker_total_value": 17056.55,
+      "orders_placed": [],
+      "executed": false,
+      "planned_not_executed": [
+        {
+          "side": "sell",
+          "symbol": "WDC",
+          "shares": 3.982649,
+          "quote_at_plan": 395.57,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "sell",
+          "symbol": "STX",
+          "shares": 2.452369,
+          "quote_at_plan": 700.0695,
+          "reason": "MAX_HOLD"
+        },
+        {
+          "side": "sell",
+          "symbol": "SNDK",
+          "shares": 1.259083,
+          "quote_at_plan": 1343.79,
+          "reason": "STOP"
+        },
+        {
+          "side": "sell",
+          "symbol": "INTC",
+          "shares": 15.127961,
+          "quote_at_plan": 91.8,
+          "reason": "STOP"
+        },
+        {
+          "side": "sell",
+          "symbol": "LRCX",
+          "shares": 0.717105,
+          "quote_at_plan": 255.395,
+          "reason": "MAX_HOLD"
+        }
+      ],
+      "guardrails": {
+        "verify": "PASS",
+        "reconcile": "PASS",
+        "freshness": "PASS",
+        "pre_commit": "not run (no orders)"
+      },
+      "risk_state": {
+        "equity_peak": 18035.23,
+        "kill_switch_active": false,
+        "kill_switch_triggered_date": null,
+        "trend_gate_active": false,
+        "total_equity": 17055.53
+      },
+      "notes": "Plan shown to user: SNDK/INTC STOP + WDC/STX/LRCX MAX_HOLD (est. realized about -$323); circuit breaker on, no buys. No answer before the close; nothing placed. State had been reconciled after the owner's 10-28 manual sells; owner confirmed 2026-10-29 that the ~$10k cash from those sells belongs to the system. Paper shadow skipped."
     }
   ]
 }
