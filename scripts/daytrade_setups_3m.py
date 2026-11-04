@@ -38,6 +38,7 @@ tightened come from data/research/v3_weekly_pnl_15000*.json (Aug 10 -> Oct 16 on
 
 Reproduce:  python3 scripts/daytrade_setups_3m.py            # 3 months, Jul 13 -> Oct 21
             python3 scripts/daytrade_setups_3m.py --6m       # 6 months, Apr 21 -> Oct 21
+            python3 scripts/daytrade_setups_3m.py --2m       # 2 months, Aug 21 -> Oct 21 (v3 to Oct 16)
                 (data/semis_5min_2026-04-17_2026-10-21.json; same rules, nothing re-tuned)
 """
 import json
@@ -53,6 +54,9 @@ SIX = '--6m' in sys.argv
 if SIX:
     DATA = os.path.join(ROOT, 'data', 'semis_5min_2026-04-17_2026-10-21.json')
     START = '2026-04-21'
+TWO = '--2m' in sys.argv
+if TWO:
+    START = '2026-08-21'
 
 
 def ema(xs, n):
@@ -223,7 +227,7 @@ def engine_rows(days):
     for name, key in [('Margin-Style Live (production)', 'PRODUCTION'),
                       ('Margin-Style + volatility sizing 3%', 'D volatility sizing 3%'),
                       ('C1: fast kill-switch + vol sizing', 'C1 fast switch + vol sizing (round 1)')]:
-        r = P2.run(START, END, P2.VARIANTS[key], CAP, f"dt{'6' if SIX else '3'}m_{key.split()[0]}")
+        r = P2.run(START, END, P2.VARIANTS[key], CAP, f"dt{'6' if SIX else ('2' if TWO else '3')}m_{key.split()[0]}")
         out[name] = {'curve': r['day_equity'], 'trades': r['trades'], 'win_rate': None}
     hd = json.load(open(P1.HOURLY))
     chk = {x['symbol']: {b['begins_at'][:10]: float(b['close_price']) for b in x['bars'] if b['begins_at'][11:16] == '17:00'}
@@ -233,9 +237,10 @@ def engine_rows(days):
     out['Buy & hold the 8 stocks'] = {'curve': {d: round(sum(sh[s] * chk[s][d] for s in chk), 2)
                                                 for d in sorted(chk['AMD']) if START <= d <= END},
                                       'trades': 8, 'win_rate': None}
-    for name, f in [('v3 day-trading, baseline*', 'v3_weekly_pnl_15000.json'),
-                    ('v3 day-trading, tightened*', 'v3_weekly_pnl_15000_tightened.json')]:
-        w = json.load(open(os.path.join(ROOT, 'data', 'research', f)))['weeks']
+    sfx = '_from2026-08-21' if TWO else ''
+    for name, f in [('v3 day-trading, baseline*', f'v3_weekly_pnl_15000{sfx}.json'),
+                    ('v3 day-trading, tightened*', f'v3_weekly_pnl_15000{sfx}_tightened.json')]:
+        w = [x for x in json.load(open(os.path.join(ROOT, 'data', 'research', f)))['weeks'] if x['last_day'] <= END]
         out[name] = {'curve': {x['last_day']: x['end_equity'] for x in w}, 'trades': w[-1]['cum_trades'],
                      'win_rate': None, 'partial': 'Aug 10 -> Oct 16 only (1-minute data limit)'}
     return out
@@ -277,7 +282,7 @@ def main():
                                   'first_half_pct': h1, 'second_half_pct': h2, 'trades': n, 'win_rate': wr,
                                   'note': part, 'curve': res[name]['curve']}
                            for ret, name, end, dd, pk, h1, h2, n, wr, part in rows}},
-              open(os.path.join(ROOT, 'data', 'research', 'daytrade_setups_6m.json' if SIX else 'daytrade_setups_3m.json'), 'w'), indent=1)
+              open(os.path.join(ROOT, 'data', 'research', 'daytrade_setups_6m.json' if SIX else ('daytrade_setups_2m.json' if TWO else 'daytrade_setups_3m.json')), 'w'), indent=1)
 
 
 if __name__ == '__main__':
