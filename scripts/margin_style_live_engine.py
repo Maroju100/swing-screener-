@@ -204,7 +204,7 @@ HUGE_DIP_PCT = 0.40
 INTRADAY_STOP = -0.0151
 PEAK_SELL_PCT = 0.743
 GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]
-MIN_NOTIONAL = 25.0
+MIN_NOTIONAL = 500.0  # v2 '1+3' (2026-11-05, user request): was 25.0 - skip buys under $500
 
 # NORMAL_DIP single-day-decline threshold, deployed 2026-08-18 (was 0.0, i.e. "any
 # down day, any size"). An elaborate grid search (coarse 0%-15%, then a fine sweep
@@ -324,7 +324,7 @@ CIRCUIT_BREAKER_STOP_COUNT = 2    # if this many STOP exits fire in the same run
 # test -25% provided ZERO protection because the crash resolved before cumulative
 # drawdown ever crossed that high a bar) while buying no additional real-world
 # safety margin, since -15% already never false-triggered on any real data tested.
-KILL_SWITCH_DD = -0.15
+KILL_SWITCH_DD = -0.08  # v2 '1+3' (2026-11-05, user request): was -0.15
 # KILL_SWITCH_RESUME_DAYS: once triggered, stay fully in cash for this many
 # trading days before allowing ANY new entries again - deliberately time-based,
 # not equity-recovery-based. (A first version tried "resume once equity recovers
@@ -332,7 +332,7 @@ KILL_SWITCH_DD = -0.15
 # cash there is no position left to ride a price recovery, so equity can never
 # climb back on its own and the system would stay killed forever after any real
 # trigger.)
-KILL_SWITCH_RESUME_DAYS = 20
+KILL_SWITCH_RESUME_DAYS = 10  # v2 '1+3' (2026-11-05, user request): was 20
 # TREND_GATE_SMA_DAYS: once the kill-switch has EVER fired for this system, every
 # future NORMAL_DIP/HUGE_DIP candidate must also have its own price above its
 # trailing SMA(TREND_GATE_SMA_DAYS) to be eligible - i.e. only re-enter names
@@ -346,6 +346,11 @@ KILL_SWITCH_RESUME_DAYS = 20
 # window (0 kill events across 6.5 months, so the gate never even activates
 # there).
 TREND_GATE_SMA_DAYS = 50
+# v2 '1+3' (2026-11-05, user request): a kill-switch fire NO LONGER arms the
+# permanent SMA-50 trend gate. Set True to restore v1 behaviour. Replay of v2:
+# scripts/margin_style_v2_verify.py on the development branch. IN-SAMPLE, NOT
+# walk-forward validated - see CLAUDE.md 'Margin-Style Live v2'.
+KILL_SWITCH_TREND_LOCK = False
 
 # Added 2026-07-27 per explicit user request after a single-day run put ~90% of the
 # $5,000 allocation into 2 trades (44.6%/74.3%-of-cash sizing has no per-trade ceiling
@@ -769,7 +774,7 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols, actual_holding
 
     if not kill_switch_active and dd_now <= KILL_SWITCH_DD:
         kill_switch_active = True
-        trend_gate_active = True
+        trend_gate_active = trend_gate_active or KILL_SWITCH_TREND_LOCK
         kill_switch_triggered_date = today
     elif kill_switch_active and kill_switch_triggered_date:
         d = datetime.strptime(kill_switch_triggered_date, '%Y-%m-%d')
