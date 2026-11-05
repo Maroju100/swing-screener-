@@ -8,6 +8,7 @@ running:
   ALL-5 (3)   1 + 2 + 3 + 5
   ALL-5 (4)   1 + 2 + 4 + 5
   NO-MARGIN   1 + 3 + 5   (what a cash account can actually run -- 2 needs limited margin)
+  added after the first run (labelled as such): #1 alone, #3 alone, PAIR 1+3
 Real engine (origin/main), $15,000, 5 bps/side, data to 2026-11-04 (Nov 2-4 priced 11:00 CST).
 Windows as consolidated_windows.py; FULL is one continuous run. Kill-switch trigger and release
 dates are written by an extra log-only patch (switched off it reproduces production exactly).
@@ -44,7 +45,8 @@ S3 = {'KILL_SWITCH_DD': -0.08, 'KILL_SWITCH_RESUME_DAYS': 10, 'NO_TREND_GATE': T
 S4 = {'KILL_SWITCH_DD': -0.10, 'KILL_SWITCH_RESUME_DAYS': 5, 'NO_TREND_GATE': True, 'CIRCUIT_BREAKER_STOP_COUNT': 1}
 S5 = {'TRANCHE_SCHEDULE': HALF, 'PEAK_SELL_PCT': 1.0}
 CONFIGS = {'CURRENT RULES': {}, 'ALL-5 with kill #3 (1+2+3+5)': {**S1, **S2, **S3, **S5},
-           'ALL-5 with kill #4 (1+2+4+5)': {**S1, **S2, **S4, **S5}, 'NO-MARGIN combo (1+3+5)': {**S1, **S3, **S5}}
+           'ALL-5 with kill #4 (1+2+4+5)': {**S1, **S2, **S4, **S5}, 'NO-MARGIN combo (1+3+5)': {**S1, **S3, **S5},
+           '#1 alone (skip < $500)': dict(S1), '#3 alone (kill -8%/10d)': dict(S3), 'PAIR 1+3': {**S1, **S3}}
 
 
 def run(p, a, b, tag):
