@@ -574,6 +574,59 @@
    "shadow_equity": 16005.74,
    "live_broker_total_value_pre_run": 16393.73,
    "live_run_found": true
+  },
+  {
+   "date": "2026-11-05",
+   "timestamp": "2026-11-05T19:13:55+00:00",
+   "engine": "origin/main + patch_instant",
+   "cost_bps_estimated": 5.0,
+   "cash_before": 2.18,
+   "same_run_proceeds_credited": 10786.7,
+   "sells": [
+    {
+     "symbol": "WDC",
+     "shares": 11.517075,
+     "price": 273.5,
+     "reason": "STOP",
+     "entry": 377.59
+    },
+    {
+     "symbol": "STX",
+     "shares": 5.924986,
+     "price": 472.8,
+     "reason": "STOP",
+     "entry": 733.965
+    },
+    {
+     "symbol": "SNDK",
+     "shares": 3.007526,
+     "price": 834.85,
+     "reason": "STOP",
+     "entry": 1445.95
+    },
+    {
+     "symbol": "INTC",
+     "shares": 40.606413,
+     "price": 53.96,
+     "reason": "STOP",
+     "entry": 101.74
+    },
+    {
+     "symbol": "LRCX",
+     "shares": 0.700077,
+     "price": 190.685,
+     "reason": "STOP",
+     "entry": 295.06
+    }
+   ],
+   "buys": [],
+   "realized_estimated": -6611.44,
+   "cash_after": 10783.49,
+   "positions": {},
+   "shadow_equity_pre_run": 10788.88,
+   "shadow_equity": 10783.49,
+   "live_broker_total_value_pre_run": null,
+   "live_run_found": true
   }
  ]
 }

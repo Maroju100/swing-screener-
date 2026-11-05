@@ -1,45 +1,35 @@
 {
- "pending_settlement": [],
- "open_positions": {
-  "WDC": {
-   "shares": 11.517075,
-   "entry": 377.59,
-   "peak": 377.59,
-   "tranches": 1,
-   "opened": "2026-10-13"
+ "pending_settlement": [
+  {
+   "amount": 3149.92,
+   "settle_date": "2026-11-06",
+   "symbol": "WDC"
   },
-  "STX": {
-   "shares": 5.924986,
-   "entry": 733.965,
-   "peak": 733.965,
-   "tranches": 1,
-   "opened": "2026-10-13"
+  {
+   "amount": 2801.33,
+   "settle_date": "2026-11-06",
+   "symbol": "STX"
   },
-  "SNDK": {
-   "shares": 3.007526,
-   "entry": 1445.95,
-   "peak": 1445.95,
-   "tranches": 1,
-   "opened": "2026-10-13"
+  {
+   "amount": 2510.83,
+   "settle_date": "2026-11-06",
+   "symbol": "SNDK"
   },
-  "INTC": {
-   "shares": 40.606413,
-   "entry": 101.74,
-   "peak": 101.74,
-   "tranches": 1,
-   "opened": "2026-10-13"
+  {
+   "amount": 2191.12,
+   "settle_date": "2026-11-06",
+   "symbol": "INTC"
   },
-  "LRCX": {
-   "shares": 0.700077,
-   "entry": 295.06,
-   "peak": 295.06,
-   "tranches": 1,
-   "opened": "2026-10-13"
+  {
+   "amount": 133.49,
+   "settle_date": "2026-11-06",
+   "symbol": "LRCX"
   }
- },
+ ],
+ "open_positions": {},
  "equity_peak": 17789.83,
- "kill_switch_active": false,
- "kill_switch_triggered_date": null,
+ "kill_switch_active": true,
+ "kill_switch_triggered_date": "2026-11-05",
  "trend_gate_active": false,
  "_last_commit": {
   "timestamp": "2026-09-21T17:06:48.586045+00:00",
@@ -47,7 +37,7 @@
   "buys_count": 0,
   "ported_from": "ca55e21 (development branch) on 2026-09-22"
  },
- "shadow_cash": 2.18,
+ "shadow_cash": 10783.49,
  "shadow_started_from": {
   "rev": "c3a77e4~1",
   "cash": 85.15,
