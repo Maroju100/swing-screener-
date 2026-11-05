@@ -92,9 +92,9 @@ def one(i):
 def lev(L):
     import margin_style_leverage as M
     M.DAILY, M.HOURLY = DAILY, HOURLY
-    M.MONTH_ENDS = ['2026-06-19', '2026-09-30', '2026-11-04']
     out = {}
     for w, (a, b) in W.items():
+        M.MONTH_ENDS = [b]
         s = M.run(L, start=a, end=b, cap=CAP, tag=f'cwl{L}_{w}')
         out[w] = {'ret': (s['end'] / CAP - 1) * 100, 'dd': s['dd'], 'trades': s['trades']}
     return out
