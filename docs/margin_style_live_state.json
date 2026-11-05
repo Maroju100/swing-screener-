@@ -16,10 +16,10 @@
       "opened": "2026-10-13"
     },
     "SNDK": {
-      "shares": 1.259083,
-      "entry": 1446.5972,
+      "shares": 10.314058,
+      "entry": 1155.79,
       "peak": 1446.5972,
-      "tranches": 1,
+      "tranches": 2,
       "opened": "2026-10-13"
     },
     "INTC": {
@@ -37,7 +37,7 @@
       "opened": "2026-10-13"
     }
   },
-  "equity_peak": 18035.23,
+  "equity_peak": 11396.53,
   "kill_switch_active": false,
   "kill_switch_triggered_date": null,
   "trend_gate_active": false,
@@ -46,5 +46,35 @@
     "sells_count": 4,
     "buys_count": 0,
     "ported_from": "ca55e21 (development branch) on 2026-09-22"
-  }
+  },
+  "_manual_adjustments": [
+    {
+      "date": "2026-11-05",
+      "by": "user decision in session",
+      "sndk_adopted": {
+        "shares_added": 9.054975,
+        "implied_buy_price": 1115.3536,
+        "before": {
+          "shares": 1.259083,
+          "entry": 1446.5972,
+          "peak": 1446.5972,
+          "tranches": 1,
+          "opened": "2026-10-13"
+        },
+        "after": {
+          "shares": 10.314058,
+          "entry": 1155.79,
+          "peak": 1446.5972,
+          "tranches": 2,
+          "opened": "2026-10-13"
+        },
+        "why": "owner bought 9.054975 SNDK on 2026-10-30 with the system cash and confirmed they belong to the system; applied as a tranche buy (opened date unchanged, as cmd_commit does)"
+      },
+      "equity_peak": {
+        "from": 18035.23,
+        "to": 11396.53,
+        "why": "peak 18,035.23 unreachable: owner withdrew/spent system cash; reset to system real equity at 2026-11-05 ~18:57 UTC quotes (same class as the a6e8ac4 deposit adjustment)"
+      }
+    }
+  ]
 }
