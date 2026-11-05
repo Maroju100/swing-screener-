@@ -10,8 +10,8 @@ import margin_style_research as R
 import margin_style_protect_rules2 as P2
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DAILY = os.path.join(ROOT, 'data', 'margin_live_daily_ext_2025-11-03_2026-11-03.json')
-HOURLY = os.path.join(ROOT, 'data', 'margin_live_hourly_ext_2026-03-06_2026-11-03.json')
+DAILY = os.path.join(ROOT, 'data', 'margin_live_daily_ext_2025-11-03_2026-11-04.json')
+HOURLY = os.path.join(ROOT, 'data', 'margin_live_hourly_ext_2026-03-06_2026-11-04.json')
 A, B = sys.argv[1], sys.argv[2]
 CAP = 15000.0
 
