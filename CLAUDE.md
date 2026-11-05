@@ -111,6 +111,45 @@ below are what makes a claim checkable.
 
 ## Strategy 1: Margin-Style Live (real money, daily) ✅
 
+### 🆕 PRODUCTION IS NOW "Margin-Style Live v2 — '1+3'" (deployed to `main` 2026-11-05, user's explicit request)
+
+v2 = the v1 rules below, unchanged, **plus** two of the "top 5" candidates:
+- **#1 Skip small buys** — `MIN_NOTIONAL = 500.0` (was 25.0): no buy order under $500.
+- **#3 Faster kill-switch** — `KILL_SWITCH_DD = -0.08` (was −0.15),
+  `KILL_SWITCH_RESUME_DAYS = 10` (was 20), and a fire **no longer arms the
+  permanent SMA-50 trend gate** (`KILL_SWITCH_TREND_LOCK = False`; set True to
+  restore v1). Everything else — −1.51% stop, tranches, PEAK 74.3%, gain tiers,
+  6-day hold, caps, check time — is untouched.
+- **Deployment verified by replay (MEASURED):** `python3 scripts/margin_style_v2_verify.py`
+  (development branch) replays the deployed engine *with no rule params* and
+  matches the research "PAIR 1+3" row to the cent in every window → 
+  `data/research/v2_verify.json`. $15k, 5 bps/side, Mar 13 → Nov 4:
+  full **+156.4%** ($38,465, 612 trades, worst drop −10.9%) vs v1 +108.6%
+  (−17.1%); rising +69.0%, falling +48.5%, crash −10.3%. Kill-switch fired
+  07-15, 10-08, 10-23.
+- ⚠️ **NOT VALIDATED — in-sample.** The pair was chosen after seeing this data;
+  no walk-forward or bootstrap check was run, and the data holds only two
+  sell-offs. Both halves have known costs: #1 cost 11 points at $80k (it is
+  capital-dependent — at larger size it blocks more), and #3 alone lost
+  Jul 22–Aug 21 (−6.8% vs +0.1%). Deployed because the user chose to, not
+  because it passed this file's standard. Describe it that way.
+- ⚠️ **Known flaw kept from v1:** `equity_peak` is not reset when the cool-off
+  ends, so if equity is still ≥8% below peak on release day the switch re-fires
+  at once (the 10-22 release → 10-23 re-fire above). A −8% threshold makes this
+  more likely than −15% did.
+- 🚨 **State on deploy day:** the engine's own equity (state positions + cash)
+  was ~**$4.55k** against `equity_peak` **18,035.23** (−75%), because the
+  owner's manual sells/withdrawals took the system's cash out. That fires the
+  kill-switch under **v1 and v2 alike**, and with no peak reset it would
+  re-fire after every cool-off. This is a withdrawal, not a trading loss — the
+  same class as the $5,000 deposit adjustment in `a6e8ac4` — but adjusting the
+  peak is the **user's** decision; do not lower it unilaterally.
+- **The trigger prompt's KILL-SWITCH paragraph still says −15% / 20 days /
+  permanent SMA-50 gate.** It was deliberately not re-sent (same reasoning as
+  the cron-time note below). **This file and the engine are authoritative**;
+  when presenting a plan, describe the v2 numbers.
+
+
 **Current Production Version** — baseline, no daily stop.
 
 - 🚨 **THE DAILY STOP WAS NEVER IN PRODUCTION (established 2026-09-21).** The
@@ -647,8 +686,9 @@ below are what makes a claim checkable.
   - `PEAK_SELL_PCT = 0.743`
   - `GAIN_TIERS = [(0.20, 0.90), (0.10, 0.50), (0.05, 0.20)]`
   - `MAX_HOLD_DAYS = 6`
-  - `KILL_SWITCH_DD = -0.15`, `KILL_SWITCH_RESUME_DAYS = 20`,
-    `TREND_GATE_SMA_DAYS = 50`
+  - `KILL_SWITCH_DD = -0.08`, `KILL_SWITCH_RESUME_DAYS = 10` (v2, 2026-11-05; v1 was −0.15 / 20),
+    `TREND_GATE_SMA_DAYS = 50`, `KILL_SWITCH_TREND_LOCK = False` (v2: no permanent lock-out)
+  - `MIN_NOTIONAL = 500.0` (v2, 2026-11-05; v1 was 25.0)
   - `CIRCUIT_BREAKER_STOP_COUNT = 2`
   - `MAX_SYMBOL_ALLOCATION_PCT = 0.50`, `MAX_TRADE_NOTIONAL_PCT = 0.25`
   - Same-day same-symbol orders net against each other.
