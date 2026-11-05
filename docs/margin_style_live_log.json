@@ -4413,6 +4413,70 @@
         "total_equity": 17055.53
       },
       "notes": "Plan shown to user: SNDK/INTC STOP + WDC/STX/LRCX MAX_HOLD (est. realized about -$323); circuit breaker on, no buys. No answer before the close; nothing placed. State had been reconciled after the owner's 10-28 manual sells; owner confirmed 2026-10-29 that the ~$10k cash from those sells belongs to the system. Paper shadow skipped."
+    },
+    {
+      "timestamp": "2026-11-05T18:57:00Z",
+      "date": "2026-11-05",
+      "engine": "v2 1+3 (979412d)",
+      "executed": false,
+      "orders_placed": [],
+      "planned_not_executed": [
+        {
+          "symbol": "WDC",
+          "shares": 3.982649,
+          "price": 273.5,
+          "reason": "STOP",
+          "entry": 376.9977
+        },
+        {
+          "symbol": "STX",
+          "shares": 2.452369,
+          "price": 472.8,
+          "reason": "STOP",
+          "entry": 734.4299
+        },
+        {
+          "symbol": "SNDK",
+          "shares": 10.314058,
+          "price": 834.85,
+          "reason": "STOP",
+          "entry": 1155.79
+        },
+        {
+          "symbol": "INTC",
+          "shares": 7.407151,
+          "price": 53.96,
+          "reason": "STOP",
+          "entry": 102.0287
+        },
+        {
+          "symbol": "LRCX",
+          "shares": 0.717105,
+          "price": 190.685,
+          "reason": "STOP",
+          "entry": 295.7963
+        }
+      ],
+      "note": "User chose HOLD (option 2). Plan: all 5 positions STOP on a broad sell-off (SNDK -19.5%); would have realized -$4,795.43 on $11,395.86 proceeds. Circuit breaker triggered (5 stops), no buys.",
+      "buying_power": 0.67,
+      "cash": 0.67,
+      "account_type": "limited_margin",
+      "unsettled_funds": 0.0,
+      "state_reconciliation": "Before planning (user decision): adopted 9.054975 SNDK as system shares (tranche 2, entry -> 1155.79); equity_peak 18035.23 -> 11396.53. Commit 820fa55.",
+      "unowned_excess": {},
+      "total_equity": 11396.53,
+      "risk_state": {
+        "equity_peak": 11396.53,
+        "kill_switch_active": false,
+        "kill_switch_triggered_date": null,
+        "trend_gate_active": false
+      },
+      "guardrails": {
+        "verify": "pass",
+        "reconcile": "fail on SNDK excess at 18:44 UTC; pass after user-approved adoption",
+        "freshness": "pass",
+        "precommit": "pass (no orders)"
+      }
     }
   ]
 }
