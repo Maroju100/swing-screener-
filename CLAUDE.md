@@ -154,6 +154,13 @@ v2 = the v1 rules below, unchanged, **plus** two of the "top 5" candidates:
   re-fire. A small cost in-sample, accepted for the system being able to re-enter at all.
   Note the manual reset on 2026-11-05 (18,035.23 → 11,396.53) was a separate, one-off
   correction for owner withdrawals.
+- 👤 **OWNER HOLDINGS — SNDK is the owner's, not the system's (2026-11-06, option C, `7d097d2`).**
+  `state['owner_holdings']` lists symbols the owner holds in this account as their own
+  investment: `cmd_plan` never buys them and `reconcile` ignores them (as it does CGC).
+  SNDK 10.314058 sh, avg cost $1,155.79, moved there at the owner's request; the system
+  now manages only WDC/STX/INTC/LRCX, and `equity_peak` was re-based 11,396.53 → 2,723.13
+  (SNDK leaving is a withdrawal from the system). Never sell, size or count an
+  owner-held symbol; only the owner moves it back. Replay unchanged (all windows match).
 - **The trigger prompt's KILL-SWITCH paragraph still says −15% / 20 days /
   permanent SMA-50 gate.** It was deliberately not re-sent (same reasoning as
   the cron-time note below). **This file and the engine are authoritative**;
