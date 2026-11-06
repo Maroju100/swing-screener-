@@ -4477,6 +4477,69 @@
         "freshness": "pass",
         "precommit": "pass (no orders)"
       }
+    },
+    {
+      "timestamp": "2026-11-06T18:44:00Z",
+      "date": "2026-11-06",
+      "engine": "v2 + peak reset (c328973)",
+      "executed": false,
+      "orders_placed": [],
+      "planned_not_executed": [
+        {
+          "symbol": "WDC",
+          "shares": 3.982649,
+          "price": 262.525,
+          "reason": "STOP",
+          "entry": 376.9977
+        },
+        {
+          "symbol": "STX",
+          "shares": 2.452369,
+          "price": 455.06,
+          "reason": "STOP",
+          "entry": 734.4299
+        },
+        {
+          "symbol": "SNDK",
+          "shares": 10.314058,
+          "price": 827.32,
+          "reason": "MAX_HOLD",
+          "entry": 1155.79
+        },
+        {
+          "symbol": "INTC",
+          "shares": 7.407151,
+          "price": 56.35,
+          "reason": "MAX_HOLD",
+          "entry": 102.0287
+        },
+        {
+          "symbol": "LRCX",
+          "shares": 0.717105,
+          "price": 200.17,
+          "reason": "MAX_HOLD",
+          "entry": 295.7963
+        }
+      ],
+      "buying_power": 0.67,
+      "cash": 0.67,
+      "account_type": "limited_margin",
+      "unsettled_funds": 0.0,
+      "total_equity_at_plan": 11256.15,
+      "note": "Plan (all 5 sells: WDC/STX STOP, SNDK/INTC/LRCX MAX_HOLD, -$4,935.80) not approved in its window. After the close the owner chose option C: SNDK 10.314058 moved to owner_holdings (own long-term hold); system keeps WDC/STX/INTC/LRCX; equity_peak re-based 11,396.53 -> 2,723.13. Commit 7d097d2. Market closed (21:49 UTC) so nothing could trade; next run Mon 2026-11-09.",
+      "guardrails": {
+        "verify": "pass",
+        "reconcile": "positions read needed in-app approval at 18:44 and did not run; account total matched state to $0.03. Post-change reconcile against 11-05 broker positions: pass",
+        "freshness": "pass",
+        "precommit": "pass (no orders)"
+      },
+      "risk_state": {
+        "equity_peak": 2723.13,
+        "kill_switch_active": false,
+        "kill_switch_triggered_date": null,
+        "trend_gate_active": false
+      },
+      "unowned_excess": {}
     }
   ]
 }
