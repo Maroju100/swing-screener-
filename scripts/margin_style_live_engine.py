@@ -642,6 +642,9 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols, actual_holding
     bars_by_sym, quotes = build(hist_path, quotes_path)
     state = load_state()
     today = datetime.now(timezone.utc).date().isoformat()
+    # Symbols the OWNER holds in this account as their own investment (state['owner_holdings'],
+    # set only at the owner's request). Never bought, sold or counted by this system.
+    owner_set = set(state.get('owner_holdings', {}))
 
     state['pending_settlement'] = [p for p in state['pending_settlement'] if p['settle_date'] > today]
     pending_total = sum(p['amount'] for p in state['pending_settlement'])
@@ -825,7 +828,7 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols, actual_holding
     candidates = []
     if not circuit_breaker_triggered and not kill_switch_active:
         for sym in SYMBOLS:
-            if sym in excluded_symbols or sym not in bars_by_sym or sym not in quotes:
+            if sym in excluded_symbols or sym in owner_set or sym not in bars_by_sym or sym not in quotes:
                 continue
             pos = None if sym in full_exit_symbols else state['open_positions'].get(sym)
             if pos and pos.get('tranches', 0) >= MAX_TRANCHES:
@@ -1180,7 +1183,7 @@ def cmd_reconcile(broker_positions_json_path=None):
         broker_positions[sym] = qty
 
     # Get our symbols (excluding known other-system symbols)
-    excluded = {"CGC"}  # Known other-system positions
+    excluded = {"CGC"} | set(state.get('owner_holdings', {}))  # other-system + owner-held positions
     broker_syms = {s for s in broker_positions.keys() if s not in excluded}
     state_syms = set(state['open_positions'].keys())
 
