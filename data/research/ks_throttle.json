@@ -1,0 +1,257 @@
+{
+ "LIVE (sell all, 10d no buys)": {
+  "rising": {
+   "ret": 68.99698918602337,
+   "dd": -7.746287494840354,
+   "trades": 326,
+   "fires": 0
+  },
+  "falling": {
+   "ret": 48.542974002475425,
+   "dd": -8.71596268436814,
+   "trades": 250,
+   "fires": 1
+  },
+  "crash": {
+   "ret": -10.819198481304293,
+   "dd": -10.819198481304293,
+   "trades": 47,
+   "fires": 1
+  },
+  "full": {
+   "ret": 154.86162596971397,
+   "dd": -11.482215265664175,
+   "trades": 643,
+   "fires": 2
+  },
+  "choppy2": {
+   "ret": 7.324348383455348,
+   "dd": -11.184027258326413,
+   "trades": 55,
+   "fires": 1
+  },
+  "oct1_nov5": {
+   "ret": -10.863548094869557,
+   "dd": -10.863548094869557,
+   "trades": 53,
+   "fires": 1
+  },
+  "boot": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "wins": {
+   "rising": false,
+   "falling": false,
+   "crash": false,
+   "full": false,
+   "choppy2": false
+  },
+  "passed": false
+ },
+ "HOLD-0.5": {
+  "rising": {
+   "ret": 68.99698918602337,
+   "dd": -7.746287494840354,
+   "trades": 326,
+   "fires": 0
+  },
+  "falling": {
+   "ret": 51.75256480837442,
+   "dd": -8.710380181716681,
+   "trades": 317,
+   "fires": 1
+  },
+  "crash": {
+   "ret": -21.9097475713653,
+   "dd": -21.9097475713653,
+   "trades": 124,
+   "fires": 1
+  },
+  "full": {
+   "ret": 127.6991022739041,
+   "dd": -22.519492799261798,
+   "trades": 796,
+   "fires": 2
+  },
+  "choppy2": {
+   "ret": 15.422820779355838,
+   "dd": -11.181521133137128,
+   "trades": 120,
+   "fires": 1
+  },
+  "oct1_nov5": {
+   "ret": -21.948581854491977,
+   "dd": -21.948581854491977,
+   "trades": 130,
+   "fires": 1
+  },
+  "boot": [
+   -0.236,
+   0.1,
+   0.21
+  ],
+  "wins": {
+   "rising": false,
+   "falling": true,
+   "crash": false,
+   "full": false,
+   "choppy2": true
+  },
+  "passed": false
+ },
+ "SELL+REENTER-0.5": {
+  "rising": {
+   "ret": 68.99698918602337,
+   "dd": -7.746287494840354,
+   "trades": 326,
+   "fires": 0
+  },
+  "falling": {
+   "ret": 48.579658747739394,
+   "dd": -8.710380181716681,
+   "trades": 310,
+   "fires": 1
+  },
+  "crash": {
+   "ret": -21.808701376689278,
+   "dd": -21.808701376689278,
+   "trades": 118,
+   "fires": 1
+  },
+  "full": {
+   "ret": 123.29394827400594,
+   "dd": -22.390015781912098,
+   "trades": 778,
+   "fires": 2
+  },
+  "choppy2": {
+   "ret": 20.90811620346873,
+   "dd": -11.181521133137128,
+   "trades": 116,
+   "fires": 1
+  },
+  "oct1_nov5": {
+   "ret": -21.847585908458456,
+   "dd": -21.847585908458456,
+   "trades": 124,
+   "fires": 1
+  },
+  "boot": [
+   -0.249,
+   0.082,
+   0.17
+  ],
+  "wins": {
+   "rising": false,
+   "falling": true,
+   "crash": false,
+   "full": false,
+   "choppy2": true
+  },
+  "passed": false
+ },
+ "HOLD-0.25": {
+  "rising": {
+   "ret": 68.99698918602337,
+   "dd": -7.746287494840354,
+   "trades": 326,
+   "fires": 0
+  },
+  "falling": {
+   "ret": 52.110109496609745,
+   "dd": -8.690687301908994,
+   "trades": 319,
+   "fires": 1
+  },
+  "crash": {
+   "ret": -16.905421182082602,
+   "dd": -16.905421182082602,
+   "trades": 125,
+   "fires": 1
+  },
+  "full": {
+   "ret": 143.1793225526763,
+   "dd": -17.524278900970902,
+   "trades": 796,
+   "fires": 2
+  },
+  "choppy2": {
+   "ret": 12.701663813700769,
+   "dd": -11.162367670293605,
+   "trades": 120,
+   "fires": 1
+  },
+  "oct1_nov5": {
+   "ret": -16.946744117142977,
+   "dd": -16.946744117142977,
+   "trades": 131,
+   "fires": 1
+  },
+  "boot": [
+   -0.123,
+   0.076,
+   0.28
+  ],
+  "wins": {
+   "rising": false,
+   "falling": true,
+   "crash": false,
+   "full": false,
+   "choppy2": true
+  },
+  "passed": false
+ },
+ "SELL+REENTER-0.25": {
+  "rising": {
+   "ret": 68.99698918602337,
+   "dd": -7.746287494840354,
+   "trades": 326,
+   "fires": 0
+  },
+  "falling": {
+   "ret": 48.989568747951594,
+   "dd": -8.690687301908994,
+   "trades": 323,
+   "fires": 1
+  },
+  "crash": {
+   "ret": -16.61290407868883,
+   "dd": -16.61290407868883,
+   "trades": 120,
+   "fires": 1
+  },
+  "full": {
+   "ret": 139.023465822344,
+   "dd": -17.23284751023907,
+   "trades": 788,
+   "fires": 2
+  },
+  "choppy2": {
+   "ret": 14.090862240278156,
+   "dd": -11.162367670293605,
+   "trades": 127,
+   "fires": 1
+  },
+  "oct1_nov5": {
+   "ret": -16.654372481918323,
+   "dd": -16.654372481918323,
+   "trades": 126,
+   "fires": 1
+  },
+  "boot": [
+   -0.129,
+   0.046,
+   0.19
+  ],
+  "wins": {
+   "rising": false,
+   "falling": true,
+   "crash": false,
+   "full": false,
+   "choppy2": true
+  },
+  "passed": false
+ }
+}
