@@ -1,0 +1,49 @@
+{
+ "engine": "3dfc275",
+ "all_match": true,
+ "windows": {
+  "rising": {
+   "ret": 68.99698918602337,
+   "trades": 326,
+   "ks": [],
+   "match": true
+  },
+  "falling": {
+   "ret": 48.542974002475425,
+   "trades": 250,
+   "ks": [
+    "fire 2026-07-15 dd=-8.7",
+    "release 2026-07-29"
+   ],
+   "match": true
+  },
+  "crash": {
+   "ret": -10.819198481304293,
+   "trades": 47,
+   "ks": [
+    "fire 2026-10-08 dd=-10.1",
+    "release 2026-10-22"
+   ],
+   "match": true
+  },
+  "full": {
+   "ret": 154.86162596971397,
+   "trades": 643,
+   "ks": [
+    "fire 2026-07-15 dd=-8.7",
+    "release 2026-07-29",
+    "fire 2026-10-08 dd=-10.8",
+    "release 2026-10-22"
+   ],
+   "match": true
+  },
+  "octnov": {
+   "end": 13370.467785769566,
+   "trades": 53,
+   "ks": [
+    "fire 2026-10-08 dd=-10.1",
+    "release 2026-10-22"
+   ]
+  }
+ }
+}

@@ -144,6 +144,16 @@ v2 = the v1 rules below, unchanged, **plus** two of the "top 5" candidates:
   re-fire after every cool-off. This is a withdrawal, not a trading loss — the
   same class as the $5,000 deposit adjustment in `a6e8ac4` — but adjusting the
   peak is the **user's** decision; do not lower it unilaterally.
+- ✅ **PEAK RESET ON RELEASE — live 2026-11-06 at the user's request (`3dfc275`).**
+  `KILL_SWITCH_RESET_PEAK_ON_RELEASE = True`: when the cool-off ends, `equity_peak` is
+  re-based to current equity, which closes the re-fire loop described above. Verified
+  by replay (`scripts/margin_style_v2_reset_verify.py`, dev branch): the engine with no
+  rule params matches the research "RS" variant in every window — full **+154.9%**
+  (vs +156.4% without; 643 trades), rising +69.0%, falling +48.5%, crash **−10.8%**
+  (vs −10.3%). Oct 1 → Nov 5 at $15k: $13,370 (−10.9%), released 10-22 and did not
+  re-fire. A small cost in-sample, accepted for the system being able to re-enter at all.
+  Note the manual reset on 2026-11-05 (18,035.23 → 11,396.53) was a separate, one-off
+  correction for owner withdrawals.
 - **The trigger prompt's KILL-SWITCH paragraph still says −15% / 20 days /
   permanent SMA-50 gate.** It was deliberately not re-sent (same reasoning as
   the cron-time note below). **This file and the engine are authoritative**;
