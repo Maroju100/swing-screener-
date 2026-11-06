@@ -351,6 +351,12 @@ TREND_GATE_SMA_DAYS = 50
 # scripts/margin_style_v2_verify.py on the development branch. IN-SAMPLE, NOT
 # walk-forward validated - see CLAUDE.md 'Margin-Style Live v2'.
 KILL_SWITCH_TREND_LOCK = False
+# Peak reset on release (2026-11-05, user request): when the cool-off ends, re-base
+# equity_peak to current equity. Without it a system sitting in cash can never climb back
+# within KILL_SWITCH_DD of the old peak, so the switch re-fires the next run, forever.
+# Replay (scripts/margin_style_v2_reset_verify.py, dev branch) matches the research
+# 'RS' variant exactly. Set False to restore the no-reset behaviour.
+KILL_SWITCH_RESET_PEAK_ON_RELEASE = True
 
 # Added 2026-07-27 per explicit user request after a single-day run put ~90% of the
 # $5,000 allocation into 2 trades (44.6%/74.3%-of-cash sizing has no per-trade ceiling
@@ -782,6 +788,8 @@ def cmd_plan(hist_path, quotes_path, real_cash, excluded_symbols, actual_holding
             d = next_business_day(d)
         if today >= d.date().isoformat():
             kill_switch_active = False
+            if KILL_SWITCH_RESET_PEAK_ON_RELEASE:
+                equity_peak = total_equity
 
     if kill_switch_active:
         # Overrides normal PEAK/GAIN sells entirely: liquidate everything still open
