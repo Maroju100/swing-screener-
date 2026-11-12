@@ -22,7 +22,8 @@ assert abs(g_end - 13370.47) < 0.01, f'GATE FAILED {g_end}'
 print(f'gate PASS: Oct1->Nov5 $15k = {g_end:,.2f}', flush=True)
 
 START = sys.argv[1] if len(sys.argv) > 1 else '2026-11-02'
-r = H.run(START, '2026-11-11', 15000.0, 'origin/main', cost_bps=5.0, daily_path=D, hourly_path=HR, tag='nov')
+END = sys.argv[2] if len(sys.argv) > 2 else '2026-11-11'
+r = H.run(START, END, 15000.0, 'origin/main', cost_bps=5.0, daily_path=D, hourly_path=HR, tag='nov')
 eq = r['day_equity']
 
 hr = {r_['symbol']: {b['begins_at'][:10]: float(b['close_price']) for b in r_['bars'] if b['begins_at'].endswith('17:00:00Z')}
@@ -30,15 +31,15 @@ hr = {r_['symbol']: {b['begins_at'][:10]: float(b['close_price']) for b in r_['b
 per = 15000.0 / len(CHIPS)
 hold_val = {}
 base = START
-days = sorted({d for s_ in CHIPS for d in hr[s_] if d >= base})
+days = sorted({d for s_ in CHIPS for d in hr[s_] if base <= d <= END})
 for d in days:
     hold_val[d] = sum(per * hr[s_][d] / hr[s_][base] for s_ in CHIPS if d in hr[s_] and base in hr[s_])
-out = {'start': START, 'end': '2026-11-11', 'capital': 15000.0,
+out = {'start': START, 'end': END, 'capital': 15000.0,
        'replay': {'end_equity': eq[max(eq)], 'ret': (eq[max(eq)] / 15000 - 1) * 100,
                   'realized': r['realized'], 'unrealized': r['unrealized'], 'trades': r['trade_count'],
                   'day_equity': eq, 'day_pnl': r['day_pnl'], 'trades_list': r['trades']},
-       'hold': {'end_value': hold_val['2026-11-11'], 'ret': (hold_val['2026-11-11'] / 15000 - 1) * 100,
+       'hold': {'end_value': hold_val[END], 'ret': (hold_val[END] / 15000 - 1) * 100,
                 'by_day': hold_val}}
-json.dump(out, open(os.path.join(ROOT, 'data', 'research', f'replay_vs_hold_{START}.json'), 'w'), indent=1, default=str)
+json.dump(out, open(os.path.join(ROOT, 'data', 'research', f'replay_vs_hold_{START}_{END}.json'), 'w'), indent=1, default=str)
 print(f"replay: ${out['replay']['end_equity']:,.2f} ({out['replay']['ret']:+.2f}%) trades {out['replay']['trades']}")
 print(f"hold:   ${out['hold']['end_value']:,.2f} ({out['hold']['ret']:+.2f}%)")
