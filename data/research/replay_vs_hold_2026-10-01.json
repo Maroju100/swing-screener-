@@ -1,0 +1,722 @@
+{
+ "start": "2026-10-01",
+ "end": "2026-11-11",
+ "capital": 15000.0,
+ "replay": {
+  "end_equity": 13320.725651183448,
+  "ret": -11.195162325443686,
+  "realized": -1706.54,
+  "unrealized": 20.64,
+  "trades": 76,
+  "day_equity": {
+   "2026-10-01": 15000.0,
+   "2026-10-02": 15000.0,
+   "2026-10-05": 14992.593750013906,
+   "2026-10-06": 14173.262100990461,
+   "2026-10-07": 14105.362938454282,
+   "2026-10-08": 13477.505046222312,
+   "2026-10-09": 13477.505046222312,
+   "2026-10-12": 13477.505046222312,
+   "2026-10-13": 13477.505046222312,
+   "2026-10-14": 13477.505046222312,
+   "2026-10-15": 13477.505046222312,
+   "2026-10-16": 13477.505046222312,
+   "2026-10-19": 13477.505046222312,
+   "2026-10-20": 13477.505046222312,
+   "2026-10-21": 13477.505046222312,
+   "2026-10-22": 13475.820358125857,
+   "2026-10-23": 13456.37390600775,
+   "2026-10-26": 13926.497686629262,
+   "2026-10-27": 13982.874582623477,
+   "2026-10-28": 14213.657268168106,
+   "2026-10-29": 14237.501571140388,
+   "2026-10-30": 14187.553522241911,
+   "2026-11-02": 14180.477479899702,
+   "2026-11-03": 14009.118070360502,
+   "2026-11-04": 13377.120227804357,
+   "2026-11-05": 13370.467785769566,
+   "2026-11-06": 13389.14868642266,
+   "2026-11-09": 13720.20910324627,
+   "2026-11-10": 13306.417580867035,
+   "2026-11-11": 13320.725651183448
+  },
+  "day_pnl": {
+   "2026-10-01": 0.0,
+   "2026-10-02": 0.0,
+   "2026-10-05": 0.0,
+   "2026-10-06": -755.5454487779491,
+   "2026-10-07": 0.0,
+   "2026-10-08": -766.9495049997383,
+   "2026-10-09": 0.0,
+   "2026-10-12": 0.0,
+   "2026-10-13": 0.0,
+   "2026-10-14": 0.0,
+   "2026-10-15": 0.0,
+   "2026-10-16": 0.0,
+   "2026-10-19": 0.0,
+   "2026-10-20": 0.0,
+   "2026-10-21": 0.0,
+   "2026-10-22": 0.0,
+   "2026-10-23": 0.0,
+   "2026-10-26": 332.2794451124847,
+   "2026-10-27": 8.3139235077305,
+   "2026-10-28": 293.06129421870196,
+   "2026-10-29": 94.11140421996453,
+   "2026-10-30": -17.717869636612072,
+   "2026-11-02": 0.0,
+   "2026-11-03": 0.0,
+   "2026-11-04": -810.433294437557,
+   "2026-11-05": 0.0,
+   "2026-11-06": -9.928844276833388,
+   "2026-11-09": 20.353581887731558,
+   "2026-11-10": -94.08186750003654,
+   "2026-11-11": 0.0
+  },
+  "trades_list": [
+   {
+    "date": "2026-10-05",
+    "side": "buy",
+    "symbol": "WDC",
+    "shares": 8.49738,
+    "price": 441.3125,
+    "reason": "NORMAL_DIP"
+   },
+   {
+    "date": "2026-10-05",
+    "side": "buy",
+    "symbol": "STX",
+    "shares": 4.17832,
+    "price": 897.49,
+    "reason": "NORMAL_DIP"
+   },
+   {
+    "date": "2026-10-05",
+    "side": "buy",
+    "symbol": "SNDK",
+    "shares": 2.186742,
+    "price": 1714.88,
+    "reason": "NORMAL_DIP"
+   },
+   {
+    "date": "2026-10-05",
+    "side": "buy",
+    "symbol": "INTC",
+    "shares": 30.443509,
+    "price": 117.02,
+    "reason": "NORMAL_DIP"
+   },
+   {
+    "date": "2026-10-06",
+    "side": "sell",
+    "symbol": "WDC",
+    "shares": 8.49738,
+    "price": 409.615,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-10-06",
+    "side": "sell",
+    "symbol": "STX",
+    "shares": 4.17832,
+    "price": 804.16,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-10-06",
+    "side": "sell",
+    "symbol": "SNDK",
+    "shares": 2.186742,
+    "price": 1675.845,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-10-07",
+    "side": "buy",
+    "symbol": "WDC",
+    "shares": 8.721237,
+    "price": 404.49,
+    "reason": "NORMAL_DIP"
+   },
+   {
+    "date": "2026-10-07",
+    "side": "buy",
+    "symbol": "STX",
+    "shares": 4.409952,
+    "price": 799.93,
+    "reason": "NORMAL_DIP"
+   },
+   {
+    "date": "2026-10-07",
+    "side": "buy",
+    "symbol": "SNDK",
+    "shares": 1.998633,
+    "price": 1722.99,
+    "reason": "NORMAL_DIP"
+   },
+   {
+    "date": "2026-10-08",
+    "side": "sell",
+    "symbol": "INTC",
+    "shares": 30.443509,
+    "price": 105.88,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-10-08",
+    "side": "sell",
+    "symbol": "WDC",
+    "shares": 8.721237,
+    "price": 394.16,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-10-08",
+    "side": "sell",
+    "symbol": "STX",
+    "shares": 4.409952,
+    "price": 777.47,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-10-08",
+    "side": "sell",
+    "symbol": "SNDK",
+    "shares": 1.998633,
+    "price": 1610.42,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-10-22",
+    "side": "buy",
+    "symbol": "LRCX",
+    "shares": 14.511289,
+    "price": 232.19,
+    "reason": "NORMAL_DIP"
+   },
+   {
+    "date": "2026-10-23",
+    "side": "buy",
+    "symbol": "STX",
+    "shares": 5.222985,
+    "price": 644.3337,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-10-23",
+    "side": "buy",
+    "symbol": "WDC",
+    "shares": 7.802661,
+    "price": 345.5795,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-10-23",
+    "side": "buy",
+    "symbol": "LRCX",
+    "shares": 9.622019,
+    "price": 231.195,
+    "reason": "NORMAL_DIP"
+   },
+   {
+    "date": "2026-10-23",
+    "side": "buy",
+    "symbol": "SNDK",
+    "shares": 1.363976,
+    "price": 1267.6847,
+    "reason": "NORMAL_DIP"
+   },
+   {
+    "date": "2026-10-26",
+    "side": "sell",
+    "symbol": "LRCX",
+    "shares": 17.931048,
+    "price": 240.47,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-10-26",
+    "side": "sell",
+    "symbol": "STX",
+    "shares": 3.880678,
+    "price": 664.51,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-10-26",
+    "side": "sell",
+    "symbol": "WDC",
+    "shares": 5.797377,
+    "price": 362.795,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-10-26",
+    "side": "sell",
+    "symbol": "SNDK",
+    "shares": 1.013434,
+    "price": 1276.28,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-10-27",
+    "side": "sell",
+    "symbol": "SNDK",
+    "shares": 0.260453,
+    "price": 1300.89,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-10-27",
+    "side": "buy",
+    "symbol": "STX",
+    "shares": 4.184351,
+    "price": 674.765,
+    "reason": "HUGE_DIP-NET(vs PEAK)"
+   },
+   {
+    "date": "2026-10-27",
+    "side": "buy",
+    "symbol": "WDC",
+    "shares": 6.405027,
+    "price": 382.255,
+    "reason": "HUGE_DIP-NET(vs PEAK)"
+   },
+   {
+    "date": "2026-10-28",
+    "side": "sell",
+    "symbol": "LRCX",
+    "shares": 4.608279,
+    "price": 254.09,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-10-28",
+    "side": "sell",
+    "symbol": "STX",
+    "shares": 4.106307,
+    "price": 684.595,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-10-28",
+    "side": "sell",
+    "symbol": "WDC",
+    "shares": 6.248861,
+    "price": 392.45,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-10-28",
+    "side": "sell",
+    "symbol": "SNDK",
+    "shares": 0.066936,
+    "price": 1381.57,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-10-29",
+    "side": "sell",
+    "symbol": "SNDK",
+    "shares": 0.023153,
+    "price": 1345.38,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-10-29",
+    "side": "sell",
+    "symbol": "LRCX",
+    "shares": 1.184328,
+    "price": 254.69,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-10-29",
+    "side": "sell",
+    "symbol": "STX",
+    "shares": 1.055321,
+    "price": 699.35,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-10-29",
+    "side": "sell",
+    "symbol": "WDC",
+    "shares": 1.605957,
+    "price": 394.125,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-10-30",
+    "side": "sell",
+    "symbol": "LRCX",
+    "shares": 0.409653,
+    "price": 235.215,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-10-30",
+    "side": "sell",
+    "symbol": "STX",
+    "shares": 0.36503,
+    "price": 632.28,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-10-30",
+    "side": "sell",
+    "symbol": "WDC",
+    "shares": 0.555493,
+    "price": 363.12,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-11-02",
+    "side": "buy",
+    "symbol": "INTC",
+    "shares": 57.197637,
+    "price": 62.0111,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-02",
+    "side": "buy",
+    "symbol": "SNDK",
+    "shares": 3.175544,
+    "price": 1116.9388,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-02",
+    "side": "buy",
+    "symbol": "STX",
+    "shares": 4.6841,
+    "price": 605.775,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-02",
+    "side": "buy",
+    "symbol": "WDC",
+    "shares": 10.185915,
+    "price": 348.215,
+    "reason": "NORMAL_DIP"
+   },
+   {
+    "date": "2026-11-02",
+    "side": "buy",
+    "symbol": "LRCX",
+    "shares": 2.901778,
+    "price": 232.24,
+    "reason": "NORMAL_DIP"
+   },
+   {
+    "date": "2026-11-04",
+    "side": "sell",
+    "symbol": "INTC",
+    "shares": 57.197637,
+    "price": 59.065,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-11-04",
+    "side": "sell",
+    "symbol": "SNDK",
+    "shares": 3.175544,
+    "price": 1045.305,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-11-04",
+    "side": "sell",
+    "symbol": "STX",
+    "shares": 4.6841,
+    "price": 566.92,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-11-04",
+    "side": "sell",
+    "symbol": "WDC",
+    "shares": 10.185915,
+    "price": 328.91,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-11-04",
+    "side": "sell",
+    "symbol": "LRCX",
+    "shares": 2.901778,
+    "price": 224.64,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-11-05",
+    "side": "buy",
+    "symbol": "INTC",
+    "shares": 61.890998,
+    "price": 54.035,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-05",
+    "side": "buy",
+    "symbol": "SNDK",
+    "shares": 4.011564,
+    "price": 833.66,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-05",
+    "side": "buy",
+    "symbol": "STX",
+    "shares": 5.643997,
+    "price": 474.03,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-05",
+    "side": "buy",
+    "symbol": "WDC",
+    "shares": 5.94814,
+    "price": 269.875,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-05",
+    "side": "buy",
+    "symbol": "LRCX",
+    "shares": 5.052869,
+    "price": 190.615,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-05",
+    "side": "buy",
+    "symbol": "MU",
+    "shares": 2.032329,
+    "price": 675.33,
+    "reason": "NORMAL_DIP"
+   },
+   {
+    "date": "2026-11-06",
+    "side": "sell",
+    "symbol": "STX",
+    "shares": 5.643997,
+    "price": 457.465,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-11-06",
+    "side": "sell",
+    "symbol": "WDC",
+    "shares": 5.94814,
+    "price": 262.3301,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-11-06",
+    "side": "sell",
+    "symbol": "INTC",
+    "shares": 45.985012,
+    "price": 55.88,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-11-06",
+    "side": "sell",
+    "symbol": "LRCX",
+    "shares": 3.754282,
+    "price": 199.865,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-11-06",
+    "side": "sell",
+    "symbol": "MU",
+    "shares": 1.51002,
+    "price": 686.835,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-11-09",
+    "side": "sell",
+    "symbol": "SNDK",
+    "shares": 0.36381,
+    "price": 890.4677,
+    "reason": "PEAK-NET(vs HUGE_DIP)"
+   },
+   {
+    "date": "2026-11-09",
+    "side": "buy",
+    "symbol": "INTC",
+    "shares": 46.922862,
+    "price": 58.295,
+    "reason": "HUGE_DIP-NET(vs PEAK)"
+   },
+   {
+    "date": "2026-11-09",
+    "side": "buy",
+    "symbol": "STX",
+    "shares": 4.578052,
+    "price": 508.985,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-09",
+    "side": "buy",
+    "symbol": "WDC",
+    "shares": 4.806931,
+    "price": 290.85,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-09",
+    "side": "buy",
+    "symbol": "LRCX",
+    "shares": 2.883518,
+    "price": 217.9775,
+    "reason": "HUGE_DIP-NET(vs PEAK)"
+   },
+   {
+    "date": "2026-11-09",
+    "side": "buy",
+    "symbol": "MU",
+    "shares": 0.417598,
+    "price": 729.13,
+    "reason": "HUGE_DIP-NET(vs PEAK)"
+   },
+   {
+    "date": "2026-11-10",
+    "side": "sell",
+    "symbol": "INTC",
+    "shares": 62.828848,
+    "price": 57.495,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-11-10",
+    "side": "sell",
+    "symbol": "SNDK",
+    "shares": 3.647754,
+    "price": 838.7,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-11-10",
+    "side": "sell",
+    "symbol": "MU",
+    "shares": 0.939907,
+    "price": 707.09,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-11-10",
+    "side": "sell",
+    "symbol": "STX",
+    "shares": 4.578052,
+    "price": 485.425,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-11-10",
+    "side": "sell",
+    "symbol": "WDC",
+    "shares": 4.806931,
+    "price": 279.275,
+    "reason": "STOP"
+   },
+   {
+    "date": "2026-11-10",
+    "side": "sell",
+    "symbol": "LRCX",
+    "shares": 3.107304,
+    "price": 221.64,
+    "reason": "PEAK"
+   },
+   {
+    "date": "2026-11-11",
+    "side": "buy",
+    "symbol": "SNDK",
+    "shares": 3.319953,
+    "price": 1003.57,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-11",
+    "side": "buy",
+    "symbol": "INTC",
+    "shares": 52.614372,
+    "price": 63.325,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-11",
+    "side": "buy",
+    "symbol": "STX",
+    "shares": 4.546655,
+    "price": 563.455,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-11",
+    "side": "buy",
+    "symbol": "WDC",
+    "shares": 4.829171,
+    "price": 318.295,
+    "reason": "HUGE_DIP"
+   },
+   {
+    "date": "2026-11-11",
+    "side": "buy",
+    "symbol": "LRCX",
+    "shares": 3.02831,
+    "price": 240.995,
+    "reason": "HUGE_DIP-NET(vs PEAK)"
+   },
+   {
+    "date": "2026-11-11",
+    "side": "buy",
+    "symbol": "MU",
+    "shares": 1.820013,
+    "price": 822.55,
+    "reason": "NORMAL_DIP"
+   }
+  ]
+ },
+ "hold": {
+  "end_value": 10623.11195745629,
+  "ret": -29.179253616958057,
+  "by_day": {
+   "2026-10-01": 15000.0,
+   "2026-10-02": 14681.307928232423,
+   "2026-10-05": 14875.81092826501,
+   "2026-10-06": 14478.553981291116,
+   "2026-10-07": 14383.811894555585,
+   "2026-10-08": 13809.293220132353,
+   "2026-10-09": 13770.52152819945,
+   "2026-10-12": 13272.985858291679,
+   "2026-10-13": 12980.41523649246,
+   "2026-10-14": 12605.906904652258,
+   "2026-10-15": 12147.426915912742,
+   "2026-10-16": 11832.045280910328,
+   "2026-10-19": 12079.29831149621,
+   "2026-10-20": 12160.22857195329,
+   "2026-10-21": 12336.306927200283,
+   "2026-10-22": 11374.151368579545,
+   "2026-10-23": 11472.873927001645,
+   "2026-10-26": 11855.34728644069,
+   "2026-10-27": 12163.258928603655,
+   "2026-10-28": 12497.925590015517,
+   "2026-10-29": 12370.38241981723,
+   "2026-10-30": 10938.936061418053,
+   "2026-11-02": 10658.339522442042,
+   "2026-11-03": 10619.238695824715,
+   "2026-11-04": 10252.409102035963,
+   "2026-11-05": 8710.015098751692,
+   "2026-11-06": 8867.135956425034,
+   "2026-11-09": 9636.247483003886,
+   "2026-11-10": 9468.594282429684,
+   "2026-11-11": 10623.11195745629
+  }
+ }
+}
