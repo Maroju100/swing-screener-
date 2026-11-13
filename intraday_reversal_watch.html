@@ -1,0 +1,382 @@
+<title>Intraday Reversal Watch</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  /* Layout: one column. Verdict first, then the two prices that matter, then the tape (price + volume), then the bounce record. */
+  :root {
+    --page: #f6f7f5; --surface: #fdfdfc; --ink: #0d1110; --ink-2: #4a524f; --muted: #7e8683;
+    --grid: #e2e5e1; --rule: #c4c9c4; --border: rgba(13,17,16,0.11);
+    --price: #2467c9; --good: #0a8f2e; --bad: #cf3a36; --warn: #b87400; --level: #6a3fb5;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page: #0c0e0d; --surface: #171a19; --ink: #f4f6f5; --ink-2: #bcc3c0; --muted: #858d8a;
+      --grid: #272b29; --rule: #3a3f3d; --border: rgba(255,255,255,0.11);
+      --price: #5b9bf0; --good: #35c25a; --bad: #f0645f; --warn: #e6a532; --level: #a98bea; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #0c0e0d; --surface: #171a19; --ink: #f4f6f5; --ink-2: #bcc3c0; --muted: #858d8a;
+    --grid: #272b29; --rule: #3a3f3d; --border: rgba(255,255,255,0.11);
+    --price: #5b9bf0; --good: #35c25a; --bad: #f0645f; --warn: #e6a532; --level: #a98bea; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--page); color: var(--ink); font-family: var(--sans); }
+  .wrap { max-width: 980px; margin: 0 auto; padding-block: 20px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 14px; }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .eyebrow { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  h1 { margin: 2px 0 0; font-size: 24px; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+  .hdr { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 100px; border: 1px solid var(--border); color: var(--ink-2); background: var(--surface); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--warn); flex: none; }
+  .dot.live { background: var(--good); } .dot.off { background: var(--bad); }
+
+  .picker { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .chip { font: inherit; font-size: 12.5px; font-weight: 600; font-family: var(--mono); padding: 6px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink-2); cursor: pointer; }
+  .chip:hover { border-color: var(--ink-2); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--page); border-color: var(--ink); }
+  .chip:focus-visible, .symform input:focus-visible, .symform button:focus-visible { outline: 2px solid var(--price); outline-offset: 2px; }
+  .symform { display: flex; gap: 6px; }
+  .symform input { font: inherit; font-family: var(--mono); font-size: 12.5px; width: 92px; padding: 6px 9px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); text-transform: uppercase; }
+  .symform button { font: inherit; font-size: 12.5px; font-weight: 600; padding: 6px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); cursor: pointer; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; min-width: 0; }
+  .card h2 { margin: 0; font-size: 14px; font-weight: 600; }
+  .sub { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+  .banner { border: 1px solid var(--border); border-left: 3px solid var(--warn); background: var(--surface); border-radius: 10px; padding: 11px 13px; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+  .banner strong { color: var(--ink); }
+
+  .verdict { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .vbadge { font-size: 19px; font-weight: 700; padding: 8px 16px; border-radius: 10px; border: 2px solid currentColor; }
+  .vbadge.fall { color: var(--bad); } .vbadge.try { color: var(--warn); } .vbadge.turn { color: var(--good); } .vbadge.flat { color: var(--ink-2); }
+  .vtext { font-size: 13.5px; color: var(--ink-2); line-height: 1.5; flex: 1 1 260px; min-width: 0; }
+  .vtext strong { color: var(--ink); }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .tile { border: 1px solid var(--border); background: var(--page); border-radius: 10px; padding: 11px 13px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .tile.key { border-color: var(--level); }
+  .tlabel { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .tval { font-size: 20px; font-weight: 700; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .tval.up { color: var(--good); } .tval.down { color: var(--bad); }
+  .tsub { font-size: 11.5px; color: var(--ink-2); line-height: 1.45; }
+
+  .checks { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; }
+  .checks li { display: flex; gap: 9px; align-items: flex-start; border: 1px solid var(--border); background: var(--page); border-radius: 10px; padding: 9px 11px; font-size: 12.5px; line-height: 1.45; min-width: 0; }
+  .mark { flex: none; width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--surface); margin-top: 1px; }
+  .mark.yes { background: var(--good); } .mark.no { background: var(--bad); }
+  .checks strong { display: block; } .checks .d { color: var(--ink-2); }
+
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--ink-2); margin: 10px 0 4px; }
+  .legend i { display: inline-block; width: 14px; height: 0; vertical-align: middle; margin-right: 5px; border-top: 2px solid var(--price); }
+  .legend i.vwap { border-top: 2px dashed var(--muted); } .legend i.lvl { border-top: 2px solid var(--level); } .legend i.low { border-top: 2px dotted var(--bad); }
+  .legend i.up { border-top: 8px solid var(--good); width: 8px; } .legend i.dn { border-top: 8px solid var(--bad); width: 8px; }
+  .chartwrap { position: relative; }
+  svg.chart { width: 100%; display: block; overflow: visible; }
+  .gl { stroke: var(--grid); stroke-width: 1; } .ax { fill: var(--muted); font-size: 10px; font-family: var(--mono); }
+  .plabel { fill: var(--ink-2); font-size: 11px; font-weight: 600; font-family: var(--sans); }
+  .tip { position: absolute; pointer-events: none; z-index: 5; min-width: 150px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 11px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); opacity: 0; transform: translate(-50%, 0); transition: opacity 0.1s; }
+  .tip.show { opacity: 1; }
+  .tip .t { color: var(--muted); font-family: var(--mono); font-size: 10px; margin-bottom: 4px; }
+  .tip .r { display: flex; gap: 8px; justify-content: space-between; padding: 1.5px 0; color: var(--ink-2); }
+  .tip .r b { font-family: var(--mono); font-weight: 500; color: var(--ink); }
+
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 480px; margin-top: 8px; }
+  th { text-align: right; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--grid); }
+  td { text-align: right; padding: 8px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  th:first-child, td:first-child, th:last-child, td:last-child { text-align: left; }
+  tr:last-child td { border-bottom: none; }
+  .tag { font-size: 12px; font-weight: 600; } .tag.bad { color: var(--bad); } .tag.ok { color: var(--good); } .tag.wait { color: var(--warn); }
+  .note { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; max-width: 70ch; }
+  .note strong { color: var(--ink); }
+  @media (prefers-reduced-motion: reduce) { .tip { transition: none; } }
+</style>
+
+<div class="wrap">
+  <div class="hdr">
+    <div>
+      <div class="eyebrow">Live prices from Robinhood &middot; refreshes about every 30 seconds &middot; regular hours</div>
+      <h1>Intraday Reversal Watch</h1>
+    </div>
+    <span class="pill"><span class="dot" id="connDot"></span><span id="connText">Connecting&hellip;</span></span>
+  </div>
+
+  <div class="picker" id="picker" role="group" aria-label="Stock to watch"></div>
+
+  <div class="banner" id="banner" hidden></div>
+
+  <div class="card">
+    <div class="verdict">
+      <span class="vbadge flat" id="vBadge">Loading</span>
+      <div class="vtext" id="vText">Reading today's minute-by-minute prices.</div>
+    </div>
+    <ul class="checks" id="checks"></ul>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="card">
+    <h2 id="chartTitle">Today, minute by minute</h2>
+    <div class="sub" id="chartSub">Price with its volume-weighted average for the day, the level a real turn has to clear, and volume coloured by whether each minute closed up or down.</div>
+    <div class="legend">
+      <span><i></i>Price</span><span><i class="vwap"></i>Day's average price (VWAP)</span><span><i class="lvl"></i>Level to beat</span><span><i class="low"></i>Today's low</span>
+      <span><i class="up"></i>Up-minute volume</span><span><i class="dn"></i>Down-minute volume</span>
+    </div>
+    <div class="chartwrap" id="chartWrap"><svg class="chart" id="svg" role="img" aria-label="Intraday price, average price, level to beat and volume"></svg><div class="tip" id="tip"></div></div>
+  </div>
+
+  <div class="card">
+    <h2>Bounces so far today</h2>
+    <div class="sub">Every time the stock lifted off a low, how far it got, and whether it went on to a new low. A bounce that fails is the "small reversal" that pulls you in too early.</div>
+    <div class="scroll"><table>
+      <thead><tr><th>Started</th><th>From</th><th>To</th><th>Size</th><th>Lasted</th><th>Outcome</th></tr></thead>
+      <tbody id="bounceBody"></tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h2>How to use it, and what it cannot do</h2>
+    <p class="note"><strong>The idea.</strong> While a stock is falling, each bounce stops below the previous bounce's high and then a new low follows. The picture changes only when a bounce holds above the last low and then trades above the previous bounce's high. That price is the <strong>level to beat</strong>. Buying below it is guessing the bottom. Buying above it means the pattern of lower highs has broken, and today's low becomes the price that proves you wrong.</p>
+    <p class="note"><strong>The limits.</strong> These are standard tape-reading rules of thumb. They have not been tested on this page's data, and earlier replays in this project found no reliable edge in day-trading these stocks. A turn that passes every check can still fail, and it often does on days with bad news. The checks tell you the selling has paused. They do not tell you it is over.</p>
+    <p class="note"><strong>What it reads.</strong> Only price quotes and minute bars for the stock you pick. It never reads an account and cannot place an order. Minute bars arrive when each minute completes, and the page refreshes about every 30 seconds while it is open and visible, so it is a few seconds to a minute behind the tape.</p>
+  </div>
+</div>
+
+<script>
+const CHIPS = ['SNDK', 'WDC', 'MU', 'AMD', 'INTC', 'STX', 'LRCX', 'TSM'];
+const SERVER = 'RobinhoodClaude';
+const $ = (id) => document.getElementById(id);
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const money = (v) => '$' + v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const pct = (v, d = 2) => (v >= 0 ? '+' : '') + v.toFixed(d) + '%';
+const clock = (t) => new Date(t).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+// Snapshot of SNDK's session on 2026-11-13 up to 10:13 AM CST, so the page shows a real example before the
+// live call answers. [minutes after 14:30 UTC, open, high, low, close, volume]. Replaced by live data at once.
+const SNAPSHOT = { sym: 'SNDK', date: '2026-11-13', prevClose: 937.46, bars: [[0,915.86,923.18,911.52,920.06,119625],[1,920.1,932.68,920.1,929.12,75460],[2,929.12,932.68,924.5,930.84,40405],[3,930.9,939.53,930.07,933.63,59347],[4,933.67,933.87,921.26,922.27,38395],[5,922.1,925.89,918.24,919.69,55391],[6,919.74,925.49,913.01,913.64,50678],[7,913.39,913.83,905.08,905.29,106215],[8,905.28,906.39,896.21,902.09,96954],[9,902.92,910.35,902.81,903.92,81010],[10,903.76,908.87,901.5,906.2,51692],[11,906.11,908.17,900.73,902.55,40442],[12,902.6,904.4,894.02,898.89,60578],[13,898.79,902.06,898.0,898.89,40435],[14,898.64,899.64,888.22,888.22,73833],[15,888.46,895.5,886.12,894.82,81225],[16,894.52,901.0,894.5,897.15,68979],[17,897.51,902.38,896.81,901.52,42746],[18,901.99,902.0,895.92,896.61,40337],[19,896.61,898.75,886.73,887.33,47910],[20,887.0,888.44,880.0,884.61,66295],[21,884.62,888.0,880.47,887.21,40599],[22,887.06,887.61,881.5,885.0,41379],[23,885.17,887.36,882.58,884.48,22402],[24,884.3,890.76,884.26,889.37,39670],[25,889.19,889.19,878.1,878.58,40727],[26,878.1,879.7,875.0,879.08,54455],[27,879.0,883.0,877.3,882.71,28413],[28,882.08,883.72,879.55,880.08,25003],[29,879.79,882.15,878.43,880.24,22366],[30,880.15,881.91,874.3,877.99,41958],[31,877.85,880.8,874.57,875.46,28038],[32,875.08,875.32,869.18,870.01,54031],[33,870.35,871.03,867.17,868.13,61476],[34,868.14,870.0,866.24,867.99,38299],[35,867.99,875.0,867.69,873.16,42367],[36,874.11,875.96,870.37,874.79,41954],[37,875.07,877.9,872.0,873.15,38448],[38,873.04,873.62,868.0,868.76,26582],[39,868.5,870.26,866.68,867.87,22476],[40,867.73,867.73,860.29,860.37,46900],[41,860.75,862.0,857.11,857.38,74865],[42,857.53,860.0,854.49,857.54,59034],[43,857.73,858.69,855.1,857.58,39435],[44,857.77,859.55,857.01,858.0,31722],[45,858.0,865.64,857.54,864.49,43351],[46,864.31,866.32,861.01,861.33,29416],[47,861.01,863.99,860.04,861.01,21233],[48,860.99,860.99,857.16,859.68,36100],[49,859.64,860.0,856.88,858.1,19811],[50,858.1,859.37,855.1,857.81,23462],[51,857.81,857.81,853.34,853.78,31700],[52,853.85,860.99,853.13,860.26,34801],[53,860.27,861.4,857.72,859.85,26329],[54,859.93,862.39,857.24,862.0,31016],[55,862.09,864.19,859.24,859.66,43161],[56,859.26,860.01,854.72,857.48,34712],[57,856.96,860.11,856.96,858.77,29431],[58,858.57,864.3,858.02,863.99,42462],[59,863.88,865.31,862.84,864.15,50013],[60,863.8,866.4,861.67,862.5,27496],[61,862.94,863.64,859.0,859.02,20284],[62,859.1,864.44,857.79,864.01,26164],[63,864.01,864.55,858.2,861.34,24248],[64,861.1,861.94,856.1,856.63,40606],[65,856.62,858.29,852.53,853.5,51051],[66,853.19,854.99,848.5,851.61,40721],[67,851.88,853.6,850.0,853.36,30590],[68,853.28,853.44,851.0,851.95,13448],[69,851.72,854.0,851.0,852.07,16513],[70,852.14,855.41,851.86,855.12,20854],[71,854.81,855.47,851.87,854.7,16225],[72,854.8,856.89,854.64,854.98,20985],[73,854.98,856.73,853.09,856.17,18477],[74,856.17,856.38,852.51,855.75,24609],[75,855.5,858.17,854.62,855.43,19894],[76,855.33,855.79,849.0,849.66,31896],[77,849.48,856.37,849.32,854.24,29051],[78,854.4,854.6,851.28,852.28,12423],[79,852.55,857.57,852.0,856.9,22452],[80,857.02,858.78,856.76,857.63,21967],[81,857.82,862.37,856.62,861.86,25539],[82,861.71,862.99,858.55,859.66,24063],[83,859.69,861.37,856.66,858.59,25046],[84,858.88,858.88,854.5,854.94,21143],[85,854.67,856.0,853.48,855.68,13877],[86,855.75,860.23,855.64,857.8,20995],[87,857.82,860.23,856.85,858.35,13995],[88,858.57,859.59,856.67,857.72,13577],[89,857.61,859.11,857.0,858.24,10253],[90,858.24,859.5,856.36,858.88,10369],[91,858.44,858.65,854.69,854.75,17168],[92,854.64,856.49,853.79,856.29,12225],[93,855.84,856.0,853.39,853.39,12088],[94,853.28,853.89,850.72,851.47,18051],[95,851.23,851.59,849.46,850.5,28342],[96,850.22,855.65,849.52,854.42,26540],[97,854.46,857.63,854.39,857.03,19748],[98,857.03,857.88,855.39,856.95,11607],[99,856.76,858.37,856.56,857.89,14102],[100,858.04,860.25,856.36,860.25,19639],[101,859.99,860.25,856.5,856.76,11853],[102,857.0,857.98,855.55,857.15,12801],[103,857.05,857.92,855.63,856.71,7560]] };
+
+const state = { sym: 'SNDK', bars: [], quote: null, live: false, err: null, lastKey: '' };
+try { const s = localStorage.getItem('irw-symbol'); if (s && /^[A-Z.]{1,6}$/.test(s)) state.sym = s; } catch {}
+
+// ---------- analysis (pure) ----------
+function analyse(bars, quote) {
+  if (!bars || bars.length < 5) return null;
+  const n = bars.length, last = bars[n - 1];
+  let pv = 0, vv = 0; const vwap = [];
+  let iLow = 0, iHigh = 0;
+  bars.forEach((b, i) => {
+    pv += (b.h + b.l + b.c) / 3 * b.v; vv += b.v; vwap.push(vv > 0 ? pv / vv : b.c);
+    if (b.l < bars[iLow].l) iLow = i; if (b.h > bars[iHigh].h) iHigh = i;
+  });
+  const lo = bars[iLow].l, hi = bars[iHigh].h;
+  const price = quote && isFinite(quote.last) ? quote.last : last.c;
+  const thr = Math.min(0.02, Math.max(0.004, 0.12 * (hi - lo) / price));   // a swing must be this big to count
+  // zigzag pivots on highs/lows
+  const piv = []; let dir = 0, H = { p: bars[0].h, i: 0 }, L = { p: bars[0].l, i: 0 };
+  for (let i = 1; i < n; i++) {
+    const b = bars[i];
+    if (dir === 0) {
+      if (b.h > H.p) H = { p: b.h, i }; if (b.l < L.p) L = { p: b.l, i };
+      if (H.p / L.p - 1 >= thr) { if (H.i > L.i) { piv.push({ k: 'L', ...L }); dir = 1; } else { piv.push({ k: 'H', ...H }); dir = -1; } }
+    } else if (dir === 1) {
+      if (b.h > H.p) H = { p: b.h, i };
+      else if (b.l <= H.p * (1 - thr)) { piv.push({ k: 'H', ...H }); dir = -1; L = { p: b.l, i }; }
+    } else {
+      if (b.l < L.p) L = { p: b.l, i };
+      else if (b.h >= L.p * (1 + thr)) { piv.push({ k: 'L', ...L }); dir = 1; H = { p: b.h, i }; }
+    }
+  }
+  const lastH = [...piv].reverse().find(p => p.k === 'H') || null;
+  const lastL = [...piv].reverse().find(p => p.k === 'L') || null;
+  // bounces: each confirmed low and the high that followed it
+  const bounces = [];
+  for (let j = 0; j < piv.length; j++) {
+    if (piv[j].k !== 'L') continue;
+    const nx = piv[j + 1];
+    const top = nx ? nx : (dir === 1 ? { p: H.p, i: H.i } : null);
+    if (!top) continue;
+    let failed = false; for (let i = top.i + 1; i < n; i++) if (bars[i].l < piv[j].p) { failed = true; break; }
+    bounces.push({ t: bars[piv[j].i].t, from: piv[j].p, to: top.p, size: (top.p / piv[j].p - 1) * 100, mins: top.i - piv[j].i, failed, open: !nx });
+  }
+  const level = lastH ? lastH.p : vwap[n - 1];
+  const minsSinceLow = n - 1 - iLow;
+  const w = bars.slice(-15); let bs = 0, ts = 0;
+  w.forEach(b => { const f = b.h > b.l ? (b.c - b.l) / (b.h - b.l) : 0.5; bs += b.v * b.c * f; ts += b.v * b.c; });
+  const buyShare = ts > 0 ? bs / ts : 0.5;
+  const higherLow = !!lastL && lastL.i > iLow && lastL.p > lo && price > lastL.p;
+  const checks = [
+    { ok: minsSinceLow >= 30, name: 'No new low for 30 minutes', d: minsSinceLow === 0 ? 'It is making a new low right now' : `Last new low was ${minsSinceLow} minute${minsSinceLow === 1 ? '' : 's'} ago, at ${money(lo)}` },
+    { ok: higherLow, name: 'A higher low', d: higherLow ? `It dipped to ${money(lastL.p)} and held above today's low` : 'No pullback has held above today\'s low yet' },
+    { ok: price > level, name: 'Above the last bounce\'s high', d: `${money(price)} against the level to beat, ${money(level)} (${pct((price / level - 1) * 100)})` },
+    { ok: price > vwap[n - 1], name: 'Above the day\'s average price', d: `Average price paid today is ${money(vwap[n - 1])} (${pct((price / vwap[n - 1] - 1) * 100)})` },
+    { ok: buyShare > 0.5, name: 'Buyers ahead over 15 minutes', d: `Estimated buying is ${(buyShare * 100).toFixed(0)}% of the last 15 minutes' volume` },
+  ];
+  const score = checks.filter(c => c.ok).length;
+  const fromHigh = (price / hi - 1) * 100;
+  return { n, bars, vwap, iLow, iHigh, lo, hi, price, thr, piv, bounces, level, minsSinceLow, buyShare, checks, score, fromHigh,
+           dayChg: quote && quote.prev ? (price / quote.prev - 1) * 100 : null, failed: bounces.filter(b => b.failed).length };
+}
+
+// ---------- render ----------
+function render() {
+  const a = analyse(state.bars, state.quote);
+  const sym = state.sym, isSnap = !state.live;
+  document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.sym === sym)));
+  if (!a) {
+    $('vBadge').className = 'vbadge flat'; $('vBadge').textContent = state.err ? 'No data' : 'Waiting';
+    $('vText').innerHTML = state.err || `Waiting for today's minute bars for <strong>${esc(sym)}</strong>. Before the market opens there is nothing to read yet.`;
+    $('checks').innerHTML = ''; $('tiles').innerHTML = ''; $('svg').innerHTML = ''; $('bounceBody').innerHTML = '<tr><td colspan="6" style="text-align:left;color:var(--muted)">Nothing yet.</td></tr>';
+    return;
+  }
+  const lastT = a.bars[a.n - 1].t, stale = Date.now() - lastT > 6 * 60000;
+  let cls, label, text;
+  if (a.fromHigh > -1.5) { cls = 'flat'; label = 'Not falling'; text = `<strong>${esc(sym)}</strong> is within 1.5% of today's high, so there is no drop to recover from. This page is for days when a stock is selling off.`; }
+  else if (a.score >= 4) { cls = 'turn'; label = 'Turn holding, for now'; text = `<strong>${a.score} of 5 checks pass.</strong> The lower highs have broken. It is wrong again below today's low, ${money(a.lo)}.`; }
+  else if (a.score >= 2) { cls = 'try'; label = 'Trying to turn'; text = `<strong>${a.score} of 5 checks pass.</strong> The selling has paused but the pattern has not broken. The price that changes it is ${money(a.level)}.`; }
+  else { cls = 'fall'; label = 'Still falling'; text = `<strong>${a.score} of 5 checks pass.</strong> ${a.failed ? `${a.failed} bounce${a.failed === 1 ? ' has' : 's have'} already failed today. ` : ''}Nothing here says the selling has stopped.`; }
+  $('vBadge').className = 'vbadge ' + cls; $('vBadge').textContent = label;
+  $('vText').innerHTML = text + (isSnap ? ' <em>Showing a saved example from Nov 13, 10:13 AM CST until live data arrives.</em>' : stale ? ` <em>Last bar ${clock(lastT)}: the market is closed or data is delayed.</em>` : '');
+  $('checks').innerHTML = a.checks.map(c => `<li><span class="mark ${c.ok ? 'yes' : 'no'}" aria-hidden="true">${c.ok ? '&#10003;' : '&#10005;'}</span><span><strong>${c.name}: ${c.ok ? 'yes' : 'not yet'}</strong><span class="d">${c.d}</span></span></li>`).join('');
+
+  const risk = (a.lo / a.level - 1) * 100;
+  $('tiles').innerHTML =
+    `<div class="tile"><div class="tlabel">${esc(sym)} now</div><div class="tval ${a.dayChg != null && a.dayChg < 0 ? 'down' : a.dayChg > 0 ? 'up' : ''}">${money(a.price)}</div><div class="tsub">${a.dayChg != null ? pct(a.dayChg) + ' today &middot; ' : ''}${pct(a.fromHigh)} from today's high ${money(a.hi)}</div></div>` +
+    `<div class="tile key"><div class="tlabel">Level to beat</div><div class="tval">${money(a.level)}</div><div class="tsub">The last bounce's high. Price is ${pct((a.price / a.level - 1) * 100)} from it.</div></div>` +
+    `<div class="tile"><div class="tlabel">Wrong if below</div><div class="tval">${money(a.lo)}</div><div class="tsub">Today's low, set at ${clock(a.bars[a.iLow].t)}. ${pct(risk)} below the level to beat.</div></div>` +
+    `<div class="tile"><div class="tlabel">Bounces failed today</div><div class="tval ${a.failed ? 'down' : ''}">${a.failed}</div><div class="tsub">of ${a.bounces.length} so far${a.bounces.length ? ' &middot; biggest ' + pct(Math.max(...a.bounces.map(b => b.size))) : ''}</div></div>`;
+
+  $('chartTitle').textContent = `${sym} today, minute by minute`;
+  $('bounceBody').innerHTML = a.bounces.length ? [...a.bounces].reverse().map(b =>
+    `<tr><td class="num">${clock(b.t)}</td><td class="num">${money(b.from)}</td><td class="num">${money(b.to)}</td><td class="num">${pct(b.size)}</td><td class="num">${b.mins} min</td>` +
+    `<td>${b.failed ? '<span class="tag bad">&#10005; Failed: made a new low after</span>' : b.open ? '<span class="tag wait">&#9679; Under way</span>' : '<span class="tag ok">&#10003; Low still holding</span>'}</td></tr>`).join('')
+    : `<tr><td colspan="6" style="text-align:left;color:var(--muted)">No bounce bigger than ${(a.thr * 100).toFixed(1)}% yet today.</td></tr>`;
+  drawChart(a);
+}
+
+function drawChart(a) {
+  const svg = $('svg'), W = Math.max(320, Math.round($('chartWrap').clientWidth || 900));
+  const key = [state.sym, a.n, a.bars[a.n - 1].c, a.price, W].join('|'); if (key === state.lastKey) return; state.lastKey = key;
+  const PL = 52, PR = 12, T = 18, H1 = W < 560 ? 200 : 250, GAP = 30, H2 = 64, PB = 22, H = T + H1 + GAP + H2 + PB;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.style.height = H + 'px';
+  const t0 = a.bars[0].t, t1 = Math.max(a.bars[a.n - 1].t, t0 + 30 * 60000);
+  const x = (t) => PL + (W - PL - PR) * (t - t0) / (t1 - t0);
+  let lo = Math.min(a.lo, a.level, a.price), hi = Math.max(a.hi, a.level, a.price); const pad = (hi - lo) * 0.06 || 1; lo -= pad; hi += pad;
+  const y = (v) => T + H1 * (1 - (v - lo) / (hi - lo));
+  const vmax = Math.max(...a.bars.map(b => b.v)) || 1, top2 = T + H1 + GAP, yv = (v) => top2 + H2 * (1 - v / vmax);
+  const price = css('--price'), good = css('--good'), bad = css('--bad'), muted = css('--muted'), lvl = css('--level'), ink2 = css('--ink-2');
+  let g = '';
+  for (let k = 0; k <= 4; k++) { const v = lo + (hi - lo) * k / 4; g += `<line class="gl" x1="${PL}" x2="${W - PR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/><text class="ax" x="${PL - 6}" y="${(y(v) + 3).toFixed(1)}" text-anchor="end">${v.toFixed(v > 200 ? 0 : 2)}</text>`; }
+  g += `<text class="plabel" x="${PL}" y="11">Price</text><text class="plabel" x="${PL}" y="${top2 - 9}">Volume per minute</text><line class="gl" x1="${PL}" x2="${W - PR}" y1="${top2 + H2}" y2="${top2 + H2}"/>`;
+  const bw = Math.max(1, (W - PL - PR) / Math.max(a.n, 30) - 0.6);
+  a.bars.forEach(b => { g += `<rect x="${(x(b.t) - bw / 2).toFixed(1)}" y="${yv(b.v).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0.5, top2 + H2 - yv(b.v)).toFixed(1)}" fill="${b.c >= b.o ? good : bad}"/>`; });
+  const path = (f) => a.bars.map((b, i) => (i ? 'L' : 'M') + x(b.t).toFixed(1) + ' ' + y(f(b, i)).toFixed(1)).join('');
+  g += `<line x1="${PL}" x2="${W - PR}" y1="${y(a.lo).toFixed(1)}" y2="${y(a.lo).toFixed(1)}" stroke="${bad}" stroke-width="2" stroke-dasharray="2 4"/>`;
+  g += `<line x1="${PL}" x2="${W - PR}" y1="${y(a.level).toFixed(1)}" y2="${y(a.level).toFixed(1)}" stroke="${lvl}" stroke-width="2"/>`;
+  const ly = y(a.level), lowY = y(a.lo);
+  g += `<text class="ax" x="${W - PR - 4}" y="${(ly - 5).toFixed(1)}" text-anchor="end" fill="${lvl}" style="fill:${lvl};font-weight:600">${W < 560 ? 'Beat' : 'Level to beat'} ${a.level.toFixed(2)}</text>`;
+  g += `<text class="ax" x="${W - PR - 4}" y="${(lowY + 13).toFixed(1)}" text-anchor="end" style="fill:${bad};font-weight:600">${W < 560 ? 'Low' : "Today's low"} ${a.lo.toFixed(2)}</text>`;
+  g += `<path d="${path((b, i) => a.vwap[i])}" fill="none" stroke="${muted}" stroke-width="2" stroke-dasharray="5 4"/>`;
+  g += `<path d="${path(b => b.c)}" fill="none" stroke="${price}" stroke-width="2" stroke-linejoin="round"/>`;
+  a.piv.forEach(p => { const px = x(a.bars[p.i].t), py = y(p.p); g += p.k === 'L'
+    ? `<path d="M${px - 5} ${py + 11}L${px + 5} ${py + 11}L${px} ${py + 3}Z" fill="${ink2}"/>` : `<path d="M${px - 5} ${py - 11}L${px + 5} ${py - 11}L${px} ${py - 3}Z" fill="${ink2}"/>`; });
+  g += `<circle cx="${x(a.bars[a.n - 1].t).toFixed(1)}" cy="${y(a.price).toFixed(1)}" r="4.5" fill="${price}"/>`;
+  const span = t1 - t0, pxPerMin = (W - PL - PR) / (span / 60000), stepMin = [5, 10, 15, 30, 60, 120].find(m => m * pxPerMin >= 66) || 180, first = Math.ceil(t0 / (stepMin * 60000)) * stepMin * 60000;
+  for (let t = first; t <= t1; t += stepMin * 60000) if (x(t) > PL + 20 && x(t) < W - PR - 20) g += `<text class="ax" x="${x(t).toFixed(1)}" y="${H - 6}" text-anchor="middle">${clock(t)}</text>`;
+  g += `<line id="cross" x1="0" x2="0" y1="${T}" y2="${top2 + H2}" stroke="${muted}" stroke-width="1" visibility="hidden"/><rect id="hit" x="${PL}" y="${T}" width="${W - PL - PR}" height="${top2 + H2 - T}" fill="transparent"/>`;
+  svg.innerHTML = g;
+  const tip = $('tip'), cross = svg.querySelector('#cross'), hit = svg.querySelector('#hit');
+  const show = (ev) => {
+    const box = svg.getBoundingClientRect(), cx = ((ev.touches ? ev.touches[0].clientX : ev.clientX) - box.left) * (W / box.width);
+    const tt = t0 + (cx - PL) / (W - PL - PR) * (t1 - t0); let k = 0, best = Infinity;
+    a.bars.forEach((b, i) => { const d = Math.abs(b.t - tt); if (d < best) { best = d; k = i; } });
+    const b = a.bars[k]; cross.setAttribute('x1', x(b.t)); cross.setAttribute('x2', x(b.t)); cross.setAttribute('visibility', 'visible');
+    tip.innerHTML = `<div class="t">${clock(b.t)}</div><div class="r"><span>Price</span><b>${b.c.toFixed(2)}</b></div><div class="r"><span>Day's average</span><b>${a.vwap[k].toFixed(2)}</b></div>` +
+      `<div class="r"><span>Minute range</span><b>${b.l.toFixed(2)} &ndash; ${b.h.toFixed(2)}</b></div><div class="r"><span>Volume</span><b>${b.v.toLocaleString()}</b></div><div class="r"><span>Minute closed</span><b>${b.c >= b.o ? 'up' : 'down'}</b></div>`;
+    tip.style.left = Math.max(84, Math.min(box.width - 84, x(b.t) * box.width / W)) + 'px'; tip.style.top = (T + 8) + 'px'; tip.classList.add('show');
+  };
+  const hide = () => { tip.classList.remove('show'); cross.setAttribute('visibility', 'hidden'); };
+  hit.addEventListener('mousemove', show); hit.addEventListener('mouseleave', hide);
+  hit.addEventListener('touchstart', show, { passive: true }); hit.addEventListener('touchmove', show, { passive: true }); hit.addEventListener('touchend', hide);
+}
+window.addEventListener('resize', render);
+
+// ---------- data ----------
+function ingestBars(payload, sym) {
+  const r = (payload?.data?.results || []).find(x => x.symbol === sym); if (!r) return [];
+  const all = (r.bars || []).filter(b => !b.interpolated).map(b => ({ t: Date.parse(b.begins_at), d: String(b.begins_at).slice(0, 10), o: +b.open_price, h: +b.high_price, l: +b.low_price, c: +b.close_price, v: +b.volume || 0 }))
+    .filter(b => isFinite(b.c) && isFinite(b.h) && isFinite(b.l));
+  if (!all.length) return [];
+  const day = all[all.length - 1].d; return all.filter(b => b.d === day);
+}
+function ingestQuote(payload, sym) {
+  const q = (payload?.data?.results || []).map(r => r.quote).find(q => q && q.symbol === sym); if (!q) return null;
+  const last = Number(q.last_trade_price), prev = Number(q.adjusted_previous_close ?? q.previous_close);
+  return isFinite(last) ? { last, prev: isFinite(prev) ? prev : null } : null;
+}
+function explain(err) {
+  switch (err.code) {
+    case 'needs_reauth': return '<strong>Robinhood needs reconnecting.</strong> Reconnect it in claude.ai Settings, Connectors.';
+    case 'server_not_connected': case 'server_not_found': return '<strong>Robinhood is not connected.</strong> Add it in claude.ai Settings, Connectors.';
+    case 'selection_required': return '<strong>Choose which Robinhood connection to use</strong> in the prompt, then reload.';
+    case 'not_in_manifest': case 'consent_required': return '<strong>Live prices are not allowed for this page yet.</strong> Reload and allow Robinhood when asked.';
+    case 'blocked_by_policy': return '<strong>Your workspace blocks this data</strong> for this page.';
+    case 'approval_required': return '<strong>Robinhood asks for approval on each call here</strong>, so the page cannot refresh by itself.';
+    case 'not_granted': case 'capability_disabled': case 'capability_removed': return '<strong>Live data is not available in this view.</strong> Open the page directly in claude.ai.';
+    case 'tool_error': return `<strong>Robinhood could not return prices for ${esc(state.sym)}.</strong> Check the symbol.`;
+    default: return null;   // transient: keep what is on screen
+  }
+}
+let mcp = null, unsub = [];
+function setConn(kind, text) { $('connDot').className = 'dot ' + kind; $('connText').textContent = text; }
+function watch() {
+  unsub.forEach(u => { try { u(); } catch {} }); unsub = [];
+  if (!mcp) return;
+  const sym = state.sym, start = new Date(Math.floor(Date.now() / 86400000) * 86400000 - 4 * 86400000).toISOString();
+  const onErr = (ev) => { const m = explain(ev.error); if (m) { state.err = m; $('banner').innerHTML = m; $('banner').hidden = false; setConn('off', 'Not live'); render(); } };
+  const ok = () => { state.err = null; $('banner').hidden = true; setConn('live', 'Live'); };
+  unsub.push(mcp.watchTool(SERVER, 'get_equity_historicals', { symbols: [sym], start_time: start, interval: 'minute', bounds: 'regular' }, (ev) => {
+    if (sym !== state.sym) return;
+    if (ev.type === 'data') { const b = ingestBars(ev.result.payload, sym); state.bars = b; state.live = true; ok(); render(); } else onErr(ev);
+  }, { refetchInterval: 30000 }));
+  unsub.push(mcp.watchTool(SERVER, 'get_equity_quotes', { symbols: [sym] }, (ev) => {
+    if (sym !== state.sym) return;
+    if (ev.type === 'data') { state.quote = ingestQuote(ev.result.payload, sym); if (state.live) render(); } else onErr(ev);
+  }, { refetchInterval: 30000 }));
+}
+function choose(sym) {
+  sym = String(sym || '').trim().toUpperCase(); if (!/^[A-Z.]{1,6}$/.test(sym) || sym === state.sym) return;
+  state.sym = sym; state.bars = []; state.quote = null; state.live = !!mcp; state.err = null; state.lastKey = ''; $('banner').hidden = true;
+  try { localStorage.setItem('irw-symbol', sym); } catch {}
+  if (!mcp && sym === SNAPSHOT.sym) loadSnapshot();
+  render(); watch();
+}
+function loadSnapshot() {
+  const base = Date.parse(SNAPSHOT.date + 'T14:30:00Z');
+  state.bars = SNAPSHOT.bars.map(r => ({ t: base + r[0] * 60000, o: r[1], h: r[2], l: r[3], c: r[4], v: r[5] }));
+  state.quote = state.bars.length ? { last: state.bars[state.bars.length - 1].c, prev: SNAPSHOT.prevClose } : null; state.live = false;
+}
+function buildPicker() {
+  const p = $('picker');
+  p.innerHTML = CHIPS.map(s => `<button type="button" class="chip" data-sym="${s}" aria-pressed="false">${s}</button>`).join('') +
+    `<form class="symform" id="symForm"><label for="symInput" hidden>Other symbol</label><input id="symInput" placeholder="Other" maxlength="6" autocomplete="off" aria-label="Other symbol"><button type="submit">Watch</button></form>`;
+  p.addEventListener('click', (e) => { const c = e.target.closest('.chip'); if (c) choose(c.dataset.sym); });
+  $('symForm').addEventListener('submit', (e) => { e.preventDefault(); choose($('symInput').value); $('symInput').value = ''; });
+}
+async function init() {
+  buildPicker();
+  if (state.sym === SNAPSHOT.sym) loadSnapshot();
+  render();
+  try { mcp = await window.claude.use('mcp'); } catch { mcp = null; }
+  if (!mcp) {
+    setConn('off', 'Not live');
+    $('banner').innerHTML = '<strong>Live prices are not available in this view.</strong> Open this page in claude.ai with the Robinhood connector on. Until then it shows a saved example.'; $('banner').hidden = false;
+    if (!state.bars.length) { state.sym = SNAPSHOT.sym; loadSnapshot(); render(); }
+    return;
+  }
+  watch();
+}
+init();
+</script>
