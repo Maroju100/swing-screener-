@@ -16,8 +16,10 @@ import margin_style_17h_backtest as H
 import margin_style_all_setups_since_sep1 as A
 import margin_style_all_setups_since_sep1_pass2 as P
 
-START, END, CAP = '2026-05-11', '2026-11-11', 15000.0
-MONTHS = ['2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10', '2026-11']
+START = sys.argv[1] if len(sys.argv) > 1 else '2026-05-11'   # optional start date, e.g. 2026-06-01
+END, CAP = '2026-11-11', 15000.0
+MONTHS = [m for m in ['2026-03', '2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10', '2026-11'] if m >= START[:7]]
+OUTNAME = '6mo_all_setups' if START == '2026-05-11' else f'all_setups_from_{START}'
 
 
 def one(job):
@@ -94,8 +96,8 @@ if __name__ == '__main__':
     rows.sort(key=lambda x: -x['end'])
     out = os.path.join(A.ROOT, 'data', 'research')
     json.dump({'start': START, 'end': END, 'capital': CAP, 'cost_bps': A.COST, 'gate_failed': sorted(bad),
-               'rows': [{k: v for k, v in x.items() if k != 'eq'} for x in rows]}, open(os.path.join(out, '6mo_all_setups.json'), 'w'), indent=1, default=str)
-    with open(os.path.join(out, '6mo_all_setups.csv'), 'w', newline='') as f:
+               'rows': [{k: v for k, v in x.items() if k != 'eq'} for x in rows]}, open(os.path.join(out, OUTNAME + '.json'), 'w'), indent=1, default=str)
+    with open(os.path.join(out, OUTNAME + '.csv'), 'w', newline='') as f:
         w = csv.writer(f)
         w.writerow(['rank', 'setup', 'base', 'study'] + [m + ' P&L $' for m in MONTHS] + ['total P&L $', 'return %', 'max drawdown %', 'trades'])
         for i, x in enumerate(rows):
