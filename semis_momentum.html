@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Semis Momentum</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -129,7 +128,7 @@
   .gridline { stroke: var(--gridline); stroke-width: 1; }
   .baseline { stroke: var(--baseline); stroke-width: 1; }
   .axis-label { fill: var(--muted); font-size: 10px; font-family: "IBM Plex Mono", ui-monospace, monospace; }
-  .series-line { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: opacity 0.15s ease; }
+  .series-line { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: opacity 0.15s ease; stroke-opacity: 0.95; }
   .series-line.dim { opacity: 0.18; }
   .series-end { transition: opacity 0.15s ease; }
   .series-end.dim { opacity: 0.18; }
@@ -237,7 +236,7 @@
 
     <div class="hdr">
       <div class="hdr-title">
-        <div class="eyebrow">Live &middot; 8-symbol semis basket &middot; SPY benchmark</div>
+        <div class="eyebrow">Live · 10-symbol semis basket</div>
         <h1>Semis Momentum</h1>
       </div>
       <div class="hdr-meta">
@@ -303,33 +302,6 @@
         <div class="card-sub">Single-month backtest (Aug 2026, this basket): a fixed 70% threshold improved paper P&amp;L +45% over the month by mainly avoiding the 3 worst blowout days &mdash; not by reliably picking winners (several high-breadth days still lost money). Held up on both halves of that one month, but one month is thin evidence. Off by default; toggling it only affects today's live paper signals below, never past days already logged, and this dashboard places no real orders either way.</div>
       </div>
 
-      <div class="card" id="marketRegimeCard">
-        <div class="card-hd">
-          <div>
-            <div class="card-title">Market Regime Probability &mdash; Live decision support</div>
-            <div class="card-sub">Real-time classification of whether semis are trending up, down, or choppy right now &mdash; use this to decide position sizing and entry timing over the next 1–2 hours</div>
-          </div>
-        </div>
-
-        <div class="regime-gauge" id="regimeGaugeContainer"></div>
-
-        <div class="card-sub" style="font-weight:600; margin-top:14px">How to use this for live decisions</div>
-        <div class="card-sub">
-          <strong>UP (green arrow):</strong> Breadth &gt; 50% and momentum building. Add on weakness, scale into strength. Expect higher odds of follow-through on existing positions. &mdash;
-          <strong>DOWN (red arrow):</strong> Breadth &lt; 50% and momentum breaking. Reduce size, tighten stops, avoid new entries unless setup looks obvious. &mdash;
-          <strong>CHOP (yellow chevron):</strong> Breadth near 50% or conflicting signals (e.g., high volume but no directional agreement). Stay flexible with position sizing; don't chase breakouts without confirmation.
-        </div>
-
-        <div class="card-sub" style="font-weight:600; margin-top:10px">Regime probability (live)</div>
-        <div id="regimeHistoryContainer" style="margin-top:8px"></div>
-
-        <div class="card-sub" style="margin-top:10px; color:var(--muted); font-size:12px">
-          Combines four live indicators: basket breadth (how many of 8 symbols are up/down), MACD momentum, buy/sell volume pressure, and price acceleration. Directional gauge only &mdash; use with your trading plan.
-        </div>
-      </div>
-
-
-
       <div class="card" id="goodDayCard">
         <div class="card-hd">
           <div>
@@ -373,22 +345,6 @@
           <span class="pill" style="border-left:3px solid var(--warning)">Informational only &mdash; no orders placed</span>
         </div>
         <div id="signalAlertBanner"></div>
-
-        <div id="v3FilterBar" style="border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin:8px 0 4px;display:flex;flex-wrap:wrap;gap:14px;align-items:center">
-          <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7;font-weight:600">Entry filter</span>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
-            <input type="checkbox" id="v3RsToggle" checked>
-            <span>Require RS &gt; 0 vs SPY</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px">
-            <span>Cost</span>
-            <input type="number" id="v3CostBps" value="2.5" min="0" max="50" step="0.5"
-                   style="width:62px;padding:3px 6px;border:1px solid var(--line);border-radius:4px;background:transparent;color:inherit;font:inherit">
-            <span style="opacity:.7">bps/side</span>
-          </label>
-          <span id="v3FilterNote" style="font-size:12px;opacity:.75"></span>
-        </div>
-        <div id="v3RsStrip" style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px"></div>
 
         <div class="card-sub" style="font-weight:600">Buy / sell signal timeline</div>
         <div class="chart-wrap" id="signalTimelineWrap" style="margin-top:6px">
@@ -565,7 +521,6 @@
 
         <div class="card-sub" style="margin-top:10px"><strong>Key insight:</strong> v3 Baseline trades <em>every</em> day without filtering, which captures both the winners and the losers in the semis basket. Gating setups attempt to filter to "good" days only, but they consistently underperform: they miss enough winning days to offset the losses they prevent. The out-of-sample holdout window (+$4,882) confirms this — no gate beats simple continuous trading for this basket.</div>
 
-        <div class="card-sub" style="margin-top:10px; border-left:3px solid var(--warning); padding-left:10px"><strong>Update (2026-09-22) &mdash; the conclusion above is now too strong.</strong> "No gate beats simple continuous trading" held for the <em>day-level</em> gates tested here, which decide once each morning whether to trade at all. It does not hold for a <em>per-bar</em> filter. Replaying the real engine over 30 days of 1-minute bars, requiring RS&nbsp;&gt;&nbsp;0 vs SPY at each entry beat continuous trading at every cost level (+3.08% &rarr; +4.98% at zero cost; &minus;2.32% &rarr; +1.12% at 10&nbsp;bps/side) and was positive in both half-windows. That filter is live on the v3 cards above. The numbers in this card are from an earlier, separately-derived backtest and have not been re-measured against the committed bars.</div>
         <div class="card-sub" style="margin-top:8px; font-size:12px; color:var(--text-secondary)">This card is informational only and does not gate, filter, or place any orders. The v3 signals card above remains the live paper reference.</div>
       </div>
 
@@ -774,21 +729,144 @@
       <footer class="note">Momentum acceleration compares the most recent 15-minute % move to the 15 minutes before it &mdash; positive means the move is speeding up to the upside, negative means it's slowing or reversing. This reflects short-term price action only; it is not a trade recommendation.</footer>
     </div>
 
+    <div id="irwHost"></div>
+    <template id="irwTpl"><style>
+  /* Layout: one column. Verdict first, then the two prices that matter, then the tape (price + volume), then the bounce record. */
+  :host { display: block; color: var(--ink); font-family: var(--sans);
+    --surface: var(--surface-1); --ink: var(--text-primary); --ink-2: var(--text-secondary);
+    --grid: var(--gridline); --rule: var(--baseline); --price: var(--s1); --bad: var(--critical);
+    --warn: var(--warning); --level: var(--s7);
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace; }
+  [hidden] { display: none !important; }
+  * { box-sizing: border-box; }
+  .wrap { margin: 8px 0 0; padding: 18px 0 0; border-top: 1px solid var(--rule); display: flex; flex-direction: column; gap: 14px; }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .eyebrow { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  h2.sect { margin: 2px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+  .hdr { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 100px; border: 1px solid var(--border); color: var(--ink-2); background: var(--surface); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--warn); flex: none; }
+  .dot.live { background: var(--good); } .dot.off { background: var(--bad); }
+
+  .picker { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .chip { font: inherit; font-size: 12.5px; font-weight: 600; font-family: var(--mono); padding: 6px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink-2); cursor: pointer; }
+  .chip:hover { border-color: var(--ink-2); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--page); border-color: var(--ink); }
+  .chip:focus-visible, .symform input:focus-visible, .symform button:focus-visible { outline: 2px solid var(--price); outline-offset: 2px; }
+  .symform { display: flex; gap: 6px; }
+  .symform input { font: inherit; font-family: var(--mono); font-size: 12.5px; width: 92px; padding: 6px 9px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); text-transform: uppercase; }
+  .symform button { font: inherit; font-size: 12.5px; font-weight: 600; padding: 6px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); cursor: pointer; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; min-width: 0; }
+  .card h2 { margin: 0; font-size: 14px; font-weight: 600; }
+  .sub { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+  .banner { border: 1px solid var(--border); border-left: 3px solid var(--warn); background: var(--surface); border-radius: 10px; padding: 11px 13px; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+  .banner strong { color: var(--ink); }
+
+  .verdict { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .vbadge { font-size: 19px; font-weight: 700; padding: 8px 16px; border-radius: 10px; border: 2px solid currentColor; }
+  .vbadge.fall { color: var(--bad); } .vbadge.try { color: var(--warn); } .vbadge.turn { color: var(--good); } .vbadge.flat { color: var(--ink-2); }
+  .vtext { font-size: 13.5px; color: var(--ink-2); line-height: 1.5; flex: 1 1 260px; min-width: 0; }
+  .vtext strong { color: var(--ink); }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .tile { border: 1px solid var(--border); background: var(--page); border-radius: 10px; padding: 11px 13px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .tile.key { border-color: var(--level); }
+  .tlabel { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .tval { font-size: 20px; font-weight: 700; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .tval.up { color: var(--good); } .tval.down { color: var(--bad); }
+  .tsub { font-size: 11.5px; color: var(--ink-2); line-height: 1.45; }
+
+  .checks { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; }
+  .checks li { display: flex; gap: 9px; align-items: flex-start; border: 1px solid var(--border); background: var(--page); border-radius: 10px; padding: 9px 11px; font-size: 12.5px; line-height: 1.45; min-width: 0; }
+  .mark { flex: none; width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--surface); margin-top: 1px; }
+  .mark.yes { background: var(--good); } .mark.no { background: var(--bad); }
+  .checks strong { display: block; } .checks .d { color: var(--ink-2); }
+
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--ink-2); margin: 10px 0 4px; }
+  .legend i { display: inline-block; width: 14px; height: 0; vertical-align: middle; margin-right: 5px; border-top: 2px solid var(--price); }
+  .legend i.vwap { border-top: 2px dashed var(--muted); } .legend i.lvl { border-top: 2px solid var(--level); } .legend i.low { border-top: 2px dotted var(--bad); }
+  .legend i.up { border-top: 8px solid var(--good); width: 8px; } .legend i.dn { border-top: 8px solid var(--bad); width: 8px; }
+  .chartwrap { position: relative; }
+  svg.chart { width: 100%; display: block; overflow: visible; }
+  .gl { stroke: var(--grid); stroke-width: 1; } .ax { fill: var(--muted); font-size: 10px; font-family: var(--mono); }
+  .plabel { fill: var(--ink-2); font-size: 11px; font-weight: 600; font-family: var(--sans); }
+  .tip { position: absolute; pointer-events: none; z-index: 5; min-width: 150px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 11px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); opacity: 0; transform: translate(-50%, 0); transition: opacity 0.1s; }
+  .tip.show { opacity: 1; }
+  .tip .t { color: var(--muted); font-family: var(--mono); font-size: 10px; margin-bottom: 4px; }
+  .tip .r { display: flex; gap: 8px; justify-content: space-between; padding: 1.5px 0; color: var(--ink-2); }
+  .tip .r b { font-family: var(--mono); font-weight: 500; color: var(--ink); }
+
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 480px; margin-top: 8px; }
+  th { text-align: right; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--grid); }
+  td { text-align: right; padding: 8px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  th:first-child, td:first-child, th:last-child, td:last-child { text-align: left; }
+  tr:last-child td { border-bottom: none; }
+  .tag { font-size: 12px; font-weight: 600; } .tag.bad { color: var(--bad); } .tag.ok { color: var(--good); } .tag.wait { color: var(--warn); }
+  .note { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; max-width: 70ch; }
+  .note strong { color: var(--ink); }
+  @media (prefers-reduced-motion: reduce) { .tip { transition: none; } }
+</style>
+<div class="wrap">
+  <div class="hdr">
+    <div>
+      <div class="eyebrow">One stock at a time &middot; live minute bars &middot; refreshes about every 30 seconds &middot; regular hours</div>
+      <h2 class="sect">Intraday Reversal Watch</h2>
+    </div>
+    <span class="pill"><span class="dot" id="connDot"></span><span id="connText">Connecting&hellip;</span></span>
+  </div>
+
+  <div class="picker" id="picker" role="group" aria-label="Stock to watch"></div>
+
+  <div class="banner" id="banner" hidden></div>
+
+  <div class="card">
+    <div class="verdict">
+      <span class="vbadge flat" id="vBadge">Loading</span>
+      <div class="vtext" id="vText">Reading today's minute-by-minute prices.</div>
+    </div>
+    <ul class="checks" id="checks"></ul>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="card">
+    <h2 id="chartTitle">Today, minute by minute</h2>
+    <div class="sub" id="chartSub">Price with its volume-weighted average for the day, the level a real turn has to clear, and volume coloured by whether each minute closed up or down.</div>
+    <div class="legend">
+      <span><i></i>Price</span><span><i class="vwap"></i>Day's average price (VWAP)</span><span><i class="lvl"></i>Level to beat</span><span><i class="low"></i>Today's low</span>
+      <span><i class="up"></i>Up-minute volume</span><span><i class="dn"></i>Down-minute volume</span>
+    </div>
+    <div class="chartwrap" id="chartWrap"><svg class="chart" id="svg" role="img" aria-label="Intraday price, average price, level to beat and volume"></svg><div class="tip" id="tip"></div></div>
+  </div>
+
+  <div class="card">
+    <h2>Bounces so far today</h2>
+    <div class="sub">Every time the stock lifted off a low, how far it got, and whether it went on to a new low. A bounce that fails is the "small reversal" that pulls you in too early.</div>
+    <div class="scroll"><table>
+      <thead><tr><th>Started</th><th>From</th><th>To</th><th>Size</th><th>Lasted</th><th>Outcome</th></tr></thead>
+      <tbody id="bounceBody"></tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h2>How to use it, and what it cannot do</h2>
+    <p class="note"><strong>The idea.</strong> While a stock is falling, each bounce stops below the previous bounce's high and then a new low follows. The picture changes only when a bounce holds above the last low and then trades above the previous bounce's high. That price is the <strong>level to beat</strong>. Buying below it is guessing the bottom. Buying above it means the pattern of lower highs has broken, and today's low becomes the price that proves you wrong.</p>
+    <p class="note"><strong>The limits.</strong> These are standard tape-reading rules of thumb. They have not been tested on this page's data, and earlier replays in this project found no reliable edge in day-trading these stocks. A turn that passes every check can still fail, and it often does on days with bad news. The checks tell you the selling has paused. They do not tell you it is over.</p>
+    <p class="note"><strong>What it reads.</strong> Only price quotes and minute bars for the stock you pick. It never reads an account and cannot place an order. Minute bars arrive when each minute completes, and the page refreshes about every 30 seconds while it is open and visible, so it is a few seconds to a minute behind the tape.</p>
+  </div>
+</div>
+
+</template>
+
   </div>
 </div>
 
 <script type="module">
-// Universe is exactly the eight semis CLAUDE.md documents. "SPCX" and "NVIDIA"
-// were removed 2026-09-22 after checking them against the API: NVIDIA is not a
-// ticker and is silently dropped (10 symbols requested, 9 returned), while SPCX
-// resolves to a live NON-semiconductor instrument. Both were entering every
-// basket-level card -- breadth, Efficiency Ratio, regime -- and the v3 signals
-// themselves, since V3_SYMBOLS = SYMBOLS.
-const SYMBOLS = ["AMD","MU","WDC","SNDK","TSM","INTC","LRCX","STX"];
-// Benchmark only: fetched, never traded, never included in basket math.
-const BENCH_SYM = "SPY";
-const FETCH_SYMBOLS = [...SYMBOLS, BENCH_SYM];
-const SLOT = { AMD:1, MU:2, WDC:3, SNDK:4, TSM:5, INTC:6, LRCX:7, STX:8 };
+const SYMBOLS = ["AMD","MU","WDC","SNDK","TSM","INTC","LRCX","STX","SPCX","NVIDIA"];
+const SLOT = { AMD:1, MU:2, WDC:3, SNDK:4, TSM:5, INTC:6, LRCX:7, STX:8, SPCX:9, NVIDIA:10 };
 const root = document.querySelector('.viz-root');
 const cssColor = (sym) => getComputedStyle(root).getPropertyValue('--s' + SLOT[sym]).trim();
 const goodColor = () => getComputedStyle(root).getPropertyValue('--good').trim();
@@ -1307,68 +1385,7 @@ function renderGoodDaySignal() {
     : `<span class="badge down">Not flagged</span> <span class="num" style="margin-left:6px">breadth ${sig.breadth.toFixed(0)}%, basket ${sig.dayDir > 0 ? 'up' : 'down'} at the ${GOOD_DAY_WINDOW_MIN}-min mark</span>`;
 }
 
-// Entry-filter settings for the v3 signal cards. costBps is PER SIDE and defaults
-// to 2.5, the mean top-of-book half-spread measured across WDC/MU/SNDK on
-// 2026-09-22 (WDC 3.24, MU 1.39, SNDK 2.80). Single snapshot, not a distribution,
-// and spreads widen at the open -- which is when v3 trades -- so treat it as a
-// floor. v3 breaks even near 5.7 bps/side ungated, so this is not a rounding error:
-// it is roughly 44% of the gross edge.
-const V3_SETTINGS = { rsRequired: true, costBps: 2.5 };
-
-let _benchCache = { key: null, map: null };
-function benchReturnByT() {
-  const bb = state.bars[BENCH_SYM];
-  if (!bb || !bb.length) return null;
-  const key = bb.length + ':' + bb[bb.length - 1].t;
-  if (_benchCache.key === key) return _benchCache.map;
-  const m = new Map();
-  let base = null, curDate = null, last = 0;
-  for (const b of bb) {
-    const d = b.t.slice(0, 10);
-    if (d !== curDate) { curDate = d; base = b.close; last = 0; }
-    if (base) last = b.close / base - 1;
-    m.set(b.t, last);
-  }
-  _benchCache = { key, map: m };
-  return m;
-}
-function renderV3FilterBar() {
-  const note = $('v3FilterNote'), strip = $('v3RsStrip');
-  if (note) {
-    note.innerHTML = V3_SETTINGS.rsRequired
-      ? 'MEASURED: RS&gt;0 vs SPY took v3 from +3.08% to +4.98% at zero cost, and from '
-        + '&minus;2.32% to +1.12% at 10bps/side, over 30 days &mdash; positive in both halves. '
-        + 'One regime; direction, not decimals.'
-      : 'Filter off &mdash; showing raw v3 signals. Ungated, v3 breaks even near 5.7 bps/side.';
-  }
-  if (!strip) return;
-  const br = benchReturnByT();
-  if (!br) { strip.innerHTML = '<span style="font-size:12px;opacity:.6">Waiting for SPY bars&hellip;</span>'; return; }
-  strip.innerHTML = SYMBOLS.map(sym => {
-    const bars = state.bars[sym];
-    if (!bars || !bars.length) return '';
-    const last = bars[bars.length - 1];
-    const d = last.t.slice(0, 10);
-    let base = null;
-    for (let i = bars.length - 1; i >= 0; i--) { if (bars[i].t.slice(0, 10) === d) base = bars[i].close; else break; }
-    const b = br.get(last.t);
-    if (base === null || b === undefined) return '';
-    const rs = (last.close / base - 1) - b;
-    const ok = rs > 0;
-    const col = ok ? 'var(--good, #16a34a)' : 'var(--bad, #dc2626)';
-    return `<span title="${sym} since open vs SPY since open" style="font-size:12px;border:1px solid var(--line);`
-      + `border-left:3px solid ${col};border-radius:4px;padding:2px 8px;${ok ? '' : 'opacity:.55;'}">`
-      + `<strong>${sym}</strong> ${(rs * 100 >= 0 ? '+' : '')}${(rs * 100).toFixed(2)}%`
-      + `${V3_SETTINGS.rsRequired && !ok ? ' &middot; blocked' : ''}</span>`;
-  }).join('');
-}
-
-function v3Opts() {
-  return { benchRet: benchReturnByT(), rsRequired: V3_SETTINGS.rsRequired,
-           costBps: V3_SETTINGS.costBps };
-}
-
-function runV3SignalReplay(bars, gateBlockedDate, config = V3, opts = {}) {
+function runV3SignalReplay(bars, gateBlockedDate, config = V3) {
   // Full in-memory replay of state.bars[sym] (the fetched trailing window)
   // through v3 rules (baseline or tightened), from scratch every call - same
   // deterministic-recompute pattern as the rest of this page's charts.
@@ -1378,33 +1395,7 @@ function runV3SignalReplay(bars, gateBlockedDate, config = V3, opts = {}) {
   // adds fire on it - existing positions still exit normally (exhaustion /
   // EOD-close untouched). Only ever set for today, never past days.
   if (!bars || bars.length < 2) return { events: [], pos: null, latest: null, realizedPnl: 0, unrealizedPnl: 0 };
-  // --- relative strength vs benchmark, and execution cost ---
-  // MEASURED 2026-09-22, 30 trading days of real 1-minute bars, replaying the real
-  // engine (scripts/v3_replay.py --rs-sweep). Requiring RS > 0 vs SPY moved v3 from
-  // +3.08% to +4.98% at zero cost, and from -2.32% to +1.12% at 10bps/side. It was
-  // positive in BOTH half-windows and beat no-filter in both. A sector benchmark
-  // (SMH) did worse; "SMH up on day" won the first half then lost the second, so it
-  // failed walk-forward. Raising the threshold above 0 also did worse -- the untuned
-  // rule is what ships. Caveat: one 6-week regime, and that replay ran the engine's
-  // own WDC/MU/SNDK universe, not all eight.
-  // RS reads only bars at or before the current bar, so it is decidable when acted on.
-  const COST_C = (opts.costBps ?? 0) / 10000;
-  const benchRet = opts.benchRet || null;
-  const rsRequired = !!opts.rsRequired;
   const closes = bars.map(b => b.close);
-  const dayOpen = [];
-  { let cd = null, base = null;
-    for (let i = 0; i < bars.length; i++) {
-      const d = bars[i].t.slice(0, 10);
-      if (d !== cd) { cd = d; base = bars[i].close; }
-      dayOpen[i] = base;
-    } }
-  const rsAt = (gi) => {
-    if (!benchRet || !dayOpen[gi]) return null;
-    const br = benchRet.get(bars[gi].t);
-    if (br === undefined) return null;
-    return (closes[gi] / dayOpen[gi] - 1) - br;
-  };
   const r = rsiSeries(closes), h = macdHistSeries(closes), vw = dayAnchoredVwapSeries(bars);
   let pos = null;
   const entryCycles = {}; // date -> count
@@ -1430,7 +1421,7 @@ function runV3SignalReplay(bars, gateBlockedDate, config = V3, opts = {}) {
       }
 
       if (isEod) {
-        const proceeds = pos.shares * price * (1 - COST_C), pnl = proceeds - pos.cost;
+        const proceeds = pos.shares * price, pnl = proceeds - pos.cost;
         realizedPnl += pnl;
         events.push({ t: bar.t, action: 'SELL', reason: 'EOD-CLOSE', pnl, shares: pos.shares, amount: proceeds,
           detail: `time-of-day ${hhmm} UTC reached the ${config.EOD_HHMM} UTC close cutoff` });
@@ -1439,7 +1430,7 @@ function runV3SignalReplay(bars, gateBlockedDate, config = V3, opts = {}) {
       if (exhaustion) {
         const sellShares = pos.shares * config.TRIM_PCT;
         const avgCost = pos.cost / pos.shares;
-        const proceeds = sellShares * price * (1 - COST_C), pnl = proceeds - sellShares * avgCost;
+        const proceeds = sellShares * price, pnl = proceeds - sellShares * avgCost;
         realizedPnl += pnl;
         pos.shares -= sellShares; pos.cost -= sellShares * avgCost;
         events.push({ t: bar.t, action: 'SELL', reason: exhaustion, pnl, shares: sellShares, amount: proceeds,
@@ -1456,7 +1447,7 @@ function runV3SignalReplay(bars, gateBlockedDate, config = V3, opts = {}) {
       const addOk = pos.tranches < config.MAX_TRANCHES && pos.lastTranchePrice !== null
         && price >= pos.lastTranchePrice * (1 + config.ADD_GAIN) && r[gi] !== null && r[gi] >= config.ENTRY_RSI;
       if (addOk) {
-        const sh = SIGNAL_TRANCHE_SIZE / (price * (1 + COST_C));
+        const sh = SIGNAL_TRANCHE_SIZE / price;
         pos.shares += sh; pos.cost += SIGNAL_TRANCHE_SIZE;
         events.push({ t: bar.t, action: 'BUY', reason: `ADD (t${pos.tranches + 1}/${config.MAX_TRANCHES})`, pnl: null, shares: sh, amount: SIGNAL_TRANCHE_SIZE,
           detail: `price ${price.toFixed(4)} >= last tranche ${pos.lastTranchePrice.toFixed(4)} x${(1+config.ADD_GAIN).toFixed(4)}, RSI ${r[gi].toFixed(1)} >= ${config.ENTRY_RSI}` });
@@ -1470,12 +1461,10 @@ function runV3SignalReplay(bars, gateBlockedDate, config = V3, opts = {}) {
     entryCycles[date] = entryCycles[date] || 0;
     if (entryCycles[date] >= config.MAX_ENTRY_CYCLES) continue;
 
-    const rsNow = rsAt(gi);
-    const rsOk = !rsRequired || (rsNow !== null && rsNow > 0);
-    const entryOk = rsOk && vw[gi] !== null && price > vw[gi] && r[gi] !== null && r[gi - 1] !== null
+    const entryOk = vw[gi] !== null && price > vw[gi] && r[gi] !== null && r[gi - 1] !== null
       && r[gi - 1] < config.ENTRY_RSI && r[gi] >= config.ENTRY_RSI && h[gi] !== null && h[gi] > 0;
     if (entryOk) {
-      const sh = SIGNAL_TRANCHE_SIZE / (price * (1 + COST_C));
+      const sh = SIGNAL_TRANCHE_SIZE / price;
       events.push({ t: bar.t, action: 'BUY', reason: 'ENTRY', pnl: null, shares: sh, amount: SIGNAL_TRANCHE_SIZE,
         detail: `price ${price.toFixed(4)} > VWAP ${vw[gi].toFixed(4)}, RSI crossed up through ${config.ENTRY_RSI} (${r[gi-1].toFixed(1)}→${r[gi].toFixed(1)}), MACD hist +${h[gi].toFixed(3)}` });
       pos = { tranches: 1, entryPeakRsi: r[gi], sinceEntryHigh: price, lastTranchePrice: price, lastActionT: bar.t,
@@ -1484,7 +1473,7 @@ function runV3SignalReplay(bars, gateBlockedDate, config = V3, opts = {}) {
     }
   }
   const lastGi = bars.length - 1;
-  const latest = { price: closes[lastGi], rsi: r[lastGi], prevRsi: r[lastGi - 1], macdHist: h[lastGi], vwap: vw[lastGi], t: bars[lastGi].t, rs: rsAt(lastGi) };
+  const latest = { price: closes[lastGi], rsi: r[lastGi], prevRsi: r[lastGi - 1], macdHist: h[lastGi], vwap: vw[lastGi], t: bars[lastGi].t };
   const unrealizedPnl = pos ? pos.shares * latest.price - pos.cost : 0;
   return { events, pos, latest, realizedPnl, unrealizedPnl };
 }
@@ -2284,154 +2273,6 @@ function renderBreadthChart() {
     <path d="${posD}" fill="${goodColor()}" fill-opacity="0.35" stroke="${goodColor()}" stroke-width="1"/>
     <path d="${negD}" fill="${criticalColor()}" fill-opacity="0.35" stroke="${criticalColor()}" stroke-width="1"/>`;
 }
-
-function computeMarketRegime() {
-  let upCount = 0, downCount = 0;
-  for (const sym of SYMBOLS) {
-    const q = state.quotes[sym];
-    if (!q || !q.prevClose) continue;
-    const pct = (q.last - q.prevClose) / q.prevClose;
-    if (pct > 0.0005) upCount++; else if (pct < -0.0005) downCount++;
-  }
-  const total = upCount + downCount;
-  const breadthScore = total ? (upCount - downCount) / total : 0;
-
-  let macdSum = 0, macdCount = 0;
-  for (const sym of SYMBOLS) {
-    const bars = state.bars[sym];
-    if (!bars || bars.length < 27) continue;
-    const closes = bars.map(b => b.close);
-    const hist = macdHistSeries(closes);
-    if (hist && hist.length > 0 && hist[hist.length - 1] !== null) {
-      const latestHist = hist[hist.length - 1];
-      macdSum += latestHist > 0 ? 1 : (latestHist < 0 ? -1 : 0);
-      macdCount++;
-    }
-  }
-  const macdScore = macdCount ? (macdSum / macdCount) : 0;
-
-  let volumeSum = 0, volumeCount = 0;
-  for (const sym of SYMBOLS) {
-    const bars = state.bars[sym];
-    if (!bars || bars.length < 30) continue;
-    const recentBars = bars.slice(-30);
-    let buyVol = 0, sellVol = 0;
-    for (let i = 1; i < recentBars.length; i++) {
-      const prevClose = recentBars[i - 1].close;
-      const currClose = recentBars[i].close;
-      if (currClose > prevClose) buyVol += recentBars[i].volume;
-      else if (currClose < prevClose) sellVol += recentBars[i].volume;
-    }
-    if (buyVol + sellVol > 0) {
-      const ratio = (buyVol - sellVol) / (buyVol + sellVol);
-      volumeSum += ratio;
-      volumeCount++;
-    }
-  }
-  const volumeScore = volumeCount ? (volumeSum / volumeCount) : 0;
-
-  let accelSum = 0, accelCount = 0;
-  for (const sym of SYMBOLS) {
-    const bars = state.bars[sym];
-    if (!bars || bars.length < 30) continue;
-    const full = computeAccelSeries(bars);
-    if (full.length > 0) {
-      const latest = full[full.length - 1].v;
-      accelSum += latest > 0 ? Math.min(1, latest / 2) : Math.max(-1, latest / 2);
-      accelCount++;
-    }
-  }
-  const accelScore = accelCount ? (accelSum / accelCount) : 0;
-
-  const rawScore = breadthScore * 0.40 + macdScore * 0.30 + volumeScore * 0.20 + accelScore * 0.10;
-  const absScore = Math.abs(rawScore);
-  const confidence = Math.min(100, absScore * 120);
-  let regime, upProb, downProb, chopProb;
-  
-  if (rawScore > 0.15) {
-    regime = 'up';
-    upProb = 50 + confidence * 0.5;
-    downProb = Math.max(5, 25 - confidence * 0.25);
-    chopProb = 100 - upProb - downProb;
-  } else if (rawScore < -0.15) {
-    regime = 'down';
-    downProb = 50 + confidence * 0.5;
-    upProb = Math.max(5, 25 - confidence * 0.25);
-    chopProb = 100 - upProb - downProb;
-  } else {
-    regime = 'chop';
-    chopProb = 50 + confidence * 0.4;
-    upProb = (100 - chopProb) / 2;
-    downProb = upProb;
-  }
-
-  return {
-    regime, upProb: Math.round(upProb), downProb: Math.round(downProb), chopProb: Math.round(chopProb),
-    signals: { upCount, downCount, total, macdScore: macdScore.toFixed(2), volumeScore: volumeScore.toFixed(2), accelScore: accelScore.toFixed(2) }
-  };
-}
-
-function renderMarketRegime() {
-  const container = $('regimeGaugeContainer');
-  const historyContainer = $('regimeHistoryContainer');
-  const regime = computeMarketRegime();
-  if (!regime) { container.innerHTML = ''; return; }
-
-  const { upProb, downProb, chopProb, signals } = regime;
-  const arrow = regime.regime === 'up' ? '↑' : (regime.regime === 'down' ? '↓' : '↔');
-  const label = regime.regime === 'up' ? 'UP' : (regime.regime === 'down' ? 'DOWN' : 'CHOP');
-
-  container.innerHTML = `
-    <div class="regime-visual">
-      <div class="regime-arrow ${regime.regime}">${arrow}</div>
-      <div class="regime-label ${regime.regime}">${label}</div>
-    </div>
-    <div class="regime-info">
-      <div class="regime-detail-row">
-        <span class="regime-detail-label">↑ UP probability</span>
-        <span class="regime-detail-value">${upProb}%</span>
-      </div>
-      <div class="regime-detail-row">
-        <span class="regime-detail-label">↓ DOWN probability</span>
-        <span class="regime-detail-value">${downProb}%</span>
-      </div>
-      <div class="regime-detail-row">
-        <span class="regime-detail-label">↔ CHOP probability</span>
-        <span class="regime-detail-value">${chopProb}%</span>
-      </div>
-      <div class="regime-detail-row">
-        <span class="regime-detail-label">Breadth (up/down)</span>
-        <span class="regime-detail-value">${signals.upCount}/${signals.downCount} of ${signals.total}</span>
-      </div>
-      <div class="regime-detail-row">
-        <span class="regime-detail-label">Volume pressure</span>
-        <span class="regime-detail-value" style="${parseFloat(signals.volumeScore) > 0 ? 'color:var(--good)' : 'color:var(--critical)'}">
-          ${parseFloat(signals.volumeScore) > 0 ? '+' : ''}${signals.volumeScore}
-        </span>
-      </div>
-    </div>
-  `;
-
-  historyContainer.innerHTML = `
-    <div class="regime-detail-row">
-      <span class="regime-detail-label">Current regime:</span>
-      <span class="regime-detail-value" style="color:${regime.regime === 'up' ? 'var(--good)' : (regime.regime === 'down' ? 'var(--critical)' : 'var(--warning)')}">${upProb}% UP · ${downProb}% DOWN · ${chopProb}% CHOP</span>
-    </div>
-    <div style="display:flex; gap:3px; margin-top:4px">
-      <div style="flex:${upProb}; height:20px; border-radius:4px; background:var(--good); display:flex; align-items:center; justify-content:flex-end; padding-right:6px">
-        ${upProb > 20 ? `<span style="font-size:11px; font-weight:600; color:var(--text-primary)">${upProb}%</span>` : ''}
-      </div>
-      <div style="flex:${chopProb}; height:20px; border-radius:4px; background:var(--warning); display:flex; align-items:center; justify-content:flex-end; padding-right:6px">
-        ${chopProb > 20 ? `<span style="font-size:11px; font-weight:600; color:var(--text-primary)">${chopProb}%</span>` : ''}
-      </div>
-      <div style="flex:${downProb}; height:20px; border-radius:4px; background:var(--critical); display:flex; align-items:center; justify-content:flex-end; padding-right:6px">
-        ${downProb > 20 ? `<span style="font-size:11px; font-weight:600; color:var(--text-primary)">${downProb}%</span>` : ''}
-      </div>
-    </div>
-  `;
-}
-
-
 function renderBreadthSummary() {
   let up = 0, down = 0, flat = 0;
   for (const sym of SYMBOLS) {
@@ -2569,90 +2410,8 @@ function buildAccelBucketedModel() {
 }
 
 function renderAccelTimeChart() {
-  const svg = $('accelTimeSvg');
-  const model = buildAccelBucketedModel();
-  if (!model) { svg.innerHTML = ''; return; }
-
-  const { series, buckets, vMin, vMax } = model;
-  const W = 900, H = 380, PAD_T = 10, PAD_B = 40, PAD_L = 50, PAD_R = 20;
-  const PLOT_W = W - PAD_L - PAD_R;
-  const PLOT_H = H - PAD_T - PAD_B;
-  const BUCKET_W = PLOT_W / 6;
-
-  const yScale = PLOT_H / (vMax - vMin);
-  const zeroY = PAD_T + PLOT_H - (0 - vMin) * yScale;
-
-  // Grid
-  let grid = `<line x1="${PAD_L}" y1="${zeroY}" x2="${W - PAD_R}" y2="${zeroY}" class="baseline"/>`;
-  const step = Math.max(0.1, Math.round((vMax - vMin) / 4 * 10) / 10);
-  for (let v = Math.ceil(vMin / step) * step; v <= vMax; v += step) {
-    const py = PAD_T + PLOT_H - (v - vMin) * yScale;
-    grid += `<line x1="${PAD_L}" y1="${py}" x2="${W - PAD_R}" y2="${py}" class="gridline"/>`;
-    grid += `<text x="${PAD_L - 8}" y="${py + 4}" text-anchor="end" class="axis-label">${v.toFixed(1)}</text>`;
-  }
-
-  // Time labels (bucket midpoints)
-  let timeLabels = '';
-  for (let i = 0; i < 6; i++) {
-    const minAgo = 30 - (i + 0.5) * 5;
-    const px = PAD_L + i * BUCKET_W + BUCKET_W / 2;
-    timeLabels += `<text x="${px}" y="${H - 4}" text-anchor="middle" class="axis-label">${Math.round(minAgo)}m</text>`;
-  }
-
-  // Lines (one per symbol)
-  let lines = '';
-  let markers = '';
-  for (const sym of SYMBOLS) {
-    const pts = series[sym];
-    if (!pts || !pts.length) continue;
-
-    // Build path data
-    let pathData = '';
-    for (let i = 0; i < pts.length; i++) {
-      const px = PAD_L + i * BUCKET_W + BUCKET_W / 2;
-      const py = zeroY - (pts[i].v - vMin) * yScale;
-      pathData += (i === 0 ? 'M' : 'L') + px.toFixed(1) + ' ' + py.toFixed(1) + ' ';
-    }
-
-    const color = cssColor(sym);
-    lines += `<path d="${pathData}" stroke="${color}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="series-line" data-sym="${sym}"/>`;
-
-    // Add markers (circles) for hover detection - visible with semi-transparent fill
-    for (let i = 0; i < pts.length; i++) {
-      const px = PAD_L + i * BUCKET_W + BUCKET_W / 2;
-      const py = zeroY - (pts[i].v - vMin) * yScale;
-      const minAgo = 30 - (i + 0.5) * 5;
-      markers += `<circle cx="${px}" cy="${py}" r="5" fill="${color}" opacity="0.3" class="accel-marker" data-sym="${sym}" data-val="${pts[i].v.toFixed(2)}" data-bucket="${i}" data-min-ago="${minAgo}" style="cursor:pointer"/>`;
-    }
-  }
-
-  svg.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:auto;display:block;overflow:visible">
-    ${grid}
-    ${timeLabels}
-    ${lines}
-    ${markers}
-  </svg>`;
-
-  const tooltip = $('tooltipAccelTime');
-  svg.querySelectorAll('.accel-marker').forEach(marker => {
-    marker.addEventListener('mouseenter', () => {
-      const sym = marker.getAttribute('data-sym');
-      const val = marker.getAttribute('data-val');
-      const minAgo = marker.getAttribute('data-min-ago');
-      tooltip.innerHTML = `<div class="tooltip-time">${Math.round(minAgo)}m ago</div><div class="tooltip-row"><span class="swatch" style="background:${cssColor(sym)}"></span><span class="sym">${sym}</span><span class="val">${val}pp</span></div>`;
-      tooltip.classList.add('show');
-    });
-    marker.addEventListener('mousemove', (e) => {
-      const rect = svg.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      tooltip.style.left = x + 'px';
-      tooltip.style.top = (y - 20) + 'px';
-    });
-    marker.addEventListener('mouseleave', () => {
-      tooltip.classList.remove('show');
-    });
-  });
+  renderLineChart($('accelTimeSvg'), buildAccelModel(), (v) => (v >= 0 ? '+' : '') + v.toFixed(2));
+  wireTooltip('accelTimeSvg', 'accelTimeWrap', 'tooltipAccelTime', fmtPP);
 }
 
 const fmtVolX = (v) => v.toFixed(1) + 'x';
@@ -3364,7 +3123,7 @@ function renderSignals() {
   const todayStr = new Date().toISOString().slice(0, 10);
   const gateBlockedDate = gate.blocked ? todayStr : null;
   for (const sym of V3_SYMBOLS) {
-    const replay = runV3SignalReplay(state.bars[sym], gateBlockedDate, V3, v3Opts());
+    const replay = runV3SignalReplay(state.bars[sym], gateBlockedDate);
     for (const e of replay.events) allEvents.push({ ...e, symbol: sym });
     const banked = bankRealizedEvents(pnlLedger, sym, replay.events);
     rows.push({ sym, proximity: computeSignalProximity(sym, replay), holding: !!replay.pos,
@@ -3453,7 +3212,7 @@ function renderV3BaselineSignals() {
   const todayStr = new Date().toISOString().slice(0, 10);
   const gateBlockedDate = gate.blocked ? todayStr : null;
   for (const sym of V3_SYMBOLS) {
-    const replay = runV3SignalReplay(state.bars[sym], gateBlockedDate, V3_BASELINE, v3Opts());
+    const replay = runV3SignalReplay(state.bars[sym], gateBlockedDate, V3_BASELINE);
     for (const e of replay.events) allEvents.push({ ...e, symbol: sym });
     rows.push({ sym, proximity: computeSignalProximity(sym, replay, V3_BASELINE), holding: !!replay.pos,
                 realizedPnl: replay.realizedPnl, unrealizedPnl: replay.unrealizedPnl,
@@ -3512,13 +3271,11 @@ function renderV3BaselineSignals() {
 }
 
 function renderAll() {
-  renderV3FilterBar();
   const haveQuotes = Object.keys(state.quotes).length > 0;
   const haveBars = Object.keys(state.bars).length > 0;
   if (!haveQuotes && !haveBars) return;
   $('mainContent').style.display = 'block';
   $('emptyState').style.display = 'none';
-  renderMarketRegime();
   renderEfficiencyRatio();
   renderSignedEfficiencyRatio();
   renderGoodDaySignal();
@@ -3608,7 +3365,7 @@ async function init() {
     }
   }
 
-  mcp.watchTool('RobinhoodClaude', 'get_equity_quotes', { symbols: FETCH_SYMBOLS }, (ev) => {
+  mcp.watchTool('RobinhoodClaude', 'get_equity_quotes', { symbols: SYMBOLS }, (ev) => {
     if (ev.type === 'data') {
       hadFatal = false; hideBanner();
       ingestQuotes(ev.result.payload);
@@ -3624,7 +3381,7 @@ async function init() {
   }, { refetchInterval: 30000 });
 
   mcp.watchTool('RobinhoodClaude', 'get_equity_historicals',
-    { symbols: FETCH_SYMBOLS, start_time: startTime, interval: 'minute', bounds: 'regular' },
+    { symbols: SYMBOLS, start_time: startTime, interval: 'minute', bounds: 'regular' },
     (ev) => {
       if (ev.type === 'data') {
         hadFatal = false; hideBanner();
@@ -3640,18 +3397,6 @@ async function init() {
       }
     }, { refetchInterval: 30000 });
 
-  const rsToggle = $('v3RsToggle');
-  if (rsToggle) rsToggle.addEventListener('change', (e) => {
-    V3_SETTINGS.rsRequired = e.target.checked;
-    renderAll();
-  });
-  const costInput = $('v3CostBps');
-  if (costInput) costInput.addEventListener('change', (e) => {
-    const v = parseFloat(e.target.value);
-    V3_SETTINGS.costBps = Number.isFinite(v) && v >= 0 ? v : 0;
-    renderAll();
-  });
-
   $('refreshBtn').addEventListener('click', async () => {
     const btn = $('refreshBtn');
     btn.classList.add('spinning');
@@ -3660,15 +3405,250 @@ async function init() {
   });
 }
 
-// Test hook: lets the Node DOM-mock harness drive the real render/replay functions
-// with cached market data (see CLAUDE.md, "Dashboard testing before publish").
-// Assigned before init() so a harness still gets it if init throws without a
-// live connector. Inert in the browser.
-globalThis.__test = { runV3SignalReplay, benchReturnByT, renderV3FilterBar, v3Opts,
-                      state, SYMBOLS, BENCH_SYM, V3, V3_BASELINE, V3_SETTINGS };
-
 init();
 </script>
+<script>
+// Intraday Reversal Watch, added 2026-11-13. Lives in a shadow root so its styles and ids cannot collide with
+// the dashboard above; it keeps its own two watches (one stock) and shares nothing with the module script.
+(function () {
+const HOST = document.getElementById('irwHost');
+const SR = HOST.attachShadow({ mode: 'open' });
+SR.appendChild(document.getElementById('irwTpl').content.cloneNode(true));
 
+const CHIPS = ['SNDK', 'WDC', 'MU', 'AMD', 'INTC', 'STX', 'LRCX', 'TSM'];
+const SERVER = 'RobinhoodClaude';
+const $ = (id) => SR.getElementById(id);
+const css = (v) => getComputedStyle(HOST).getPropertyValue(v).trim();
+const money = (v) => '$' + v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const pct = (v, d = 2) => (v >= 0 ? '+' : '') + v.toFixed(d) + '%';
+const clock = (t) => new Date(t).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-</body></html>
+// Snapshot of SNDK's session on 2026-11-13 up to 10:13 AM CST, so the page shows a real example before the
+// live call answers. [minutes after 14:30 UTC, open, high, low, close, volume]. Replaced by live data at once.
+const SNAPSHOT = { sym: 'SNDK', date: '2026-11-13', prevClose: 937.46, bars: [[0,915.86,923.18,911.52,920.06,119625],[1,920.1,932.68,920.1,929.12,75460],[2,929.12,932.68,924.5,930.84,40405],[3,930.9,939.53,930.07,933.63,59347],[4,933.67,933.87,921.26,922.27,38395],[5,922.1,925.89,918.24,919.69,55391],[6,919.74,925.49,913.01,913.64,50678],[7,913.39,913.83,905.08,905.29,106215],[8,905.28,906.39,896.21,902.09,96954],[9,902.92,910.35,902.81,903.92,81010],[10,903.76,908.87,901.5,906.2,51692],[11,906.11,908.17,900.73,902.55,40442],[12,902.6,904.4,894.02,898.89,60578],[13,898.79,902.06,898.0,898.89,40435],[14,898.64,899.64,888.22,888.22,73833],[15,888.46,895.5,886.12,894.82,81225],[16,894.52,901.0,894.5,897.15,68979],[17,897.51,902.38,896.81,901.52,42746],[18,901.99,902.0,895.92,896.61,40337],[19,896.61,898.75,886.73,887.33,47910],[20,887.0,888.44,880.0,884.61,66295],[21,884.62,888.0,880.47,887.21,40599],[22,887.06,887.61,881.5,885.0,41379],[23,885.17,887.36,882.58,884.48,22402],[24,884.3,890.76,884.26,889.37,39670],[25,889.19,889.19,878.1,878.58,40727],[26,878.1,879.7,875.0,879.08,54455],[27,879.0,883.0,877.3,882.71,28413],[28,882.08,883.72,879.55,880.08,25003],[29,879.79,882.15,878.43,880.24,22366],[30,880.15,881.91,874.3,877.99,41958],[31,877.85,880.8,874.57,875.46,28038],[32,875.08,875.32,869.18,870.01,54031],[33,870.35,871.03,867.17,868.13,61476],[34,868.14,870.0,866.24,867.99,38299],[35,867.99,875.0,867.69,873.16,42367],[36,874.11,875.96,870.37,874.79,41954],[37,875.07,877.9,872.0,873.15,38448],[38,873.04,873.62,868.0,868.76,26582],[39,868.5,870.26,866.68,867.87,22476],[40,867.73,867.73,860.29,860.37,46900],[41,860.75,862.0,857.11,857.38,74865],[42,857.53,860.0,854.49,857.54,59034],[43,857.73,858.69,855.1,857.58,39435],[44,857.77,859.55,857.01,858.0,31722],[45,858.0,865.64,857.54,864.49,43351],[46,864.31,866.32,861.01,861.33,29416],[47,861.01,863.99,860.04,861.01,21233],[48,860.99,860.99,857.16,859.68,36100],[49,859.64,860.0,856.88,858.1,19811],[50,858.1,859.37,855.1,857.81,23462],[51,857.81,857.81,853.34,853.78,31700],[52,853.85,860.99,853.13,860.26,34801],[53,860.27,861.4,857.72,859.85,26329],[54,859.93,862.39,857.24,862.0,31016],[55,862.09,864.19,859.24,859.66,43161],[56,859.26,860.01,854.72,857.48,34712],[57,856.96,860.11,856.96,858.77,29431],[58,858.57,864.3,858.02,863.99,42462],[59,863.88,865.31,862.84,864.15,50013],[60,863.8,866.4,861.67,862.5,27496],[61,862.94,863.64,859.0,859.02,20284],[62,859.1,864.44,857.79,864.01,26164],[63,864.01,864.55,858.2,861.34,24248],[64,861.1,861.94,856.1,856.63,40606],[65,856.62,858.29,852.53,853.5,51051],[66,853.19,854.99,848.5,851.61,40721],[67,851.88,853.6,850.0,853.36,30590],[68,853.28,853.44,851.0,851.95,13448],[69,851.72,854.0,851.0,852.07,16513],[70,852.14,855.41,851.86,855.12,20854],[71,854.81,855.47,851.87,854.7,16225],[72,854.8,856.89,854.64,854.98,20985],[73,854.98,856.73,853.09,856.17,18477],[74,856.17,856.38,852.51,855.75,24609],[75,855.5,858.17,854.62,855.43,19894],[76,855.33,855.79,849.0,849.66,31896],[77,849.48,856.37,849.32,854.24,29051],[78,854.4,854.6,851.28,852.28,12423],[79,852.55,857.57,852.0,856.9,22452],[80,857.02,858.78,856.76,857.63,21967],[81,857.82,862.37,856.62,861.86,25539],[82,861.71,862.99,858.55,859.66,24063],[83,859.69,861.37,856.66,858.59,25046],[84,858.88,858.88,854.5,854.94,21143],[85,854.67,856.0,853.48,855.68,13877],[86,855.75,860.23,855.64,857.8,20995],[87,857.82,860.23,856.85,858.35,13995],[88,858.57,859.59,856.67,857.72,13577],[89,857.61,859.11,857.0,858.24,10253],[90,858.24,859.5,856.36,858.88,10369],[91,858.44,858.65,854.69,854.75,17168],[92,854.64,856.49,853.79,856.29,12225],[93,855.84,856.0,853.39,853.39,12088],[94,853.28,853.89,850.72,851.47,18051],[95,851.23,851.59,849.46,850.5,28342],[96,850.22,855.65,849.52,854.42,26540],[97,854.46,857.63,854.39,857.03,19748],[98,857.03,857.88,855.39,856.95,11607],[99,856.76,858.37,856.56,857.89,14102],[100,858.04,860.25,856.36,860.25,19639],[101,859.99,860.25,856.5,856.76,11853],[102,857.0,857.98,855.55,857.15,12801],[103,857.05,857.92,855.63,856.71,7560]] };
+
+const state = { sym: 'SNDK', bars: [], quote: null, live: false, err: null, lastKey: '' };
+try { const s = localStorage.getItem('irw-symbol'); if (s && /^[A-Z.]{1,6}$/.test(s)) state.sym = s; } catch {}
+
+// ---------- analysis (pure) ----------
+function analyse(bars, quote) {
+  if (!bars || bars.length < 5) return null;
+  const n = bars.length, last = bars[n - 1];
+  let pv = 0, vv = 0; const vwap = [];
+  let iLow = 0, iHigh = 0;
+  bars.forEach((b, i) => {
+    pv += (b.h + b.l + b.c) / 3 * b.v; vv += b.v; vwap.push(vv > 0 ? pv / vv : b.c);
+    if (b.l < bars[iLow].l) iLow = i; if (b.h > bars[iHigh].h) iHigh = i;
+  });
+  const lo = bars[iLow].l, hi = bars[iHigh].h;
+  const price = quote && isFinite(quote.last) ? quote.last : last.c;
+  const thr = Math.min(0.02, Math.max(0.004, 0.12 * (hi - lo) / price));   // a swing must be this big to count
+  // zigzag pivots on highs/lows
+  const piv = []; let dir = 0, H = { p: bars[0].h, i: 0 }, L = { p: bars[0].l, i: 0 };
+  for (let i = 1; i < n; i++) {
+    const b = bars[i];
+    if (dir === 0) {
+      if (b.h > H.p) H = { p: b.h, i }; if (b.l < L.p) L = { p: b.l, i };
+      if (H.p / L.p - 1 >= thr) { if (H.i > L.i) { piv.push({ k: 'L', ...L }); dir = 1; } else { piv.push({ k: 'H', ...H }); dir = -1; } }
+    } else if (dir === 1) {
+      if (b.h > H.p) H = { p: b.h, i };
+      else if (b.l <= H.p * (1 - thr)) { piv.push({ k: 'H', ...H }); dir = -1; L = { p: b.l, i }; }
+    } else {
+      if (b.l < L.p) L = { p: b.l, i };
+      else if (b.h >= L.p * (1 + thr)) { piv.push({ k: 'L', ...L }); dir = 1; H = { p: b.h, i }; }
+    }
+  }
+  const lastH = [...piv].reverse().find(p => p.k === 'H') || null;
+  const lastL = [...piv].reverse().find(p => p.k === 'L') || null;
+  // bounces: each confirmed low and the high that followed it
+  const bounces = [];
+  for (let j = 0; j < piv.length; j++) {
+    if (piv[j].k !== 'L') continue;
+    const nx = piv[j + 1];
+    const top = nx ? nx : (dir === 1 ? { p: H.p, i: H.i } : null);
+    if (!top) continue;
+    let failed = false; for (let i = top.i + 1; i < n; i++) if (bars[i].l < piv[j].p) { failed = true; break; }
+    bounces.push({ t: bars[piv[j].i].t, from: piv[j].p, to: top.p, size: (top.p / piv[j].p - 1) * 100, mins: top.i - piv[j].i, failed, open: !nx });
+  }
+  const level = lastH ? lastH.p : vwap[n - 1];
+  const minsSinceLow = n - 1 - iLow;
+  const w = bars.slice(-15); let bs = 0, ts = 0;
+  w.forEach(b => { const f = b.h > b.l ? (b.c - b.l) / (b.h - b.l) : 0.5; bs += b.v * b.c * f; ts += b.v * b.c; });
+  const buyShare = ts > 0 ? bs / ts : 0.5;
+  const higherLow = !!lastL && lastL.i > iLow && lastL.p > lo && price > lastL.p;
+  const checks = [
+    { ok: minsSinceLow >= 30, name: 'No new low for 30 minutes', d: minsSinceLow === 0 ? 'It is making a new low right now' : `Last new low was ${minsSinceLow} minute${minsSinceLow === 1 ? '' : 's'} ago, at ${money(lo)}` },
+    { ok: higherLow, name: 'A higher low', d: higherLow ? `It dipped to ${money(lastL.p)} and held above today's low` : 'No pullback has held above today\'s low yet' },
+    { ok: price > level, name: 'Above the last bounce\'s high', d: `${money(price)} against the level to beat, ${money(level)} (${pct((price / level - 1) * 100)})` },
+    { ok: price > vwap[n - 1], name: 'Above the day\'s average price', d: `Average price paid today is ${money(vwap[n - 1])} (${pct((price / vwap[n - 1] - 1) * 100)})` },
+    { ok: buyShare > 0.5, name: 'Buyers ahead over 15 minutes', d: `Estimated buying is ${(buyShare * 100).toFixed(0)}% of the last 15 minutes' volume` },
+  ];
+  const score = checks.filter(c => c.ok).length;
+  const fromHigh = (price / hi - 1) * 100;
+  return { n, bars, vwap, iLow, iHigh, lo, hi, price, thr, piv, bounces, level, minsSinceLow, buyShare, checks, score, fromHigh,
+           dayChg: quote && quote.prev ? (price / quote.prev - 1) * 100 : null, failed: bounces.filter(b => b.failed).length };
+}
+
+// ---------- render ----------
+function render() {
+  const a = analyse(state.bars, state.quote);
+  const sym = state.sym, isSnap = !state.live;
+  SR.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.sym === sym)));
+  if (!a) {
+    $('vBadge').className = 'vbadge flat'; $('vBadge').textContent = state.err ? 'No data' : 'Waiting';
+    $('vText').innerHTML = state.err || `Waiting for today's minute bars for <strong>${esc(sym)}</strong>. Before the market opens there is nothing to read yet.`;
+    $('checks').innerHTML = ''; $('tiles').innerHTML = ''; $('svg').innerHTML = ''; $('bounceBody').innerHTML = '<tr><td colspan="6" style="text-align:left;color:var(--muted)">Nothing yet.</td></tr>';
+    return;
+  }
+  const lastT = a.bars[a.n - 1].t, stale = Date.now() - lastT > 6 * 60000;
+  let cls, label, text;
+  if (a.fromHigh > -1.5) { cls = 'flat'; label = 'Not falling'; text = `<strong>${esc(sym)}</strong> is within 1.5% of today's high, so there is no drop to recover from. This page is for days when a stock is selling off.`; }
+  else if (a.score >= 4) { cls = 'turn'; label = 'Turn holding, for now'; text = `<strong>${a.score} of 5 checks pass.</strong> The lower highs have broken. It is wrong again below today's low, ${money(a.lo)}.`; }
+  else if (a.score >= 2) { cls = 'try'; label = 'Trying to turn'; text = `<strong>${a.score} of 5 checks pass.</strong> The selling has paused but the pattern has not broken. The price that changes it is ${money(a.level)}.`; }
+  else { cls = 'fall'; label = 'Still falling'; text = `<strong>${a.score} of 5 checks pass.</strong> ${a.failed ? `${a.failed} bounce${a.failed === 1 ? ' has' : 's have'} already failed today. ` : ''}Nothing here says the selling has stopped.`; }
+  $('vBadge').className = 'vbadge ' + cls; $('vBadge').textContent = label;
+  $('vText').innerHTML = text + (isSnap ? ' <em>Showing a saved example from Nov 13, 10:13 AM CST until live data arrives.</em>' : stale ? ` <em>Last bar ${clock(lastT)}: the market is closed or data is delayed.</em>` : '');
+  $('checks').innerHTML = a.checks.map(c => `<li><span class="mark ${c.ok ? 'yes' : 'no'}" aria-hidden="true">${c.ok ? '&#10003;' : '&#10005;'}</span><span><strong>${c.name}: ${c.ok ? 'yes' : 'not yet'}</strong><span class="d">${c.d}</span></span></li>`).join('');
+
+  const risk = (a.lo / a.level - 1) * 100;
+  $('tiles').innerHTML =
+    `<div class="tile"><div class="tlabel">${esc(sym)} now</div><div class="tval ${a.dayChg != null && a.dayChg < 0 ? 'down' : a.dayChg > 0 ? 'up' : ''}">${money(a.price)}</div><div class="tsub">${a.dayChg != null ? pct(a.dayChg) + ' today &middot; ' : ''}${pct(a.fromHigh)} from today's high ${money(a.hi)}</div></div>` +
+    `<div class="tile key"><div class="tlabel">Level to beat</div><div class="tval">${money(a.level)}</div><div class="tsub">The last bounce's high. Price is ${pct((a.price / a.level - 1) * 100)} from it.</div></div>` +
+    `<div class="tile"><div class="tlabel">Wrong if below</div><div class="tval">${money(a.lo)}</div><div class="tsub">Today's low, set at ${clock(a.bars[a.iLow].t)}. ${pct(risk)} below the level to beat.</div></div>` +
+    `<div class="tile"><div class="tlabel">Bounces failed today</div><div class="tval ${a.failed ? 'down' : ''}">${a.failed}</div><div class="tsub">of ${a.bounces.length} so far${a.bounces.length ? ' &middot; biggest ' + pct(Math.max(...a.bounces.map(b => b.size))) : ''}</div></div>`;
+
+  $('chartTitle').textContent = `${sym} today, minute by minute`;
+  $('bounceBody').innerHTML = a.bounces.length ? [...a.bounces].reverse().map(b =>
+    `<tr><td class="num">${clock(b.t)}</td><td class="num">${money(b.from)}</td><td class="num">${money(b.to)}</td><td class="num">${pct(b.size)}</td><td class="num">${b.mins} min</td>` +
+    `<td>${b.failed ? '<span class="tag bad">&#10005; Failed: made a new low after</span>' : b.open ? '<span class="tag wait">&#9679; Under way</span>' : '<span class="tag ok">&#10003; Low still holding</span>'}</td></tr>`).join('')
+    : `<tr><td colspan="6" style="text-align:left;color:var(--muted)">No bounce bigger than ${(a.thr * 100).toFixed(1)}% yet today.</td></tr>`;
+  drawChart(a);
+}
+
+function drawChart(a) {
+  const svg = $('svg'), W = Math.max(320, Math.round($('chartWrap').clientWidth || 900));
+  const key = [state.sym, a.n, a.bars[a.n - 1].c, a.price, W].join('|'); if (key === state.lastKey) return; state.lastKey = key;
+  const PL = 52, PR = 12, T = 18, H1 = W < 560 ? 200 : 250, GAP = 30, H2 = 64, PB = 22, H = T + H1 + GAP + H2 + PB;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.style.height = H + 'px';
+  const t0 = a.bars[0].t, t1 = Math.max(a.bars[a.n - 1].t, t0 + 30 * 60000);
+  const x = (t) => PL + (W - PL - PR) * (t - t0) / (t1 - t0);
+  let lo = Math.min(a.lo, a.level, a.price), hi = Math.max(a.hi, a.level, a.price); const pad = (hi - lo) * 0.06 || 1; lo -= pad; hi += pad;
+  const y = (v) => T + H1 * (1 - (v - lo) / (hi - lo));
+  const vmax = Math.max(...a.bars.map(b => b.v)) || 1, top2 = T + H1 + GAP, yv = (v) => top2 + H2 * (1 - v / vmax);
+  const price = css('--price'), good = css('--good'), bad = css('--bad'), muted = css('--muted'), lvl = css('--level'), ink2 = css('--ink-2');
+  let g = '';
+  for (let k = 0; k <= 4; k++) { const v = lo + (hi - lo) * k / 4; g += `<line class="gl" x1="${PL}" x2="${W - PR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/><text class="ax" x="${PL - 6}" y="${(y(v) + 3).toFixed(1)}" text-anchor="end">${v.toFixed(v > 200 ? 0 : 2)}</text>`; }
+  g += `<text class="plabel" x="${PL}" y="11">Price</text><text class="plabel" x="${PL}" y="${top2 - 9}">Volume per minute</text><line class="gl" x1="${PL}" x2="${W - PR}" y1="${top2 + H2}" y2="${top2 + H2}"/>`;
+  const bw = Math.max(1, (W - PL - PR) / Math.max(a.n, 30) - 0.6);
+  a.bars.forEach(b => { g += `<rect x="${(x(b.t) - bw / 2).toFixed(1)}" y="${yv(b.v).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0.5, top2 + H2 - yv(b.v)).toFixed(1)}" fill="${b.c >= b.o ? good : bad}"/>`; });
+  const path = (f) => a.bars.map((b, i) => (i ? 'L' : 'M') + x(b.t).toFixed(1) + ' ' + y(f(b, i)).toFixed(1)).join('');
+  g += `<line x1="${PL}" x2="${W - PR}" y1="${y(a.lo).toFixed(1)}" y2="${y(a.lo).toFixed(1)}" stroke="${bad}" stroke-width="2" stroke-dasharray="2 4"/>`;
+  g += `<line x1="${PL}" x2="${W - PR}" y1="${y(a.level).toFixed(1)}" y2="${y(a.level).toFixed(1)}" stroke="${lvl}" stroke-width="2"/>`;
+  const ly = y(a.level), lowY = y(a.lo);
+  g += `<text class="ax" x="${W - PR - 4}" y="${(ly - 5).toFixed(1)}" text-anchor="end" fill="${lvl}" style="fill:${lvl};font-weight:600">${W < 560 ? 'Beat' : 'Level to beat'} ${a.level.toFixed(2)}</text>`;
+  g += `<text class="ax" x="${W - PR - 4}" y="${(lowY + 13).toFixed(1)}" text-anchor="end" style="fill:${bad};font-weight:600">${W < 560 ? 'Low' : "Today's low"} ${a.lo.toFixed(2)}</text>`;
+  g += `<path d="${path((b, i) => a.vwap[i])}" fill="none" stroke="${muted}" stroke-width="2" stroke-dasharray="5 4"/>`;
+  g += `<path d="${path(b => b.c)}" fill="none" stroke="${price}" stroke-width="2" stroke-linejoin="round"/>`;
+  a.piv.forEach(p => { const px = x(a.bars[p.i].t), py = y(p.p); g += p.k === 'L'
+    ? `<path d="M${px - 5} ${py + 11}L${px + 5} ${py + 11}L${px} ${py + 3}Z" fill="${ink2}"/>` : `<path d="M${px - 5} ${py - 11}L${px + 5} ${py - 11}L${px} ${py - 3}Z" fill="${ink2}"/>`; });
+  g += `<circle cx="${x(a.bars[a.n - 1].t).toFixed(1)}" cy="${y(a.price).toFixed(1)}" r="4.5" fill="${price}"/>`;
+  const span = t1 - t0, pxPerMin = (W - PL - PR) / (span / 60000), stepMin = [5, 10, 15, 30, 60, 120].find(m => m * pxPerMin >= 66) || 180, first = Math.ceil(t0 / (stepMin * 60000)) * stepMin * 60000;
+  for (let t = first; t <= t1; t += stepMin * 60000) if (x(t) > PL + 20 && x(t) < W - PR - 20) g += `<text class="ax" x="${x(t).toFixed(1)}" y="${H - 6}" text-anchor="middle">${clock(t)}</text>`;
+  g += `<line id="cross" x1="0" x2="0" y1="${T}" y2="${top2 + H2}" stroke="${muted}" stroke-width="1" visibility="hidden"/><rect id="hit" x="${PL}" y="${T}" width="${W - PL - PR}" height="${top2 + H2 - T}" fill="transparent"/>`;
+  svg.innerHTML = g;
+  const tip = $('tip'), cross = svg.querySelector('#cross'), hit = svg.querySelector('#hit');
+  const show = (ev) => {
+    const box = svg.getBoundingClientRect(), cx = ((ev.touches ? ev.touches[0].clientX : ev.clientX) - box.left) * (W / box.width);
+    const tt = t0 + (cx - PL) / (W - PL - PR) * (t1 - t0); let k = 0, best = Infinity;
+    a.bars.forEach((b, i) => { const d = Math.abs(b.t - tt); if (d < best) { best = d; k = i; } });
+    const b = a.bars[k]; cross.setAttribute('x1', x(b.t)); cross.setAttribute('x2', x(b.t)); cross.setAttribute('visibility', 'visible');
+    tip.innerHTML = `<div class="t">${clock(b.t)}</div><div class="r"><span>Price</span><b>${b.c.toFixed(2)}</b></div><div class="r"><span>Day's average</span><b>${a.vwap[k].toFixed(2)}</b></div>` +
+      `<div class="r"><span>Minute range</span><b>${b.l.toFixed(2)} &ndash; ${b.h.toFixed(2)}</b></div><div class="r"><span>Volume</span><b>${b.v.toLocaleString()}</b></div><div class="r"><span>Minute closed</span><b>${b.c >= b.o ? 'up' : 'down'}</b></div>`;
+    tip.style.left = Math.max(84, Math.min(box.width - 84, x(b.t) * box.width / W)) + 'px'; tip.style.top = (T + 8) + 'px'; tip.classList.add('show');
+  };
+  const hide = () => { tip.classList.remove('show'); cross.setAttribute('visibility', 'hidden'); };
+  hit.addEventListener('mousemove', show); hit.addEventListener('mouseleave', hide);
+  hit.addEventListener('touchstart', show, { passive: true }); hit.addEventListener('touchmove', show, { passive: true }); hit.addEventListener('touchend', hide);
+}
+window.addEventListener('resize', render);
+
+// ---------- data ----------
+function ingestBars(payload, sym) {
+  const r = (payload?.data?.results || []).find(x => x.symbol === sym); if (!r) return [];
+  const all = (r.bars || []).filter(b => !b.interpolated).map(b => ({ t: Date.parse(b.begins_at), d: String(b.begins_at).slice(0, 10), o: +b.open_price, h: +b.high_price, l: +b.low_price, c: +b.close_price, v: +b.volume || 0 }))
+    .filter(b => isFinite(b.c) && isFinite(b.h) && isFinite(b.l));
+  if (!all.length) return [];
+  const day = all[all.length - 1].d; return all.filter(b => b.d === day);
+}
+function ingestQuote(payload, sym) {
+  const q = (payload?.data?.results || []).map(r => r.quote).find(q => q && q.symbol === sym); if (!q) return null;
+  const last = Number(q.last_trade_price), prev = Number(q.adjusted_previous_close ?? q.previous_close);
+  return isFinite(last) ? { last, prev: isFinite(prev) ? prev : null } : null;
+}
+function explain(err) {
+  switch (err.code) {
+    case 'needs_reauth': return '<strong>Robinhood needs reconnecting.</strong> Reconnect it in claude.ai Settings, Connectors.';
+    case 'server_not_connected': case 'server_not_found': return '<strong>Robinhood is not connected.</strong> Add it in claude.ai Settings, Connectors.';
+    case 'selection_required': return '<strong>Choose which Robinhood connection to use</strong> in the prompt, then reload.';
+    case 'not_in_manifest': case 'consent_required': return '<strong>Live prices are not allowed for this page yet.</strong> Reload and allow Robinhood when asked.';
+    case 'blocked_by_policy': return '<strong>Your workspace blocks this data</strong> for this page.';
+    case 'approval_required': return '<strong>Robinhood asks for approval on each call here</strong>, so the page cannot refresh by itself.';
+    case 'not_granted': case 'capability_disabled': case 'capability_removed': return '<strong>Live data is not available in this view.</strong> Open the page directly in claude.ai.';
+    case 'tool_error': return `<strong>Robinhood could not return prices for ${esc(state.sym)}.</strong> Check the symbol.`;
+    default: return null;   // transient: keep what is on screen
+  }
+}
+let mcp = null, unsub = [];
+function setConn(kind, text) { $('connDot').className = 'dot ' + kind; $('connText').textContent = text; }
+function watch() {
+  unsub.forEach(u => { try { u(); } catch {} }); unsub = [];
+  if (!mcp) return;
+  const sym = state.sym, start = new Date(Math.floor(Date.now() / 86400000) * 86400000 - 4 * 86400000).toISOString();
+  const onErr = (ev) => { const m = explain(ev.error); if (m) { state.err = m; $('banner').innerHTML = m; $('banner').hidden = false; setConn('off', 'Not live'); render(); } };
+  const ok = () => { state.err = null; $('banner').hidden = true; setConn('live', 'Live'); };
+  unsub.push(mcp.watchTool(SERVER, 'get_equity_historicals', { symbols: [sym], start_time: start, interval: 'minute', bounds: 'regular' }, (ev) => {
+    if (sym !== state.sym) return;
+    if (ev.type === 'data') { const b = ingestBars(ev.result.payload, sym); state.bars = b; state.live = true; ok(); render(); } else onErr(ev);
+  }, { refetchInterval: 30000 }));
+  unsub.push(mcp.watchTool(SERVER, 'get_equity_quotes', { symbols: [sym] }, (ev) => {
+    if (sym !== state.sym) return;
+    if (ev.type === 'data') { state.quote = ingestQuote(ev.result.payload, sym); if (state.live) render(); } else onErr(ev);
+  }, { refetchInterval: 30000 }));
+}
+function choose(sym) {
+  sym = String(sym || '').trim().toUpperCase(); if (!/^[A-Z.]{1,6}$/.test(sym) || sym === state.sym) return;
+  state.sym = sym; state.bars = []; state.quote = null; state.live = !!mcp; state.err = null; state.lastKey = ''; $('banner').hidden = true;
+  try { localStorage.setItem('irw-symbol', sym); } catch {}
+  if (!mcp && sym === SNAPSHOT.sym) loadSnapshot();
+  render(); watch();
+}
+function loadSnapshot() {
+  const base = Date.parse(SNAPSHOT.date + 'T14:30:00Z');
+  state.bars = SNAPSHOT.bars.map(r => ({ t: base + r[0] * 60000, o: r[1], h: r[2], l: r[3], c: r[4], v: r[5] }));
+  state.quote = state.bars.length ? { last: state.bars[state.bars.length - 1].c, prev: SNAPSHOT.prevClose } : null; state.live = false;
+}
+function buildPicker() {
+  const p = $('picker');
+  p.innerHTML = CHIPS.map(s => `<button type="button" class="chip" data-sym="${s}" aria-pressed="false">${s}</button>`).join('') +
+    `<form class="symform" id="symForm"><label for="symInput" hidden>Other symbol</label><input id="symInput" placeholder="Other" maxlength="6" autocomplete="off" aria-label="Other symbol"><button type="submit">Watch</button></form>`;
+  p.addEventListener('click', (e) => { const c = e.target.closest('.chip'); if (c) choose(c.dataset.sym); });
+  $('symForm').addEventListener('submit', (e) => { e.preventDefault(); choose($('symInput').value); $('symInput').value = ''; });
+}
+async function init() {
+  buildPicker();
+  if (state.sym === SNAPSHOT.sym) loadSnapshot();
+  render();
+  try { mcp = await window.claude.use('mcp'); } catch { mcp = null; }
+  if (!mcp) {
+    setConn('off', 'Not live');
+    $('banner').innerHTML = '<strong>Live prices are not available in this view.</strong> Open this page in claude.ai with the Robinhood connector on. Until then it shows a saved example.'; $('banner').hidden = false;
+    if (!state.bars.length) { state.sym = SNAPSHOT.sym; loadSnapshot(); render(); }
+    return;
+  }
+  watch();
+}
+init();
+
+})();
+</script>
