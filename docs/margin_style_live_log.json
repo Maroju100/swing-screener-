@@ -4598,6 +4598,28 @@
     "trend_gate_active": false
    },
    "unowned_excess": {}
+  },
+  {
+   "timestamp": "2026-11-13T18:44:00Z",
+   "date": "2026-11-13",
+   "engine": "v2 + peak reset",
+   "executed": false,
+   "run_completed": false,
+   "orders_placed": [],
+   "planned_not_executed": [],
+   "note": "Scheduled run fired 18:44 UTC but was NOT carried out: the session's worker restarted repeatedly and the run was first picked up at 21:03 UTC, after the 21:00 UTC close. No broker data was read, no plan was built or shown, nothing was placed, and state was not changed. Only the state audit ran (pass). Open positions unchanged from 2026-11-12: WDC 3.982649, STX 2.452369, INTC 7.407151, LRCX 0.717105, all opened 2026-10-13 and past MAX_HOLD. Next run Mon 2026-11-16.",
+   "guardrails": {
+    "verify": "pass",
+    "reconcile": "not run",
+    "freshness": "not run",
+    "precommit": "not run"
+   },
+   "risk_state": {
+    "equity_peak": 3177.56,
+    "kill_switch_active": false,
+    "kill_switch_triggered_date": null,
+    "trend_gate_active": false
+   }
   }
  ]
 }
