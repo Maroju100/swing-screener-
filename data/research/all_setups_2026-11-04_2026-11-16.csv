@@ -1,0 +1,170 @@
+rank,setup,base,study,2026-11 P&L $,total P&L $,return %,max drawdown %,trades
+1,Full exit on new high only,v1,candidate_pdf,714.71,714.71,4.76,-12.71,51
+2,Quality filter 3+ down days,v2,rank_admissible2,-330.16,-330.16,-2.2,-2.2,4
+3,Quality filter 3+ down days,v1,rank_admissible2,-330.16,-330.16,-2.2,-2.2,4
+4,R3 hold through sector-wide drops,v1 engine,after_october,-388.28,-388.28,-2.59,-9.74,40
+5,R4 R3 + R2,v1 engine,after_october,-388.28,-388.28,-2.59,-9.74,40
+6,SELL+REENTER-0.5,v2,ks_throttle,-558.68,-558.68,-3.72,-12.7,58
+7,Trade cap 10% (was 25%),v2,rank_admissible0,-580.22,-580.22,-3.87,-6.37,56
+8,Trade cap 10% (was 25%),v1,rank_admissible0,-621.07,-621.07,-4.14,-6.37,57
+9,PAUSE_3,v2 pre-reset engine,v2_pause,-635.33,-635.33,-4.24,-12.7,34
+10,R1 bounce: 2 up days,v2 pre-reset engine,v2_pause,-635.33,-635.33,-4.24,-12.7,34
+11,R2 bounce: above 5d avg,v2 pre-reset engine,v2_pause,-635.33,-635.33,-4.24,-12.7,34
+12,R3 bounce: +5% off low,v2 pre-reset engine,v2_pause,-635.33,-635.33,-4.24,-12.7,34
+13,C+early: basket above 5-day avg,v1 engine,reentry_rules,-635.39,-635.39,-4.24,-12.7,35
+14,C+early: basket up 2 days,v1 engine,reentry_rules,-635.39,-635.39,-4.24,-12.7,35
+15,C+early: basket +5% off low,v1 engine,reentry_rules,-635.39,-635.39,-4.24,-12.7,35
+16,No intraday stop at all,v1,rank_admissible0,-841.42,-841.42,-5.61,-12.7,41
+17,L1 bank 50% of gains,v1 engine,protect_rules,-960.17,-960.17,-6.4,-6.38,55
+18,streak pause,v1,lower_risk,-977.46,-977.46,-6.52,-12.71,46
+19,D volatility sizing 3%,v1 engine,protect_rules,-994.68,-994.68,-6.63,-9.33,57
+20,EQ10+D equity filter + vol sizing,v1 engine,protect_rules2,-994.68,-994.68,-6.63,-9.33,57
+21,D volatility sizing 3%,v1 engine,protect_rules2,-994.68,-994.68,-6.63,-9.33,57
+22,"D Volatility sizing: buy x min(1, 3% / 20-day vol)",v1,sizing_rules,-994.68,-994.68,-6.63,-9.33,57
+23,S2+D cool-off 2 days + vol sizing,v1 engine,protect_rules2,-1190.56,-1190.56,-7.94,-9.31,44
+24,S5 stop cool-off 5 days,v1 engine,protect_rules2,-1278.46,-1278.46,-8.52,-12.7,36
+25,HOLD 8 chips equal weight,-,reference,-1297.81,-1297.81,-8.65,-15.05,0
+26,E Exposure cap: at most 60% of equity in stocks,v2,sizing_rules,-1332.73,-1332.73,-8.88,-8.86,6
+27,F At most 2 new buys per run,v2,sizing_rules,-1361.98,-1361.98,-9.08,-9.06,16
+28,"D Volatility sizing: buy x min(1, 3% / 20-day vol)",v2,sizing_rules,-1396.62,-1396.62,-9.31,-9.28,8
+29,Best grid-search config (rejected),v1,rank_admissible1,-1434.1,-1434.1,-9.56,-12.7,38
+30,2b Rank by yesterday's drop,v1,rule_ideas,-1568.35,-1568.35,-10.46,-12.33,52
+31,S2 stop cool-off 2 days,v1 engine,protect_rules2,-1621.5,-1621.5,-10.81,-12.7,44
+32,E Exposure cap: at most 60% of equity in stocks,v1,sizing_rules,-1661.98,-1661.98,-11.08,-11.05,27
+33,HOLD-0.5,v2,ks_throttle,-1674.73,-1674.73,-11.16,-12.7,57
+34,Intraday stop -1.0% (tighter),v1,rank_admissible0,-1685.76,-1685.76,-11.24,-12.71,54
+35,C1 K2 + volatility sizing 3%,v1 engine,protect_rules,-1736.0,-1736.0,-11.57,-11.55,16
+36,C1 fast switch + vol sizing (round 1),v1 engine,protect_rules2,-1736.0,-1736.0,-11.57,-11.55,16
+37,2a Equal split across qualifiers,v1,rule_ideas,-1748.07,-1748.07,-11.65,-12.7,57
+38,HOLD-0.25,v2,ks_throttle,-1804.06,-1804.06,-12.03,-12.68,57
+39,F At most 2 new buys per run,v1,sizing_rules,-1821.25,-1821.25,-12.14,-12.12,21
+40,CANDIDATE (both rule changes),v1,candidate_pdf,-1828.54,-1828.54,-12.19,-12.7,50
+41,2b Rank by yesterday's drop,v2,rule_ideas,-1848.08,-1848.08,-12.32,-12.28,8
+42,SELL+REENTER-0.25,v2,ks_throttle,-1852.21,-1852.21,-12.35,-12.68,56
+43,Max 1 tranche per symbol,v1,rank_admissible0,-1866.56,-1866.56,-12.44,-12.71,56
+44,CANDIDATE (both rule changes),v2,candidate_pdf,-1904.6,-1904.6,-12.7,-12.66,8
+45,Smaller tranches only,v2,candidate_pdf,-1904.6,-1904.6,-12.7,-12.66,8
+46,Full exit on new high only,v2,candidate_pdf,-1904.6,-1904.6,-12.7,-12.66,8
+47,A Whipsaw pause: no buys the run after a circuit breaker,v2,drawdown_rules,-1904.6,-1904.6,-12.7,-12.66,8
+48,B Breadth gate: no dip buys when 6+ of 8 fell,v2,drawdown_rules,-1904.6,-1904.6,-12.7,-12.66,8
+49,C Drawdown throttle: size x (1 + dd/15%),v2,drawdown_rules,-1904.6,-1904.6,-12.7,-12.66,8
+50,"K1 fast kill-switch (-8%, 5 days)",v1 engine,protect_rules,-1904.6,-1904.6,-12.7,-12.66,8
+51,E2 rebound (live +1%),v2,rebound_addons,-1904.6,-1904.6,-12.7,-12.66,8
+52,X1 no hold-limit sell on up day,v2,rebound_addons,-1904.6,-1904.6,-12.7,-12.66,8
+53,E2 + X1,v2,rebound_addons,-1904.6,-1904.6,-12.7,-12.66,8
+54,C+time only (as is),v1 engine,reentry_rules,-1904.6,-1904.6,-12.7,-12.66,8
+55,C+time + reset high-water mark,v1 engine,reentry_rules,-1904.6,-1904.6,-12.7,-12.66,8
+56,1 Regime: trim 30% / hold 10d in rising market,v2,rule_ideas,-1904.6,-1904.6,-12.7,-12.66,8
+57,2a Equal split across qualifiers,v2,rule_ideas,-1904.6,-1904.6,-12.7,-12.66,8
+58,3 Buy only once the bounce has started,v2,rule_ideas,-1904.6,-1904.6,-12.7,-12.66,8
+59,4 Skip buys under $500,v2,rule_ideas,-1904.6,-1904.6,-12.7,-12.66,8
+60,ALL-5 with kill #3 (1+2+3+5),v1 engine,top5_combined,-1904.6,-1904.6,-12.7,-12.66,8
+61,NO-MARGIN combo (1+3+5),v1 engine,top5_combined,-1904.6,-1904.6,-12.7,-12.66,8
+62,#3 alone (kill -8%/10d),v1 engine,top5_combined,-1904.6,-1904.6,-12.7,-12.66,8
+63,PAIR 1+3,v1 engine,top5_combined,-1904.6,-1904.6,-12.7,-12.66,8
+64,A  dip must be 10%+ below 20-day high,v2,user_derived,-1904.6,-1904.6,-12.7,-12.66,8
+65,B  no profit-taking before day 3,v2,user_derived,-1904.6,-1904.6,-12.7,-12.66,8
+66,A+B,v2,user_derived,-1904.6,-1904.6,-12.7,-12.66,8
+67,PAUSE_10,v2 pre-reset engine,v2_pause,-1904.6,-1904.6,-12.7,-12.66,8
+68,PAUSE_15,v2 pre-reset engine,v2_pause,-1904.6,-1904.6,-12.7,-12.66,8
+69,PAUSE_20,v2 pre-reset engine,v2_pause,-1904.6,-1904.6,-12.7,-12.66,8
+70,RS (10d + peak reset),v2 pre-reset engine,v2_pause,-1904.6,-1904.6,-12.7,-12.66,8
+71,K8/20,v2 pre-reset engine,v2_steady,-1904.6,-1904.6,-12.7,-12.66,8
+72,K8/10,v2 pre-reset engine,v2_steady,-1904.6,-1904.6,-12.7,-12.66,8
+73,K8/15,v2 pre-reset engine,v2_steady,-1904.6,-1904.6,-12.7,-12.66,8
+74,K10/10,v2 pre-reset engine,v2_steady,-1904.6,-1904.6,-12.7,-12.66,8
+75,K10/15,v2 pre-reset engine,v2_steady,-1904.6,-1904.6,-12.7,-12.66,8
+76,K10/20,v2 pre-reset engine,v2_steady,-1904.6,-1904.6,-12.7,-12.66,8
+77,K12/10,v2 pre-reset engine,v2_steady,-1904.6,-1904.6,-12.7,-12.66,8
+78,K12/20,v2 pre-reset engine,v2_steady,-1904.6,-1904.6,-12.7,-12.66,8
+79,K12/15,v2 pre-reset engine,v2_steady,-1904.6,-1904.6,-12.7,-12.66,8
+80,v2 live (-8/10),v2 pre-reset engine,v2_steady,-1904.6,-1904.6,-12.7,-12.66,8
+81,streak pause,v2,lower_risk,-1904.6,-1904.6,-12.7,-12.66,8
+82,grid#1 dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers wider | hold 6d,v2,grid_entry_exit,-1904.6,-1904.6,-12.7,-12.66,8
+83,grid#2 dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers live | hold 6d,v2,grid_entry_exit,-1904.6,-1904.6,-12.7,-12.66,8
+84,grid#3 dip 0.2% | tranche half x3 | cap 35% | peak 50.0% | tiers wider | hold 6d,v2,grid_entry_exit,-1904.6,-1904.6,-12.7,-12.66,8
+85,grid#4 dip 0.2% | tranche half x3 | cap 35% | peak 50.0% | tiers live | hold 6d,v2,grid_entry_exit,-1904.6,-1904.6,-12.7,-12.66,8
+86,grid#5 dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers none | hold 6d,v2,grid_entry_exit,-1904.6,-1904.6,-12.7,-12.66,8
+87,grid#6 dip 0.4% | tranche live x3 | cap 25% | peak 50.0% | tiers live | hold 10d,v2,grid_entry_exit,-1904.6,-1904.6,-12.7,-12.66,8
+88,grid#7 dip 0.4% | tranche live x3 | cap 25% | peak 50.0% | tiers wider | hold 10d,v2,grid_entry_exit,-1904.6,-1904.6,-12.7,-12.66,8
+89,grid#8 dip 0.2% | tranche half x5 | cap 35% | peak 74.3% | tiers wider | hold 6d,v2,grid_entry_exit,-1904.6,-1904.6,-12.7,-12.66,8
+90,grid#9 dip 0.2% | tranche half x5 | cap 35% | peak 74.3% | tiers live | hold 6d,v2,grid_entry_exit,-1904.6,-1904.6,-12.7,-12.66,8
+91,grid#10 dip 0.4% | tranche live x5 | cap 25% | peak 50.0% | tiers live | hold 6d,v2,grid_entry_exit,-1904.6,-1904.6,-12.7,-12.66,8
+92,kill -10%/5d cb1,v1 engine,crash_grid,-1904.6,-1904.6,-12.7,-12.66,8
+93,kill -10%/20d noSMA cb1,v1 engine,crash_grid,-1904.6,-1904.6,-12.7,-12.66,8
+94,kill -10%/20d cb1,v1 engine,crash_grid,-1904.6,-1904.6,-12.7,-12.66,8
+95,Intraday stop -2.5% (looser),v2,rank_admissible0,-1904.6,-1904.6,-12.7,-12.66,8
+96,Intraday stop -1.0% (tighter),v2,rank_admissible0,-1904.6,-1904.6,-12.7,-12.66,8
+97,Symbol cap 25% (was 50%),v2,rank_admissible0,-1904.6,-1904.6,-12.7,-12.66,8
+98,Max 1 tranche per symbol,v2,rank_admissible0,-1904.6,-1904.6,-12.7,-12.66,8
+99,No intraday stop at all,v2,rank_admissible0,-1904.6,-1904.6,-12.7,-12.66,8
+100,Best grid-search config (rejected),v2,rank_admissible1,-1904.6,-1904.6,-12.7,-12.66,8
+101,v2 LIVE (current rules),v2,reference,-1904.6,-1904.6,-12.7,-12.66,8
+102,v2 before peak reset,v2 pre-reset engine,reference,-1904.6,-1904.6,-12.7,-12.66,8
+103,3 Buy only once the bounce has started,v1,rule_ideas,-1905.41,-1905.41,-12.7,-12.71,53
+104,PRODUCTION,v1 engine,after_october,-1906.58,-1906.58,-12.71,-12.71,55
+105,R1 kill-switch cool-off 5 days,v1 engine,after_october,-1906.58,-1906.58,-12.71,-12.71,55
+106,R2 R1 + no 50-day re-entry gate,v1 engine,after_october,-1906.58,-1906.58,-12.71,-12.71,55
+107,PRODUCTION,v1 engine,protect_rules,-1906.58,-1906.58,-12.71,-12.71,55
+108,PRODUCTION,v1 engine,protect_rules2,-1906.58,-1906.58,-12.71,-12.71,55
+109,EQ10 equity-curve filter,v1 engine,protect_rules2,-1906.58,-1906.58,-12.71,-12.71,55
+110,LIVE v2,v1,rebound_addons,-1906.58,-1906.58,-12.71,-12.71,55
+111,X1 no hold-limit sell on up day,v1,rebound_addons,-1906.58,-1906.58,-12.71,-12.71,55
+112,P+time only (as is),v1 engine,reentry_rules,-1906.58,-1906.58,-12.71,-12.71,55
+113,P+time + reset high-water mark,v1 engine,reentry_rules,-1906.58,-1906.58,-12.71,-12.71,55
+114,P+early: basket up 2 days,v1 engine,reentry_rules,-1906.58,-1906.58,-12.71,-12.71,55
+115,P+early: basket above 5-day avg,v1 engine,reentry_rules,-1906.58,-1906.58,-12.71,-12.71,55
+116,P+early: basket +5% off low,v1 engine,reentry_rules,-1906.58,-1906.58,-12.71,-12.71,55
+117,1 Regime: trim 30% / hold 10d in rising market,v1,rule_ideas,-1906.58,-1906.58,-12.71,-12.71,55
+118,CURRENT RULES,v1 engine,top5_combined,-1906.58,-1906.58,-12.71,-12.71,55
+119,A  dip must be 10%+ below 20-day high,v1,user_derived,-1906.58,-1906.58,-12.71,-12.71,55
+120,"LIVE (sell all, 10d no buys)",v1,ks_throttle,-1906.58,-1906.58,-12.71,-12.71,55
+121,HOLD-0.5,v1,ks_throttle,-1906.58,-1906.58,-12.71,-12.71,55
+122,SELL+REENTER-0.5,v1,ks_throttle,-1906.58,-1906.58,-12.71,-12.71,55
+123,HOLD-0.25,v1,ks_throttle,-1906.58,-1906.58,-12.71,-12.71,55
+124,SELL+REENTER-0.25,v1,ks_throttle,-1906.58,-1906.58,-12.71,-12.71,55
+125,v1 old rules,v2 pre-reset engine,choppy,-1906.58,-1906.58,-12.71,-12.71,55
+126,PRODUCTION (current rules),v1,rank_admissible0,-1906.58,-1906.58,-12.71,-12.71,55
+127,Symbol cap 25% (was 50%),v1,rank_admissible0,-1906.58,-1906.58,-12.71,-12.71,55
+128,v1 (old rules),v1 engine,reference,-1906.58,-1906.58,-12.71,-12.71,55
+129,E2 rebound (live +1%),v1,rebound_addons,-1907.35,-1907.35,-12.72,-12.71,55
+130,E2 + X1,v1,rebound_addons,-1907.35,-1907.35,-12.72,-12.71,55
+131,PAUSE_7,v2 pre-reset engine,v2_pause,-1911.09,-1911.09,-12.74,-12.7,13
+132,Smaller tranches only,v1,candidate_pdf,-1913.01,-1913.01,-12.75,-12.72,57
+133,grid#8 dip 0.2% | tranche half x5 | cap 35% | peak 74.3% | tiers wider | hold 6d,v1,grid_entry_exit,-1913.01,-1913.01,-12.75,-12.72,57
+134,grid#9 dip 0.2% | tranche half x5 | cap 35% | peak 74.3% | tiers live | hold 6d,v1,grid_entry_exit,-1913.01,-1913.01,-12.75,-12.72,57
+135,4 Skip buys under $500,v1,rule_ideas,-1933.4,-1933.4,-12.89,-12.85,48
+136,#1 alone (skip < $500),v1 engine,top5_combined,-1933.4,-1933.4,-12.89,-12.85,48
+137,K15/5,v2 pre-reset engine,v2_steady,-1933.4,-1933.4,-12.89,-12.85,48
+138,K15/10,v2 pre-reset engine,v2_steady,-1933.4,-1933.4,-12.89,-12.85,48
+139,K15/15,v2 pre-reset engine,v2_steady,-1933.4,-1933.4,-12.89,-12.85,48
+140,K15/20,v2 pre-reset engine,v2_steady,-1933.4,-1933.4,-12.89,-12.85,48
+141,$500 only (no switch),v2 pre-reset engine,v2_steady,-1933.4,-1933.4,-12.89,-12.85,48
+142,"$500 + v1 switch (-15/20, SMA lock)",v2 pre-reset engine,v2_steady,-1933.4,-1933.4,-12.89,-12.85,48
+143,grid#6 dip 0.4% | tranche live x3 | cap 25% | peak 50.0% | tiers live | hold 10d,v1,grid_entry_exit,-1966.18,-1966.18,-13.11,-13.07,55
+144,grid#7 dip 0.4% | tranche live x3 | cap 25% | peak 50.0% | tiers wider | hold 10d,v1,grid_entry_exit,-1966.18,-1966.18,-13.11,-13.07,55
+145,grid#10 dip 0.4% | tranche live x5 | cap 25% | peak 50.0% | tiers live | hold 6d,v1,grid_entry_exit,-1966.18,-1966.18,-13.11,-13.07,55
+146,B Breadth gate: no dip buys when 6+ of 8 fell,v1,drawdown_rules,-1969.63,-1969.63,-13.13,-13.1,48
+147,Intraday stop -2.5% (looser),v1,rank_admissible0,-1971.37,-1971.37,-13.14,-13.11,60
+148,B  no profit-taking before day 3,v1,user_derived,-1973.28,-1973.28,-13.16,-13.12,46
+149,A+B,v1,user_derived,-1973.28,-1973.28,-13.16,-13.12,46
+150,grid#1 dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers wider | hold 6d,v1,grid_entry_exit,-1976.42,-1976.42,-13.18,-13.14,57
+151,grid#2 dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers live | hold 6d,v1,grid_entry_exit,-1976.42,-1976.42,-13.18,-13.14,57
+152,grid#3 dip 0.2% | tranche half x3 | cap 35% | peak 50.0% | tiers wider | hold 6d,v1,grid_entry_exit,-1976.42,-1976.42,-13.18,-13.14,57
+153,grid#4 dip 0.2% | tranche half x3 | cap 35% | peak 50.0% | tiers live | hold 6d,v1,grid_entry_exit,-1976.42,-1976.42,-13.18,-13.14,57
+154,grid#5 dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers none | hold 6d,v1,grid_entry_exit,-1976.81,-1976.81,-13.18,-13.14,56
+155,C Drawdown throttle: size x (1 + dd/15%),v1,drawdown_rules,-2040.08,-2040.08,-13.6,-13.57,57
+156,E1 rebound (yday +2%),v2,rebound_addons,-2294.54,-2294.54,-15.3,-15.25,10
+157,E1 + X1,v2,rebound_addons,-2294.54,-2294.54,-15.3,-15.25,10
+158,E1 rebound (yday +2%),v1,rebound_addons,-2316.26,-2316.26,-15.44,-15.4,12
+159,E1 + X1,v1,rebound_addons,-2316.26,-2316.26,-15.44,-15.4,12
+160,A Whipsaw pause: no buys the run after a circuit breaker,v1,drawdown_rules,-2336.92,-2336.92,-15.58,-15.54,20
+161,"K2 fast kill-switch, no SMA-50 lock-out",v1 engine,protect_rules,-2584.37,-2584.37,-17.23,-17.2,16
+162,ALL-5 with kill #4 (1+2+4+5),v1 engine,top5_combined,-2584.37,-2584.37,-17.23,-17.2,16
+163,PAUSE_5,v2 pre-reset engine,v2_pause,-2584.37,-2584.37,-17.23,-17.2,16
+164,kill -10%/5d noSMA cb1,v1 engine,crash_grid,-2584.37,-2584.37,-17.23,-17.2,16
+165,kill -12%/5d noSMA cb1,v1 engine,crash_grid,-2584.37,-2584.37,-17.23,-17.2,16
+166,K8/5,v2 pre-reset engine,v2_steady,-2590.52,-2590.52,-17.27,-17.24,21
+167,K10/5,v2 pre-reset engine,v2_steady,-2590.52,-2590.52,-17.27,-17.24,21
+168,K12/5,v2 pre-reset engine,v2_steady,-2590.52,-2590.52,-17.27,-17.24,21
+169,PAUSE_2,v2 pre-reset engine,v2_pause,-2994.25,-2994.25,-19.96,-19.93,28
