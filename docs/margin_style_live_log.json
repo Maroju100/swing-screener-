@@ -4620,6 +4620,64 @@
     "kill_switch_triggered_date": null,
     "trend_gate_active": false
    }
+  },
+  {
+   "timestamp": "2026-11-16T18:44:00Z",
+   "date": "2026-11-16",
+   "engine": "v2 + peak reset",
+   "executed": false,
+   "orders_placed": [],
+   "planned_not_executed": [
+    {
+     "symbol": "WDC",
+     "shares": 3.982649,
+     "price": 282.865,
+     "reason": "STOP",
+     "entry": 376.9977
+    },
+    {
+     "symbol": "STX",
+     "shares": 2.452369,
+     "price": 497.85,
+     "reason": "STOP",
+     "entry": 734.4299
+    },
+    {
+     "symbol": "INTC",
+     "shares": 7.407151,
+     "price": 55.255,
+     "reason": "STOP",
+     "entry": 102.0287
+    },
+    {
+     "symbol": "LRCX",
+     "shares": 0.717105,
+     "price": 210.99,
+     "reason": "STOP",
+     "entry": 295.7963
+    }
+   ],
+   "buying_power": 0.62,
+   "cash": 0.62,
+   "account_type": "limited_margin",
+   "unsettled_funds": 0.0,
+   "total_equity_at_plan": 2908.67,
+   "broker_total_value": 10404.03,
+   "circuit_breaker_triggered": true,
+   "note": "Plan (4 STOP sells, est. proceeds $2,908.04, -$1,362.35 vs entry; kill-switch fired at -8.5% vs peak 3,177.56) shown 18:44 UTC and not approved; nothing placed. risk_state committed verbatim from the plan per procedure, so kill_switch_active=true from 2026-11-16 while the four positions are still held. Recorded 2026-11-17 16:30 UTC.",
+   "guardrails": {
+    "verify": "pass",
+    "reconcile": "pass",
+    "freshness": "pass (bars to 2026-11-13, equal to official closes)",
+    "precommit": "pass (no orders)"
+   },
+   "risk_state": {
+    "equity_peak": 3177.56,
+    "kill_switch_active": true,
+    "kill_switch_triggered_date": "2026-11-16",
+    "trend_gate_active": false
+   },
+   "unowned_excess": {}
   }
  ]
 }

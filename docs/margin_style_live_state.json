@@ -31,8 +31,8 @@
   }
  },
  "equity_peak": 3177.56,
- "kill_switch_active": false,
- "kill_switch_triggered_date": null,
+ "kill_switch_active": true,
+ "kill_switch_triggered_date": "2026-11-16",
  "trend_gate_active": false,
  "_last_commit": {
   "timestamp": "2026-09-21T17:06:48.586045+00:00",
