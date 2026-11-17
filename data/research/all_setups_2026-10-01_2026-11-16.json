@@ -1,0 +1,2543 @@
+{
+ "start": "2026-10-01",
+ "end": "2026-11-16",
+ "capital": 15000.0,
+ "cost_bps": 5.0,
+ "gate_failed": [],
+ "rows": [
+  {
+   "study": "top5_combined",
+   "label": "NO-MARGIN combo (1+3+5)",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 16246.71862033915,
+   "max_dd": -9.454738094204174,
+   "trades": 60,
+   "monthly": {
+    "2026-10": -1411.86,
+    "2026-11": 2658.58
+   },
+   "pnl": 1246.72,
+   "ret": 8.31
+  },
+  {
+   "study": "v2_pause",
+   "label": "PAUSE_7",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 15031.18778475824,
+   "max_dd": -10.194329812711766,
+   "trades": 48,
+   "monthly": {
+    "2026-10": -1296.98,
+    "2026-11": 1328.16
+   },
+   "pnl": 31.19,
+   "ret": 0.21
+  },
+  {
+   "study": "lower_risk",
+   "label": "streak pause",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 14680.970960289806,
+   "max_dd": -10.858973118386794,
+   "trades": 68,
+   "monthly": {
+    "2026-10": -812.45,
+    "2026-11": 493.42
+   },
+   "pnl": -319.03,
+   "ret": -2.13
+  },
+  {
+   "study": "v2_pause",
+   "label": "PAUSE_5",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 14620.032963103862,
+   "max_dd": -12.711955982996571,
+   "trades": 66,
+   "monthly": {
+    "2026-10": -1495.3,
+    "2026-11": 1115.33
+   },
+   "pnl": -379.97,
+   "ret": -2.53
+  },
+  {
+   "study": "protect_rules",
+   "label": "K2 fast kill-switch, no SMA-50 lock-out",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 14619.170716401773,
+   "max_dd": -12.777250544290453,
+   "trades": 80,
+   "monthly": {
+    "2026-10": -1496.55,
+    "2026-11": 1115.72
+   },
+   "pnl": -380.83,
+   "ret": -2.54
+  },
+  {
+   "study": "v2_pause",
+   "label": "PAUSE_2",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 14518.391858349207,
+   "max_dd": -14.287221617408685,
+   "trades": 88,
+   "monthly": {
+    "2026-10": -1598.82,
+    "2026-11": 1117.21
+   },
+   "pnl": -481.61,
+   "ret": -3.21
+  },
+  {
+   "study": "top5_combined",
+   "label": "ALL-5 with kill #3 (1+2+3+5)",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 13636.717388540566,
+   "max_dd": -9.454738094204174,
+   "trades": 51,
+   "monthly": {
+    "2026-10": -1411.86,
+    "2026-11": 48.57
+   },
+   "pnl": -1363.28,
+   "ret": -9.09
+  },
+  {
+   "study": "drawdown_rules",
+   "label": "A Whipsaw pause: no buys the run after a circuit breaker",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 13613.998102714286,
+   "max_dd": -10.492662440136414,
+   "trades": 76,
+   "monthly": {
+    "2026-10": -958.03,
+    "2026-11": -427.97
+   },
+   "pnl": -1386.0,
+   "ret": -9.24
+  },
+  {
+   "study": "v2_pause",
+   "label": "PAUSE_3",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 13547.641517287477,
+   "max_dd": -19.979769397129854,
+   "trades": 61,
+   "monthly": {
+    "2026-10": -1245.1,
+    "2026-11": -207.26
+   },
+   "pnl": -1452.36,
+   "ret": -9.68
+  },
+  {
+   "study": "v2_pause",
+   "label": "PAUSE_20",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 13487.191456004191,
+   "max_dd": -10.194648780479465,
+   "trades": 26,
+   "monthly": {
+    "2026-10": -1522.49,
+    "2026-11": 9.69
+   },
+   "pnl": -1512.81,
+   "ret": -10.09
+  },
+  {
+   "study": "crash_grid",
+   "label": "kill -10%/20d noSMA cb1",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 13484.192134362671,
+   "max_dd": -10.23159282700804,
+   "trades": 35,
+   "monthly": {
+    "2026-10": -1528.0,
+    "2026-11": 12.2
+   },
+   "pnl": -1515.81,
+   "ret": -10.11
+  },
+  {
+   "study": "v2_pause",
+   "label": "PAUSE_15",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 13477.505046222312,
+   "max_dd": -10.149966358517926,
+   "trades": 14,
+   "monthly": {
+    "2026-10": -1522.49,
+    "2026-11": 0.0
+   },
+   "pnl": -1522.49,
+   "ret": -10.15
+  },
+  {
+   "study": "crash_grid",
+   "label": "kill -10%/20d cb1",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 13471.995254889718,
+   "max_dd": -10.186698300735209,
+   "trades": 21,
+   "monthly": {
+    "2026-10": -1528.0,
+    "2026-11": 0.0
+   },
+   "pnl": -1528.0,
+   "ret": -10.19
+  },
+  {
+   "study": "reentry_rules",
+   "label": "C+time only (as is)",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 13458.892003732493,
+   "max_dd": -10.350082541198535,
+   "trades": 64,
+   "monthly": {
+    "2026-10": -1545.8,
+    "2026-11": 4.69
+   },
+   "pnl": -1541.11,
+   "ret": -10.27
+  },
+  {
+   "study": "top5_combined",
+   "label": "#3 alone (kill -8%/10d)",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 13458.892003732493,
+   "max_dd": -10.350082541198535,
+   "trades": 64,
+   "monthly": {
+    "2026-10": -1545.8,
+    "2026-11": 4.69
+   },
+   "pnl": -1541.11,
+   "ret": -10.27
+  },
+  {
+   "study": "top5_combined",
+   "label": "PAIR 1+3",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 13436.767827786367,
+   "max_dd": -10.421547814757549,
+   "trades": 51,
+   "monthly": {
+    "2026-10": -1540.3,
+    "2026-11": -22.94
+   },
+   "pnl": -1563.23,
+   "ret": -10.42
+  },
+  {
+   "study": "v2_pause",
+   "label": "PAUSE_10",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 13436.767827786367,
+   "max_dd": -10.421547814757549,
+   "trades": 51,
+   "monthly": {
+    "2026-10": -1540.3,
+    "2026-11": -22.94
+   },
+   "pnl": -1563.23,
+   "ret": -10.42
+  },
+  {
+   "study": "v2_steady",
+   "label": "v2 live (-8/10)",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 13436.767827786367,
+   "max_dd": -10.421547814757549,
+   "trades": 51,
+   "monthly": {
+    "2026-10": -1540.3,
+    "2026-11": -22.94
+   },
+   "pnl": -1563.23,
+   "ret": -10.42
+  },
+  {
+   "study": "reference",
+   "label": "v2 before peak reset",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 13436.767827786367,
+   "max_dd": -10.421547814757549,
+   "trades": 51,
+   "monthly": {
+    "2026-10": -1540.3,
+    "2026-11": -22.94
+   },
+   "pnl": -1563.23,
+   "ret": -10.42
+  },
+  {
+   "study": "rank_admissible0",
+   "label": "Intraday stop -2.5% (looser)",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 13355.993570714363,
+   "max_dd": -10.96004286190425,
+   "trades": 46,
+   "monthly": {
+    "2026-10": -523.66,
+    "2026-11": -1120.34
+   },
+   "pnl": -1644.01,
+   "ret": -10.96
+  },
+  {
+   "study": "protect_rules",
+   "label": "K1 fast kill-switch (-8%, 5 days)",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 13342.887817467625,
+   "max_dd": -11.047414550215839,
+   "trades": 23,
+   "monthly": {
+    "2026-10": -1657.11,
+    "2026-11": 0.0
+   },
+   "pnl": -1657.11,
+   "ret": -11.05
+  },
+  {
+   "study": "crash_grid",
+   "label": "kill -10%/5d cb1",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 13342.887817467625,
+   "max_dd": -11.047414550215839,
+   "trades": 23,
+   "monthly": {
+    "2026-10": -1657.11,
+    "2026-11": 0.0
+   },
+   "pnl": -1657.11,
+   "ret": -11.05
+  },
+  {
+   "study": "sizing_rules",
+   "label": "D Volatility sizing: buy x min(1, 3% / 20-day vol)",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 13222.532805774365,
+   "max_dd": -11.84978129483757,
+   "trades": 106,
+   "monthly": {
+    "2026-10": -544.6,
+    "2026-11": -1232.87
+   },
+   "pnl": -1777.47,
+   "ret": -11.85
+  },
+  {
+   "study": "crash_grid",
+   "label": "kill -12%/5d noSMA cb1",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 13185.256234584676,
+   "max_dd": -14.314390387751386,
+   "trades": 90,
+   "monthly": {
+    "2026-10": -1819.34,
+    "2026-11": 4.6
+   },
+   "pnl": -1814.74,
+   "ret": -12.1
+  },
+  {
+   "study": "protect_rules",
+   "label": "C1 K2 + volatility sizing 3%",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 13177.259935270251,
+   "max_dd": -12.151600431531662,
+   "trades": 99,
+   "monthly": {
+    "2026-10": -931.37,
+    "2026-11": -891.37
+   },
+   "pnl": -1822.74,
+   "ret": -12.15
+  },
+  {
+   "study": "protect_rules2",
+   "label": "C1 fast switch + vol sizing (round 1)",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 13177.259935270251,
+   "max_dd": -12.151600431531662,
+   "trades": 99,
+   "monthly": {
+    "2026-10": -931.37,
+    "2026-11": -891.37
+   },
+   "pnl": -1822.74,
+   "ret": -12.15
+  },
+  {
+   "study": "rank_admissible1",
+   "label": "Best grid-search config (rejected)",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 13164.88817497976,
+   "max_dd": -12.234078833468265,
+   "trades": 39,
+   "monthly": {
+    "2026-10": -663.6,
+    "2026-11": -1171.51
+   },
+   "pnl": -1835.11,
+   "ret": -12.23
+  },
+  {
+   "study": "user_derived",
+   "label": "A+B",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 13120.2759315717,
+   "max_dd": -12.531493789522008,
+   "trades": 67,
+   "monthly": {
+    "2026-10": -327.71,
+    "2026-11": -1552.02
+   },
+   "pnl": -1879.72,
+   "ret": -12.53
+  },
+  {
+   "study": "rebound_addons",
+   "label": "E2 rebound (live +1%)",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 13077.586869125182,
+   "max_dd": -12.816087539165455,
+   "trades": 90,
+   "monthly": {
+    "2026-10": -615.82,
+    "2026-11": -1306.6
+   },
+   "pnl": -1922.41,
+   "ret": -12.82
+  },
+  {
+   "study": "rebound_addons",
+   "label": "E2 + X1",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 13077.586869125182,
+   "max_dd": -12.816087539165455,
+   "trades": 90,
+   "monthly": {
+    "2026-10": -615.82,
+    "2026-11": -1306.6
+   },
+   "pnl": -1922.41,
+   "ret": -12.82
+  },
+  {
+   "study": "drawdown_rules",
+   "label": "A Whipsaw pause: no buys the run after a circuit breaker",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 13071.266932774352,
+   "max_dd": -14.262940604679386,
+   "trades": 119,
+   "monthly": {
+    "2026-10": -1530.6,
+    "2026-11": -398.14
+   },
+   "pnl": -1928.73,
+   "ret": -12.86
+  },
+  {
+   "study": "user_derived",
+   "label": "A  dip must be 10%+ below 20-day high",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 13050.118431762508,
+   "max_dd": -12.99921045491661,
+   "trades": 80,
+   "monthly": {
+    "2026-10": -590.92,
+    "2026-11": -1358.96
+   },
+   "pnl": -1949.88,
+   "ret": -13.0
+  },
+  {
+   "study": "rule_ideas",
+   "label": "3 Buy only once the bounce has started",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 13044.038046428881,
+   "max_dd": -13.03974635714079,
+   "trades": 76,
+   "monthly": {
+    "2026-10": -594.51,
+    "2026-11": -1361.45
+   },
+   "pnl": -1955.96,
+   "ret": -13.04
+  },
+  {
+   "study": "candidate_pdf",
+   "label": "Smaller tranches only",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 13025.69641357379,
+   "max_dd": -13.162023909508058,
+   "trades": 97,
+   "monthly": {
+    "2026-10": -674.12,
+    "2026-11": -1300.18
+   },
+   "pnl": -1974.3,
+   "ret": -13.16
+  },
+  {
+   "study": "sizing_rules",
+   "label": "E Exposure cap: at most 60% of equity in stocks",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 13019.449873930893,
+   "max_dd": -13.203667507127381,
+   "trades": 62,
+   "monthly": {
+    "2026-10": -977.99,
+    "2026-11": -1002.56
+   },
+   "pnl": -1980.55,
+   "ret": -13.2
+  },
+  {
+   "study": "candidate_pdf",
+   "label": "CANDIDATE (both rule changes)",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 13007.15301999695,
+   "max_dd": -13.285646533353667,
+   "trades": 79,
+   "monthly": {
+    "2026-10": -812.67,
+    "2026-11": -1180.18
+   },
+   "pnl": -1992.85,
+   "ret": -13.29
+  },
+  {
+   "study": "rule_ideas",
+   "label": "2a Equal split across qualifiers",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 13005.40791189981,
+   "max_dd": -13.297280587334592,
+   "trades": 126,
+   "monthly": {
+    "2026-10": -606.6,
+    "2026-11": -1387.99
+   },
+   "pnl": -1994.59,
+   "ret": -13.3
+  },
+  {
+   "study": "rank_admissible0",
+   "label": "Trade cap 10% (was 25%)",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12990.622948131428,
+   "max_dd": -13.395847012457152,
+   "trades": 104,
+   "monthly": {
+    "2026-10": -909.3,
+    "2026-11": -1100.08
+   },
+   "pnl": -2009.38,
+   "ret": -13.4
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#1 dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers wider | hold 6d",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12983.408006406831,
+   "max_dd": -13.443946623954462,
+   "trades": 97,
+   "monthly": {
+    "2026-10": -784.18,
+    "2026-11": -1232.42
+   },
+   "pnl": -2016.59,
+   "ret": -13.44
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#2 dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers live | hold 6d",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12983.408006406831,
+   "max_dd": -13.443946623954462,
+   "trades": 97,
+   "monthly": {
+    "2026-10": -784.18,
+    "2026-11": -1232.42
+   },
+   "pnl": -2016.59,
+   "ret": -13.44
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#3 dip 0.2% | tranche half x3 | cap 35% | peak 50.0% | tiers wider | hold 6d",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12983.408006406831,
+   "max_dd": -13.443946623954462,
+   "trades": 97,
+   "monthly": {
+    "2026-10": -784.18,
+    "2026-11": -1232.42
+   },
+   "pnl": -2016.59,
+   "ret": -13.44
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#4 dip 0.2% | tranche half x3 | cap 35% | peak 50.0% | tiers live | hold 6d",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12983.408006406831,
+   "max_dd": -13.443946623954462,
+   "trades": 97,
+   "monthly": {
+    "2026-10": -784.18,
+    "2026-11": -1232.42
+   },
+   "pnl": -2016.59,
+   "ret": -13.44
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#5 dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers none | hold 6d",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12983.408006406831,
+   "max_dd": -13.443946623954462,
+   "trades": 97,
+   "monthly": {
+    "2026-10": -784.18,
+    "2026-11": -1232.42
+   },
+   "pnl": -2016.59,
+   "ret": -13.44
+  },
+  {
+   "study": "drawdown_rules",
+   "label": "C Drawdown throttle: size x (1 + dd/15%)",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12980.596509112092,
+   "max_dd": -13.462689939252714,
+   "trades": 93,
+   "monthly": {
+    "2026-10": -821.92,
+    "2026-11": -1197.48
+   },
+   "pnl": -2019.4,
+   "ret": -13.46
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#6 dip 0.4% | tranche live x3 | cap 25% | peak 50.0% | tiers live | hold 10d",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12943.560280040081,
+   "max_dd": -13.709598133066125,
+   "trades": 82,
+   "monthly": {
+    "2026-10": -802.33,
+    "2026-11": -1254.11
+   },
+   "pnl": -2056.44,
+   "ret": -13.71
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#7 dip 0.4% | tranche live x3 | cap 25% | peak 50.0% | tiers wider | hold 10d",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12943.560280040081,
+   "max_dd": -13.709598133066125,
+   "trades": 82,
+   "monthly": {
+    "2026-10": -802.33,
+    "2026-11": -1254.11
+   },
+   "pnl": -2056.44,
+   "ret": -13.71
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#10 dip 0.4% | tranche live x5 | cap 25% | peak 50.0% | tiers live | hold 6d",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12943.560280040081,
+   "max_dd": -13.709598133066125,
+   "trades": 82,
+   "monthly": {
+    "2026-10": -802.33,
+    "2026-11": -1254.11
+   },
+   "pnl": -2056.44,
+   "ret": -13.71
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#8 dip 0.2% | tranche half x5 | cap 35% | peak 74.3% | tiers wider | hold 6d",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12926.022560150115,
+   "max_dd": -13.8265162656659,
+   "trades": 97,
+   "monthly": {
+    "2026-10": -783.74,
+    "2026-11": -1290.23
+   },
+   "pnl": -2073.98,
+   "ret": -13.83
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#9 dip 0.2% | tranche half x5 | cap 35% | peak 74.3% | tiers live | hold 6d",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12926.022560150115,
+   "max_dd": -13.8265162656659,
+   "trades": 97,
+   "monthly": {
+    "2026-10": -783.74,
+    "2026-11": -1290.23
+   },
+   "pnl": -2073.98,
+   "ret": -13.83
+  },
+  {
+   "study": "user_derived",
+   "label": "B  no profit-taking before day 3",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12918.564603890687,
+   "max_dd": -13.87623597406209,
+   "trades": 69,
+   "monthly": {
+    "2026-10": -553.28,
+    "2026-11": -1528.16
+   },
+   "pnl": -2081.44,
+   "ret": -13.88
+  },
+  {
+   "study": "rank_admissible0",
+   "label": "Symbol cap 25% (was 50%)",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12904.1378971951,
+   "max_dd": -13.97241401869933,
+   "trades": 86,
+   "monthly": {
+    "2026-10": -884.66,
+    "2026-11": -1211.21
+   },
+   "pnl": -2095.86,
+   "ret": -13.97
+  },
+  {
+   "study": "candidate_pdf",
+   "label": "Full exit on new high only",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12902.930017430295,
+   "max_dd": -13.980466550464698,
+   "trades": 68,
+   "monthly": {
+    "2026-10": -945.7,
+    "2026-11": -1151.37
+   },
+   "pnl": -2097.07,
+   "ret": -13.98
+  },
+  {
+   "study": "rank_admissible0",
+   "label": "Intraday stop -1.0% (tighter)",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12902.618305841082,
+   "max_dd": -13.982544627726112,
+   "trades": 84,
+   "monthly": {
+    "2026-10": -753.78,
+    "2026-11": -1343.6
+   },
+   "pnl": -2097.38,
+   "ret": -13.98
+  },
+  {
+   "study": "sizing_rules",
+   "label": "F At most 2 new buys per run",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12894.211735306115,
+   "max_dd": -14.038588431292565,
+   "trades": 45,
+   "monthly": {
+    "2026-10": -1268.08,
+    "2026-11": -837.71
+   },
+   "pnl": -2105.79,
+   "ret": -14.04
+  },
+  {
+   "study": "sizing_rules",
+   "label": "F At most 2 new buys per run",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12859.251051252868,
+   "max_dd": -14.271659658314217,
+   "trades": 71,
+   "monthly": {
+    "2026-10": -1250.56,
+    "2026-11": -890.19
+   },
+   "pnl": -2140.75,
+   "ret": -14.27
+  },
+  {
+   "study": "reentry_rules",
+   "label": "C+time + reset high-water mark",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12852.278913328371,
+   "max_dd": -14.318140577810857,
+   "trades": 103,
+   "monthly": {
+    "2026-10": -813.07,
+    "2026-11": -1334.65
+   },
+   "pnl": -2147.72,
+   "ret": -14.32
+  },
+  {
+   "study": "rebound_addons",
+   "label": "X1 no hold-limit sell on up day",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12849.485860990819,
+   "max_dd": -14.336760926727877,
+   "trades": 82,
+   "monthly": {
+    "2026-10": -812.45,
+    "2026-11": -1338.07
+   },
+   "pnl": -2150.51,
+   "ret": -14.34
+  },
+  {
+   "study": "rule_ideas",
+   "label": "1 Regime: trim 30% / hold 10d in rising market",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12849.485860990819,
+   "max_dd": -14.336760926727877,
+   "trades": 82,
+   "monthly": {
+    "2026-10": -812.45,
+    "2026-11": -1338.07
+   },
+   "pnl": -2150.51,
+   "ret": -14.34
+  },
+  {
+   "study": "rule_ideas",
+   "label": "4 Skip buys under $500",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12849.485860990819,
+   "max_dd": -14.336760926727877,
+   "trades": 82,
+   "monthly": {
+    "2026-10": -812.45,
+    "2026-11": -1338.07
+   },
+   "pnl": -2150.51,
+   "ret": -14.34
+  },
+  {
+   "study": "v2_pause",
+   "label": "RS (10d + peak reset)",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 12849.485860990819,
+   "max_dd": -14.336760926727877,
+   "trades": 82,
+   "monthly": {
+    "2026-10": -812.45,
+    "2026-11": -1338.07
+   },
+   "pnl": -2150.51,
+   "ret": -14.34
+  },
+  {
+   "study": "v2_pause",
+   "label": "R2 bounce: above 5d avg",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 12849.485860990819,
+   "max_dd": -14.336760926727877,
+   "trades": 82,
+   "monthly": {
+    "2026-10": -812.45,
+    "2026-11": -1338.07
+   },
+   "pnl": -2150.51,
+   "ret": -14.34
+  },
+  {
+   "study": "v2_pause",
+   "label": "R3 bounce: +5% off low",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 12849.485860990819,
+   "max_dd": -14.336760926727877,
+   "trades": 82,
+   "monthly": {
+    "2026-10": -812.45,
+    "2026-11": -1338.07
+   },
+   "pnl": -2150.51,
+   "ret": -14.34
+  },
+  {
+   "study": "v2_steady",
+   "label": "K8/10",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 12849.485860990819,
+   "max_dd": -14.336760926727877,
+   "trades": 82,
+   "monthly": {
+    "2026-10": -812.45,
+    "2026-11": -1338.07
+   },
+   "pnl": -2150.51,
+   "ret": -14.34
+  },
+  {
+   "study": "reference",
+   "label": "v2 LIVE (current rules)",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12849.485860990819,
+   "max_dd": -14.336760926727877,
+   "trades": 82,
+   "monthly": {
+    "2026-10": -812.45,
+    "2026-11": -1338.07
+   },
+   "pnl": -2150.51,
+   "ret": -14.34
+  },
+  {
+   "study": "protect_rules",
+   "label": "L1 bank 50% of gains",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12846.805448264384,
+   "max_dd": -14.354630344904107,
+   "trades": 123,
+   "monthly": {
+    "2026-10": -1447.09,
+    "2026-11": -706.1
+   },
+   "pnl": -2153.19,
+   "ret": -14.35
+  },
+  {
+   "study": "rebound_addons",
+   "label": "E1 rebound (yday +2%)",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12803.737982597166,
+   "max_dd": -14.64174678268556,
+   "trades": 96,
+   "monthly": {
+    "2026-10": -917.03,
+    "2026-11": -1279.23
+   },
+   "pnl": -2196.26,
+   "ret": -14.64
+  },
+  {
+   "study": "rebound_addons",
+   "label": "E1 + X1",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12803.737982597166,
+   "max_dd": -14.64174678268556,
+   "trades": 96,
+   "monthly": {
+    "2026-10": -917.03,
+    "2026-11": -1279.23
+   },
+   "pnl": -2196.26,
+   "ret": -14.64
+  },
+  {
+   "study": "rank_admissible0",
+   "label": "Max 1 tranche per symbol",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12783.596228091079,
+   "max_dd": -14.776025146059467,
+   "trades": 86,
+   "monthly": {
+    "2026-10": -976.84,
+    "2026-11": -1239.57
+   },
+   "pnl": -2216.4,
+   "ret": -14.78
+  },
+  {
+   "study": "drawdown_rules",
+   "label": "C Drawdown throttle: size x (1 + dd/15%)",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12737.440633708613,
+   "max_dd": -15.083729108609244,
+   "trades": 168,
+   "monthly": {
+    "2026-10": -2112.18,
+    "2026-11": -150.37
+   },
+   "pnl": -2262.56,
+   "ret": -15.08
+  },
+  {
+   "study": "candidate_pdf",
+   "label": "Smaller tranches only",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12723.562182946078,
+   "max_dd": -15.176252113692811,
+   "trades": 54,
+   "monthly": {
+    "2026-10": -2276.44,
+    "2026-11": 0.0
+   },
+   "pnl": -2276.44,
+   "ret": -15.18
+  },
+  {
+   "study": "user_derived",
+   "label": "A  dip must be 10%+ below 20-day high",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12720.634216477252,
+   "max_dd": -15.195771890151654,
+   "trades": 30,
+   "monthly": {
+    "2026-10": -2279.37,
+    "2026-11": 0.0
+   },
+   "pnl": -2279.37,
+   "ret": -15.2
+  },
+  {
+   "study": "user_derived",
+   "label": "A+B",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12720.634216477252,
+   "max_dd": -15.195771890151654,
+   "trades": 30,
+   "monthly": {
+    "2026-10": -2279.37,
+    "2026-11": 0.0
+   },
+   "pnl": -2279.37,
+   "ret": -15.2
+  },
+  {
+   "study": "candidate_pdf",
+   "label": "CANDIDATE (both rule changes)",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12705.069162885864,
+   "max_dd": -15.299538914094235,
+   "trades": 54,
+   "monthly": {
+    "2026-10": -2294.93,
+    "2026-11": 0.0
+   },
+   "pnl": -2294.93,
+   "ret": -15.3
+  },
+  {
+   "study": "rule_ideas",
+   "label": "3 Buy only once the bounce has started",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12686.140504055475,
+   "max_dd": -15.425729972963499,
+   "trades": 43,
+   "monthly": {
+    "2026-10": -2313.86,
+    "2026-11": 0.0
+   },
+   "pnl": -2313.86,
+   "ret": -15.43
+  },
+  {
+   "study": "protect_rules2",
+   "label": "S2+D cool-off 2 days + vol sizing",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12681.610980573198,
+   "max_dd": -15.455926796178687,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2318.39,
+    "2026-11": 0.0
+   },
+   "pnl": -2318.39,
+   "ret": -15.46
+  },
+  {
+   "study": "drawdown_rules",
+   "label": "B Breadth gate: no dip buys when 6+ of 8 fell",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12667.633199436255,
+   "max_dd": -15.549112003758292,
+   "trades": 85,
+   "monthly": {
+    "2026-10": -1498.06,
+    "2026-11": -834.3
+   },
+   "pnl": -2332.37,
+   "ret": -15.55
+  },
+  {
+   "study": "sizing_rules",
+   "label": "E Exposure cap: at most 60% of equity in stocks",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12666.763018657619,
+   "max_dd": -15.554913208949205,
+   "trades": 46,
+   "monthly": {
+    "2026-10": -2333.24,
+    "2026-11": 0.0
+   },
+   "pnl": -2333.24,
+   "ret": -15.55
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#1 dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers wider | hold 6d",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12655.528432470734,
+   "max_dd": -15.629810450195114,
+   "trades": 54,
+   "monthly": {
+    "2026-10": -2344.47,
+    "2026-11": 0.0
+   },
+   "pnl": -2344.47,
+   "ret": -15.63
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#3 dip 0.2% | tranche half x3 | cap 35% | peak 50.0% | tiers wider | hold 6d",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12655.528432470734,
+   "max_dd": -15.629810450195114,
+   "trades": 54,
+   "monthly": {
+    "2026-10": -2344.47,
+    "2026-11": 0.0
+   },
+   "pnl": -2344.47,
+   "ret": -15.63
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#2 dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers live | hold 6d",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12655.528432470734,
+   "max_dd": -15.629810450195114,
+   "trades": 54,
+   "monthly": {
+    "2026-10": -2344.47,
+    "2026-11": 0.0
+   },
+   "pnl": -2344.47,
+   "ret": -15.63
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#4 dip 0.2% | tranche half x3 | cap 35% | peak 50.0% | tiers live | hold 6d",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12655.528432470734,
+   "max_dd": -15.629810450195114,
+   "trades": 54,
+   "monthly": {
+    "2026-10": -2344.47,
+    "2026-11": 0.0
+   },
+   "pnl": -2344.47,
+   "ret": -15.63
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#5 dip 0.2% | tranche half x5 | cap 35% | peak 50.0% | tiers none | hold 6d",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12655.528432470734,
+   "max_dd": -15.629810450195114,
+   "trades": 54,
+   "monthly": {
+    "2026-10": -2344.47,
+    "2026-11": 0.0
+   },
+   "pnl": -2344.47,
+   "ret": -15.63
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#8 dip 0.2% | tranche half x5 | cap 35% | peak 74.3% | tiers wider | hold 6d",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12652.566531049602,
+   "max_dd": -15.649556459669324,
+   "trades": 54,
+   "monthly": {
+    "2026-10": -2347.43,
+    "2026-11": 0.0
+   },
+   "pnl": -2347.43,
+   "ret": -15.65
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#9 dip 0.2% | tranche half x5 | cap 35% | peak 74.3% | tiers live | hold 6d",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12652.566531049602,
+   "max_dd": -15.649556459669324,
+   "trades": 54,
+   "monthly": {
+    "2026-10": -2347.43,
+    "2026-11": 0.0
+   },
+   "pnl": -2347.43,
+   "ret": -15.65
+  },
+  {
+   "study": "drawdown_rules",
+   "label": "B Breadth gate: no dip buys when 6+ of 8 fell",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12597.328101718656,
+   "max_dd": -16.017812655208964,
+   "trades": 66,
+   "monthly": {
+    "2026-10": -1113.32,
+    "2026-11": -1289.35
+   },
+   "pnl": -2402.67,
+   "ret": -16.02
+  },
+  {
+   "study": "rank_admissible0",
+   "label": "Intraday stop -1.0% (tighter)",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12569.601949434324,
+   "max_dd": -16.20265367043784,
+   "trades": 42,
+   "monthly": {
+    "2026-10": -2430.4,
+    "2026-11": 0.0
+   },
+   "pnl": -2430.4,
+   "ret": -16.2
+  },
+  {
+   "study": "rule_ideas",
+   "label": "4 Skip buys under $500",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12530.639403904988,
+   "max_dd": -16.462403973966744,
+   "trades": 30,
+   "monthly": {
+    "2026-10": -2469.36,
+    "2026-11": 0.0
+   },
+   "pnl": -2469.36,
+   "ret": -16.46
+  },
+  {
+   "study": "top5_combined",
+   "label": "#1 alone (skip < $500)",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12530.639403904988,
+   "max_dd": -16.462403973966744,
+   "trades": 30,
+   "monthly": {
+    "2026-10": -2469.36,
+    "2026-11": 0.0
+   },
+   "pnl": -2469.36,
+   "ret": -16.46
+  },
+  {
+   "study": "v2_steady",
+   "label": "$500 + v1 switch (-15/20, SMA lock)",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 12530.639403904988,
+   "max_dd": -16.462403973966744,
+   "trades": 30,
+   "monthly": {
+    "2026-10": -2469.36,
+    "2026-11": 0.0
+   },
+   "pnl": -2469.36,
+   "ret": -16.46
+  },
+  {
+   "study": "v2_steady",
+   "label": "K8/20",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 12530.634445549986,
+   "max_dd": -16.462437029666766,
+   "trades": 49,
+   "monthly": {
+    "2026-10": -1522.49,
+    "2026-11": -946.87
+   },
+   "pnl": -2469.37,
+   "ret": -16.46
+  },
+  {
+   "study": "rank_admissible1",
+   "label": "Best grid-search config (rejected)",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12524.517522176184,
+   "max_dd": -16.503216518825436,
+   "trades": 22,
+   "monthly": {
+    "2026-10": -2475.48,
+    "2026-11": 0.0
+   },
+   "pnl": -2475.48,
+   "ret": -16.5
+  },
+  {
+   "study": "v2_steady",
+   "label": "K10/20",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 12524.425516185798,
+   "max_dd": -16.50382989209468,
+   "trades": 54,
+   "monthly": {
+    "2026-10": -1522.49,
+    "2026-11": -953.08
+   },
+   "pnl": -2475.57,
+   "ret": -16.5
+  },
+  {
+   "study": "rank_admissible0",
+   "label": "Max 1 tranche per symbol",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12520.744899322148,
+   "max_dd": -16.528367337852345,
+   "trades": 40,
+   "monthly": {
+    "2026-10": -2479.26,
+    "2026-11": 0.0
+   },
+   "pnl": -2479.26,
+   "ret": -16.53
+  },
+  {
+   "study": "user_derived",
+   "label": "B  no profit-taking before day 3",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12519.459949387403,
+   "max_dd": -16.536933670750642,
+   "trades": 40,
+   "monthly": {
+    "2026-10": -2480.54,
+    "2026-11": 0.0
+   },
+   "pnl": -2480.54,
+   "ret": -16.54
+  },
+  {
+   "study": "rule_ideas",
+   "label": "1 Regime: trim 30% / hold 10d in rising market",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12518.31736733097,
+   "max_dd": -16.544550884460197,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2481.68,
+    "2026-11": 0.0
+   },
+   "pnl": -2481.68,
+   "ret": -16.54
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#6 dip 0.4% | tranche live x3 | cap 25% | peak 50.0% | tiers live | hold 10d",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12517.165577724521,
+   "max_dd": -16.552229481836523,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2482.83,
+    "2026-11": 0.0
+   },
+   "pnl": -2482.83,
+   "ret": -16.55
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#7 dip 0.4% | tranche live x3 | cap 25% | peak 50.0% | tiers wider | hold 10d",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12517.165577724521,
+   "max_dd": -16.552229481836523,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2482.83,
+    "2026-11": 0.0
+   },
+   "pnl": -2482.83,
+   "ret": -16.55
+  },
+  {
+   "study": "grid_entry_exit",
+   "label": "grid#10 dip 0.4% | tranche live x5 | cap 25% | peak 50.0% | tiers live | hold 6d",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12517.165577724521,
+   "max_dd": -16.552229481836523,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2482.83,
+    "2026-11": 0.0
+   },
+   "pnl": -2482.83,
+   "ret": -16.55
+  },
+  {
+   "study": "rank_admissible0",
+   "label": "Symbol cap 25% (was 50%)",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12515.274529983537,
+   "max_dd": -16.564836466776423,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.73,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.73,
+   "ret": -16.56
+  },
+  {
+   "study": "after_october",
+   "label": "PRODUCTION",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "after_october",
+   "label": "R1 kill-switch cool-off 5 days",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "protect_rules",
+   "label": "PRODUCTION",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "protect_rules2",
+   "label": "PRODUCTION",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "protect_rules2",
+   "label": "EQ10 equity-curve filter",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "rebound_addons",
+   "label": "LIVE v2",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "rebound_addons",
+   "label": "E1 rebound (yday +2%)",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "rebound_addons",
+   "label": "E2 rebound (live +1%)",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "rebound_addons",
+   "label": "X1 no hold-limit sell on up day",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "rebound_addons",
+   "label": "E1 + X1",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "rebound_addons",
+   "label": "E2 + X1",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "reentry_rules",
+   "label": "P+time only (as is)",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "reentry_rules",
+   "label": "P+time + reset high-water mark",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "top5_combined",
+   "label": "CURRENT RULES",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "ks_throttle",
+   "label": "LIVE (sell all, 10d no buys)",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "choppy",
+   "label": "v1 old rules",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "rank_admissible0",
+   "label": "PRODUCTION (current rules)",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "rank_admissible0",
+   "label": "Trade cap 10% (was 25%)",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "reference",
+   "label": "v1 (old rules)",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12515.2513333985,
+   "max_dd": -16.564991110676665,
+   "trades": 41,
+   "monthly": {
+    "2026-10": -2484.75,
+    "2026-11": 0.0
+   },
+   "pnl": -2484.75,
+   "ret": -16.56
+  },
+  {
+   "study": "candidate_pdf",
+   "label": "Full exit on new high only",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12512.038990730678,
+   "max_dd": -16.586406728462144,
+   "trades": 39,
+   "monthly": {
+    "2026-10": -2487.96,
+    "2026-11": 0.0
+   },
+   "pnl": -2487.96,
+   "ret": -16.59
+  },
+  {
+   "study": "crash_grid",
+   "label": "kill -10%/5d noSMA cb1",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12502.83667308992,
+   "max_dd": -16.647755512733863,
+   "trades": 83,
+   "monthly": {
+    "2026-10": -1247.43,
+    "2026-11": -1249.73
+   },
+   "pnl": -2497.16,
+   "ret": -16.65
+  },
+  {
+   "study": "protect_rules2",
+   "label": "EQ10+D equity filter + vol sizing",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12502.456252977527,
+   "max_dd": -16.650291646816484,
+   "trades": 59,
+   "monthly": {
+    "2026-10": -2187.55,
+    "2026-11": -309.99
+   },
+   "pnl": -2497.54,
+   "ret": -16.65
+  },
+  {
+   "study": "protect_rules2",
+   "label": "S2 stop cool-off 2 days",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12494.26721184997,
+   "max_dd": -16.704885254333533,
+   "trades": 33,
+   "monthly": {
+    "2026-10": -2505.73,
+    "2026-11": 0.0
+   },
+   "pnl": -2505.73,
+   "ret": -16.7
+  },
+  {
+   "study": "ks_throttle",
+   "label": "HOLD-0.25",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12469.379813910837,
+   "max_dd": -16.870801240594425,
+   "trades": 50,
+   "monthly": {
+    "2026-10": -2505.83,
+    "2026-11": -24.79
+   },
+   "pnl": -2530.62,
+   "ret": -16.87
+  },
+  {
+   "study": "ks_throttle",
+   "label": "SELL+REENTER-0.25",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12469.070344167856,
+   "max_dd": -16.87286437221429,
+   "trades": 47,
+   "monthly": {
+    "2026-10": -2506.14,
+    "2026-11": -24.78
+   },
+   "pnl": -2530.93,
+   "ret": -16.87
+  },
+  {
+   "study": "protect_rules",
+   "label": "D volatility sizing 3%",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12461.376286899535,
+   "max_dd": -16.924158087336437,
+   "trades": 63,
+   "monthly": {
+    "2026-10": -2538.62,
+    "2026-11": 0.0
+   },
+   "pnl": -2538.62,
+   "ret": -16.92
+  },
+  {
+   "study": "protect_rules2",
+   "label": "D volatility sizing 3%",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12461.376286899535,
+   "max_dd": -16.924158087336437,
+   "trades": 63,
+   "monthly": {
+    "2026-10": -2538.62,
+    "2026-11": 0.0
+   },
+   "pnl": -2538.62,
+   "ret": -16.92
+  },
+  {
+   "study": "sizing_rules",
+   "label": "D Volatility sizing: buy x min(1, 3% / 20-day vol)",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12461.376286899535,
+   "max_dd": -16.924158087336437,
+   "trades": 63,
+   "monthly": {
+    "2026-10": -2538.62,
+    "2026-11": 0.0
+   },
+   "pnl": -2538.62,
+   "ret": -16.92
+  },
+  {
+   "study": "rank_admissible2",
+   "label": "Quality filter 3+ down days",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12454.896981006224,
+   "max_dd": -16.967353459958503,
+   "trades": 66,
+   "monthly": {
+    "2026-10": -1582.57,
+    "2026-11": -962.53
+   },
+   "pnl": -2545.1,
+   "ret": -16.97
+  },
+  {
+   "study": "rule_ideas",
+   "label": "2b Rank by yesterday's drop",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12440.6500379113,
+   "max_dd": -17.06233308059133,
+   "trades": 53,
+   "monthly": {
+    "2026-10": -2559.35,
+    "2026-11": 0.0
+   },
+   "pnl": -2559.35,
+   "ret": -17.06
+  },
+  {
+   "study": "after_october",
+   "label": "R4 R3 + R2",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12437.911730099477,
+   "max_dd": -19.806871958534966,
+   "trades": 84,
+   "monthly": {
+    "2026-10": -2965.03,
+    "2026-11": 402.94
+   },
+   "pnl": -2562.09,
+   "ret": -17.08
+  },
+  {
+   "study": "v2_steady",
+   "label": "K10/10",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 12437.302348834324,
+   "max_dd": -17.084651007771168,
+   "trades": 82,
+   "monthly": {
+    "2026-10": -812.45,
+    "2026-11": -1750.25
+   },
+   "pnl": -2562.7,
+   "ret": -17.08
+  },
+  {
+   "study": "rule_ideas",
+   "label": "2a Equal split across qualifiers",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12433.351029484635,
+   "max_dd": -17.110993136769103,
+   "trades": 70,
+   "monthly": {
+    "2026-10": -2566.65,
+    "2026-11": 0.0
+   },
+   "pnl": -2566.65,
+   "ret": -17.11
+  },
+  {
+   "study": "ks_throttle",
+   "label": "HOLD-0.5",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12423.547867070098,
+   "max_dd": -17.176347552866012,
+   "trades": 50,
+   "monthly": {
+    "2026-10": -2526.96,
+    "2026-11": -49.49
+   },
+   "pnl": -2576.45,
+   "ret": -17.18
+  },
+  {
+   "study": "ks_throttle",
+   "label": "SELL+REENTER-0.5",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12422.93161018688,
+   "max_dd": -17.180455932087458,
+   "trades": 47,
+   "monthly": {
+    "2026-10": -2527.58,
+    "2026-11": -49.49
+   },
+   "pnl": -2577.07,
+   "ret": -17.18
+  },
+  {
+   "study": "reentry_rules",
+   "label": "P+early: basket up 2 days",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12414.381290181622,
+   "max_dd": -17.237458065455858,
+   "trades": 43,
+   "monthly": {
+    "2026-10": -2486.31,
+    "2026-11": -99.31
+   },
+   "pnl": -2585.62,
+   "ret": -17.24
+  },
+  {
+   "study": "reentry_rules",
+   "label": "P+early: basket above 5-day avg",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12414.381290181622,
+   "max_dd": -17.237458065455858,
+   "trades": 43,
+   "monthly": {
+    "2026-10": -2486.31,
+    "2026-11": -99.31
+   },
+   "pnl": -2585.62,
+   "ret": -17.24
+  },
+  {
+   "study": "reentry_rules",
+   "label": "P+early: basket +5% off low",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12414.381290181622,
+   "max_dd": -17.237458065455858,
+   "trades": 43,
+   "monthly": {
+    "2026-10": -2486.31,
+    "2026-11": -99.31
+   },
+   "pnl": -2585.62,
+   "ret": -17.24
+  },
+  {
+   "study": "rank_admissible0",
+   "label": "Intraday stop -2.5% (looser)",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12399.368565756575,
+   "max_dd": -17.337542894956172,
+   "trades": 50,
+   "monthly": {
+    "2026-10": -2600.63,
+    "2026-11": 0.0
+   },
+   "pnl": -2600.63,
+   "ret": -17.34
+  },
+  {
+   "study": "rank_admissible0",
+   "label": "No intraday stop at all",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12397.81900636437,
+   "max_dd": -17.347873290904193,
+   "trades": 30,
+   "monthly": {
+    "2026-10": -2602.18,
+    "2026-11": 0.0
+   },
+   "pnl": -2602.18,
+   "ret": -17.35
+  },
+  {
+   "study": "rule_ideas",
+   "label": "2b Rank by yesterday's drop",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12343.772963033938,
+   "max_dd": -17.708180246440406,
+   "trades": 90,
+   "monthly": {
+    "2026-10": -1430.17,
+    "2026-11": -1226.06
+   },
+   "pnl": -2656.23,
+   "ret": -17.71
+  },
+  {
+   "study": "after_october",
+   "label": "R2 R1 + no 50-day re-entry gate",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12316.349344899221,
+   "max_dd": -23.907107898723577,
+   "trades": 71,
+   "monthly": {
+    "2026-10": -3580.37,
+    "2026-11": 896.72
+   },
+   "pnl": -2683.65,
+   "ret": -17.89
+  },
+  {
+   "study": "lower_risk",
+   "label": "streak pause",
+   "base": "v1",
+   "eng": "origin/main",
+   "end": 12279.559619580295,
+   "max_dd": -18.136269202798026,
+   "trades": 59,
+   "monthly": {
+    "2026-10": -2720.44,
+    "2026-11": 0.0
+   },
+   "pnl": -2720.44,
+   "ret": -18.14
+  },
+  {
+   "study": "protect_rules2",
+   "label": "S5 stop cool-off 5 days",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12199.898449910428,
+   "max_dd": -18.667343667263815,
+   "trades": 39,
+   "monthly": {
+    "2026-10": -2800.1,
+    "2026-11": 0.0
+   },
+   "pnl": -2800.1,
+   "ret": -18.67
+  },
+  {
+   "study": "rank_admissible2",
+   "label": "Quality filter 3+ down days",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 12144.627386255523,
+   "max_dd": -19.035817424963184,
+   "trades": 33,
+   "monthly": {
+    "2026-10": -1623.08,
+    "2026-11": -1232.3
+   },
+   "pnl": -2855.37,
+   "ret": -19.04
+  },
+  {
+   "study": "after_october",
+   "label": "R3 hold through sector-wide drops",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 12034.974995691266,
+   "max_dd": -19.766833362058232,
+   "trades": 45,
+   "monthly": {
+    "2026-10": -2965.03,
+    "2026-11": 0.0
+   },
+   "pnl": -2965.03,
+   "ret": -19.77
+  },
+  {
+   "study": "v2_steady",
+   "label": "K8/15",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 12003.624484727385,
+   "max_dd": -19.9758367684841,
+   "trades": 67,
+   "monthly": {
+    "2026-10": -1529.15,
+    "2026-11": -1467.23
+   },
+   "pnl": -2996.38,
+   "ret": -19.98
+  },
+  {
+   "study": "v2_steady",
+   "label": "K10/15",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 12003.624484727385,
+   "max_dd": -19.9758367684841,
+   "trades": 67,
+   "monthly": {
+    "2026-10": -1529.15,
+    "2026-11": -1467.23
+   },
+   "pnl": -2996.38,
+   "ret": -19.98
+  },
+  {
+   "study": "reentry_rules",
+   "label": "C+early: basket +5% off low",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 11972.05558818462,
+   "max_dd": -20.186296078769207,
+   "trades": 88,
+   "monthly": {
+    "2026-10": -1552.52,
+    "2026-11": -1475.42
+   },
+   "pnl": -3027.94,
+   "ret": -20.19
+  },
+  {
+   "study": "reentry_rules",
+   "label": "C+early: basket above 5-day avg",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 11972.05558818462,
+   "max_dd": -20.186296078769207,
+   "trades": 88,
+   "monthly": {
+    "2026-10": -1552.52,
+    "2026-11": -1475.42
+   },
+   "pnl": -3027.94,
+   "ret": -20.19
+  },
+  {
+   "study": "v2_steady",
+   "label": "K10/5",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 11796.133507551493,
+   "max_dd": -21.35910994965672,
+   "trades": 109,
+   "monthly": {
+    "2026-10": -1975.49,
+    "2026-11": -1228.38
+   },
+   "pnl": -3203.87,
+   "ret": -21.36
+  },
+  {
+   "study": "ks_throttle",
+   "label": "SELL+REENTER-0.25",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 11779.64499677282,
+   "max_dd": -21.469033354847866,
+   "trades": 169,
+   "monthly": {
+    "2026-10": -1734.15,
+    "2026-11": -1486.2
+   },
+   "pnl": -3220.36,
+   "ret": -21.47
+  },
+  {
+   "study": "rank_admissible0",
+   "label": "No intraday stop at all",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 11682.650004305719,
+   "max_dd": -22.115666637961873,
+   "trades": 47,
+   "monthly": {
+    "2026-10": -589.57,
+    "2026-11": -2727.78
+   },
+   "pnl": -3317.35,
+   "ret": -22.12
+  },
+  {
+   "study": "v2_steady",
+   "label": "K15/20",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 11681.64592470185,
+   "max_dd": -22.12236050198767,
+   "trades": 47,
+   "monthly": {
+    "2026-10": -2469.36,
+    "2026-11": -848.99
+   },
+   "pnl": -3318.35,
+   "ret": -22.12
+  },
+  {
+   "study": "v2_steady",
+   "label": "K12/10",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 11630.605273588251,
+   "max_dd": -22.462631509411658,
+   "trades": 81,
+   "monthly": {
+    "2026-10": -1732.67,
+    "2026-11": -1636.73
+   },
+   "pnl": -3369.39,
+   "ret": -22.46
+  },
+  {
+   "study": "v2_steady",
+   "label": "K12/20",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 11628.159215440208,
+   "max_dd": -22.478938563731944,
+   "trades": 51,
+   "monthly": {
+    "2026-10": -2130.65,
+    "2026-11": -1241.19
+   },
+   "pnl": -3371.84,
+   "ret": -22.48
+  },
+  {
+   "study": "ks_throttle",
+   "label": "HOLD-0.25",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 11585.610421104815,
+   "max_dd": -22.76259719263457,
+   "trades": 168,
+   "monthly": {
+    "2026-10": -1780.69,
+    "2026-11": -1633.7
+   },
+   "pnl": -3414.39,
+   "ret": -22.76
+  },
+  {
+   "study": "v2_steady",
+   "label": "K8/5",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 11448.46779714994,
+   "max_dd": -23.676881352333734,
+   "trades": 91,
+   "monthly": {
+    "2026-10": -1975.49,
+    "2026-11": -1576.04
+   },
+   "pnl": -3551.53,
+   "ret": -23.68
+  },
+  {
+   "study": "v2_steady",
+   "label": "K12/15",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 11281.72159770114,
+   "max_dd": -24.788522681992397,
+   "trades": 67,
+   "monthly": {
+    "2026-10": -2130.65,
+    "2026-11": -1587.63
+   },
+   "pnl": -3718.28,
+   "ret": -24.79
+  },
+  {
+   "study": "v2_pause",
+   "label": "R1 bounce: 2 up days",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 11232.61710110161,
+   "max_dd": -25.11588599265593,
+   "trades": 75,
+   "monthly": {
+    "2026-10": -2597.69,
+    "2026-11": -1169.7
+   },
+   "pnl": -3767.38,
+   "ret": -25.12
+  },
+  {
+   "study": "reentry_rules",
+   "label": "C+early: basket up 2 days",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 11230.962427322425,
+   "max_dd": -25.126917151183836,
+   "trades": 91,
+   "monthly": {
+    "2026-10": -2602.76,
+    "2026-11": -1166.28
+   },
+   "pnl": -3769.04,
+   "ret": -25.13
+  },
+  {
+   "study": "v2_steady",
+   "label": "K12/5",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 11216.98943617852,
+   "max_dd": -25.220070425476536,
+   "trades": 109,
+   "monthly": {
+    "2026-10": -2204.49,
+    "2026-11": -1578.52
+   },
+   "pnl": -3783.01,
+   "ret": -25.22
+  },
+  {
+   "study": "top5_combined",
+   "label": "ALL-5 with kill #4 (1+2+4+5)",
+   "base": "v1 engine",
+   "eng": "1cb91a2",
+   "end": 11096.47697977847,
+   "max_dd": -26.02348680147687,
+   "trades": 59,
+   "monthly": {
+    "2026-10": -1593.74,
+    "2026-11": -2309.79
+   },
+   "pnl": -3903.52,
+   "ret": -26.02
+  },
+  {
+   "study": "v2_steady",
+   "label": "K15/15",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 10927.683323396072,
+   "max_dd": -27.148777844026196,
+   "trades": 75,
+   "monthly": {
+    "2026-10": -2469.36,
+    "2026-11": -1602.96
+   },
+   "pnl": -4072.32,
+   "ret": -27.15
+  },
+  {
+   "study": "ks_throttle",
+   "label": "HOLD-0.5",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 10885.525766942925,
+   "max_dd": -27.429828220380504,
+   "trades": 167,
+   "monthly": {
+    "2026-10": -2576.81,
+    "2026-11": -1537.66
+   },
+   "pnl": -4114.47,
+   "ret": -27.43
+  },
+  {
+   "study": "ks_throttle",
+   "label": "SELL+REENTER-0.5",
+   "base": "v2",
+   "eng": "origin/main",
+   "end": 10828.715452606042,
+   "max_dd": -27.80856364929305,
+   "trades": 167,
+   "monthly": {
+    "2026-10": -2560.74,
+    "2026-11": -1610.55
+   },
+   "pnl": -4171.28,
+   "ret": -27.81
+  },
+  {
+   "study": "v2_steady",
+   "label": "K15/10",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 10796.955771866853,
+   "max_dd": -28.020294854220985,
+   "trades": 88,
+   "monthly": {
+    "2026-10": -2475.55,
+    "2026-11": -1727.5
+   },
+   "pnl": -4203.04,
+   "ret": -28.02
+  },
+  {
+   "study": "v2_steady",
+   "label": "$500 only (no switch)",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 10610.32284641987,
+   "max_dd": -29.264514357200877,
+   "trades": 130,
+   "monthly": {
+    "2026-10": -2890.53,
+    "2026-11": -1499.15
+   },
+   "pnl": -4389.68,
+   "ret": -29.26
+  },
+  {
+   "study": "v2_steady",
+   "label": "K15/5",
+   "base": "v2 pre-reset engine",
+   "eng": "979412d",
+   "end": 10537.652030770525,
+   "max_dd": -29.748986461529835,
+   "trades": 105,
+   "monthly": {
+    "2026-10": -2995.68,
+    "2026-11": -1466.67
+   },
+   "pnl": -4462.35,
+   "ret": -29.75
+  },
+  {
+   "study": "reference",
+   "label": "HOLD 8 chips equal weight",
+   "base": "-",
+   "end": 9413.197842031483,
+   "max_dd": -41.933232674988716,
+   "trades": 0,
+   "monthly": {
+    "2026-10": -4061.06,
+    "2026-11": -1525.74
+   },
+   "pnl": -5586.8,
+   "ret": -37.25
+  }
+ ]
+}
