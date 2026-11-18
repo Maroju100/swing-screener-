@@ -4678,6 +4678,64 @@
     "trend_gate_active": false
    },
    "unowned_excess": {}
+  },
+  {
+   "timestamp": "2026-11-17T19:02:00Z",
+   "date": "2026-11-17",
+   "engine": "v2 + peak reset",
+   "executed": false,
+   "orders_placed": [],
+   "planned_not_executed": [
+    {
+     "symbol": "WDC",
+     "shares": 3.982649,
+     "price": 279.82,
+     "reason": "MAX_HOLD",
+     "entry": 376.9977
+    },
+    {
+     "symbol": "STX",
+     "shares": 2.452369,
+     "price": 497.655,
+     "reason": "MAX_HOLD",
+     "entry": 734.4299
+    },
+    {
+     "symbol": "INTC",
+     "shares": 7.407151,
+     "price": 53.8935,
+     "reason": "STOP",
+     "entry": 102.0287
+    },
+    {
+     "symbol": "LRCX",
+     "shares": 0.717105,
+     "price": 207.36,
+     "reason": "STOP",
+     "entry": 295.7963
+    }
+   ],
+   "buying_power": 0.62,
+   "cash": 0.62,
+   "account_type": "limited_margin",
+   "unsettled_funds": 0.0,
+   "total_equity_at_plan": 2883.37,
+   "broker_total_value": 10149.87,
+   "circuit_breaker_triggered": true,
+   "note": "Plan (WDC/STX MAX_HOLD, INTC/LRCX STOP; est. proceeds $2,882.75, -$1,387.65 vs entry) shown 19:02 UTC after a worker restart re-quote; not approved, nothing placed. Kill-switch active since 2026-11-16. Recorded 2026-11-18 18:44 UTC.",
+   "guardrails": {
+    "verify": "pass",
+    "reconcile": "pass",
+    "freshness": "pass (bars to 2026-11-16, equal to official closes)",
+    "precommit": "pass (no orders)"
+   },
+   "risk_state": {
+    "equity_peak": 3177.56,
+    "kill_switch_active": true,
+    "kill_switch_triggered_date": "2026-11-16",
+    "trend_gate_active": false
+   },
+   "unowned_excess": {}
   }
  ]
 }
