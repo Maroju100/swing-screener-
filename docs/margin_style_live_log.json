@@ -4736,6 +4736,28 @@
     "trend_gate_active": false
    },
    "unowned_excess": {}
+  },
+  {
+   "timestamp": "2026-11-18T18:44:00Z",
+   "date": "2026-11-18",
+   "engine": "v2 + peak reset",
+   "executed": false,
+   "run_completed": false,
+   "orders_placed": [],
+   "planned_not_executed": [],
+   "note": "Run not completed: get_equity_positions and get_equity_historicals were awaiting in-app approval and the tool use was interrupted; no plan was built or shown, nothing placed, state unchanged. Quotes read 18:44 UTC. Account value 10,131.89, buying power 0.62. Recorded 2026-11-19.",
+   "guardrails": {
+    "verify": "pass",
+    "reconcile": "not run",
+    "freshness": "not run",
+    "precommit": "not run"
+   },
+   "risk_state": {
+    "equity_peak": 3177.56,
+    "kill_switch_active": true,
+    "kill_switch_triggered_date": "2026-11-16",
+    "trend_gate_active": false
+   }
   }
  ]
 }
