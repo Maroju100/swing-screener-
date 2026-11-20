@@ -4758,6 +4758,60 @@
     "kill_switch_triggered_date": "2026-11-16",
     "trend_gate_active": false
    }
+  },
+  {
+   "timestamp": "2026-11-19T19:51:00Z",
+   "date": "2026-11-19",
+   "engine": "v2 + peak reset",
+   "executed": false,
+   "run_completed": false,
+   "orders_placed": [],
+   "planned_not_executed": [
+    {
+     "symbol": "WDC",
+     "side": "sell",
+     "shares": 3.982649,
+     "price": 297.7151,
+     "reason": "MAX_HOLD"
+    },
+    {
+     "symbol": "STX",
+     "side": "sell",
+     "shares": 2.452369,
+     "price": 529.305,
+     "reason": "MAX_HOLD"
+    },
+    {
+     "symbol": "INTC",
+     "side": "sell",
+     "shares": 7.407151,
+     "price": 55.96,
+     "reason": "MAX_HOLD"
+    },
+    {
+     "symbol": "LRCX",
+     "side": "sell",
+     "shares": 0.717105,
+     "price": 206.02,
+     "reason": "STOP"
+    }
+   ],
+   "buying_power_used": 0.62,
+   "cash": 0.62,
+   "total_value": 10189.29,
+   "note": "Indicative plan built from state only: get_equity_positions was awaiting in-app approval, so reconcile could not run. Plan shown to user 19:51 UTC; no approval received. Nothing placed; state unchanged. Recorded 2026-11-20.",
+   "guardrails": {
+    "verify": "pass",
+    "reconcile": "not run (positions read pending approval)",
+    "freshness": "pass",
+    "precommit": "not run"
+   },
+   "risk_state": {
+    "equity_peak": 3177.56,
+    "kill_switch_active": true,
+    "kill_switch_triggered_date": "2026-11-16",
+    "trend_gate_active": false
+   }
   }
  ]
 }
