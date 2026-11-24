@@ -4845,6 +4845,37 @@
     "kill_switch_triggered_date": "2026-11-16",
     "trend_gate_active": false
    }
+  },
+  {
+   "timestamp": "2026-11-23T19:14:00Z",
+   "date": "2026-11-23",
+   "engine": "v2 + peak reset",
+   "executed": false,
+   "run_completed": false,
+   "orders_placed": [],
+   "planned_not_executed": [],
+   "buying_power_used": 0.62,
+   "cash": 0.62,
+   "total_value": 9603.07,
+   "quotes_19_14_utc": {
+    "WDC": 299.8372,
+    "STX": 518.685,
+    "INTC": 58.585,
+    "LRCX": 209.29
+   },
+   "note": "Run not completed: get_equity_historicals and get_equity_positions were awaiting in-app approval and the worker restarted; no plan built or shown, nothing placed, state unchanged. Basket rebounded sharply (WDC +14.8%, STX +13.5%, INTC +14.2%, LRCX +14.2% vs prior close). Recorded 2026-11-24.",
+   "guardrails": {
+    "verify": "pass",
+    "reconcile": "not run",
+    "freshness": "not run",
+    "precommit": "not run"
+   },
+   "risk_state": {
+    "equity_peak": 3177.56,
+    "kill_switch_active": true,
+    "kill_switch_triggered_date": "2026-11-16",
+    "trend_gate_active": false
+   }
   }
  ]
 }
