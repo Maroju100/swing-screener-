@@ -4876,6 +4876,38 @@
     "kill_switch_triggered_date": "2026-11-16",
     "trend_gate_active": false
    }
+  },
+  {
+   "timestamp": "2026-11-24T18:43:40Z",
+   "date": "2026-11-24",
+   "engine": "v2 + peak reset",
+   "executed": false,
+   "run_completed": false,
+   "orders_placed": [],
+   "planned_not_executed": [],
+   "buying_power_used": 1000.54,
+   "cash": 1000.54,
+   "total_value": 8738.71,
+   "equity_value": 7738.17,
+   "quotes_18_43_utc": {
+    "WDC": 276.68,
+    "STX": 490.59,
+    "INTC": 55.32,
+    "LRCX": 196.56
+   },
+   "note": "Run not completed: get_equity_historicals and get_equity_positions awaiting in-app approval; worker restarted. No plan, nothing placed, state unchanged. Cash rose 0.62 -> 1000.54 since 11-23 with no system order: an owner action (likely a partial SNDK sale or a deposit), unconfirmed; not this system's money until the owner says so. Recorded 2026-11-25.",
+   "guardrails": {
+    "verify": "pass",
+    "reconcile": "not run",
+    "freshness": "not run",
+    "precommit": "not run"
+   },
+   "risk_state": {
+    "equity_peak": 3177.56,
+    "kill_switch_active": true,
+    "kill_switch_triggered_date": "2026-11-16",
+    "trend_gate_active": false
+   }
   }
  ]
 }
