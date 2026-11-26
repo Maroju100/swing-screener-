@@ -4908,6 +4908,47 @@
     "kill_switch_triggered_date": "2026-11-16",
     "trend_gate_active": false
    }
+  },
+  {
+   "timestamp": "2026-11-25T18:44:17Z",
+   "date": "2026-11-25",
+   "engine": "v2 + peak reset",
+   "executed": false,
+   "run_completed": false,
+   "orders_placed": [],
+   "planned_not_executed": [],
+   "buying_power_used": 1000.54,
+   "cash": 1000.54,
+   "total_value": 8183.83,
+   "equity_value": 7183.29,
+   "quotes_18_44_utc": {
+    "WDC": 264.91,
+    "STX": 464.71,
+    "INTC": 53.04,
+    "LRCX": 181.5374
+   },
+   "note": "Run not completed: get_equity_positions and get_equity_historicals awaiting in-app approval; worker restarted. No plan, nothing placed, state unchanged. Recorded 2026-11-26.",
+   "guardrails": {
+    "verify": "pass",
+    "reconcile": "not run",
+    "freshness": "not run",
+    "precommit": "not run"
+   },
+   "risk_state": {
+    "equity_peak": 3177.56,
+    "kill_switch_active": true,
+    "kill_switch_triggered_date": "2026-11-16",
+    "trend_gate_active": false
+   }
+  },
+  {
+   "timestamp": "2026-11-26T18:44:09Z",
+   "date": "2026-11-26",
+   "executed": false,
+   "run_completed": true,
+   "orders_placed": [],
+   "planned_not_executed": [],
+   "note": "NYSE closed (Thanksgiving). No run; nothing placed; state unchanged."
   }
  ]
 }
